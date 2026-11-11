@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Raised garden bed planner</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L2.5-garden-bed</div>
+  <h1>Raised garden bed planner</h1>
+<h2>Objectives</h2><ul><li>Import a module and use its resources with the qualifier: <code>math.pi</code>, <code>math.ceil</code></li><li>Use a function&#x27;s optional argument: <code>round(x, 2)</code></li><li>Choose between <code>int</code>, <code>round</code> and <code>math.ceil</code> by what the result is for</li><li>Lay out a script in the standard order: docstring, imports, constants, input, processing, output</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Import the module with <code>import math</code> right after the docstring, and use <code>math.pi</code> (with the qualifier) instead of 3.14.</li><li><strong>R2</strong> Display the area and the edging rounded to 2 decimal places with <code>round</code>&#x27;s optional second argument.</li><li><strong>R3</strong> Compute <code>bags</code> with <code>math.ceil</code>, so the club never buys too little soil.</li><li><strong>R4</strong> Every bed in the test suite gets the right area, edging and number of bags. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>A bed needs 9.42 bags of soil. What do <code>int(9.42)</code> and <code>round(9.42)</code> give, and how many bags does the club actually need?</p><div class="answer"><p>Both give 9: int truncates the fraction and round goes to the nearest whole number, which is 9. The club needs 10 bags, because the 0.42 of a bag still has to be bought.</p></div></li><li><p><code>round(28.274334, 2)</code> and <code>round(28.274334)</code>: what does each return, and what does the second argument change?</p><div class="answer"><p>round(28.274334, 2) returns 28.27 and round(28.274334) returns 28. The optional second argument is the number of decimal places to keep; without it round returns the nearest whole number.</p></div></li></ol>
+<h2>Solution</h2><div class="file">garden_bed.py</div><pre class="code-block"><code><span class="t-sd">"""</span>
+<span class="t-sd">Program: garden_bed.py</span>
+<span class="t-sd">Author: (your name)</span>
+<span class="t-sd">Plan materials for a round raised garden bed.</span>
+<span class="t-sd">Inputs: diameter and soil depth, in feet</span>
+<span class="t-sd">Outputs: bed area, length of edging, bags of soil to buy</span>
+<span class="t-sd">"""</span>
+
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">math</span>
+
+<span class="t-n">BAG_VOLUME</span> <span class="t-o">=</span> <span class="t-mf">1.5</span>   <span class="t-c1"># cubic feet of soil in one bag</span>
+
+<span class="t-n">diameter</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Diameter (ft): "</span><span class="t-p">))</span>
+<span class="t-n">depth</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Soil depth (ft): "</span><span class="t-p">))</span>
+
+<span class="t-n">radius</span> <span class="t-o">=</span> <span class="t-n">diameter</span> <span class="t-o">/</span> <span class="t-mi">2</span>
+<span class="t-n">area</span> <span class="t-o">=</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">pi</span> <span class="t-o">*</span> <span class="t-n">radius</span> <span class="t-o">**</span> <span class="t-mi">2</span>
+<span class="t-n">edging</span> <span class="t-o">=</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">pi</span> <span class="t-o">*</span> <span class="t-n">diameter</span>
+
+<span class="t-c1"># Round up: a partly used bag still has to be bought</span>
+<span class="t-n">bags</span> <span class="t-o">=</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">ceil</span><span class="t-p">(</span><span class="t-n">area</span> <span class="t-o">*</span> <span class="t-n">depth</span> <span class="t-o">/</span> <span class="t-n">BAG_VOLUME</span><span class="t-p">)</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Bed area: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-nb">round</span><span class="t-p">(</span><span class="t-n">area</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">))</span> <span class="t-o">+</span> <span class="t-s2">" sq ft"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Edging needed: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-nb">round</span><span class="t-p">(</span><span class="t-n">edging</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">))</span> <span class="t-o">+</span> <span class="t-s2">" ft"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Soil bags to buy: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">bags</span><span class="t-p">))</span></code></pre>
+<h3>Walkthrough</h3><p><code>int</code> truncates and <code>round</code> goes to the nearest whole number, so both can come out below what the bed needs (9.42 bags becomes 9). <code>math.ceil</code> always rounds up. Rounding happens only for display: the bag count uses the full-precision area. <code>math.pi</code> keeps the reader aware the value comes from the <code>math</code> module, which is why the qualified import is preferred over <code>from math import *</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">importlib</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Bed 1: 6 ft wide, 0.5 ft deep"</span><span class="t-p">)</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">garden_bed</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Bed 2: 4 ft wide, 1 ft deep"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">garden_bed</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Bed 3: 3 ft wide, 1.5 ft deep"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">garden_bed</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">6
+0.5
+4
+1
+3
+1.5
+</pre><h3>Expected output</h3><pre class="output">Bed 1: 6 ft wide, 0.5 ft deep
+Diameter (ft): Soil depth (ft): Bed area: 28.27 sq ft
+Edging needed: 18.85 ft
+Soil bags to buy: 10
+
+Bed 2: 4 ft wide, 1 ft deep
+Diameter (ft): Soil depth (ft): Bed area: 12.57 sq ft
+Edging needed: 12.57 ft
+Soil bags to buy: 9
+
+Bed 3: 3 ft wide, 1.5 ft deep
+Diameter (ft): Soil depth (ft): Bed area: 7.07 sq ft
+Edging needed: 9.42 ft
+Soil bags to buy: 8
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>import math</code> comes right after the docstring<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>^\s*(?:\&quot;\&quot;\&quot;[\s\S]*?\&quot;\&quot;\&quot;|&#x27;&#x27;&#x27;[\s\S]*?&#x27;&#x27;&#x27;)?\s*import\s+math\b</code></div><div><span class="tag">forbid</span> <code>\bfrom\s+math\s+import\s+\*</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>math.pi</code> replaces 3.14<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bmath\.pi\b</code></div><div><span class="tag">forbid</span> <code>\b3\.14\d*\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td>Area and edging are rounded to 2 places<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bround\s*\(\s*area\s*,\s*2\s*\))(?=[\s\S]*\bround\s*\(\s*edging\s*,\s*2\s*\))</code></div></td></tr><tr><td>C4</td><td>R3</td><td>Bags are rounded up with <code>math.ceil</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bbags\s*=\s*math\.ceil\s*\(</code></div><div><span class="tag">forbid</span> <code>\bbags\s*=\s*(?:int|round)\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>import math</code> comes right after the docstring</dt><dd><p>Put <code>import math</code> on its own line directly after the docstring, before the constants. Imports come first so a reader sees every module the script depends on; the plain <code>import math</code> form keeps the <code>math.</code> qualifier on every use.</p></dd><dt>C2 · <code>math.pi</code> replaces 3.14</dt><dd><p>Replace each <code>3.14</code> with <code>math.pi</code>. The module&#x27;s value is accurate to about 16 digits; 3.14 is off by more than a twentieth of a percent, which adds up on a large bed.</p></dd><dt>C3 · Area and edging are rounded to 2 places</dt><dd><p>Show <code>round(area, 2)</code> and <code>round(edging, 2)</code> in the output lines. Round for display only, so the bag count still uses the precise area.</p></dd><dt>C4 · Bags are rounded up with <code>math.ceil</code></dt><dd><p>Use <code>math.ceil(...)</code> for <code>bags</code>. <code>int</code> truncates and <code>round</code> can round down, and either one leaves the club short of soil.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Section 2.5 recommends importing the module name, then writing the module as a qualifier on every use.</p></li><li><p><code>dir(math)</code> lists a function whose name means the opposite of floor.</p></li><li><p>Round inside the <code>print</code> lines, not where <code>area</code> is computed: the soil calculation needs the precise value.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>When is <code>int</code> the right tool, when is <code>round</code>, and when is <code>math.ceil</code>? Give one example from everyday life for each.</p><div class="answer"><p>int when the fraction should simply be dropped, like counting complete years of age. round when the nearest value is fairest, like a score of 89.6 shown as 90. math.ceil when running short is not acceptable, like buses for a field trip or bags of soil: any fraction means one more.</p></div></li><li><p>Section 2.5 prefers <code>import math</code> with <code>math.pi</code> over <code>from math import *</code>. What does the qualifier buy you in a longer program?</p><div class="answer"><p>The qualifier tells the reader where each name comes from, and it keeps names from different modules apart: two modules can both define a function with the same name, and with import * one silently replaces the other. With math.ceil there is no doubt which function runs.</p></div></li></ol>
+<h2>Extension</h2><p>Soil comes in two bag sizes: 1.5 and 2.0 cubic feet. Print the number of bags of each size the club would need, and use <code>help(math.ceil)</code> in the shell to read what the function promises.</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

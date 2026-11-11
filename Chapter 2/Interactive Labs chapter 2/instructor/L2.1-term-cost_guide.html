@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Term cost estimator</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L2.1-term-cost</div>
+  <h1>Term cost estimator</h1>
+<h2>Objectives</h2><ul><li>Turn an analysis and a pseudocode design into working Python</li><li>Name fixed values as symbolic constants instead of typing magic numbers</li><li>Convert typed input with <code>int()</code> before doing arithmetic</li><li>Explain why a test suite checks edge cases such as 0</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Name the three amounts as symbolic constants written as dollars and cents: <code>TUITION_PER_CREDIT = 425.0</code>, <code>TECH_FEE = 150.0</code>, <code>LAB_FEE = 60.0</code>.</li><li><strong>R2</strong> Convert both inputs to whole numbers with <code>int()</code> before using them.</li><li><strong>R3</strong> Compute <code>termCost</code> from the pseudocode formula using the constants only: no 425, 150 or 60 in the arithmetic.</li><li><strong>R4</strong> Every case in the test suite prints the expected cost, for example <code>Estimated term cost: $5370.0</code> for 12 credits and 2 labs. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the starter, <code>credits</code> holds whatever <code>input()</code> returned. If you typed <code>12</code> and the program then evaluated <code>credits * 425.0</code>, what would happen, and why?</p><div class="answer"><p>Python stops with a TypeError. input() always returns a string, so credits is the text &#x27;12&#x27;, not the number 12, and a string cannot be multiplied by a float. It has to be converted with int() first.</p></div></li><li><p>Which part of the docstring is the analysis (what the program does) and which is the design (how it does it)?</p><div class="answer"><p>The constants, inputs and output describe what the program must do, which came from analysis. The computation step, the formula that turns inputs into the cost, is the design: it says how the program will do it.</p></div></li></ol>
+<h2>Solution</h2><div class="file">term_cost.py</div><pre class="code-block"><code><span class="t-sd">"""</span>
+<span class="t-sd">Program: term_cost.py</span>
+<span class="t-sd">Author: (your name)</span>
+<span class="t-sd">Estimate what one term will cost a student.</span>
+
+<span class="t-sd">1. Significant constants</span>
+<span class="t-sd">   tuition per credit hour</span>
+<span class="t-sd">   technology fee (once per term)</span>
+<span class="t-sd">   lab fee (per lab course)</span>
+<span class="t-sd">2. The inputs are</span>
+<span class="t-sd">   number of credit hours</span>
+<span class="t-sd">   number of lab courses</span>
+<span class="t-sd">3. Computation:</span>
+<span class="t-sd">   term cost = credits * tuition per credit</span>
+<span class="t-sd">               + technology fee</span>
+<span class="t-sd">               + lab courses * lab fee</span>
+<span class="t-sd">4. The output is</span>
+<span class="t-sd">   the estimated term cost</span>
+<span class="t-sd">"""</span>
+
+<span class="t-c1"># Initialize the constants</span>
+<span class="t-n">TUITION_PER_CREDIT</span> <span class="t-o">=</span> <span class="t-mf">425.0</span>   <span class="t-c1"># dollars per credit hour</span>
+<span class="t-n">TECH_FEE</span> <span class="t-o">=</span> <span class="t-mf">150.0</span>             <span class="t-c1"># charged once per term</span>
+<span class="t-n">LAB_FEE</span> <span class="t-o">=</span> <span class="t-mf">60.0</span>               <span class="t-c1"># charged for each lab course</span>
+
+<span class="t-c1"># Request the inputs</span>
+<span class="t-n">credits</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Credit hours: "</span><span class="t-p">))</span>
+<span class="t-n">labCourses</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Lab courses: "</span><span class="t-p">))</span>
+
+<span class="t-c1"># Compute the term cost</span>
+<span class="t-n">termCost</span> <span class="t-o">=</span> <span class="t-n">credits</span> <span class="t-o">*</span> <span class="t-n">TUITION_PER_CREDIT</span> <span class="t-o">+</span> <span class="t-n">TECH_FEE</span> <span class="t-o">+</span> \
+           <span class="t-n">labCourses</span> <span class="t-o">*</span> <span class="t-n">LAB_FEE</span>
+
+<span class="t-c1"># Display the term cost</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Estimated term cost: $"</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">termCost</span><span class="t-p">))</span></code></pre>
+<h3>Walkthrough</h3><p>The constants are floats (<code>425.0</code>) because they are money; mixing them with the <code>int</code> inputs makes the result a float, so the output reads <code>$5370.0</code>, exactly like the tax calculator&#x27;s <code>$26200.0</code>. Converting with <code>int()</code> right where the input is read means every later line can trust that <code>credits</code> is a number. Because the fees live in one place, next year&#x27;s price change is a one-line edit: that is what cheaper maintenance looks like.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">importlib</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 1: 12 credits, 2 lab courses"</span><span class="t-p">)</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">term_cost</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 2: 0 credits, 0 lab courses"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">term_cost</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 3: 1 credit, 1 lab course"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">term_cost</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 4: 15 credits, 0 lab courses"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">term_cost</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">12
+2
+0
+0
+1
+1
+15
+0
+</pre><h3>Expected output</h3><pre class="output">Case 1: 12 credits, 2 lab courses
+Credit hours: Lab courses: Estimated term cost: $5370.0
+
+Case 2: 0 credits, 0 lab courses
+Credit hours: Lab courses: Estimated term cost: $150.0
+
+Case 3: 1 credit, 1 lab course
+Credit hours: Lab courses: Estimated term cost: $635.0
+
+Case 4: 15 credits, 0 lab courses
+Credit hours: Lab courses: Estimated term cost: $6525.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The three amounts are named constants<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bTUITION_PER_CREDIT\s*=\s*425\.\d*)(?=[\s\S]*\bTECH_FEE\s*=\s*150\.\d*)(?=[\s\S]*\bLAB_FEE\s*=\s*60\.\d*)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Both inputs are converted with <code>int()</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bint\s*\([\s\S]*\bint\s*\(</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Tuition uses the constant, with no magic numbers<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bcredits\s*\*\s*TUITION_PER_CREDIT\b</code></div><div><span class="tag">require</span> <code>\bTUITION_PER_CREDIT\s*\*\s*credits\b</code></div><div><span class="tag">forbid</span> <code>[*+]\s*(?:425|150|60)(?:\.0*)?\b|\b(?:425|150|60)(?:\.0*)?\s*[*+]</code></div></td></tr><tr><td>C4</td><td>R3</td><td>Both fees come from their constants<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*(?:\blabCourses\s*\*\s*LAB_FEE\b|\bLAB_FEE\s*\*\s*labCourses\b))(?=[\s\S]*(?:\+\s*TECH_FEE\b|\bTECH_FEE\s*\+))</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The three amounts are named constants</dt><dd><p>Define <code>TUITION_PER_CREDIT = 425.0</code>, <code>TECH_FEE = 150.0</code> and <code>LAB_FEE = 60.0</code> under the &quot;Initialize the constants&quot; comment. Write each with a decimal point: they are dollar amounts, and the float makes the output show cents (<code>$5370.0</code>).</p><div class='small'><strong>Hint:</strong></div><p>Uppercase names tell every reader &quot;this value never changes while the program runs&quot;.</p></dd><dt>C2 · Both inputs are converted with <code>int()</code></dt><dd><p><code>input()</code> always returns a string. Wrap each input (or convert <code>credits</code> and <code>labCourses</code> afterwards) with <code>int(...)</code> so the arithmetic works on numbers.</p></dd><dt>C3 · Tuition uses the constant, with no magic numbers</dt><dd><p>Multiply <code>credits</code> by <code>TUITION_PER_CREDIT</code> in the <code>termCost</code> formula, and use the constants for every amount: when the office changes a fee, only the constant&#x27;s line should need editing.</p></dd><dt>C4 · Both fees come from their constants</dt><dd><p>Add <code>TECH_FEE</code> once and <code>labCourses * LAB_FEE</code> for the lab courses. The technology fee is per term, so it is not multiplied by anything.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Work top to bottom in the order of the docstring: constants first, then the inputs, then the computation.</p></li><li><p><code>input()</code> gives you text. The number lives inside it until <code>int(...)</code> takes it out.</p></li><li><p>The technology fee is charged once per term; the lab fee is charged once per lab course. Only one of them gets multiplied.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The test suite includes 0 credits and 0 lab courses. What could that case reveal that the 12-credit case could not?</p><div class="answer"><p>With zeros, everything that is multiplied disappears and only the flat technology fee remains, so the output must be exactly $150.0. That isolates TECH_FEE: if it was forgotten, or wrongly multiplied by credits or labs, the zero case shows it immediately, while a large realistic case can hide the mistake inside a big total.</p></div></li><li><p>Next year the lab fee rises to $75. Which lines of your program change, and why does that matter for the cost of software?</p><div class="answer"><p>Only the line LAB_FEE = 60.0 changes, because every calculation uses the constant. Maintenance is the most expensive phase of the life cycle, so code that turns a policy change into a one-line edit, with no risk of missing a hidden 60 somewhere, is cheaper and safer to maintain.</p></div></li></ol>
+<h2>Extension</h2><p>Advisors also want the cost <strong>per credit hour</strong> of the whole term. Add a line that prints <code>termCost / credits</code>, and run it with 0 credits. What happens? Note the problem: Chapter 3 shows how to prevent it.</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

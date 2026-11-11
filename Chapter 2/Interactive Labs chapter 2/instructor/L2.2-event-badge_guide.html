@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Event check-in badge</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L2.2-event-badge</div>
+  <h1>Event check-in badge</h1>
+<h2>Objectives</h2><ul><li>Build new strings with concatenation (<code>+</code>) and repetition (<code>*</code>)</li><li>Use escape sequences (<code>\t</code>, <code>\&quot;</code>) and quotation marks to control exactly what prints</li><li>Choose variable and constant names that explain their purpose</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Build the border from the constants with repetition, <code>BORDER * BADGE_WIDTH</code>, instead of typing stars.</li><li><strong>R2</strong> Build <code>fullName</code> by concatenating the first name, one space and the last name.</li><li><strong>R3</strong> Indent the name line with the tab escape sequence <code>\t</code>.</li><li><strong>R4</strong> Print the event name inside double quotation marks: <code>Event: &quot;Python Night&quot;</code>.</li><li><strong>R5</strong> Print the reminder <code>Don&#x27;t forget your laptop!</code> with its apostrophe.</li><li><strong>R6</strong> The badge matches the example line for line, for every guest. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Read the starter. Exactly what does it print on the name line for Maya Ortiz, and why?</p><div class="answer"><p>It prints MayaOrtiz with no space. Concatenation glues strings together exactly as they are; nothing adds a space unless the program concatenates a &quot; &quot; string between the two names.</p></div></li><li><p>Why can <code>print(&#x27;Don&#x27;t forget your laptop!&#x27;)</code> not work, while the same text in double quotes does?</p><div class="answer"><p>In a single-quoted literal the apostrophe in Don&#x27;t ends the string early, so Python sees Don as the string and then t forget... as broken code, a syntax error. Inside double quotes the apostrophe is just a character.</p></div></li></ol>
+<h2>Solution</h2><div class="file">badge.py</div><pre class="code-block"><code><span class="t-sd">"""</span>
+<span class="t-sd">Program: badge.py</span>
+<span class="t-sd">Author: (your name)</span>
+<span class="t-sd">Print a name badge at the Tech Club's event check-in kiosk.</span>
+<span class="t-sd">"""</span>
+
+<span class="t-n">BADGE_WIDTH</span> <span class="t-o">=</span> <span class="t-mi">30</span>   <span class="t-c1"># characters across the badge</span>
+<span class="t-n">BORDER</span> <span class="t-o">=</span> <span class="t-s2">"*"</span>       <span class="t-c1"># character used for the top and bottom edge</span>
+
+<span class="t-n">firstName</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"First name: "</span><span class="t-p">)</span>
+<span class="t-n">lastName</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Last name: "</span><span class="t-p">)</span>
+<span class="t-n">eventName</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Event: "</span><span class="t-p">)</span>
+
+<span class="t-c1"># Join the names with one space between them</span>
+<span class="t-n">fullName</span> <span class="t-o">=</span> <span class="t-n">firstName</span> <span class="t-o">+</span> <span class="t-s2">" "</span> <span class="t-o">+</span> <span class="t-n">lastName</span>
+
+<span class="t-c1"># Repeat the border character across the badge</span>
+<span class="t-n">border</span> <span class="t-o">=</span> <span class="t-n">BORDER</span> <span class="t-o">*</span> <span class="t-n">BADGE_WIDTH</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">border</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"HELLO, my name is"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"</span><span class="t-se">\t</span><span class="t-s2">"</span> <span class="t-o">+</span> <span class="t-n">fullName</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Event: </span><span class="t-se">\"</span><span class="t-s2">"</span> <span class="t-o">+</span> <span class="t-n">eventName</span> <span class="t-o">+</span> <span class="t-s2">"</span><span class="t-se">\"</span><span class="t-s2">"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Don't forget your laptop!"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">border</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p><code>BORDER * BADGE_WIDTH</code> means a wider badge is a one-number change, and switching to <code>=</code> is a one-character change. The escaped <code>\&quot;</code> puts a double quotation mark inside a double-quoted string; <code>&#x27;Event: &quot;&#x27; + eventName + &#x27;&quot;&#x27;</code> with single-quoted literals works too. The apostrophe in <code>Don&#x27;t</code> is safe because the literal is in double quotes.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">importlib</span>
+
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">badge</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">badge</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">Maya
+Ortiz
+Python Night
+Jordan
+Lee
+Career Fair
+</pre><h3>Expected output</h3><pre class="output">First name: Last name: Event: ******************************
+HELLO, my name is
+	Maya Ortiz
+Event: &quot;Python Night&quot;
+Don&#x27;t forget your laptop!
+******************************
+
+First name: Last name: Event: ******************************
+HELLO, my name is
+	Jordan Lee
+Event: &quot;Career Fair&quot;
+Don&#x27;t forget your laptop!
+******************************
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The border is built with repetition<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bBORDER\s*\*\s*BADGE_WIDTH\b</code></div><div><span class="tag">require</span> <code>\bBADGE_WIDTH\s*\*\s*BORDER\b</code></div><div><span class="tag">forbid</span> <code>[\&quot;&#x27;]\*{2,}[\&quot;&#x27;]</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The full name has a space between the names<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bfirstName\s*\+\s*(?:\&quot;\s\&quot;|&#x27;\s&#x27;)\s*\+\s*lastName\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The name line uses the tab escape <code>\t</code><div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\\t</code></div></td></tr><tr><td>C4</td><td>R4</td><td>The event name is printed inside double quotes<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\\\&quot;</code></div><div><span class="tag">require</span> <code>&#x27;[^&#x27;\n]*\&quot;[^&#x27;\n]*&#x27;</code></div></td></tr><tr><td>C5</td><td>R5</td><td>The reminder line is printed<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>Don(?:\\)?&#x27;t forget your laptop!</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The border is built with repetition</dt><dd><p>Replace the typed stars with <code>BORDER * BADGE_WIDTH</code>. The <code>*</code> operator repeats a string a whole number of times, so the border is always exactly as wide as the constant says.</p></dd><dt>C2 · The full name has a space between the names</dt><dd><p>Concatenate a string holding one space between the names: first name, then <code>&quot; &quot;</code>, then last name. <code>+</code> adds nothing on its own.</p></dd><dt>C3 · The name line uses the tab escape <code>\t</code></dt><dd><p>Start the name line with the escape sequence <code>\t</code> (a backslash then t) inside a string, for example concatenated before <code>fullName</code>. Typing spaces would not line up the same way on every printer.</p></dd><dt>C4 · The event name is printed inside double quotes</dt><dd><p>Print a <code>&quot;</code> before and after the event name. Inside a double-quoted string write it as the escape <code>\&quot;</code>; inside a single-quoted string you can type <code>&quot;</code> directly.</p></dd><dt>C5 · The reminder line is printed</dt><dd><p>Add <code>print(&quot;Don&#x27;t forget your laptop!&quot;)</code> before the bottom border. Put the text in double quotes (or escape the apostrophe as <code>\&#x27;</code>) so the apostrophe doesn&#x27;t end the string.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Compare the starter&#x27;s output with the example badge line by line: each difference is one requirement.</p></li><li><p>Escape sequences start with a backslash and live inside a string literal: one for the tab, one for each double quotation mark.</p></li><li><p>The border needs no stars typed at all: the string you repeat is already stored in a constant.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The constants <code>BADGE_WIDTH</code> and <code>BORDER</code> each have an end-of-line comment, but <code>firstName</code> does not. When is a comment worth writing, and when is it noise?</p><div class="answer"><p>A comment is worth it when the code alone doesn&#x27;t say why a value is what it is or what it is for, such as a width measured in characters or the character used for the edge. firstName already explains itself, so a comment would repeat the code and become one more thing to keep up to date.</p></div></li><li><p>Why is <code>border = BORDER * BADGE_WIDTH</code> better than typing 30 stars, even though both print the same line today?</p><div class="answer"><p>The expression ties the border to the constants, so changing the badge width or the border character takes one edit and can&#x27;t leave the two borders different lengths. Typed stars are a hidden copy of the width that someone must remember to recount by hand.</p></div></li></ol>
+<h2>Extension</h2><p>Make the badge wider without touching any <code>print</code> line: change one constant, then press <strong>Run</strong>. Then try <code>BORDER = &quot;=-&quot;</code>. What happens to the width, and why?</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

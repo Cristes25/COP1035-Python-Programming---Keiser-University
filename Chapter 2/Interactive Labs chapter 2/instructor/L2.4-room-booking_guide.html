@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Study room booking</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L2.4-room-booking</div>
+  <h1>Study room booking</h1>
+<h2>Objectives</h2><ul><li>Choose between <code>/</code>, <code>//</code> and <code>%</code> for the result you need</li><li>Write expressions whose order of evaluation is the one you intend</li><li>Round money with <code>round(value, 2)</code> and convert numbers with <code>str()</code> for output</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Split the booking into <code>hours</code> with <code>//</code> and leftover <code>extraMinutes</code> with <code>%</code>.</li><li><strong>R2</strong> <code>roomCost</code> is minutes times the hourly rate divided by 60, rounded to 2 decimal places with <code>round(..., 2)</code>.</li><li><strong>R3</strong> <code>share</code> is the room cost divided by the number of people, rounded to 2 decimal places.</li><li><strong>R4</strong> Convert every number to a string with <code>str()</code> before concatenating it into an output line.</li><li><strong>R5</strong> Every case prints the expected lines, including one where floating-point arithmetic is not exact. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>For a 135-minute booking, what do <code>135 / 60</code>, <code>135 // 60</code> and <code>135 % 60</code> evaluate to?</p><div class="answer"><p>135 / 60 is 2.25 (exact division always gives a float), 135 // 60 is 2 (the integer quotient), and 135 % 60 is 15 (the remainder).</p></div></li><li><p>The starter&#x27;s line <code>print(&quot;Room cost: $&quot; + roomCost)</code> stops the program. What error is it, and why?</p><div class="answer"><p>A TypeError. roomCost is a float, and Python won&#x27;t use + between a string and a number because it checks operand types before applying an operator. The number must be converted with str() first.</p></div></li></ol>
+<h2>Solution</h2><div class="file">room_booking.py</div><pre class="code-block"><code><span class="t-sd">"""</span>
+<span class="t-sd">Program: room_booking.py</span>
+<span class="t-sd">Author: (your name)</span>
+<span class="t-sd">Print the time, cost and per-person share of a study room booking.</span>
+<span class="t-sd">"""</span>
+
+<span class="t-n">MINUTES_PER_HOUR</span> <span class="t-o">=</span> <span class="t-mi">60</span>
+
+<span class="t-n">minutes</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Minutes booked: "</span><span class="t-p">))</span>
+<span class="t-n">rate</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Hourly rate: "</span><span class="t-p">))</span>
+<span class="t-n">people</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"People: "</span><span class="t-p">))</span>
+
+<span class="t-c1"># Whole hours, and the minutes that don't make a full hour</span>
+<span class="t-n">hours</span> <span class="t-o">=</span> <span class="t-n">minutes</span> <span class="t-o">//</span> <span class="t-n">MINUTES_PER_HOUR</span>
+<span class="t-n">extraMinutes</span> <span class="t-o">=</span> <span class="t-n">minutes</span> <span class="t-o">%</span> <span class="t-n">MINUTES_PER_HOUR</span>
+
+<span class="t-c1"># Cost of the booking, rounded to cents</span>
+<span class="t-n">roomCost</span> <span class="t-o">=</span> <span class="t-nb">round</span><span class="t-p">(</span><span class="t-n">minutes</span> <span class="t-o">*</span> <span class="t-n">rate</span> <span class="t-o">/</span> <span class="t-n">MINUTES_PER_HOUR</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">)</span>
+
+<span class="t-c1"># Each person's share, rounded to cents</span>
+<span class="t-n">share</span> <span class="t-o">=</span> <span class="t-nb">round</span><span class="t-p">(</span><span class="t-n">roomCost</span> <span class="t-o">/</span> <span class="t-n">people</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">)</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Booked time: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">" h "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">extraMinutes</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">" min"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Room cost: $"</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">roomCost</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Each person pays: $"</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">share</span><span class="t-p">))</span></code></pre>
+<h3>Walkthrough</h3><p><code>//</code> keeps the whole hours as an <code>int</code> and <code>%</code> gives what is left; <code>/</code> would give <code>2.25</code>, a fraction of an hour that no one reads as minutes. Multiplying before dividing (<code>minutes * rate / 60</code>) keeps the arithmetic exact for these inputs, and <code>round(..., 2)</code> cleans up cases like 50 minutes split three ways. <code>str()</code> is required because Python is strongly typed: <code>&quot;$&quot; + 45.0</code> is a TypeError.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">importlib</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 1: 135 min at $20.00, 3 people"</span><span class="t-p">)</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">room_booking</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 2: 125 min at $15.00, 5 people"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">room_booking</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 3: 50 min at $15.00, 3 people"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">room_booking</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">135
+20.00
+3
+125
+15.00
+5
+50
+15.00
+3
+</pre><h3>Expected output</h3><pre class="output">Case 1: 135 min at $20.00, 3 people
+Minutes booked: Hourly rate: People: Booked time: 2 h 15 min
+Room cost: $45.0
+Each person pays: $15.0
+
+Case 2: 125 min at $15.00, 5 people
+Minutes booked: Hourly rate: People: Booked time: 2 h 5 min
+Room cost: $31.25
+Each person pays: $6.25
+
+Case 3: 50 min at $15.00, 3 people
+Minutes booked: Hourly rate: People: Booked time: 0 h 50 min
+Room cost: $12.5
+Each person pays: $4.17
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>hours</code> uses integer division <code>//</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bhours\s*=\s*minutes\s*//\s*(?:MINUTES_PER_HOUR|60)\b</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>extraMinutes</code> uses the remainder <code>%</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bextraMinutes\s*=\s*minutes\s*%\s*(?:MINUTES_PER_HOUR|60)\b</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>roomCost</code> is rounded to 2 decimal places<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\broomCost\s*=\s*round\s*\([^\n]*\brate\b[^\n]*,\s*2\s*\)</code></div></td></tr><tr><td>C4</td><td>R3</td><td><code>share</code> divides the cost by the people, rounded<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bshare\s*=\s*round\s*\(\s*\(?\s*roomCost\s*\)?\s*/\s*people\s*,\s*2\s*\)</code></div></td></tr><tr><td>C5</td><td>R4</td><td>Numbers are converted with <code>str()</code> for output<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bstr\s*\(\s*roomCost\s*\))(?=[\s\S]*\bstr\s*\(\s*share\s*\))</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>hours</code> uses integer division <code>//</code></dt><dd><p>Use <code>//</code> for the whole hours. <code>/</code> always produces a float such as <code>2.25</code>, which is a fraction of an hour, not a count of hours.</p></dd><dt>C2 · <code>extraMinutes</code> uses the remainder <code>%</code></dt><dd><p>The minutes left after the whole hours are the remainder of dividing by 60: use <code>%</code>.</p></dd><dt>C3 · <code>roomCost</code> is rounded to 2 decimal places</dt><dd><p>Wrap the cost expression in <code>round(..., 2)</code>. The second argument is optional; without it, <code>round</code> returns a whole number and the cents are lost.</p></dd><dt>C4 · <code>share</code> divides the cost by the people, rounded</dt><dd><p>Set <code>share</code> to <code>round(roomCost / people, 2)</code>. Divide the rounded cost the group actually pays, not a recomputed value.</p></dd><dt>C5 · Numbers are converted with <code>str()</code> for output</dt><dd><p>Convert <code>roomCost</code> and <code>share</code> with <code>str(...)</code> before concatenating them. <code>+</code> between a string and a float is a TypeError.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Three division operators, three different answers: one for a float, one for the whole part, one for what&#x27;s left.</p></li><li><p>If you divide by 60 before multiplying by the rate, use parentheses or check that the order still gives the same value. Either way, round once, at the end.</p></li><li><p>The crash comes from mixing types in <code>+</code>, not from the arithmetic.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Case 2 is 125 minutes at $15.00. In algebra <code>125 / 60 * 15.0</code> and <code>125 * 15.0 / 60</code> are equal, but Python prints <code>31.250000000000004</code> for the first and <code>31.25</code> for the second. Why, and how does your program protect the receipt?</p><div class="answer"><p>Floats have limited precision, and 125 / 60 is a repeating fraction that can&#x27;t be stored exactly, so multiplying it by 15 carries a tiny error. Multiplying first keeps the intermediate value exact here, and rounding the final amount to 2 decimals removes any leftover error before it reaches the receipt.</p></div></li><li><p>Why does <code>hours</code> use <code>//</code> while <code>roomCost</code> uses <code>/</code>? What would go wrong if they were swapped?</p><div class="answer"><p>Hours are a count of whole hours, so the integer quotient is what&#x27;s wanted and the rest comes from %. Cost needs the exact fraction: with // the group would only pay for full hours, so 50 minutes would cost $0 and 135 minutes would lose the 15-minute part.</p></div></li></ol>
+<h2>Extension</h2><p>Groups now pay for every <strong>started</strong> 15-minute block. Compute the number of blocks using only <code>//</code> and <code>+</code> (no <code>if</code>), and test 135, 136 and 150 minutes.</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

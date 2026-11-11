@@ -1,0 +1,40 @@
+POSTING CHECKLIST
+=================
+
+  Lab L2.1-term-cost: Term cost estimator
+    students : L2.1-term-cost.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L2.1-term-cost_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L2.1-term-cost_guide.html
+
+  Lab L2.2-event-badge: Event check-in badge
+    students : L2.2-event-badge.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L2.2-event-badge_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L2.2-event-badge_guide.html
+
+  Lab L2.3-shift-code: Escape-room shift code
+    students : L2.3-shift-code.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L2.3-shift-code_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L2.3-shift-code_guide.html
+
+  Lab L2.4-room-booking: Study room booking
+    students : L2.4-room-booking.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L2.4-room-booking_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L2.4-room-booking_guide.html
+
+  Lab L2.5-garden-bed: Raised garden bed planner
+    students : L2.5-garden-bed.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L2.5-garden-bed_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L2.5-garden-bed_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.
+
+Python labs run in the browser. Students need the page opened from a web address (Blackboard is fine) and,
+unless you built with --python-runtime, an internet connection the first time (about 12 MB, then cached).
+If you built with --python-runtime, upload the runtime/ folder next to the lab pages, keeping its structure.

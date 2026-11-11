@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Escape-room shift code</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L2.3-shift-code</div>
+  <h1>Escape-room shift code</h1>
+<h2>Objectives</h2><ul><li>Use <code>ord</code> and <code>chr</code> to move between characters and their ASCII codes</li><li>Choose the right data type for each value: <code>str</code>, <code>int</code></li><li>Reverse an encoding to prove it can be read back</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Store the letter&#x27;s ASCII code in <code>letterCode</code> using <code>ord</code>.</li><li><strong>R2</strong> Convert <code>shift</code> to an <code>int</code>, then build <code>encoded</code> with <code>chr</code> of the code plus the shift.</li><li><strong>R3</strong> Build <code>decoded</code> from <code>encoded</code> itself, shifting back by the same amount, as a player would.</li><li><strong>R4</strong> The three output lines are right for every case, including a shift that leaves the alphabet. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Using the ASCII table in Section 2.3, what is <code>ord(&#x27;H&#x27;)</code>, and what does <code>chr(ord(&#x27;H&#x27;) + 3)</code> evaluate to?</p><div class="answer"><p>ord(&#x27;H&#x27;) is 72. Adding 3 gives 75, and chr(75) is &#x27;K&#x27;.</p></div></li><li><p>The starter reads <code>shift</code> with <code>input()</code> and doesn&#x27;t convert it. What would <code>ord(letter) + shift</code> do with that value, and why?</p><div class="answer"><p>It raises a TypeError: ord returns an int, but shift is still a string such as &#x27;3&#x27;, and Python won&#x27;t add an int and a str. The shift has to be converted with int() first.</p></div></li></ol>
+<h2>Solution</h2><div class="file">shift_code.py</div><pre class="code-block"><code><span class="t-sd">"""</span>
+<span class="t-sd">Program: shift_code.py</span>
+<span class="t-sd">Author: (your name)</span>
+<span class="t-sd">Encode one letter for the escape-room clue and check it decodes.</span>
+<span class="t-sd">"""</span>
+
+<span class="t-n">letter</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Letter: "</span><span class="t-p">)</span>
+<span class="t-n">shift</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Shift: "</span><span class="t-p">))</span>
+
+<span class="t-c1"># The character set maps each character to an integer code</span>
+<span class="t-n">letterCode</span> <span class="t-o">=</span> <span class="t-nb">ord</span><span class="t-p">(</span><span class="t-n">letter</span><span class="t-p">)</span>
+
+<span class="t-c1"># Move along the character set by the shift</span>
+<span class="t-n">encoded</span> <span class="t-o">=</span> <span class="t-nb">chr</span><span class="t-p">(</span><span class="t-n">letterCode</span> <span class="t-o">+</span> <span class="t-n">shift</span><span class="t-p">)</span>
+
+<span class="t-c1"># A player works backwards from the clue on the wall</span>
+<span class="t-n">decoded</span> <span class="t-o">=</span> <span class="t-nb">chr</span><span class="t-p">(</span><span class="t-nb">ord</span><span class="t-p">(</span><span class="t-n">encoded</span><span class="t-p">)</span> <span class="t-o">-</span> <span class="t-n">shift</span><span class="t-p">)</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Code of "</span> <span class="t-o">+</span> <span class="t-n">letter</span> <span class="t-o">+</span> <span class="t-s2">": "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">letterCode</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Encoded letter: "</span> <span class="t-o">+</span> <span class="t-n">encoded</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Decoded again: "</span> <span class="t-o">+</span> <span class="t-n">decoded</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p><code>ord</code> returns an <code>int</code>, so the shift must be an <code>int</code> too before they are added; <code>chr</code> then turns the new code back into a one-character string. Decoding starts from <code>encoded</code>, not from <code>letter</code>: copying <code>letter</code> would print the right answer without proving anything. Case 3 shows that the character set doesn&#x27;t wrap: X shifted by 4 lands on the backslash.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">importlib</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 1: H shifted by 3"</span><span class="t-p">)</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">shift_code</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 2: A shifted by 25"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shift_code</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 3: X shifted by 4"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shift_code</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">H
+3
+A
+25
+X
+4
+</pre><h3>Expected output</h3><pre class="output">Case 1: H shifted by 3
+Letter: Shift: Code of H: 72
+Encoded letter: K
+Decoded again: H
+
+Case 2: A shifted by 25
+Letter: Shift: Code of A: 65
+Encoded letter: Z
+Decoded again: A
+
+Case 3: X shifted by 4
+Letter: Shift: Code of X: 88
+Encoded letter: \
+Decoded again: X
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>letterCode</code> comes from <code>ord</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bletterCode\s*=\s*ord\s*\(\s*letter\s*\)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>The shift is converted to an <code>int</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bshift\s*=\s*int\s*\(</code></div><div><span class="tag">require</span> <code>\bint\s*\(\s*shift\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>encoded</code> uses <code>chr</code> of code plus shift<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bencoded\s*=\s*chr\s*\(\s*(?:letterCode|ord\s*\(\s*letter\s*\))\s*\+\s*(?:shift|int\s*\(\s*shift\s*\))\s*\)</code></div></td></tr><tr><td>C4</td><td>R3</td><td><code>decoded</code> works backwards from <code>encoded</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bdecoded\s*=\s*chr\s*\(\s*ord\s*\(\s*encoded\s*\)\s*-\s*(?:shift|int\s*\(\s*shift\s*\))\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>letterCode</code> comes from <code>ord</code></dt><dd><p>Set <code>letterCode = ord(letter)</code>. <code>ord</code> looks up the character&#x27;s integer code in the character set (72 for <code>H</code>).</p></dd><dt>C2 · The shift is converted to an <code>int</code></dt><dd><p>Convert the shift with <code>int(...)</code>: <code>input()</code> returns text, and text can&#x27;t be added to the integer that <code>ord</code> returns.</p></dd><dt>C3 · <code>encoded</code> uses <code>chr</code> of code plus shift</dt><dd><p>Build <code>encoded</code> with <code>chr(...)</code> around the letter&#x27;s code plus the shift. <code>chr</code> turns the shifted number back into a character.</p></dd><dt>C4 · <code>decoded</code> works backwards from <code>encoded</code></dt><dd><p>Decode the way a player would: take the code of <code>encoded</code> with <code>ord</code>, subtract the shift, and turn it back with <code>chr</code>. Reusing <code>letter</code> or <code>letterCode</code> would pass without testing that the clue can be solved.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>There are two kinds of values here: one-character strings and integer codes. <code>ord</code> goes one way, <code>chr</code> the other.</p></li><li><p>Before anything is added to the code, the shift has to stop being text.</p></li><li><p>Decoding is the same idea as encoding with the opposite sign, and it starts from <code>encoded</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Case 3 turned X into a backslash. Why does that happen, and why is it a problem for the escape room?</p><div class="answer"><p>The character set is just a numbered list, and after Z (90) come symbols like [ and \, so adding 4 to 88 gives 92, the backslash. Players expect a letter, so the clue would look broken. The program needs to wrap around from Z back to A, which needs the remainder operator from Section 2.4.</p></div></li><li><p>Why is the decoded line computed from <code>encoded</code> instead of simply printing <code>letter</code> again?</p><div class="answer"><p>Printing letter would always look right, so it would prove nothing. Decoding from encoded is a real test: if the shift were applied wrongly, or the wrong sign used, the decoded letter would differ from the original and the bug would show.</p></div></li></ol>
+<h2>Extension</h2><p>Lowercase letters have their own codes. Run your program with <code>h</code> and 3, then <code>z</code> and 3. Use the results to explain why the escape room should stick to one case.</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

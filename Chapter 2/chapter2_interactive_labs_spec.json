@@ -1,0 +1,567 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 2: Data Types and Expressions · Interactive labs",
+  "collection_intro": "Five hands-on labs for sections 2.1–2.5 of *Fundamentals of Python: First Programs*, 3e (Software Development, Data Types, and Expressions). Each one runs real Python in your browser: read the code, predict, write, run, and explain. Your work saves as you type.",
+  "theme": "harbor",
+  "background": "pattern",
+  "language": "python",
+  "labs": [
+    {
+      "id": "L2.1-term-cost",
+      "title": "Term cost estimator",
+      "subtitle": "From request to tested program: the waterfall in miniature",
+      "source": "Ch. 2, section 2.1, The Software Development Process and Case Study 2-1 (pp. 27–32)",
+      "minutes": 25,
+      "objectives": [
+        "Turn an analysis and a pseudocode design into working Python",
+        "Name fixed values as symbolic constants instead of typing magic numbers",
+        "Convert typed input with `int()` before doing arithmetic",
+        "Explain why a test suite checks edge cases such as 0"
+      ],
+      "scenario": "The campus advising office asked for a quick tool advisors can run while a student is in the room: type the credit hours and the number of lab courses, get the estimated cost of the term.\n\n**Request** and **analysis** are done. The tuition rules the advisors gave you:\n\n- Tuition is **$425.00 per credit hour**.\n- Every student pays a **$150.00 technology fee** each term.\n- Each lab course adds a **$60.00 lab fee**.\n- Advisors type whole numbers for both inputs.\n\nThe **design** (pseudocode) is in the docstring at the top of `term_cost.py`. Your job is the **implementation**; the test program in step 2 is the **testing** phase: it runs your script four times with a small test suite, the way Case Study 2-1 tests the tax calculator.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "Name the three amounts as symbolic constants written as dollars and cents: `TUITION_PER_CREDIT = 425.0`, `TECH_FEE = 150.0`, `LAB_FEE = 60.0`."
+        },
+        {
+          "id": "R2",
+          "text": "Convert both inputs to whole numbers with `int()` before using them."
+        },
+        {
+          "id": "R3",
+          "text": "Compute `termCost` from the pseudocode formula using the constants only: no 425, 150 or 60 in the arithmetic."
+        },
+        {
+          "id": "R4",
+          "text": "Every case in the test suite prints the expected cost, for example `Estimated term cost: $5370.0` for 12 credits and 2 labs.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "term_cost.py",
+      "starter_code": "\"\"\"\nProgram: term_cost.py\nAuthor: (your name)\nEstimate what one term will cost a student.\n\n1. Significant constants\n   tuition per credit hour\n   technology fee (once per term)\n   lab fee (per lab course)\n2. The inputs are\n   number of credit hours\n   number of lab courses\n3. Computation:\n   term cost = credits * tuition per credit\n               + technology fee\n               + lab courses * lab fee\n4. The output is\n   the estimated term cost\n\"\"\"\n\n# Initialize the constants\n# TODO (R1): name the three amounts from the analysis as constants.\n\n# Request the inputs\ncredits = input(\"Credit hours: \")\nlabCourses = input(\"Lab courses: \")\n\n# Compute the term cost\n# TODO (R2): convert both inputs to whole numbers.\n# TODO (R3): compute the cost with the formula in the docstring.\ntermCost = 0\n\n# Display the term cost\nprint(\"Estimated term cost: $\" + str(termCost))\n",
+      "solution": "\"\"\"\nProgram: term_cost.py\nAuthor: (your name)\nEstimate what one term will cost a student.\n\n1. Significant constants\n   tuition per credit hour\n   technology fee (once per term)\n   lab fee (per lab course)\n2. The inputs are\n   number of credit hours\n   number of lab courses\n3. Computation:\n   term cost = credits * tuition per credit\n               + technology fee\n               + lab courses * lab fee\n4. The output is\n   the estimated term cost\n\"\"\"\n\n# Initialize the constants\nTUITION_PER_CREDIT = 425.0   # dollars per credit hour\nTECH_FEE = 150.0             # charged once per term\nLAB_FEE = 60.0               # charged for each lab course\n\n# Request the inputs\ncredits = int(input(\"Credit hours: \"))\nlabCourses = int(input(\"Lab courses: \"))\n\n# Compute the term cost\ntermCost = credits * TUITION_PER_CREDIT + TECH_FEE + \\\n           labCourses * LAB_FEE\n\n# Display the term cost\nprint(\"Estimated term cost: $\" + str(termCost))\n",
+      "solution_notes": "The constants are floats (`425.0`) because they are money; mixing them with the `int` inputs makes the result a float, so the output reads `$5370.0`, exactly like the tax calculator's `$26200.0`. Converting with `int()` right where the input is read means every later line can trust that `credits` is a number. Because the fees live in one place, next year's price change is a one-line edit: that is what cheaper maintenance looks like.",
+      "warmup": [
+        {
+          "question": "In the starter, `credits` holds whatever `input()` returned. If you typed `12` and the program then evaluated `credits * 425.0`, what would happen, and why?",
+          "model_answer": "Python stops with a TypeError. input() always returns a string, so credits is the text '12', not the number 12, and a string cannot be multiplied by a float. It has to be converted with int() first."
+        },
+        {
+          "question": "Which part of the docstring is the analysis (what the program does) and which is the design (how it does it)?",
+          "model_answer": "The constants, inputs and output describe what the program must do, which came from analysis. The computation step, the formula that turns inputs into the cost, is the design: it says how the program will do it."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "The three amounts are named constants",
+          "require": "^(?=[\\s\\S]*\\bTUITION_PER_CREDIT\\s*=\\s*425\\.\\d*)(?=[\\s\\S]*\\bTECH_FEE\\s*=\\s*150\\.\\d*)(?=[\\s\\S]*\\bLAB_FEE\\s*=\\s*60\\.\\d*)",
+          "message": "Define `TUITION_PER_CREDIT = 425.0`, `TECH_FEE = 150.0` and `LAB_FEE = 60.0` under the \"Initialize the constants\" comment. Write each with a decimal point: they are dollar amounts, and the float makes the output show cents (`$5370.0`).",
+          "hint": "Uppercase names tell every reader \"this value never changes while the program runs\"."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "Both inputs are converted with `int()`",
+          "require": "\\bint\\s*\\([\\s\\S]*\\bint\\s*\\(",
+          "message": "`input()` always returns a string. Wrap each input (or convert `credits` and `labCourses` afterwards) with `int(...)` so the arithmetic works on numbers."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "Tuition uses the constant, with no magic numbers",
+          "require": [
+            "\\bcredits\\s*\\*\\s*TUITION_PER_CREDIT\\b",
+            "\\bTUITION_PER_CREDIT\\s*\\*\\s*credits\\b"
+          ],
+          "forbid": "[*+]\\s*(?:425|150|60)(?:\\.0*)?\\b|\\b(?:425|150|60)(?:\\.0*)?\\s*[*+]",
+          "message": "Multiply `credits` by `TUITION_PER_CREDIT` in the `termCost` formula, and use the constants for every amount: when the office changes a fee, only the constant's line should need editing."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "Both fees come from their constants",
+          "require": "^(?=[\\s\\S]*(?:\\blabCourses\\s*\\*\\s*LAB_FEE\\b|\\bLAB_FEE\\s*\\*\\s*labCourses\\b))(?=[\\s\\S]*(?:\\+\\s*TECH_FEE\\b|\\bTECH_FEE\\s*\\+))",
+          "message": "Add `TECH_FEE` once and `labCourses * LAB_FEE` for the lab courses. The technology fee is per term, so it is not multiplied by anything."
+        }
+      ],
+      "hints": [
+        "Work top to bottom in the order of the docstring: constants first, then the inputs, then the computation.",
+        "`input()` gives you text. The number lives inside it until `int(...)` takes it out.",
+        "The technology fee is charged once per term; the lab fee is charged once per lab course. Only one of them gets multiplied."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "import importlib\n\nprint(\"Case 1: 12 credits, 2 lab courses\")\nimport term_cost\nprint()\nprint(\"Case 2: 0 credits, 0 lab courses\")\nimportlib.reload(term_cost)\nprint()\nprint(\"Case 3: 1 credit, 1 lab course\")\nimportlib.reload(term_cost)\nprint()\nprint(\"Case 4: 15 credits, 0 lab courses\")\nimportlib.reload(term_cost)\n",
+        "stdin": "12\n2\n0\n0\n1\n1\n15\n0\n",
+        "expected_output": "Case 1: 12 credits, 2 lab courses\nCredit hours: Lab courses: Estimated term cost: $5370.0\n\nCase 2: 0 credits, 0 lab courses\nCredit hours: Lab courses: Estimated term cost: $150.0\n\nCase 3: 1 credit, 1 lab course\nCredit hours: Lab courses: Estimated term cost: $635.0\n\nCase 4: 15 credits, 0 lab courses\nCredit hours: Lab courses: Estimated term cost: $6525.0\n",
+        "predict": "Before running: work out Case 1 (12 credits, 2 lab courses) and Case 2 (0 credits, 0 lab courses) by hand. Why would a test suite bother with 0 credits?"
+      },
+      "reflection": [
+        {
+          "question": "The test suite includes 0 credits and 0 lab courses. What could that case reveal that the 12-credit case could not?",
+          "model_answer": "With zeros, everything that is multiplied disappears and only the flat technology fee remains, so the output must be exactly $150.0. That isolates TECH_FEE: if it was forgotten, or wrongly multiplied by credits or labs, the zero case shows it immediately, while a large realistic case can hide the mistake inside a big total."
+        },
+        {
+          "question": "Next year the lab fee rises to $75. Which lines of your program change, and why does that matter for the cost of software?",
+          "model_answer": "Only the line LAB_FEE = 60.0 changes, because every calculation uses the constant. Maintenance is the most expensive phase of the life cycle, so code that turns a policy change into a one-line edit, with no risk of missing a hidden 60 somewhere, is cheaper and safer to maintain."
+        }
+      ],
+      "worth_knowing": "In 1947, operators of the Harvard Mark II traced a fault to a moth stuck in a relay. They taped it into the logbook with the note \"First actual case of bug being found.\" Engineers already said \"bug\"; the moth just made it famous. That logbook page is now at the Smithsonian.",
+      "extension": "Advisors also want the cost **per credit hour** of the whole term. Add a line that prints `termCost / credits`, and run it with 0 credits. What happens? Note the problem: Chapter 3 shows how to prevent it.",
+      "stdin": "12\n2\n"
+    },
+    {
+      "id": "L2.2-event-badge",
+      "title": "Event check-in badge",
+      "subtitle": "String literals, escape sequences, concatenation and repetition",
+      "source": "Ch. 2, section 2.2, Strings, Assignment, and Comments (pp. 32–36)",
+      "minutes": 20,
+      "objectives": [
+        "Build new strings with concatenation (`+`) and repetition (`*`)",
+        "Use escape sequences (`\\t`, `\\\"`) and quotation marks to control exactly what prints",
+        "Choose variable and constant names that explain their purpose"
+      ],
+      "scenario": "The Tech Club's check-in kiosk prints a name badge for each guest at its events. The script asks for a first name, a last name and the event, then prints the badge. The current version prints `MayaOrtiz`, has a short hand-typed border, and is missing two lines.\n\nThis is what a guest named Maya Ortiz should get for Python Night (the name line starts with a tab):\n\n```\n******************************\nHELLO, my name is\n\tMaya Ortiz\nEvent: \"Python Night\"\nDon't forget your laptop!\n******************************\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "Build the border from the constants with repetition, `BORDER * BADGE_WIDTH`, instead of typing stars."
+        },
+        {
+          "id": "R2",
+          "text": "Build `fullName` by concatenating the first name, one space and the last name."
+        },
+        {
+          "id": "R3",
+          "text": "Indent the name line with the tab escape sequence `\\t`."
+        },
+        {
+          "id": "R4",
+          "text": "Print the event name inside double quotation marks: `Event: \"Python Night\"`."
+        },
+        {
+          "id": "R5",
+          "text": "Print the reminder `Don't forget your laptop!` with its apostrophe."
+        },
+        {
+          "id": "R6",
+          "text": "The badge matches the example line for line, for every guest.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "badge.py",
+      "starter_code": "\"\"\"\nProgram: badge.py\nAuthor: (your name)\nPrint a name badge at the Tech Club's event check-in kiosk.\n\"\"\"\n\nBADGE_WIDTH = 30   # characters across the badge\nBORDER = \"*\"       # character used for the top and bottom edge\n\nfirstName = input(\"First name: \")\nlastName = input(\"Last name: \")\neventName = input(\"Event: \")\n\n# TODO (R2): the badge shows MayaOrtiz; fix the full name.\nfullName = firstName + lastName\n\n# TODO (R1): build the border from BORDER and BADGE_WIDTH.\nborder = \"**********\"\n\nprint(border)\nprint(\"HELLO, my name is\")\n# TODO (R3): indent the name with a tab escape sequence.\nprint(fullName)\n# TODO (R4): show the event name inside double quotation marks.\nprint(\"Event: \" + eventName)\n# TODO (R5): print the reminder: Don't forget your laptop!\nprint(border)\n",
+      "solution": "\"\"\"\nProgram: badge.py\nAuthor: (your name)\nPrint a name badge at the Tech Club's event check-in kiosk.\n\"\"\"\n\nBADGE_WIDTH = 30   # characters across the badge\nBORDER = \"*\"       # character used for the top and bottom edge\n\nfirstName = input(\"First name: \")\nlastName = input(\"Last name: \")\neventName = input(\"Event: \")\n\n# Join the names with one space between them\nfullName = firstName + \" \" + lastName\n\n# Repeat the border character across the badge\nborder = BORDER * BADGE_WIDTH\n\nprint(border)\nprint(\"HELLO, my name is\")\nprint(\"\\t\" + fullName)\nprint(\"Event: \\\"\" + eventName + \"\\\"\")\nprint(\"Don't forget your laptop!\")\nprint(border)\n",
+      "solution_notes": "`BORDER * BADGE_WIDTH` means a wider badge is a one-number change, and switching to `=` is a one-character change. The escaped `\\\"` puts a double quotation mark inside a double-quoted string; `'Event: \"' + eventName + '\"'` with single-quoted literals works too. The apostrophe in `Don't` is safe because the literal is in double quotes.",
+      "warmup": [
+        {
+          "question": "Read the starter. Exactly what does it print on the name line for Maya Ortiz, and why?",
+          "model_answer": "It prints MayaOrtiz with no space. Concatenation glues strings together exactly as they are; nothing adds a space unless the program concatenates a \" \" string between the two names."
+        },
+        {
+          "question": "Why can `print('Don't forget your laptop!')` not work, while the same text in double quotes does?",
+          "model_answer": "In a single-quoted literal the apostrophe in Don't ends the string early, so Python sees Don as the string and then t forget... as broken code, a syntax error. Inside double quotes the apostrophe is just a character."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "The border is built with repetition",
+          "require": [
+            "\\bBORDER\\s*\\*\\s*BADGE_WIDTH\\b",
+            "\\bBADGE_WIDTH\\s*\\*\\s*BORDER\\b"
+          ],
+          "forbid": "[\\\"']\\*{2,}[\\\"']",
+          "strings": true,
+          "message": "Replace the typed stars with `BORDER * BADGE_WIDTH`. The `*` operator repeats a string a whole number of times, so the border is always exactly as wide as the constant says."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "The full name has a space between the names",
+          "require": "\\bfirstName\\s*\\+\\s*(?:\\\"\\s\\\"|'\\s')\\s*\\+\\s*lastName\\b",
+          "strings": true,
+          "message": "Concatenate a string holding one space between the names: first name, then `\" \"`, then last name. `+` adds nothing on its own."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "The name line uses the tab escape `\\t`",
+          "require": "\\\\t",
+          "strings": true,
+          "message": "Start the name line with the escape sequence `\\t` (a backslash then t) inside a string, for example concatenated before `fullName`. Typing spaces would not line up the same way on every printer."
+        },
+        {
+          "id": "C4",
+          "requirement": "R4",
+          "title": "The event name is printed inside double quotes",
+          "require": [
+            "\\\\\\\"",
+            "'[^'\\n]*\\\"[^'\\n]*'"
+          ],
+          "strings": true,
+          "message": "Print a `\"` before and after the event name. Inside a double-quoted string write it as the escape `\\\"`; inside a single-quoted string you can type `\"` directly."
+        },
+        {
+          "id": "C5",
+          "requirement": "R5",
+          "title": "The reminder line is printed",
+          "require": "Don(?:\\\\)?'t forget your laptop!",
+          "strings": true,
+          "message": "Add `print(\"Don't forget your laptop!\")` before the bottom border. Put the text in double quotes (or escape the apostrophe as `\\'`) so the apostrophe doesn't end the string."
+        }
+      ],
+      "hints": [
+        "Compare the starter's output with the example badge line by line: each difference is one requirement.",
+        "Escape sequences start with a backslash and live inside a string literal: one for the tab, one for each double quotation mark.",
+        "The border needs no stars typed at all: the string you repeat is already stored in a constant."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "import importlib\n\nimport badge\nprint()\nimportlib.reload(badge)\n",
+        "stdin": "Maya\nOrtiz\nPython Night\nJordan\nLee\nCareer Fair\n",
+        "expected_output": "First name: Last name: Event: ******************************\nHELLO, my name is\n\tMaya Ortiz\nEvent: \"Python Night\"\nDon't forget your laptop!\n******************************\n\nFirst name: Last name: Event: ******************************\nHELLO, my name is\n\tJordan Lee\nEvent: \"Career Fair\"\nDon't forget your laptop!\n******************************\n",
+        "predict": "The test program checks in **Maya Ortiz** for Python Night and **Jordan Lee** for the Career Fair. How many stars will each border have, and where will the quotation marks appear?"
+      },
+      "reflection": [
+        {
+          "question": "The constants `BADGE_WIDTH` and `BORDER` each have an end-of-line comment, but `firstName` does not. When is a comment worth writing, and when is it noise?",
+          "model_answer": "A comment is worth it when the code alone doesn't say why a value is what it is or what it is for, such as a width measured in characters or the character used for the edge. firstName already explains itself, so a comment would repeat the code and become one more thing to keep up to date."
+        },
+        {
+          "question": "Why is `border = BORDER * BADGE_WIDTH` better than typing 30 stars, even though both print the same line today?",
+          "model_answer": "The expression ties the border to the constants, so changing the badge width or the border character takes one edit and can't leave the two borders different lengths. Typed stars are a hidden copy of the width that someone must remember to recount by hand."
+        }
+      ],
+      "worth_knowing": "The `\\t` tab and `\\n` newline go back to typewriters and teleprinters: \"line feed\" moved the paper up one line and \"tab\" jumped the carriage to preset stops. ASCII kept them as codes 10 and 9 in 1963, which is why `ord('\\n')` is still 10 today.",
+      "extension": "Make the badge wider without touching any `print` line: change one constant, then press **Run**. Then try `BORDER = \"=-\"`. What happens to the width, and why?",
+      "stdin": "Maya\nOrtiz\nPython Night\n"
+    },
+    {
+      "id": "L2.3-shift-code",
+      "title": "Escape-room shift code",
+      "subtitle": "Characters are numbers: ord, chr and integer arithmetic",
+      "source": "Ch. 2, section 2.3, Numeric Data Types and Character Sets (pp. 37–39)",
+      "minutes": 20,
+      "objectives": [
+        "Use `ord` and `chr` to move between characters and their ASCII codes",
+        "Choose the right data type for each value: `str`, `int`",
+        "Reverse an encoding to prove it can be read back"
+      ],
+      "scenario": "The Tech Club is building an escape room. The last lock opens with a single letter, and the clue on the wall shows that letter **shifted** a few places along the character set: with a shift of 3, `H` is shown as `K`.\n\nThe puzzle master wants a small helper that reads the secret letter and the shift, then prints the letter's ASCII code, the encoded letter for the wall, and the letter decoded back again, as a check that players can actually solve it. Section 2.3 gives the key idea: `chr(ord('A') + 3)`.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "Store the letter's ASCII code in `letterCode` using `ord`."
+        },
+        {
+          "id": "R2",
+          "text": "Convert `shift` to an `int`, then build `encoded` with `chr` of the code plus the shift."
+        },
+        {
+          "id": "R3",
+          "text": "Build `decoded` from `encoded` itself, shifting back by the same amount, as a player would."
+        },
+        {
+          "id": "R4",
+          "text": "The three output lines are right for every case, including a shift that leaves the alphabet.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "shift_code.py",
+      "starter_code": "\"\"\"\nProgram: shift_code.py\nAuthor: (your name)\nEncode one letter for the escape-room clue and check it decodes.\n\"\"\"\n\nletter = input(\"Letter: \")\nshift = input(\"Shift: \")\n\n# TODO (R1): find the letter's ASCII code.\nletterCode = 0\n\n# TODO (R2): turn the shift into a number and build the encoded letter.\nencoded = letter\n\n# TODO (R3): decode the encoded letter by shifting it back.\ndecoded = encoded\n\nprint(\"Code of \" + letter + \": \" + str(letterCode))\nprint(\"Encoded letter: \" + encoded)\nprint(\"Decoded again: \" + decoded)\n",
+      "solution": "\"\"\"\nProgram: shift_code.py\nAuthor: (your name)\nEncode one letter for the escape-room clue and check it decodes.\n\"\"\"\n\nletter = input(\"Letter: \")\nshift = int(input(\"Shift: \"))\n\n# The character set maps each character to an integer code\nletterCode = ord(letter)\n\n# Move along the character set by the shift\nencoded = chr(letterCode + shift)\n\n# A player works backwards from the clue on the wall\ndecoded = chr(ord(encoded) - shift)\n\nprint(\"Code of \" + letter + \": \" + str(letterCode))\nprint(\"Encoded letter: \" + encoded)\nprint(\"Decoded again: \" + decoded)\n",
+      "solution_notes": "`ord` returns an `int`, so the shift must be an `int` too before they are added; `chr` then turns the new code back into a one-character string. Decoding starts from `encoded`, not from `letter`: copying `letter` would print the right answer without proving anything. Case 3 shows that the character set doesn't wrap: X shifted by 4 lands on the backslash.",
+      "warmup": [
+        {
+          "question": "Using the ASCII table in Section 2.3, what is `ord('H')`, and what does `chr(ord('H') + 3)` evaluate to?",
+          "model_answer": "ord('H') is 72. Adding 3 gives 75, and chr(75) is 'K'."
+        },
+        {
+          "question": "The starter reads `shift` with `input()` and doesn't convert it. What would `ord(letter) + shift` do with that value, and why?",
+          "model_answer": "It raises a TypeError: ord returns an int, but shift is still a string such as '3', and Python won't add an int and a str. The shift has to be converted with int() first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`letterCode` comes from `ord`",
+          "require": "\\bletterCode\\s*=\\s*ord\\s*\\(\\s*letter\\s*\\)",
+          "message": "Set `letterCode = ord(letter)`. `ord` looks up the character's integer code in the character set (72 for `H`)."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "The shift is converted to an `int`",
+          "require": [
+            "\\bshift\\s*=\\s*int\\s*\\(",
+            "\\bint\\s*\\(\\s*shift\\s*\\)"
+          ],
+          "message": "Convert the shift with `int(...)`: `input()` returns text, and text can't be added to the integer that `ord` returns."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`encoded` uses `chr` of code plus shift",
+          "require": "\\bencoded\\s*=\\s*chr\\s*\\(\\s*(?:letterCode|ord\\s*\\(\\s*letter\\s*\\))\\s*\\+\\s*(?:shift|int\\s*\\(\\s*shift\\s*\\))\\s*\\)",
+          "message": "Build `encoded` with `chr(...)` around the letter's code plus the shift. `chr` turns the shifted number back into a character."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "`decoded` works backwards from `encoded`",
+          "require": "\\bdecoded\\s*=\\s*chr\\s*\\(\\s*ord\\s*\\(\\s*encoded\\s*\\)\\s*-\\s*(?:shift|int\\s*\\(\\s*shift\\s*\\))\\s*\\)",
+          "message": "Decode the way a player would: take the code of `encoded` with `ord`, subtract the shift, and turn it back with `chr`. Reusing `letter` or `letterCode` would pass without testing that the clue can be solved."
+        }
+      ],
+      "hints": [
+        "There are two kinds of values here: one-character strings and integer codes. `ord` goes one way, `chr` the other.",
+        "Before anything is added to the code, the shift has to stop being text.",
+        "Decoding is the same idea as encoding with the opposite sign, and it starts from `encoded`."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "import importlib\n\nprint(\"Case 1: H shifted by 3\")\nimport shift_code\nprint()\nprint(\"Case 2: A shifted by 25\")\nimportlib.reload(shift_code)\nprint()\nprint(\"Case 3: X shifted by 4\")\nimportlib.reload(shift_code)\n",
+        "stdin": "H\n3\nA\n25\nX\n4\n",
+        "expected_output": "Case 1: H shifted by 3\nLetter: Shift: Code of H: 72\nEncoded letter: K\nDecoded again: H\n\nCase 2: A shifted by 25\nLetter: Shift: Code of A: 65\nEncoded letter: Z\nDecoded again: A\n\nCase 3: X shifted by 4\nLetter: Shift: Code of X: 88\nEncoded letter: \\\nDecoded again: X\n",
+        "predict": "Use the ASCII table: X is 88. What character will X shifted by 4 become? Is it still a letter?"
+      },
+      "reflection": [
+        {
+          "question": "Case 3 turned X into a backslash. Why does that happen, and why is it a problem for the escape room?",
+          "model_answer": "The character set is just a numbered list, and after Z (90) come symbols like [ and \\, so adding 4 to 88 gives 92, the backslash. Players expect a letter, so the clue would look broken. The program needs to wrap around from Z back to A, which needs the remainder operator from Section 2.4."
+        },
+        {
+          "question": "Why is the decoded line computed from `encoded` instead of simply printing `letter` again?",
+          "model_answer": "Printing letter would always look right, so it would prove nothing. Decoding from encoded is a real test: if the shift were applied wrongly, or the wrong sign used, the decoded letter would differ from the original and the bug would show."
+        }
+      ],
+      "worth_knowing": "A shift cipher is named after Julius Caesar, who, according to the Roman historian Suetonius, wrote private letters with each letter moved three places along the alphabet: exactly `chr(ord(c) + 3)`. With only 25 useful shifts, anyone can try them all in seconds, so it protects puzzles, not secrets.",
+      "extension": "Lowercase letters have their own codes. Run your program with `h` and 3, then `z` and 3. Use the results to explain why the escape room should stick to one case.",
+      "stdin": "H\n3\n"
+    },
+    {
+      "id": "L2.4-room-booking",
+      "title": "Study room booking",
+      "subtitle": "Arithmetic expressions: //, %, /, precedence, mixed mode and str()",
+      "source": "Ch. 2, section 2.4, Expressions (pp. 39–42)",
+      "minutes": 25,
+      "objectives": [
+        "Choose between `/`, `//` and `%` for the result you need",
+        "Write expressions whose order of evaluation is the one you intend",
+        "Round money with `round(value, 2)` and convert numbers with `str()` for output"
+      ],
+      "scenario": "The library rents group study rooms by the minute. When a group checks out, the desk app prints how long they stayed, the room cost, and each person's share. The current script prints `2.25 h` for a 2 hour 15 minute booking and crashes before showing any cost.\n\nInputs: minutes booked (whole number), hourly rate in dollars, number of people. For 135 minutes at $20.00 an hour shared by 3 people, the desk should see:\n\n```\nBooked time: 2 h 15 min\nRoom cost: $45.0\nEach person pays: $15.0\n```",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "Split the booking into `hours` with `//` and leftover `extraMinutes` with `%`."
+        },
+        {
+          "id": "R2",
+          "text": "`roomCost` is minutes times the hourly rate divided by 60, rounded to 2 decimal places with `round(..., 2)`."
+        },
+        {
+          "id": "R3",
+          "text": "`share` is the room cost divided by the number of people, rounded to 2 decimal places."
+        },
+        {
+          "id": "R4",
+          "text": "Convert every number to a string with `str()` before concatenating it into an output line."
+        },
+        {
+          "id": "R5",
+          "text": "Every case prints the expected lines, including one where floating-point arithmetic is not exact.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "room_booking.py",
+      "starter_code": "\"\"\"\nProgram: room_booking.py\nAuthor: (your name)\nPrint the time, cost and per-person share of a study room booking.\n\"\"\"\n\nMINUTES_PER_HOUR = 60\n\nminutes = int(input(\"Minutes booked: \"))\nrate = float(input(\"Hourly rate: \"))\npeople = int(input(\"People: \"))\n\n# TODO (R1): whole hours and the minutes left over.\nhours = minutes / MINUTES_PER_HOUR\nextraMinutes = 0\n\n# TODO (R2): cost of the booking, rounded to cents.\nroomCost = minutes * rate / MINUTES_PER_HOUR\n\n# TODO (R3): each person's share, rounded to cents.\nshare = 0\n\n# TODO (R4): numbers must become strings before concatenation.\nprint(\"Booked time: \" + str(hours) + \" h \" + str(extraMinutes) + \" min\")\nprint(\"Room cost: $\" + roomCost)\nprint(\"Each person pays: $\" + share)\n",
+      "solution": "\"\"\"\nProgram: room_booking.py\nAuthor: (your name)\nPrint the time, cost and per-person share of a study room booking.\n\"\"\"\n\nMINUTES_PER_HOUR = 60\n\nminutes = int(input(\"Minutes booked: \"))\nrate = float(input(\"Hourly rate: \"))\npeople = int(input(\"People: \"))\n\n# Whole hours, and the minutes that don't make a full hour\nhours = minutes // MINUTES_PER_HOUR\nextraMinutes = minutes % MINUTES_PER_HOUR\n\n# Cost of the booking, rounded to cents\nroomCost = round(minutes * rate / MINUTES_PER_HOUR, 2)\n\n# Each person's share, rounded to cents\nshare = round(roomCost / people, 2)\n\nprint(\"Booked time: \" + str(hours) + \" h \" + str(extraMinutes) + \" min\")\nprint(\"Room cost: $\" + str(roomCost))\nprint(\"Each person pays: $\" + str(share))\n",
+      "solution_notes": "`//` keeps the whole hours as an `int` and `%` gives what is left; `/` would give `2.25`, a fraction of an hour that no one reads as minutes. Multiplying before dividing (`minutes * rate / 60`) keeps the arithmetic exact for these inputs, and `round(..., 2)` cleans up cases like 50 minutes split three ways. `str()` is required because Python is strongly typed: `\"$\" + 45.0` is a TypeError.",
+      "warmup": [
+        {
+          "question": "For a 135-minute booking, what do `135 / 60`, `135 // 60` and `135 % 60` evaluate to?",
+          "model_answer": "135 / 60 is 2.25 (exact division always gives a float), 135 // 60 is 2 (the integer quotient), and 135 % 60 is 15 (the remainder)."
+        },
+        {
+          "question": "The starter's line `print(\"Room cost: $\" + roomCost)` stops the program. What error is it, and why?",
+          "model_answer": "A TypeError. roomCost is a float, and Python won't use + between a string and a number because it checks operand types before applying an operator. The number must be converted with str() first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`hours` uses integer division `//`",
+          "require": "\\bhours\\s*=\\s*minutes\\s*//\\s*(?:MINUTES_PER_HOUR|60)\\b",
+          "message": "Use `//` for the whole hours. `/` always produces a float such as `2.25`, which is a fraction of an hour, not a count of hours."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "`extraMinutes` uses the remainder `%`",
+          "require": "\\bextraMinutes\\s*=\\s*minutes\\s*%\\s*(?:MINUTES_PER_HOUR|60)\\b",
+          "message": "The minutes left after the whole hours are the remainder of dividing by 60: use `%`."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`roomCost` is rounded to 2 decimal places",
+          "require": "\\broomCost\\s*=\\s*round\\s*\\([^\\n]*\\brate\\b[^\\n]*,\\s*2\\s*\\)",
+          "message": "Wrap the cost expression in `round(..., 2)`. The second argument is optional; without it, `round` returns a whole number and the cents are lost."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "`share` divides the cost by the people, rounded",
+          "require": "\\bshare\\s*=\\s*round\\s*\\(\\s*\\(?\\s*roomCost\\s*\\)?\\s*/\\s*people\\s*,\\s*2\\s*\\)",
+          "message": "Set `share` to `round(roomCost / people, 2)`. Divide the rounded cost the group actually pays, not a recomputed value."
+        },
+        {
+          "id": "C5",
+          "requirement": "R4",
+          "title": "Numbers are converted with `str()` for output",
+          "require": "^(?=[\\s\\S]*\\bstr\\s*\\(\\s*roomCost\\s*\\))(?=[\\s\\S]*\\bstr\\s*\\(\\s*share\\s*\\))",
+          "message": "Convert `roomCost` and `share` with `str(...)` before concatenating them. `+` between a string and a float is a TypeError."
+        }
+      ],
+      "hints": [
+        "Three division operators, three different answers: one for a float, one for the whole part, one for what's left.",
+        "If you divide by 60 before multiplying by the rate, use parentheses or check that the order still gives the same value. Either way, round once, at the end.",
+        "The crash comes from mixing types in `+`, not from the arithmetic."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "import importlib\n\nprint(\"Case 1: 135 min at $20.00, 3 people\")\nimport room_booking\nprint()\nprint(\"Case 2: 125 min at $15.00, 5 people\")\nimportlib.reload(room_booking)\nprint()\nprint(\"Case 3: 50 min at $15.00, 3 people\")\nimportlib.reload(room_booking)\n",
+        "stdin": "135\n20.00\n3\n125\n15.00\n5\n50\n15.00\n3\n",
+        "expected_output": "Case 1: 135 min at $20.00, 3 people\nMinutes booked: Hourly rate: People: Booked time: 2 h 15 min\nRoom cost: $45.0\nEach person pays: $15.0\n\nCase 2: 125 min at $15.00, 5 people\nMinutes booked: Hourly rate: People: Booked time: 2 h 5 min\nRoom cost: $31.25\nEach person pays: $6.25\n\nCase 3: 50 min at $15.00, 3 people\nMinutes booked: Hourly rate: People: Booked time: 0 h 50 min\nRoom cost: $12.5\nEach person pays: $4.17\n",
+        "predict": "Case 3 is 50 minutes at $15.00 an hour for 3 people. How many whole hours is that, and what would each share be without rounding?"
+      },
+      "reflection": [
+        {
+          "question": "Case 2 is 125 minutes at $15.00. In algebra `125 / 60 * 15.0` and `125 * 15.0 / 60` are equal, but Python prints `31.250000000000004` for the first and `31.25` for the second. Why, and how does your program protect the receipt?",
+          "model_answer": "Floats have limited precision, and 125 / 60 is a repeating fraction that can't be stored exactly, so multiplying it by 15 carries a tiny error. Multiplying first keeps the intermediate value exact here, and rounding the final amount to 2 decimals removes any leftover error before it reaches the receipt."
+        },
+        {
+          "question": "Why does `hours` use `//` while `roomCost` uses `/`? What would go wrong if they were swapped?",
+          "model_answer": "Hours are a count of whole hours, so the integer quotient is what's wanted and the rest comes from %. Cost needs the exact fraction: with // the group would only pay for full hours, so 50 minutes would cost $0 and 135 minutes would lose the 15-minute part."
+        }
+      ],
+      "worth_knowing": "`0.1 + 0.2` in Python prints `0.30000000000000004`. The same is true in JavaScript, Java and C: they all use the IEEE 754 binary floating-point standard, where 0.1 can't be stored exactly, just as 1/3 can't be written exactly in decimal. Money software often counts whole cents as integers to avoid it.",
+      "extension": "Groups now pay for every **started** 15-minute block. Compute the number of blocks using only `//` and `+` (no `if`), and test 135, 136 and 150 minutes.",
+      "stdin": "135\n20.00\n3\n"
+    },
+    {
+      "id": "L2.5-garden-bed",
+      "title": "Raised garden bed planner",
+      "subtitle": "Calling functions, optional arguments and the math module",
+      "source": "Ch. 2, section 2.5, Using Functions and Modules (pp. 43–47)",
+      "minutes": 25,
+      "objectives": [
+        "Import a module and use its resources with the qualifier: `math.pi`, `math.ceil`",
+        "Use a function's optional argument: `round(x, 2)`",
+        "Choose between `int`, `round` and `math.ceil` by what the result is for",
+        "Lay out a script in the standard order: docstring, imports, constants, input, processing, output"
+      ],
+      "scenario": "The campus garden club is building round raised beds. For each bed they enter the diameter and the soil depth in feet, and the planner tells them the bed's area, how much edging to buy, and how many bags of soil to pick up. Each bag holds 1.5 cubic feet.\n\nThe current planner uses `3.14` for pi, prints long unrounded numbers, and last weekend it told the club to buy **9** bags for a bed that needed a little over 9.4. They ran out of soil.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "Import the module with `import math` right after the docstring, and use `math.pi` (with the qualifier) instead of 3.14."
+        },
+        {
+          "id": "R2",
+          "text": "Display the area and the edging rounded to 2 decimal places with `round`'s optional second argument."
+        },
+        {
+          "id": "R3",
+          "text": "Compute `bags` with `math.ceil`, so the club never buys too little soil."
+        },
+        {
+          "id": "R4",
+          "text": "Every bed in the test suite gets the right area, edging and number of bags.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "garden_bed.py",
+      "starter_code": "\"\"\"\nProgram: garden_bed.py\nAuthor: (your name)\nPlan materials for a round raised garden bed.\nInputs: diameter and soil depth, in feet\nOutputs: bed area, length of edging, bags of soil to buy\n\"\"\"\n\n# TODO (R1): import the math module here.\n\nBAG_VOLUME = 1.5   # cubic feet of soil in one bag\n\ndiameter = float(input(\"Diameter (ft): \"))\ndepth = float(input(\"Soil depth (ft): \"))\n\nradius = diameter / 2\n# TODO (R1): use the math module's pi.\narea = 3.14 * radius ** 2\nedging = 3.14 * diameter\n\n# TODO (R3): the club must never run out of soil.\nbags = int(area * depth / BAG_VOLUME)\n\n# TODO (R2): show area and edging rounded to 2 decimal places.\nprint(\"Bed area: \" + str(area) + \" sq ft\")\nprint(\"Edging needed: \" + str(edging) + \" ft\")\nprint(\"Soil bags to buy: \" + str(bags))\n",
+      "solution": "\"\"\"\nProgram: garden_bed.py\nAuthor: (your name)\nPlan materials for a round raised garden bed.\nInputs: diameter and soil depth, in feet\nOutputs: bed area, length of edging, bags of soil to buy\n\"\"\"\n\nimport math\n\nBAG_VOLUME = 1.5   # cubic feet of soil in one bag\n\ndiameter = float(input(\"Diameter (ft): \"))\ndepth = float(input(\"Soil depth (ft): \"))\n\nradius = diameter / 2\narea = math.pi * radius ** 2\nedging = math.pi * diameter\n\n# Round up: a partly used bag still has to be bought\nbags = math.ceil(area * depth / BAG_VOLUME)\n\nprint(\"Bed area: \" + str(round(area, 2)) + \" sq ft\")\nprint(\"Edging needed: \" + str(round(edging, 2)) + \" ft\")\nprint(\"Soil bags to buy: \" + str(bags))\n",
+      "solution_notes": "`int` truncates and `round` goes to the nearest whole number, so both can come out below what the bed needs (9.42 bags becomes 9). `math.ceil` always rounds up. Rounding happens only for display: the bag count uses the full-precision area. `math.pi` keeps the reader aware the value comes from the `math` module, which is why the qualified import is preferred over `from math import *`.",
+      "warmup": [
+        {
+          "question": "A bed needs 9.42 bags of soil. What do `int(9.42)` and `round(9.42)` give, and how many bags does the club actually need?",
+          "model_answer": "Both give 9: int truncates the fraction and round goes to the nearest whole number, which is 9. The club needs 10 bags, because the 0.42 of a bag still has to be bought."
+        },
+        {
+          "question": "`round(28.274334, 2)` and `round(28.274334)`: what does each return, and what does the second argument change?",
+          "model_answer": "round(28.274334, 2) returns 28.27 and round(28.274334) returns 28. The optional second argument is the number of decimal places to keep; without it round returns the nearest whole number."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`import math` comes right after the docstring",
+          "require": "^\\s*(?:\\\"\\\"\\\"[\\s\\S]*?\\\"\\\"\\\"|'''[\\s\\S]*?''')?\\s*import\\s+math\\b",
+          "strings": true,
+          "forbid": "\\bfrom\\s+math\\s+import\\s+\\*",
+          "message": "Put `import math` on its own line directly after the docstring, before the constants. Imports come first so a reader sees every module the script depends on; the plain `import math` form keeps the `math.` qualifier on every use."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "`math.pi` replaces 3.14",
+          "require": "\\bmath\\.pi\\b",
+          "forbid": "\\b3\\.14\\d*\\b",
+          "message": "Replace each `3.14` with `math.pi`. The module's value is accurate to about 16 digits; 3.14 is off by more than a twentieth of a percent, which adds up on a large bed."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "Area and edging are rounded to 2 places",
+          "require": "^(?=[\\s\\S]*\\bround\\s*\\(\\s*area\\s*,\\s*2\\s*\\))(?=[\\s\\S]*\\bround\\s*\\(\\s*edging\\s*,\\s*2\\s*\\))",
+          "message": "Show `round(area, 2)` and `round(edging, 2)` in the output lines. Round for display only, so the bag count still uses the precise area."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "Bags are rounded up with `math.ceil`",
+          "require": "\\bbags\\s*=\\s*math\\.ceil\\s*\\(",
+          "forbid": "\\bbags\\s*=\\s*(?:int|round)\\s*\\(",
+          "message": "Use `math.ceil(...)` for `bags`. `int` truncates and `round` can round down, and either one leaves the club short of soil."
+        }
+      ],
+      "hints": [
+        "Section 2.5 recommends importing the module name, then writing the module as a qualifier on every use.",
+        "`dir(math)` lists a function whose name means the opposite of floor.",
+        "Round inside the `print` lines, not where `area` is computed: the soil calculation needs the precise value."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "import importlib\n\nprint(\"Bed 1: 6 ft wide, 0.5 ft deep\")\nimport garden_bed\nprint()\nprint(\"Bed 2: 4 ft wide, 1 ft deep\")\nimportlib.reload(garden_bed)\nprint()\nprint(\"Bed 3: 3 ft wide, 1.5 ft deep\")\nimportlib.reload(garden_bed)\n",
+        "stdin": "6\n0.5\n4\n1\n3\n1.5\n",
+        "expected_output": "Bed 1: 6 ft wide, 0.5 ft deep\nDiameter (ft): Soil depth (ft): Bed area: 28.27 sq ft\nEdging needed: 18.85 ft\nSoil bags to buy: 10\n\nBed 2: 4 ft wide, 1 ft deep\nDiameter (ft): Soil depth (ft): Bed area: 12.57 sq ft\nEdging needed: 12.57 ft\nSoil bags to buy: 9\n\nBed 3: 3 ft wide, 1.5 ft deep\nDiameter (ft): Soil depth (ft): Bed area: 7.07 sq ft\nEdging needed: 9.42 ft\nSoil bags to buy: 8\n",
+        "predict": "Bed 1 needs about 9.42 bags of soil. What will your program print for it, and what did the old `int` version print?"
+      },
+      "reflection": [
+        {
+          "question": "When is `int` the right tool, when is `round`, and when is `math.ceil`? Give one example from everyday life for each.",
+          "model_answer": "int when the fraction should simply be dropped, like counting complete years of age. round when the nearest value is fairest, like a score of 89.6 shown as 90. math.ceil when running short is not acceptable, like buses for a field trip or bags of soil: any fraction means one more."
+        },
+        {
+          "question": "Section 2.5 prefers `import math` with `math.pi` over `from math import *`. What does the qualifier buy you in a longer program?",
+          "model_answer": "The qualifier tells the reader where each name comes from, and it keeps names from different modules apart: two modules can both define a function with the same name, and with import * one silently replaces the other. With math.ceil there is no doubt which function runs."
+        }
+      ],
+      "worth_knowing": "`math.pi` is stored as a 64-bit float, accurate to about 15 to 16 significant digits. NASA's Jet Propulsion Laboratory has explained that it uses just 15 decimal places of pi for interplanetary navigation: enough to compute a circle the size of Voyager 1's distance from Earth to within about the width of a finger.",
+      "extension": "Soil comes in two bag sizes: 1.5 and 2.0 cubic feet. Print the number of bags of each size the club would need, and use `help(math.ceil)` in the shell to read what the function promises.",
+      "stdin": "6\n0.5\n"
+    }
+  ]
+}
