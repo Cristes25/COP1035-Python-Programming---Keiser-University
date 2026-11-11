@@ -1,0 +1,30 @@
+POSTING CHECKLIST
+=================
+
+  Lab L1.1-change-maker: Change maker
+    students : L1.1-change-maker.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L1.1-change-maker_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L1.1-change-maker_guide.html
+
+  Lab L1.2-floor-quote: Floor-area quote
+    students : L1.2-floor-quote.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L1.2-floor-quote_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L1.2-floor-quote_guide.html
+
+  Lab L1.3-read-the-error: Read the error
+    students : L1.3-read-the-error.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/L1.3-read-the-error_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/L1.3-read-the-error_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.
+
+Python labs run in the browser. Students need the page opened from a web address (Blackboard is fine) and,
+unless you built with --python-runtime, an internet connection the first time (about 12 MB, then cached).
+If you built with --python-runtime, upload the runtime/ folder next to the lab pages, keeping its structure.

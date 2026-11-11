@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Read the error</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L1.3-read-the-error</div>
+  <h1>Read the error</h1>
+<h2>Objectives</h2><ul><li>Read a Python error message: the kind of error, the line, and what Python could not do</li><li>Fix the syntax errors the book describes: an unexpected indent and an incomplete expression</li><li>Explain why a syntax error stops a script before any line runs, while a misspelled name fails only when its line is reached</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The script passes the syntax check: no line starts with unexpected spaces, and no expression is missing an operand.</li><li><strong>R2</strong> Every variable is used with exactly the name it was given, and <code>remaining</code> is the goal minus the hours logged.</li><li><strong>R3</strong> The fixed script prints the report shown in the brief for any week&#x27;s answers. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Jordan&#x27;s script starts with <code>print(&quot;Weekly study log&quot;)</code>. Before you press Run: will that line appear in the output? Explain using what the interpreter does before the Python virtual machine runs anything.</p><div class="answer"><p>No. The interpreter first checks the syntax of the whole script and translates it to byte code. It finds the unexpected indent on line 7 and halts with an error message before any byte code reaches the PVM, so not even the first print runs.</p></div></li><li><p>Read the starter without running it. Find the three mistakes. Which two can Python report before running anything, and which one can it only discover while the program is running?</p><div class="answer"><p>The indented goal line and the incomplete expression goal - are syntax errors, found during the syntax check. The misspelled cours is grammatically fine, so Python only discovers it is undefined when the PVM executes that line, after the title has printed and the inputs were typed.</p></div></li></ol>
+<h2>Solution</h2><div class="file">study_log.py</div><pre class="code-block"><code><span class="t-c1"># study_log.py - weekly study-hours log, written by your classmate Jordan</span>
+<span class="t-c1"># Jordan: "It won't even start and I don't know why. Can you fix it?"</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Weekly study log"</span><span class="t-p">)</span>
+<span class="t-n">course</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Course: "</span><span class="t-p">)</span>
+<span class="t-n">hours</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Hours studied: "</span><span class="t-p">))</span>
+<span class="t-n">goal</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Goal: "</span><span class="t-p">))</span>
+<span class="t-n">remaining</span> <span class="t-o">=</span> <span class="t-n">goal</span> <span class="t-o">-</span> <span class="t-n">hours</span>  <span class="t-c1"># hours still needed to reach the goal</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Course:"</span><span class="t-p">,</span> <span class="t-n">course</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Hours logged:"</span><span class="t-p">,</span> <span class="t-n">hours</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Hours to goal:"</span><span class="t-p">,</span> <span class="t-n">remaining</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p>Three mistakes, found in this order. (1) Line 7 starts with two spaces: IndentationError: unexpected indent. (2) Line 8, <code>goal -</code>, is missing its second operand, like the book&#x27;s <code>3 +</code>: SyntaxError: invalid syntax. Both are found by the syntax checker before any byte code runs, so the starter prints nothing at all, not even <code>Weekly study log</code>. (3) Once the script translates, it runs: it prints the title, asks all three questions, and only then stops with NameError at <code>cours</code>, because a misspelled name is discovered by the PVM when that line executes. Current Python even adds <code>Did you mean: &#x27;course&#x27;?</code>, but it never runs a guess.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_weeks.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">runpy</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"--- Week 3 ---"</span><span class="t-p">)</span>
+<span class="t-n">runpy</span><span class="t-o">.</span><span class="t-n">run_path</span><span class="t-p">(</span><span class="t-s2">"study_log.py"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"--- Week 4 ---"</span><span class="t-p">)</span>
+<span class="t-n">runpy</span><span class="t-o">.</span><span class="t-n">run_path</span><span class="t-p">(</span><span class="t-s2">"study_log.py"</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">COP1035
+6
+9
+MAC1105
+2
+10
+</pre><h3>Expected output</h3><pre class="output">--- Week 3 ---
+Weekly study log
+Course: Hours studied: Goal: Course: COP1035
+Hours logged: 6
+Hours to goal: 3
+--- Week 4 ---
+Weekly study log
+Course: Hours studied: Goal: Course: MAC1105
+Hours logged: 2
+Hours to goal: 8
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>No line starts with unexpected spaces<div class="small">whole file, flags m</div></td><td><div><span class="tag">require</span> <code>\bgoal\s*=</code></div><div><span class="tag">forbid</span> <code>^[ \t]+\S</code></div></td></tr><tr><td>C2</td><td>R1</td><td>No expression is missing an operand<div class="small">whole file, flags m</div></td><td><div><span class="tag">require</span> <code>\bremaining\s*=</code></div><div><span class="tag">forbid</span> <code>[-+*/]\s*$</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>remaining</code> is goal minus hours<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bremaining\s*=\s*goal\s*-\s*hours\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td>The course is printed with its real name<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bprint\s*\([^\n]*\bcourse\b</code></div><div><span class="tag">forbid</span> <code>\bcours\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · No line starts with unexpected spaces</dt><dd><p>A line still begins with spaces. Indentation is significant in Python: outside control statements and definitions, every line must start in the leftmost column (section 1.4). Delete the spaces before the first word.</p></dd><dt>C2 · No expression is missing an operand</dt><dd><p>A line ends with an operator and nothing after it, like the book&#x27;s <code>3 +</code>. The syntax checker rejects it as invalid syntax. Give the operator its second operand.</p></dd><dt>C3 · <code>remaining</code> is goal minus hours</dt><dd><p><code>remaining</code> should hold the hours still needed: the weekly goal minus the hours already logged. Read the comment on that line: it says what Jordan meant.</p></dd><dt>C4 · The course is printed with its real name</dt><dd><p>The script uses a name that was never given a value. Python reads only what you type, not what you meant: use exactly the name created by the <code>input</code> line.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Press <strong>Run</strong> before changing anything and read the <strong>last</strong> line of the error first: it names the kind of error. The line above it points to where Python stopped.</p></li><li><p>Fix one error, then run again. A syntax error hides everything after it, so expect a new message after each fix. When the title finally prints, you have moved from the syntax checker to the PVM.</p></li><li><p>One mistake is invisible at a glance: look at the very start of each line. Another is a subtraction with nothing to subtract. The last one is a single missing letter.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>With the two syntax errors fixed but <code>cours</code> still there, the script printed <code>Weekly study log</code> and asked all three questions before it stopped. Why did this error wait until then, while the syntax errors stopped everything at once?</p><div class="answer"><p>Syntax errors are found when the interpreter checks and translates the whole script, before the PVM executes any byte code, so nothing runs. cours is valid grammar; it only fails when the PVM reaches that line and finds the name has no value, so every line before it has already run.</p></div></li><li><p>Current versions of Python add <code>Did you mean: &#x27;course&#x27;?</code> to the NameError, yet still stop instead of using <code>course</code>. Why is stopping better than running a guess?</p><div class="answer"><p>A guess could be wrong and the program would continue with the wrong value, producing output that looks right but isn&#x27;t, which is much harder to notice than an error. Stopping makes the mistake visible at the exact line and leaves the decision to the programmer, who knows what was intended.</p></div></li></ol>
+<h2>Extension</h2><p>Make your own error museum: in the shell, produce one SyntaxError, one NameError and one TypeError (hint: <code>&quot;Hours: &quot; + 6</code>). For each, write one sentence saying whether the syntax checker or the PVM caught it.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Both syntax errors fixed</td><td>4</td><td>Checks C1 and C2</td></tr><tr><td>Name error and calculation fixed</td><td>3</td><td>Checks C3 and C4</td></tr><tr><td>Correct report for both weeks</td><td>4</td><td>Test program output matches</td></tr><tr><td>Explains syntax check vs. run-time in own words</td><td>4</td><td>Warm-up and reflection answers</td></tr><tr><td><strong>Total</strong></td><td><strong>15</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

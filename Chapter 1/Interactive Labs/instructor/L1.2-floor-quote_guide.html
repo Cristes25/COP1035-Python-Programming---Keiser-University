@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Floor-area quote</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L1.2-floor-quote</div>
+  <h1>Floor-area quote</h1>
+<h2>Objectives</h2><ul><li>Organise a script as input, processing and output, the shape of most useful programs (section 1.4)</li><li>Choose <code>float()</code> instead of <code>int()</code> when the input can contain a decimal point</li><li>Control how <code>print</code> separates and ends its output with commas and <code>end=&quot;&quot;</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>width</code>, <code>length</code> and <code>price</code> are converted with <code>float()</code>, so answers like 12.5 and 3.50 are accepted (no <code>int()</code> in the script).</li><li><strong>R2</strong> <code>area</code> is width times length, and <code>cost</code> is area times price, both computed from the variables.</li><li><strong>R3</strong> The area line ends with <code>square feet</code>, and the cost line shows the amount right after <code>$</code>, with no space.</li><li><strong>R4</strong> The output matches the brief exactly for every customer. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter already prints the Room line. Run it with 12.5, 10 and 3.50. Why does it show <code>10</code> and not <code>10.0</code>, as the brief does?</p><div class="answer"><p>Because length is still the string the customer typed, &quot;10&quot;, and print shows a string exactly as it is. Only after converting it with float() does length become the number 10.0, which print shows with a decimal point.</p></div></li><li><p>The starter&#x27;s last line prints <code>Estimated cost: $ 0</code>. Where does the space after <code>$</code> come from?</p><div class="answer"><p>print puts a single space between the values it is given, so separating the text &quot;Estimated cost: $&quot; and cost with a comma adds a space between them. Removing it needs a different way of ending or separating the output, not a change to the text.</p></div></li></ol>
+<h2>Solution</h2><div class="file">floor_quote.py</div><pre class="code-block"><code><span class="t-c1"># floor_quote.py - vinyl-plank quote for one rectangular room</span>
+
+<span class="t-c1"># Input</span>
+<span class="t-n">width</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Room width in feet: "</span><span class="t-p">))</span>
+<span class="t-n">length</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Room length in feet: "</span><span class="t-p">))</span>
+<span class="t-n">price</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Price per square foot: "</span><span class="t-p">))</span>
+
+<span class="t-c1"># Processing</span>
+<span class="t-n">area</span> <span class="t-o">=</span> <span class="t-n">width</span> <span class="t-o">*</span> <span class="t-n">length</span>
+<span class="t-n">cost</span> <span class="t-o">=</span> <span class="t-n">area</span> <span class="t-o">*</span> <span class="t-n">price</span>
+
+<span class="t-c1"># Output</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Room:"</span><span class="t-p">,</span> <span class="t-n">width</span><span class="t-p">,</span> <span class="t-s2">"x"</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">,</span> <span class="t-s2">"feet"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Area:"</span><span class="t-p">,</span> <span class="t-n">area</span><span class="t-p">,</span> <span class="t-s2">"square feet"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Estimated cost: $"</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-o">=</span><span class="t-s2">""</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">cost</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p><code>float()</code> accepts both <code>12.5</code> and <code>10</code>; <code>int(&quot;12.5&quot;)</code> would stop the script with a ValueError. Once <code>length</code> is a float, <code>print</code> shows it as <code>10.0</code>, which is why the brief&#x27;s Room line reads 10.0. <code>print</code> separates values with one space, so the cost line needs two <code>print</code> calls: the first ends with <code>end=&quot;&quot;</code> instead of a newline, and the second prints the amount on the same line. An equally correct alternative is one call with <code>sep=&quot;&quot;</code>: <code>print(&quot;Estimated cost: $&quot;, cost, sep=&quot;&quot;)</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_quotes.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">runpy</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Customer 1: living room, vinyl plank at $3.50"</span><span class="t-p">)</span>
+<span class="t-n">runpy</span><span class="t-o">.</span><span class="t-n">run_path</span><span class="t-p">(</span><span class="t-s2">"floor_quote.py"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Customer 2: bedroom, vinyl plank at $2.25"</span><span class="t-p">)</span>
+<span class="t-n">runpy</span><span class="t-o">.</span><span class="t-n">run_path</span><span class="t-p">(</span><span class="t-s2">"floor_quote.py"</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">12.5
+10
+3.50
+9.5
+8
+2.25
+</pre><h3>Expected output</h3><pre class="output">Customer 1: living room, vinyl plank at $3.50
+Room width in feet: Room length in feet: Price per square foot: Room: 12.5 x 10.0 feet
+Area: 125.0 square feet
+Estimated cost: $437.5
+
+Customer 2: bedroom, vinyl plank at $2.25
+Room width in feet: Room length in feet: Price per square foot: Room: 9.5 x 8.0 feet
+Area: 76.0 square feet
+Estimated cost: $171.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>All three answers become floats<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bwidth\s*=\s*float\s*\()(?=[\s\S]*\blength\s*=\s*float\s*\()(?=[\s\S]*\bprice\s*=\s*float\s*\()</code></div></td></tr><tr><td>C2</td><td>R1</td><td>No <code>int()</code> for measurements or prices<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bfloat\s*\(</code></div><div><span class="tag">forbid</span> <code>\bint\s*\(</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>area</code> is width times length<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\barea\s*=\s*(width\s*\*\s*length|length\s*\*\s*width)\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>cost</code> is area times price<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bcost\s*=\s*(area\s*\*\s*price|price\s*\*\s*area)\b</code></div><div><span class="tag">require</span> <code>\bcost\s*=\s*(width\s*\*\s*length|length\s*\*\s*width)\s*\*\s*price\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>The area line says <code>square feet</code><div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bprint\s*\([^\n]*\barea\b[^\n]*square feet</code></div></td></tr><tr><td>C6</td><td>R3</td><td>No space after the dollar sign<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bprint\s*\([^\n]*\bend\s*=</code></div><div><span class="tag">require</span> <code>\bprint\s*\([^\n]*\bsep\s*=</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · All three answers become floats</dt><dd><p>Each of <code>width</code>, <code>length</code> and <code>price</code> needs <code>float(...)</code>: until then they are strings and cannot be multiplied. Use <code>float</code>, not <code>int</code>, because a customer may type 12.5.</p></dd><dt>C2 · No <code>int()</code> for measurements or prices</dt><dd><p>Use <code>float()</code> for every value in this script, never <code>int()</code>: <code>int(&quot;12.5&quot;)</code> stops the script with a ValueError, because text with a decimal point is not an integer.</p></dd><dt>C3 · <code>area</code> is width times length</dt><dd><p>The floor of a rectangular room is width times length. Compute <code>area</code> from the two variables with <code>*</code>.</p></dd><dt>C4 · <code>cost</code> is area times price</dt><dd><p>The customer pays <code>price</code> dollars for every square foot, so <code>cost</code> is <code>area * price</code>. Reuse <code>area</code> instead of measuring again.</p></dd><dt>C5 · The area line says <code>square feet</code></dt><dd><p>A bare number is not a quote: add the text <code>&quot;square feet&quot;</code> after <code>area</code> in the same <code>print</code> call, so the line reads <code>Area: 125.0 square feet</code>.</p></dd><dt>C6 · No space after the dollar sign</dt><dd><p><code>print</code> always puts a space between values, which leaves <code>$ 437.5</code>. End the first part with <code>end=&quot;&quot;</code> (so the next <code>print</code> continues on the same line), or set <code>sep=&quot;&quot;</code>.</p><div class='small'><strong>Hint:</strong></div><p>Section 1.4: <code>print(&lt;expression&gt;, end = &quot;&quot;)</code> says &quot;end the line with an empty string instead of a newline&quot;.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Start with the input: run the starter, then convert one value at a time and watch the Room line change.</p></li><li><p>Processing is two lines of arithmetic. In Python, <code>*</code> multiplies; the second line can use the result of the first.</p></li><li><p>For the cost line, think of it as two prints: the label, then the amount. The first one must not move to a new line.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>What would happen if your script used <code>int()</code> and a customer typed 12.5? Why is <code>float()</code> the better choice even for a customer who types a whole number like 10?</p><div class="answer"><p>int(&quot;12.5&quot;) raises a ValueError and the script stops before any quote is printed. float() accepts both kinds of input: &quot;12.5&quot; becomes 12.5 and &quot;10&quot; becomes 10.0, so one conversion handles every measurement a customer can give.</p></div></li><li><p>Section 1.4 says most useful programs accept inputs, process them, and output results. Point to each part in your script, and explain why the processing has to come after the conversion with <code>float()</code>.</p><div class="answer"><p>The three input lines are the input, the two arithmetic lines are the processing, and the print lines are the output. The processing must come after float(), because before conversion the values are strings, and multiplying two strings is an error in Python.</p></div></li></ol>
+<h2>Extension</h2><p>Installers order 10% extra for cuts. Add a line <code>Order: 137.5 square feet</code> that prints <code>area * 1.1</code>. Then try a 9.5 by 8 room: what prints, and what does it suggest about decimals stored in binary?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Input converted with float()</td><td>3</td><td>Checks C1 and C2</td></tr><tr><td>Area and cost computed from the variables</td><td>3</td><td>Checks C3 and C4</td></tr><tr><td>Output format: units and no space after $</td><td>2</td><td>Checks C5 and C6</td></tr><tr><td>Correct quote for both customers</td><td>4</td><td>Test program output matches</td></tr><tr><td>Reflection in own words</td><td>3</td><td>Answers in the lab report</td></tr><tr><td><strong>Total</strong></td><td><strong>15</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

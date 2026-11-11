@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Change maker</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L1.1-change-maker</div>
+  <h1>Change maker</h1>
+<h2>Objectives</h2><ul><li>Turn the four steps of the book&#x27;s making-change algorithm into four parts of a Python script</li><li>Convert keyboard input from a string to an integer with <code>int()</code> before doing arithmetic</li><li>Print text and a computed value on one line with <code>print(..., ..., ...)</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Both answers, <code>price</code> and <code>paid</code>, are converted from strings to integers with <code>int()</code>.</li><li><strong>R2</strong> <code>change</code> is the amount paid minus the price, computed from the two variables (never typed in as a number).</li><li><strong>R3</strong> The script prints exactly one result line in this form: <code>Change due: 761 cents</code>.</li><li><strong>R4</strong> The same script gives the right change for every sale, including an exact payment (0 cents). <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Suppose you only changed Step 3 to <code>change = paid - price</code> and left the two <code>input</code> lines as they are. You run it and type 239 and 1000. What happens, and why?</p><div class="answer"><p>The script stops with a TypeError (unsupported operand type(s) for -: &#x27;str&#x27; and &#x27;str&#x27;). input() always returns a string, so price is the text &quot;239&quot; and paid is the text &quot;1000&quot;. Python cannot subtract one piece of text from another; the strings must be converted to numbers with int() first.</p></div></li><li><p>Match each of the four algorithm steps in the comments to the lines of code below them. Which step is the processing, and which are input and output?</p><div class="answer"><p>Steps 1 and 2 are input (the two input() lines), Step 3 is processing (the line that computes change), and Step 4 is output (the print line). The script is the algorithm, written in a language the computer can run.</p></div></li></ol>
+<h2>Solution</h2><div class="file">change_maker.py</div><pre class="code-block"><code><span class="t-c1"># change_maker.py - change for the Saturday farmers' market stall</span>
+<span class="t-c1">#</span>
+<span class="t-c1"># The algorithm (Section 1.1):</span>
+<span class="t-c1">#   Step 1  Get the purchase price.</span>
+<span class="t-c1">#   Step 2  Get the amount the customer hands over.</span>
+<span class="t-c1">#   Step 3  Change = amount paid - purchase price.</span>
+<span class="t-c1">#   Step 4  Tell the cashier how much change to give back.</span>
+<span class="t-c1">#</span>
+<span class="t-c1"># Money is typed in cents (a dozen eggs at $2.39 is 239), so every</span>
+<span class="t-c1"># value is a whole number.</span>
+
+<span class="t-c1"># Steps 1 and 2: input</span>
+<span class="t-n">price</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Price in cents: "</span><span class="t-p">))</span>
+<span class="t-n">paid</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Amount paid in cents: "</span><span class="t-p">))</span>
+
+<span class="t-c1"># Step 3: processing</span>
+<span class="t-n">change</span> <span class="t-o">=</span> <span class="t-n">paid</span> <span class="t-o">-</span> <span class="t-n">price</span>
+
+<span class="t-c1"># Step 4: output</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Change due:"</span><span class="t-p">,</span> <span class="t-n">change</span><span class="t-p">,</span> <span class="t-s2">"cents"</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p><code>int(input(...))</code> converts each answer the moment it arrives, so <code>price</code> and <code>paid</code> are numbers for the rest of the script. The order <code>paid - price</code> matters: the other way round gives -761. Passing three values to <code>print</code> separated by commas makes Python put one space between them, which is exactly the format the cashier sees. Nothing in the script mentions 761, so it solves the whole class of problems (section 1.1, feature 4), not one example.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_sales.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">runpy</span>
+
+<span class="t-c1"># Three sales, each run through your script exactly as the cashier would run it.</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Sale 1: a dozen eggs, paid with a $10 bill"</span><span class="t-p">)</span>
+<span class="t-n">runpy</span><span class="t-o">.</span><span class="t-n">run_path</span><span class="t-p">(</span><span class="t-s2">"change_maker.py"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Sale 2: a jar of jam, exact payment"</span><span class="t-p">)</span>
+<span class="t-n">runpy</span><span class="t-o">.</span><span class="t-n">run_path</span><span class="t-p">(</span><span class="t-s2">"change_maker.py"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Sale 3: honey and bread, paid with a $20 bill"</span><span class="t-p">)</span>
+<span class="t-n">runpy</span><span class="t-o">.</span><span class="t-n">run_path</span><span class="t-p">(</span><span class="t-s2">"change_maker.py"</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">239
+1000
+500
+500
+1275
+2000
+</pre><h3>Expected output</h3><pre class="output">Sale 1: a dozen eggs, paid with a $10 bill
+Price in cents: Amount paid in cents: Change due: 761 cents
+
+Sale 2: a jar of jam, exact payment
+Price in cents: Amount paid in cents: Change due: 0 cents
+
+Sale 3: honey and bread, paid with a $20 bill
+Price in cents: Amount paid in cents: Change due: 725 cents
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>price</code> becomes an integer<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bprice\s*=\s*int\s*\(\s*input\s*\(</code></div><div><span class="tag">require</span> <code>\bprice\s*=\s*int\s*\(\s*price\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>paid</code> becomes an integer<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bpaid\s*=\s*int\s*\(\s*input\s*\(</code></div><div><span class="tag">require</span> <code>\bpaid\s*=\s*int\s*\(\s*paid\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>change</code> is computed as paid minus price<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bchange\s*=\s*paid\s*-\s*price\b</code></div><div><span class="tag">forbid</span> <code>\bchange\s*=\s*price\s*-\s*paid\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td>No answer typed in by hand<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bchange\s*=\s*[A-Za-z_]</code></div><div><span class="tag">forbid</span> <code>\b(761|7\.61)\b</code></div></td></tr><tr><td>C5</td><td>R3</td><td>The result line prints the variable <code>change</code><div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bprint\s*\([^\n]*\bchange\b</code></div></td></tr><tr><td>C6</td><td>R3</td><td>The result line ends with the word <code>cents</code><div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bprint\s*\([^\n]*\bchange\b[^\n]*cents</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>price</code> becomes an integer</dt><dd><p><code>price</code> is still the text the cashier typed. Wrap the input in <code>int(...)</code> so it becomes a number you can subtract: <code>input()</code> always returns a string.</p><div class='small'><strong>Hint:</strong></div><p>The book&#x27;s example: <code>first = int(input(&quot;Enter the first number: &quot;))</code>.</p></dd><dt>C2 · <code>paid</code> becomes an integer</dt><dd><p><code>paid</code> is still a string. Convert it with <code>int(...)</code> the same way as <code>price</code>; both values must be numbers before Step 3 can subtract them.</p></dd><dt>C3 · <code>change</code> is computed as paid minus price</dt><dd><p>Step 3 says change = amount paid - purchase price. Compute <code>change</code> from the two variables in that order: <code>price - paid</code> would tell the cashier to give back -761 cents.</p></dd><dt>C4 · No answer typed in by hand</dt><dd><p><code>change</code> must be calculated from <code>paid</code> and <code>price</code>, never set to a number such as 0 or 761. An algorithm solves a general class of problems (section 1.1): a typed-in answer is right for one sale only.</p></dd><dt>C5 · The result line prints the variable <code>change</code></dt><dd><p>The output line prints only the label. Pass <code>change</code> to the same <code>print</code> call, separated by commas from the text, so the cashier sees the number: <code>print</code> puts one space between the values.</p></dd><dt>C6 · The result line ends with the word <code>cents</code></dt><dd><p>The cashier must know the unit: after <code>change</code>, add the text <code>&quot;cents&quot;</code> as one more value in the same <code>print</code> call, so the line reads <code>Change due: 761 cents</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Work through the algorithm one step at a time, top to bottom. Run after each change and type 239 and 1000 in <strong>Program input</strong>.</p></li><li><p>Steps 1 and 2 already ask the questions. What they give back is text; the book&#x27;s sum example (Table 1-2) shows how to turn text into a whole number in the same line.</p></li><li><p><code>print</code> accepts several values separated by commas and puts a single space between them. The label, the variable and the word cents are three values.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your script gave the right change for three different sales without being edited. Which feature of an algorithm from section 1.1 does that show, and why would a script that simply printed <code>Change due: 761 cents</code> not be an algorithm for making change?</p><div class="answer"><p>It shows that an algorithm solves a general class of problems: the same steps work for any price and any amount paid. A script that prints 761 solves only one sale (the eggs); for any other purchase the answer would be wrong, so it does not describe a process for making change at all.</p></div></li><li><p>When the volunteer uses your script on the stall&#x27;s laptop, which hardware from section 1.2 handles the input, the processing and the output?</p><div class="answer"><p>The keyboard is the input device that delivers the typed amounts; the values are stored in memory as binary; the CPU fetches and executes the subtraction (the processing); and the monitor is the output device that shows the Change due line in a form a person can read.</p></div></li></ol>
+<h2>Extension</h2><p>Preview of Chapter 2: in the shell, try <code>761 // 100</code> and <code>761 % 100</code>. Use what you see to add a second line, <code>That is 7 dollars and 61 cents</code>, that works for any sale.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Input converted with int()</td><td>3</td><td>Checks C1 and C2</td></tr><tr><td>Change computed from the variables, correct order</td><td>3</td><td>Checks C3 and C4</td></tr><tr><td>Output line in the required form</td><td>2</td><td>Checks C5 and C6</td></tr><tr><td>Correct change for all three sales</td><td>4</td><td>Test program output matches</td></tr><tr><td>Reflection in own words</td><td>3</td><td>Answers in the lab report</td></tr><tr><td><strong>Total</strong></td><td><strong>15</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

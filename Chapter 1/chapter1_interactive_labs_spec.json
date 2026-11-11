@@ -1,0 +1,441 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 1: Introduction · Interactive labs",
+  "collection_intro": "Three short, hands-on labs for sections 1.1–1.4 of *Fundamentals of Python: First Programs*, 3e. Each one runs real Python in your browser: read the code, predict, write, run, and explain. Your work saves as you type.",
+  "theme": "harbor",
+  "background": "pattern",
+  "language": "python",
+  "labs": [
+    {
+      "id": "L1.1-change-maker",
+      "title": "Change maker",
+      "subtitle": "From an algorithm on paper to a working script: input(), int(), subtraction, print()",
+      "source": "Ch. 1, section 1.1 (pp. 1–4) and section 1.4, Input, Processing, and Output (pp. 18–19)",
+      "minutes": 25,
+      "objectives": [
+        "Turn the four steps of the book's making-change algorithm into four parts of a Python script",
+        "Convert keyboard input from a string to an integer with `int()` before doing arithmetic",
+        "Print text and a computed value on one line with `print(..., ..., ...)`"
+      ],
+      "scenario": "You help out at a stall at the Saturday farmers' market. The card reader is down, so it is cash only, and the volunteers keep getting the change wrong when the line is long. You offer to write a small script for the stall's laptop.\n\nThe algorithm is already written, as comments at the top of `change_maker.py`: it is the first method from section 1.1 (the price of a dozen eggs is **$2.39**, the customer pays with a **$10** bill, the change is **$7.61**). To keep every value a whole number, the cashier types amounts in **cents**: 239 and 1000.\n\nThe script asks the right questions, but it does not yet do any work. Finish it so that it follows the algorithm for **any** sale, not just the eggs.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "Both answers, `price` and `paid`, are converted from strings to integers with `int()`."
+        },
+        {
+          "id": "R2",
+          "text": "`change` is the amount paid minus the price, computed from the two variables (never typed in as a number)."
+        },
+        {
+          "id": "R3",
+          "text": "The script prints exactly one result line in this form: `Change due: 761 cents`."
+        },
+        {
+          "id": "R4",
+          "text": "The same script gives the right change for every sale, including an exact payment (0 cents).",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "change_maker.py",
+      "starter_code": "# change_maker.py - change for the Saturday farmers' market stall\n#\n# The algorithm (Section 1.1):\n#   Step 1  Get the purchase price.\n#   Step 2  Get the amount the customer hands over.\n#   Step 3  Change = amount paid - purchase price.\n#   Step 4  Tell the cashier how much change to give back.\n#\n# Money is typed in cents (a dozen eggs at $2.39 is 239), so every\n# value is a whole number.\n\n# Steps 1 and 2: input\n# TODO (R1): input() always returns a string. Turn both answers into integers.\nprice = input(\"Price in cents: \")\npaid = input(\"Amount paid in cents: \")\n\n# Step 3: processing\n# TODO (R2): work out the change from the two numbers.\nchange = 0\n\n# Step 4: output\n# TODO (R3): print one line, for example:  Change due: 761 cents\nprint(\"Change due:\")\n",
+      "solution": "# change_maker.py - change for the Saturday farmers' market stall\n#\n# The algorithm (Section 1.1):\n#   Step 1  Get the purchase price.\n#   Step 2  Get the amount the customer hands over.\n#   Step 3  Change = amount paid - purchase price.\n#   Step 4  Tell the cashier how much change to give back.\n#\n# Money is typed in cents (a dozen eggs at $2.39 is 239), so every\n# value is a whole number.\n\n# Steps 1 and 2: input\nprice = int(input(\"Price in cents: \"))\npaid = int(input(\"Amount paid in cents: \"))\n\n# Step 3: processing\nchange = paid - price\n\n# Step 4: output\nprint(\"Change due:\", change, \"cents\")\n",
+      "solution_notes": "`int(input(...))` converts each answer the moment it arrives, so `price` and `paid` are numbers for the rest of the script. The order `paid - price` matters: the other way round gives -761. Passing three values to `print` separated by commas makes Python put one space between them, which is exactly the format the cashier sees. Nothing in the script mentions 761, so it solves the whole class of problems (section 1.1, feature 4), not one example.",
+      "stdin": "239\n1000\n",
+      "warmup": [
+        {
+          "question": "Suppose you only changed Step 3 to `change = paid - price` and left the two `input` lines as they are. You run it and type 239 and 1000. What happens, and why?",
+          "model_answer": "The script stops with a TypeError (unsupported operand type(s) for -: 'str' and 'str'). input() always returns a string, so price is the text \"239\" and paid is the text \"1000\". Python cannot subtract one piece of text from another; the strings must be converted to numbers with int() first."
+        },
+        {
+          "question": "Match each of the four algorithm steps in the comments to the lines of code below them. Which step is the processing, and which are input and output?",
+          "model_answer": "Steps 1 and 2 are input (the two input() lines), Step 3 is processing (the line that computes change), and Step 4 is output (the print line). The script is the algorithm, written in a language the computer can run."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`price` becomes an integer",
+          "require": [
+            "\\bprice\\s*=\\s*int\\s*\\(\\s*input\\s*\\(",
+            "\\bprice\\s*=\\s*int\\s*\\(\\s*price\\s*\\)"
+          ],
+          "message": "`price` is still the text the cashier typed. Wrap the input in `int(...)` so it becomes a number you can subtract: `input()` always returns a string.",
+          "hint": "The book's example: `first = int(input(\"Enter the first number: \"))`."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "`paid` becomes an integer",
+          "require": [
+            "\\bpaid\\s*=\\s*int\\s*\\(\\s*input\\s*\\(",
+            "\\bpaid\\s*=\\s*int\\s*\\(\\s*paid\\s*\\)"
+          ],
+          "message": "`paid` is still a string. Convert it with `int(...)` the same way as `price`; both values must be numbers before Step 3 can subtract them."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`change` is computed as paid minus price",
+          "require": "\\bchange\\s*=\\s*paid\\s*-\\s*price\\b",
+          "forbid": "\\bchange\\s*=\\s*price\\s*-\\s*paid\\b",
+          "message": "Step 3 says change = amount paid - purchase price. Compute `change` from the two variables in that order: `price - paid` would tell the cashier to give back -761 cents."
+        },
+        {
+          "id": "C4",
+          "requirement": "R2",
+          "title": "No answer typed in by hand",
+          "forbid": "\\b(761|7\\.61)\\b",
+          "require": "\\bchange\\s*=\\s*[A-Za-z_]",
+          "message": "`change` must be calculated from `paid` and `price`, never set to a number such as 0 or 761. An algorithm solves a general class of problems (section 1.1): a typed-in answer is right for one sale only."
+        },
+        {
+          "id": "C5",
+          "requirement": "R3",
+          "title": "The result line prints the variable `change`",
+          "require": "\\bprint\\s*\\([^\\n]*\\bchange\\b",
+          "message": "The output line prints only the label. Pass `change` to the same `print` call, separated by commas from the text, so the cashier sees the number: `print` puts one space between the values."
+        },
+        {
+          "id": "C6",
+          "requirement": "R3",
+          "title": "The result line ends with the word `cents`",
+          "strings": true,
+          "require": "\\bprint\\s*\\([^\\n]*\\bchange\\b[^\\n]*cents",
+          "message": "The cashier must know the unit: after `change`, add the text `\"cents\"` as one more value in the same `print` call, so the line reads `Change due: 761 cents`."
+        }
+      ],
+      "hints": [
+        "Work through the algorithm one step at a time, top to bottom. Run after each change and type 239 and 1000 in **Program input**.",
+        "Steps 1 and 2 already ask the questions. What they give back is text; the book's sum example (Table 1-2) shows how to turn text into a whole number in the same line.",
+        "`print` accepts several values separated by commas and puts a single space between them. The label, the variable and the word cents are three values."
+      ],
+      "test_program": {
+        "file_name": "run_sales.py",
+        "code": "import runpy\n\n# Three sales, each run through your script exactly as the cashier would run it.\nprint(\"Sale 1: a dozen eggs, paid with a $10 bill\")\nrunpy.run_path(\"change_maker.py\")\nprint()\nprint(\"Sale 2: a jar of jam, exact payment\")\nrunpy.run_path(\"change_maker.py\")\nprint()\nprint(\"Sale 3: honey and bread, paid with a $20 bill\")\nrunpy.run_path(\"change_maker.py\")\n",
+        "stdin": "239\n1000\n500\n500\n1275\n2000\n",
+        "expected_output": "Sale 1: a dozen eggs, paid with a $10 bill\nPrice in cents: Amount paid in cents: Change due: 761 cents\n\nSale 2: a jar of jam, exact payment\nPrice in cents: Amount paid in cents: Change due: 0 cents\n\nSale 3: honey and bread, paid with a $20 bill\nPrice in cents: Amount paid in cents: Change due: 725 cents\n",
+        "predict": "The test program runs your script three times. It types **239** and **1000**, then **500** and **500**, then **1275** and **2000**. Write down the three `Change due` lines before you press the button."
+      },
+      "reflection": [
+        {
+          "question": "Your script gave the right change for three different sales without being edited. Which feature of an algorithm from section 1.1 does that show, and why would a script that simply printed `Change due: 761 cents` not be an algorithm for making change?",
+          "model_answer": "It shows that an algorithm solves a general class of problems: the same steps work for any price and any amount paid. A script that prints 761 solves only one sale (the eggs); for any other purchase the answer would be wrong, so it does not describe a process for making change at all."
+        },
+        {
+          "question": "When the volunteer uses your script on the stall's laptop, which hardware from section 1.2 handles the input, the processing and the output?",
+          "model_answer": "The keyboard is the input device that delivers the typed amounts; the values are stored in memory as binary; the CPU fetches and executes the subtraction (the processing); and the monitor is the output device that shows the Change due line in a form a person can read."
+        }
+      ],
+      "reflection_min_words": 15,
+      "worth_knowing": "Type `0.1 + 0.2` in a Python shell and you get `0.30000000000000004`. Memory holds only bits (section 1.2), and most decimal fractions have no exact binary form, so they are stored as close approximations. That is why payment systems usually count money in whole cents, exactly as your change maker does.",
+      "extension": "Preview of Chapter 2: in the shell, try `761 // 100` and `761 % 100`. Use what you see to add a second line, `That is 7 dollars and 61 cents`, that works for any sale.",
+      "rubric": [
+        {
+          "criterion": "Input converted with int()",
+          "points": 3,
+          "evidence": "Checks C1 and C2"
+        },
+        {
+          "criterion": "Change computed from the variables, correct order",
+          "points": 3,
+          "evidence": "Checks C3 and C4"
+        },
+        {
+          "criterion": "Output line in the required form",
+          "points": 2,
+          "evidence": "Checks C5 and C6"
+        },
+        {
+          "criterion": "Correct change for all three sales",
+          "points": 4,
+          "evidence": "Test program output matches"
+        },
+        {
+          "criterion": "Reflection in own words",
+          "points": 3,
+          "evidence": "Answers in the lab report"
+        }
+      ]
+    },
+    {
+      "id": "L1.2-floor-quote",
+      "title": "Floor-area quote",
+      "subtitle": "Input, processing, output with decimals: float(), *, and print(..., end=\"\")",
+      "source": "Ch. 1, section 1.2 (pp. 4–6) and section 1.4, Input, Processing, and Output; Editing, Saving, and Running a Script (pp. 18–20)",
+      "minutes": 25,
+      "objectives": [
+        "Organise a script as input, processing and output, the shape of most useful programs (section 1.4)",
+        "Choose `float()` instead of `int()` when the input can contain a decimal point",
+        "Control how `print` separates and ends its output with commas and `end=\"\"`"
+      ],
+      "scenario": "Your part-time job is at a flooring store. Customers walk in with a room's measurements and want to know, right away, how much vinyl plank will cost. The manager asks you for a quote script for the counter laptop, like the rectangle-area script in Figure 1-7 but with a price.\n\nRooms are measured to the half foot, so a customer may type **12.5**, and prices have cents (**3.50**). For a 12.5 by 10 foot room at $3.50 a square foot, the screen must show exactly:\n\n```\nRoom: 12.5 x 10.0 feet\nArea: 125.0 square feet\nEstimated cost: $437.5\n```\n\nNote: no space between `$` and the amount.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`width`, `length` and `price` are converted with `float()`, so answers like 12.5 and 3.50 are accepted (no `int()` in the script)."
+        },
+        {
+          "id": "R2",
+          "text": "`area` is width times length, and `cost` is area times price, both computed from the variables."
+        },
+        {
+          "id": "R3",
+          "text": "The area line ends with `square feet`, and the cost line shows the amount right after `$`, with no space."
+        },
+        {
+          "id": "R4",
+          "text": "The output matches the brief exactly for every customer.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "floor_quote.py",
+      "starter_code": "# floor_quote.py - vinyl-plank quote for one rectangular room\n\n# Input\n# TODO (R1): rooms are measured to the half foot (12.5) and prices have cents.\n#            Turn each answer into a number that can hold a decimal point.\nwidth = input(\"Room width in feet: \")\nlength = input(\"Room length in feet: \")\nprice = input(\"Price per square foot: \")\n\n# Processing\n# TODO (R2): the area of the floor, then the cost of covering it.\narea = 0\ncost = 0\n\n# Output\nprint(\"Room:\", width, \"x\", length, \"feet\")\n# TODO (R3): print the area and cost lines exactly as shown in the brief.\nprint(\"Area:\", area)\nprint(\"Estimated cost: $\", cost)\n",
+      "solution": "# floor_quote.py - vinyl-plank quote for one rectangular room\n\n# Input\nwidth = float(input(\"Room width in feet: \"))\nlength = float(input(\"Room length in feet: \"))\nprice = float(input(\"Price per square foot: \"))\n\n# Processing\narea = width * length\ncost = area * price\n\n# Output\nprint(\"Room:\", width, \"x\", length, \"feet\")\nprint(\"Area:\", area, \"square feet\")\nprint(\"Estimated cost: $\", end=\"\")\nprint(cost)\n",
+      "solution_notes": "`float()` accepts both `12.5` and `10`; `int(\"12.5\")` would stop the script with a ValueError. Once `length` is a float, `print` shows it as `10.0`, which is why the brief's Room line reads 10.0. `print` separates values with one space, so the cost line needs two `print` calls: the first ends with `end=\"\"` instead of a newline, and the second prints the amount on the same line. An equally correct alternative is one call with `sep=\"\"`: `print(\"Estimated cost: $\", cost, sep=\"\")`.",
+      "stdin": "12.5\n10\n3.50\n",
+      "warmup": [
+        {
+          "question": "The starter already prints the Room line. Run it with 12.5, 10 and 3.50. Why does it show `10` and not `10.0`, as the brief does?",
+          "model_answer": "Because length is still the string the customer typed, \"10\", and print shows a string exactly as it is. Only after converting it with float() does length become the number 10.0, which print shows with a decimal point."
+        },
+        {
+          "question": "The starter's last line prints `Estimated cost: $ 0`. Where does the space after `$` come from?",
+          "model_answer": "print puts a single space between the values it is given, so separating the text \"Estimated cost: $\" and cost with a comma adds a space between them. Removing it needs a different way of ending or separating the output, not a change to the text."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "All three answers become floats",
+          "require": "^(?=[\\s\\S]*\\bwidth\\s*=\\s*float\\s*\\()(?=[\\s\\S]*\\blength\\s*=\\s*float\\s*\\()(?=[\\s\\S]*\\bprice\\s*=\\s*float\\s*\\()",
+          "message": "Each of `width`, `length` and `price` needs `float(...)`: until then they are strings and cannot be multiplied. Use `float`, not `int`, because a customer may type 12.5."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "No `int()` for measurements or prices",
+          "forbid": "\\bint\\s*\\(",
+          "require": "\\bfloat\\s*\\(",
+          "message": "Use `float()` for every value in this script, never `int()`: `int(\"12.5\")` stops the script with a ValueError, because text with a decimal point is not an integer."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`area` is width times length",
+          "require": "\\barea\\s*=\\s*(width\\s*\\*\\s*length|length\\s*\\*\\s*width)\\b",
+          "message": "The floor of a rectangular room is width times length. Compute `area` from the two variables with `*`."
+        },
+        {
+          "id": "C4",
+          "requirement": "R2",
+          "title": "`cost` is area times price",
+          "require": [
+            "\\bcost\\s*=\\s*(area\\s*\\*\\s*price|price\\s*\\*\\s*area)\\b",
+            "\\bcost\\s*=\\s*(width\\s*\\*\\s*length|length\\s*\\*\\s*width)\\s*\\*\\s*price\\b"
+          ],
+          "message": "The customer pays `price` dollars for every square foot, so `cost` is `area * price`. Reuse `area` instead of measuring again."
+        },
+        {
+          "id": "C5",
+          "requirement": "R3",
+          "title": "The area line says `square feet`",
+          "strings": true,
+          "require": "\\bprint\\s*\\([^\\n]*\\barea\\b[^\\n]*square feet",
+          "message": "A bare number is not a quote: add the text `\"square feet\"` after `area` in the same `print` call, so the line reads `Area: 125.0 square feet`."
+        },
+        {
+          "id": "C6",
+          "requirement": "R3",
+          "title": "No space after the dollar sign",
+          "require": [
+            "\\bprint\\s*\\([^\\n]*\\bend\\s*=",
+            "\\bprint\\s*\\([^\\n]*\\bsep\\s*="
+          ],
+          "message": "`print` always puts a space between values, which leaves `$ 437.5`. End the first part with `end=\"\"` (so the next `print` continues on the same line), or set `sep=\"\"`.",
+          "hint": "Section 1.4: `print(<expression>, end = \"\")` says \"end the line with an empty string instead of a newline\"."
+        }
+      ],
+      "hints": [
+        "Start with the input: run the starter, then convert one value at a time and watch the Room line change.",
+        "Processing is two lines of arithmetic. In Python, `*` multiplies; the second line can use the result of the first.",
+        "For the cost line, think of it as two prints: the label, then the amount. The first one must not move to a new line."
+      ],
+      "test_program": {
+        "file_name": "run_quotes.py",
+        "code": "import runpy\n\nprint(\"Customer 1: living room, vinyl plank at $3.50\")\nrunpy.run_path(\"floor_quote.py\")\nprint()\nprint(\"Customer 2: bedroom, vinyl plank at $2.25\")\nrunpy.run_path(\"floor_quote.py\")\n",
+        "stdin": "12.5\n10\n3.50\n9.5\n8\n2.25\n",
+        "expected_output": "Customer 1: living room, vinyl plank at $3.50\nRoom width in feet: Room length in feet: Price per square foot: Room: 12.5 x 10.0 feet\nArea: 125.0 square feet\nEstimated cost: $437.5\n\nCustomer 2: bedroom, vinyl plank at $2.25\nRoom width in feet: Room length in feet: Price per square foot: Room: 9.5 x 8.0 feet\nArea: 76.0 square feet\nEstimated cost: $171.0\n",
+        "predict": "Customer 2's bedroom is **9.5** by **8** feet, at **$2.25** a square foot. Predict all three lines of the quote, including how the 8 will be shown."
+      },
+      "reflection": [
+        {
+          "question": "What would happen if your script used `int()` and a customer typed 12.5? Why is `float()` the better choice even for a customer who types a whole number like 10?",
+          "model_answer": "int(\"12.5\") raises a ValueError and the script stops before any quote is printed. float() accepts both kinds of input: \"12.5\" becomes 12.5 and \"10\" becomes 10.0, so one conversion handles every measurement a customer can give."
+        },
+        {
+          "question": "Section 1.4 says most useful programs accept inputs, process them, and output results. Point to each part in your script, and explain why the processing has to come after the conversion with `float()`.",
+          "model_answer": "The three input lines are the input, the two arithmetic lines are the processing, and the print lines are the output. The processing must come after float(), because before conversion the values are strings, and multiplying two strings is an error in Python."
+        }
+      ],
+      "reflection_min_words": 15,
+      "worth_knowing": "Guido van Rossum named Python after the BBC comedy series *Monty Python's Flying Circus*, not after the snake. That is why Python's own tutorials use `spam` and `eggs` as example names where other languages use `foo` and `bar`.",
+      "extension": "Installers order 10% extra for cuts. Add a line `Order: 137.5 square feet` that prints `area * 1.1`. Then try a 9.5 by 8 room: what prints, and what does it suggest about decimals stored in binary?",
+      "rubric": [
+        {
+          "criterion": "Input converted with float()",
+          "points": 3,
+          "evidence": "Checks C1 and C2"
+        },
+        {
+          "criterion": "Area and cost computed from the variables",
+          "points": 3,
+          "evidence": "Checks C3 and C4"
+        },
+        {
+          "criterion": "Output format: units and no space after $",
+          "points": 2,
+          "evidence": "Checks C5 and C6"
+        },
+        {
+          "criterion": "Correct quote for both customers",
+          "points": 4,
+          "evidence": "Test program output matches"
+        },
+        {
+          "criterion": "Reflection in own words",
+          "points": 3,
+          "evidence": "Answers in the lab report"
+        }
+      ]
+    },
+    {
+      "id": "L1.3-read-the-error",
+      "title": "Read the error",
+      "subtitle": "Syntax errors, run-time errors, and what the interpreter does before your first line runs",
+      "source": "Ch. 1, section 1.2, Computer Software (p. 6) and section 1.4, Behind the Scenes; Detecting and Correcting Syntax Errors (pp. 20–22)",
+      "minutes": 20,
+      "objectives": [
+        "Read a Python error message: the kind of error, the line, and what Python could not do",
+        "Fix the syntax errors the book describes: an unexpected indent and an incomplete expression",
+        "Explain why a syntax error stops a script before any line runs, while a misspelled name fails only when its line is reached"
+      ],
+      "scenario": "Your classmate Jordan wrote a script to track weekly study hours against a goal, but it \"won't even start\". Jordan sends you `study_log.py` and asks for help before tonight's study group.\n\nDon't rewrite it. Find and fix Jordan's mistakes one at a time, letting Python's error messages guide you. Use the **Program input** box (one answer per line): `COP1035`, `6`, `9`. The fixed script must show:\n\n```\nWeekly study log\nCourse: Hours studied: Goal: Course: COP1035\nHours logged: 6\nHours to goal: 3\n```\n\n(The prompts share one line here because the typed answers are not echoed in the output.)",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "The script passes the syntax check: no line starts with unexpected spaces, and no expression is missing an operand."
+        },
+        {
+          "id": "R2",
+          "text": "Every variable is used with exactly the name it was given, and `remaining` is the goal minus the hours logged."
+        },
+        {
+          "id": "R3",
+          "text": "The fixed script prints the report shown in the brief for any week's answers.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "study_log.py",
+      "starter_code": "# study_log.py - weekly study-hours log, written by your classmate Jordan\n# Jordan: \"It won't even start and I don't know why. Can you fix it?\"\n\nprint(\"Weekly study log\")\ncourse = input(\"Course: \")\nhours = int(input(\"Hours studied: \"))\n  goal = int(input(\"Goal: \"))\nremaining = goal -        # hours still needed to reach the goal\nprint(\"Course:\", cours)\nprint(\"Hours logged:\", hours)\nprint(\"Hours to goal:\", remaining)\n",
+      "solution": "# study_log.py - weekly study-hours log, written by your classmate Jordan\n# Jordan: \"It won't even start and I don't know why. Can you fix it?\"\n\nprint(\"Weekly study log\")\ncourse = input(\"Course: \")\nhours = int(input(\"Hours studied: \"))\ngoal = int(input(\"Goal: \"))\nremaining = goal - hours  # hours still needed to reach the goal\nprint(\"Course:\", course)\nprint(\"Hours logged:\", hours)\nprint(\"Hours to goal:\", remaining)\n",
+      "solution_notes": "Three mistakes, found in this order. (1) Line 7 starts with two spaces: IndentationError: unexpected indent. (2) Line 8, `goal -`, is missing its second operand, like the book's `3 +`: SyntaxError: invalid syntax. Both are found by the syntax checker before any byte code runs, so the starter prints nothing at all, not even `Weekly study log`. (3) Once the script translates, it runs: it prints the title, asks all three questions, and only then stops with NameError at `cours`, because a misspelled name is discovered by the PVM when that line executes. Current Python even adds `Did you mean: 'course'?`, but it never runs a guess.",
+      "stdin": "COP1035\n6\n9\n",
+      "solution_policy": "after_attempts",
+      "warmup": [
+        {
+          "question": "Jordan's script starts with `print(\"Weekly study log\")`. Before you press Run: will that line appear in the output? Explain using what the interpreter does before the Python virtual machine runs anything.",
+          "model_answer": "No. The interpreter first checks the syntax of the whole script and translates it to byte code. It finds the unexpected indent on line 7 and halts with an error message before any byte code reaches the PVM, so not even the first print runs."
+        },
+        {
+          "question": "Read the starter without running it. Find the three mistakes. Which two can Python report before running anything, and which one can it only discover while the program is running?",
+          "model_answer": "The indented goal line and the incomplete expression goal - are syntax errors, found during the syntax check. The misspelled cours is grammatically fine, so Python only discovers it is undefined when the PVM executes that line, after the title has printed and the inputs were typed."
+        }
+      ],
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "No line starts with unexpected spaces",
+          "flags": "m",
+          "forbid": "^[ \\t]+\\S",
+          "require": "\\bgoal\\s*=",
+          "message": "A line still begins with spaces. Indentation is significant in Python: outside control statements and definitions, every line must start in the leftmost column (section 1.4). Delete the spaces before the first word."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "No expression is missing an operand",
+          "flags": "m",
+          "forbid": "[-+*/]\\s*$",
+          "require": "\\bremaining\\s*=",
+          "message": "A line ends with an operator and nothing after it, like the book's `3 +`. The syntax checker rejects it as invalid syntax. Give the operator its second operand."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`remaining` is goal minus hours",
+          "require": "\\bremaining\\s*=\\s*goal\\s*-\\s*hours\\b",
+          "message": "`remaining` should hold the hours still needed: the weekly goal minus the hours already logged. Read the comment on that line: it says what Jordan meant."
+        },
+        {
+          "id": "C4",
+          "requirement": "R2",
+          "title": "The course is printed with its real name",
+          "forbid": "\\bcours\\b",
+          "require": "\\bprint\\s*\\([^\\n]*\\bcourse\\b",
+          "message": "The script uses a name that was never given a value. Python reads only what you type, not what you meant: use exactly the name created by the `input` line."
+        }
+      ],
+      "hints": [
+        "Press **Run** before changing anything and read the **last** line of the error first: it names the kind of error. The line above it points to where Python stopped.",
+        "Fix one error, then run again. A syntax error hides everything after it, so expect a new message after each fix. When the title finally prints, you have moved from the syntax checker to the PVM.",
+        "One mistake is invisible at a glance: look at the very start of each line. Another is a subtraction with nothing to subtract. The last one is a single missing letter."
+      ],
+      "test_program": {
+        "file_name": "run_weeks.py",
+        "code": "import runpy\n\nprint(\"--- Week 3 ---\")\nrunpy.run_path(\"study_log.py\")\nprint(\"--- Week 4 ---\")\nrunpy.run_path(\"study_log.py\")\n",
+        "stdin": "COP1035\n6\n9\nMAC1105\n2\n10\n",
+        "expected_output": "--- Week 3 ---\nWeekly study log\nCourse: Hours studied: Goal: Course: COP1035\nHours logged: 6\nHours to goal: 3\n--- Week 4 ---\nWeekly study log\nCourse: Hours studied: Goal: Course: MAC1105\nHours logged: 2\nHours to goal: 8\n",
+        "predict": "Week 4 types **MAC1105**, **2** and **10**. Predict the three report lines for that week."
+      },
+      "reflection": [
+        {
+          "question": "With the two syntax errors fixed but `cours` still there, the script printed `Weekly study log` and asked all three questions before it stopped. Why did this error wait until then, while the syntax errors stopped everything at once?",
+          "model_answer": "Syntax errors are found when the interpreter checks and translates the whole script, before the PVM executes any byte code, so nothing runs. cours is valid grammar; it only fails when the PVM reaches that line and finds the name has no value, so every line before it has already run."
+        },
+        {
+          "question": "Current versions of Python add `Did you mean: 'course'?` to the NameError, yet still stop instead of using `course`. Why is stopping better than running a guess?",
+          "model_answer": "A guess could be wrong and the program would continue with the wrong value, producing output that looks right but isn't, which is much harder to notice than an error. Stopping makes the mistake visible at the exact line and leaves the decision to the programmer, who knows what was intended."
+        }
+      ],
+      "reflection_min_words": 15,
+      "worth_knowing": "On 9 September 1947, operators of the Harvard Mark II found a moth trapped in a relay and taped it into the logbook as the \"first actual case of bug being found.\" Grace Hopper, who later led the team behind COBOL (section 1.3), loved telling the story. The logbook page is now at the Smithsonian.",
+      "extension": "Make your own error museum: in the shell, produce one SyntaxError, one NameError and one TypeError (hint: `\"Hours: \" + 6`). For each, write one sentence saying whether the syntax checker or the PVM caught it.",
+      "rubric": [
+        {
+          "criterion": "Both syntax errors fixed",
+          "points": 4,
+          "evidence": "Checks C1 and C2"
+        },
+        {
+          "criterion": "Name error and calculation fixed",
+          "points": 3,
+          "evidence": "Checks C3 and C4"
+        },
+        {
+          "criterion": "Correct report for both weeks",
+          "points": 4,
+          "evidence": "Test program output matches"
+        },
+        {
+          "criterion": "Explains syntax check vs. run-time in own words",
+          "points": 4,
+          "evidence": "Warm-up and reflection answers"
+        }
+      ]
+    }
+  ]
+}
