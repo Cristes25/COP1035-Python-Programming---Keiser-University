@@ -1,0 +1,907 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 1: Introduction",
+  "collection_intro": "Short, ungraded practice checks for sections 1.1–1.4 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+  "theme": "harbor",
+  "background": "pattern",
+  "checks": [
+    {
+      "id": "1.1-algorithms",
+      "title": "Algorithms and information processing",
+      "subtitle": "The four features of an algorithm, halting, generality, and input → processing → output",
+      "source": "Ch. 1, section 1.1 (pp. 1–4)",
+      "intro": "A friend's \"algorithm\" for sorting a playlist ends with \"keep shuffling until it feels right.\" Five questions on what turns a list of steps into a real algorithm.",
+      "takeaways": [
+        "A list of steps is an algorithm only if it has finitely many instructions, each one can actually be carried out, it halts with a solution, and it works for a whole class of problems.",
+        "A finite list of instructions is not the same as a finite process: a four-step list that loops forever still fails to be an algorithm.",
+        "Every algorithm is information processing: it takes input, transforms it by well-defined rules, and produces output."
+      ],
+      "questions": [
+        {
+          "id": "well-defined-step",
+          "concept": "Every instruction must be well defined",
+          "level": "apply",
+          "stem": "Which instruction could **NOT** be a step in an algorithm, because no computing agent could ever carry it out?",
+          "options": [
+            {
+              "text": "Find the largest whole number and write it down",
+              "correct": true,
+              "feedback": "There is no largest whole number: whatever you write, adding 1 gives a bigger one. Like the book's \"divide a number by 0\", no agent can perform this action, so it is not well defined."
+            },
+            {
+              "text": "Write down the largest number on the list you were given",
+              "feedback": "A given list is finite, so an agent can compare its entries one by one and finish. That makes this step well defined."
+            },
+            {
+              "text": "Repeat the next step exactly one million times",
+              "feedback": "A million repetitions is tedious but finite, and each repetition is a clear action. Being long does not make a step impossible."
+            },
+            {
+              "text": "Ask the user for a number and then double it",
+              "feedback": "Reading a value and doubling it are both actions any agent capable of arithmetic can perform, so this step is well defined."
+            }
+          ],
+          "hint": "For each step, ask: could any agent, given unlimited patience, actually finish this one action?",
+          "explanation": "An instruction is well defined when a computing agent can actually perform it. Steps that are merely long or tedious are fine; steps that ask for something that cannot exist or cannot be computed, such as dividing by zero, can never appear in an algorithm.",
+          "ref": "Section 1.1, \"Algorithms\", feature 2 (pp. 2–3)"
+        },
+        {
+          "id": "never-halts",
+          "concept": "An algorithm must halt",
+          "level": "analyze",
+          "stem": "Which feature of an algorithm do these steps fail to have?",
+          "code": {
+            "language": "text",
+            "label": "Steps",
+            "text": "1. Set count to 1.\n2. Write down count.\n3. Add 2 to count.\n4. If count equals 10, stop;\n   else go back to step 2.",
+            "verify": {
+              "expect": "skip",
+              "reason": "Plain-language algorithm steps, not program code; trace: 1, 3, 5, 7, 9, 11, ... never equals 10."
+            }
+          },
+          "options": [
+            {
+              "text": "It never halts, because count never equals 10",
+              "correct": true,
+              "feedback": "count takes the values 1, 3, 5, 7, 9, 11, ... and skips 10, so the test in Step 4 is never true and the process runs forever."
+            },
+            {
+              "text": "It has an infinite number of instructions",
+              "feedback": "The list has exactly four instructions. The problem is that following them never ends, which is a different feature from having finitely many instructions."
+            },
+            {
+              "text": "Step 4 is not well defined, since it jumps back",
+              "feedback": "Going back to an earlier step is allowed: the book's subtraction algorithm does exactly that in its Step 4. A jump is a perfectly clear instruction."
+            },
+            {
+              "text": "It only solves one problem, not a general class",
+              "feedback": "Generality matters, but it is not what breaks here. Even for its one task, the process never finishes."
+            }
+          ],
+          "hint": "Trace the values of count for a few rounds. Does Step 4's test ever come true?",
+          "explanation": "An algorithm must eventually halt after arriving at a solution. A short, finite list of steps can still describe a process that never ends, so checking an algorithm means tracing what the steps do, not just counting them.",
+          "aside": "Alan Turing proved in 1936 that no single algorithm can decide, for every program and input, whether that program will eventually halt. This \"halting problem\" is one of the unsolvable problems the book credits him with discovering.",
+          "ref": "Section 1.1, \"Algorithms\", feature 3 (p. 3)"
+        },
+        {
+          "id": "general-class",
+          "concept": "An algorithm solves a general class of problems",
+          "level": "evaluate",
+          "stem": "Student A's steps for making change say: \"Give back one $5 bill, two $1 bills, two quarters, a dime and a penny.\" Student B's steps compute and count out the change for any price and any amount paid that covers it. Which is an algorithm in the book's sense?",
+          "options": [
+            {
+              "text": "Only B's, because it works for any amounts",
+              "correct": true,
+              "feedback": "A's steps are only correct for one case ($2.39 paid with $10). The book requires an algorithm to solve a general class of problems, such as any two amounts of money."
+            },
+            {
+              "text": "Only A's, because its steps are more concrete",
+              "feedback": "Concrete steps are good, but A's are concrete about one single purchase. Change it to $3.10 and A's steps give the wrong answer."
+            },
+            {
+              "text": "Both, because each is a finite list that halts",
+              "feedback": "Being finite and halting are two of the four features. A's steps miss the fourth: they solve one instance rather than a general class."
+            },
+            {
+              "text": "Neither, because making change requires judgment",
+              "feedback": "The book shows that making change can be written as well-defined steps; merchants and cash registers carry them out without judgment."
+            }
+          ],
+          "hint": "What happens to each student's steps if the price changes to $3.10?",
+          "explanation": "An algorithm describes how to solve every problem of a given kind, not just one example. A recipe that only works for one input is a worked answer, not an algorithm.",
+          "ref": "Section 1.1, \"Algorithms\", feature 4 (p. 3)"
+        },
+        {
+          "id": "many-algorithms",
+          "concept": "Several algorithms can solve one problem",
+          "level": "understand",
+          "stem": "The book describes two ways a merchant can make change: subtract first and then count out the difference, or start at the price and count up to the amount given. Both give $7.61 back for a $2.39 purchase paid with $10. What does this show?",
+          "options": [
+            {
+              "text": "A single problem can have several correct algorithms",
+              "correct": true,
+              "feedback": "Both methods are finite, well defined, halt and work for any amounts. The book notes that many algorithms can solve the same problem and choosing the best is a skill."
+            },
+            {
+              "text": "Only one can be the real algorithm; the other is a shortcut",
+              "feedback": "Nothing makes one of them less of an algorithm. Each meets all four features on its own."
+            },
+            {
+              "text": "They are the same algorithm because their outputs match",
+              "feedback": "Equal outputs do not make the steps equal. One subtracts and then selects coins; the other never subtracts at all."
+            },
+            {
+              "text": "Counting up is not an algorithm because it skips subtraction",
+              "feedback": "An algorithm is defined by its features, not by which operations it uses. Counting up is a different, equally valid, sequence of steps."
+            }
+          ],
+          "hint": "Do the two methods use the same steps, and does either break one of the four features?",
+          "explanation": "An algorithm is a particular sequence of steps, so the same problem can be solved by different algorithms that produce the same results. Comparing them, for speed, simplicity or reliability, is a core skill you will build in this course.",
+          "aside": "Euclid's algorithm for the greatest common divisor, which the book dates to about 2,300 years ago, has an extended version that is still used in cryptography software today, for example when generating RSA keys.",
+          "ref": "Section 1.1, \"Algorithms\" (p. 2)"
+        },
+        {
+          "id": "information-processing",
+          "concept": "Information processing: input, transformation, output",
+          "level": "apply",
+          "stem": "A music app takes your listening history, ranks songs by how rarely you skip them, and shows a \"You might like\" list. Which description matches the book's account of information processing?",
+          "options": [
+            {
+              "text": "Input is transformed by well-defined rules into new output",
+              "correct": true,
+              "feedback": "The history is the input, the ranking rules are the transformation, and the list is the output: exactly the input → transform → output pattern of section 1.1."
+            },
+            {
+              "text": "Nothing is processed, because nothing physical changes",
+              "feedback": "Information processing manipulates symbols, not physical objects. Turning a history into a ranked list creates new information."
+            },
+            {
+              "text": "Only the ranking is information; history and list are hardware",
+              "feedback": "The history and the list are both data. Hardware is the physical machine that stores and processes them."
+            },
+            {
+              "text": "It is not an algorithm, because outputs differ between users",
+              "feedback": "Different inputs giving different outputs is what a general algorithm should do. The same rules applied to your history give your list."
+            }
+          ],
+          "hint": "Name the input, the rules, and the result.",
+          "explanation": "A computing agent starts with input, transforms it according to well-defined rules, and produces output. Text, images, music and even algorithms themselves can all be represented as information, which is what lets one machine process all of them.",
+          "ref": "Section 1.1, \"Information Processing\" (p. 3)"
+        }
+      ]
+    },
+    {
+      "id": "1.2-computer-systems",
+      "title": "Hardware and software",
+      "subtitle": "CPU and memory, primary versus secondary storage, the loader, system versus application software, translation",
+      "source": "Ch. 1, section 1.2 (pp. 4–6)",
+      "intro": "Your laptop shuts off mid-essay. After a restart, yesterday's saved file is fine, but the last ten minutes of typing are gone. Five questions on the parts of a computer that explain why.",
+      "takeaways": [
+        "Primary memory (RAM) is fast but loses its contents when power is lost; secondary storage is slower but permanent, which is why saving matters.",
+        "Hardware executes only binary machine code: high-level programs must be translated first, and the translator rejects syntax errors before anything runs."
+      ],
+      "questions": [
+        {
+          "id": "ram-volatile",
+          "concept": "Primary versus secondary memory",
+          "level": "apply",
+          "stem": "In the situation above, which explanation fits section 1.2?",
+          "options": [
+            {
+              "text": "Unsaved typing was only in RAM, which loses data without power",
+              "correct": true,
+              "feedback": "Primary memory keeps data only while electricity flows. The saved file was on secondary storage, which keeps its bit patterns with the power off."
+            },
+            {
+              "text": "The CPU was holding the recent typing and cleared it on restart",
+              "feedback": "The CPU processes data; it fetches it from and stores it to memory. The typing was held in primary memory, not kept inside the processor."
+            },
+            {
+              "text": "The disk lost its newest data but kept the older files",
+              "feedback": "Secondary storage does not lose recent files first. The newest typing simply never reached the disk."
+            },
+            {
+              "text": "RAM kept the typing, but the restart made it unreadable",
+              "feedback": "RAM does not keep data across a power loss at all; once power stops, its contents are gone, not hidden."
+            }
+          ],
+          "hint": "Which kind of memory needs electricity to keep what it stores?",
+          "explanation": "Primary memory (RAM) is fast enough for the CPU to work with directly but is volatile. Secondary storage, whether magnetic, semiconductor (flash, USB) or optical, keeps data permanently, so work is safe only once it has been saved there.",
+          "aside": "The book's model memory has 8 cells of 16 bits, which is 128 bits or 16 bytes. A laptop with 16 GB of RAM holds roughly a billion times as much.",
+          "ref": "Section 1.2, \"Computer Hardware\" (pp. 4–5)"
+        },
+        {
+          "id": "cpu-cycle",
+          "concept": "What the CPU does",
+          "level": "understand",
+          "stem": "What does the CPU do when it executes a program?",
+          "options": [
+            {
+              "text": "Fetches binary instructions from memory, decodes and runs them",
+              "correct": true,
+              "feedback": "This is the cycle the book describes: the processor repeatedly fetches a binary instruction, decodes it, and executes it, sometimes fetching data from memory too."
+            },
+            {
+              "text": "Reads the program's high-level source code and runs it directly",
+              "feedback": "The CPU understands only binary machine code. High-level code like Python must be translated before the hardware can execute it."
+            },
+            {
+              "text": "Stores the program permanently so it survives a power loss",
+              "feedback": "Permanent storage is the job of secondary memory. The CPU processes data; it does not keep programs across a power loss."
+            },
+            {
+              "text": "Converts keyboard and mouse actions into binary for memory",
+              "feedback": "Turning human actions into binary information is the job of input devices. The CPU then processes that information."
+            }
+          ],
+          "hint": "In what form must an instruction be for the hardware itself to carry it out?",
+          "explanation": "The CPU is built from switches that perform simple logical, arithmetic and control operations. It runs any algorithm by fetching that algorithm's binary instructions from memory, decoding them and executing them, one after another.",
+          "ref": "Section 1.2, \"Computer Hardware\" (p. 5)"
+        },
+        {
+          "id": "loader-hardwired",
+          "concept": "The loader and bootstrapping",
+          "level": "analyze",
+          "stem": "A loader is a program that places machine code into memory so it can run. The book points out that the loader cannot load itself. What follows from that?",
+          "options": [
+            {
+              "text": "Some loading algorithm has to be hardwired into the computer",
+              "correct": true,
+              "feedback": "If every program needs a loader to get into memory, the first loader cannot arrive that way. The book concludes it must be built into the hardware."
+            },
+            {
+              "text": "Every program must be keyed into memory by hand, bit by bit",
+              "feedback": "Avoiding that tedious, error-prone process is the whole reason the loader exists. Once a loader is in place, other programs load automatically."
+            },
+            {
+              "text": "The operating system must start first and then load the loader",
+              "feedback": "The operating system is itself a program that has to be loaded, so it cannot come before the loader. This reverses the order."
+            },
+            {
+              "text": "The loader must be rewritten for every program it loads",
+              "feedback": "A loader takes any set of machine instructions as input. One loader serves every program."
+            }
+          ],
+          "hint": "If programs need a loader to reach memory, how does the very first loader get there?",
+          "explanation": "Some starting point has to be built into the hardware, because software can only run once it is in memory. From that hardwired start, the computer loads system software such as the operating system, which in turn loads everything else.",
+          "aside": "This is why starting a computer is called \"booting\": short for bootstrapping, from the impossible idea of lifting yourself up by your own bootstraps.",
+          "ref": "Section 1.2, \"Computer Software\" (pp. 5–6)"
+        },
+        {
+          "id": "system-vs-application",
+          "concept": "System software versus applications software",
+          "level": "understand",
+          "stem": "Which of these is system software rather than applications software?",
+          "options": [
+            {
+              "text": "The file system",
+              "correct": true,
+              "feedback": "The file system is part of the operating system: it lets users organize data and programs in permanent storage for every program on the machine."
+            },
+            {
+              "text": "A web browser",
+              "feedback": "A browser can feel essential, but it is designed for one task, displaying web pages, which makes it an application."
+            },
+            {
+              "text": "A database manager",
+              "feedback": "\"Manager\" sounds like system software, but the book lists database managers among applications: they serve a specific task for users."
+            },
+            {
+              "text": "A spreadsheet",
+              "feedback": "A spreadsheet is designed for a specific task, working with tables of numbers, so it is applications software."
+            }
+          ],
+          "hint": "Does the program serve one specific user task, or does it manage the computer for every program?",
+          "explanation": "System software makes developing, running and managing programs possible; the operating system, with its scheduling, memory management, file system and user interfaces, is the main example. Applications are programs designed for a specific task, which is what you will write in this course.",
+          "ref": "Section 1.2, \"Computer Software\" (p. 6)"
+        },
+        {
+          "id": "translator-syntax",
+          "concept": "Translator and run-time system",
+          "level": "analyze",
+          "stem": "A program contains a typo that breaks the grammar of its language. According to Figure 1-3, where is the mistake reported?",
+          "options": [
+            {
+              "text": "By the translator, before the program runs at all",
+              "correct": true,
+              "feedback": "The translator checks syntax before it completes the translation. If it finds an error, nothing reaches the run-time system."
+            },
+            {
+              "text": "By the run-time system, when it reaches that line",
+              "feedback": "The run-time system reports other kinds of errors. A grammar mistake is caught earlier, during translation."
+            },
+            {
+              "text": "By the text editor, which refuses to save the file",
+              "feedback": "A text editor saves whatever you type. Checking the language's grammar is the translator's job."
+            },
+            {
+              "text": "By the loader, when it puts the program into memory",
+              "feedback": "The loader handles machine code that has already been translated. A grammar error stops the process before any machine code exists."
+            }
+          ],
+          "hint": "In Figure 1-3, which box has an arrow labelled \"Syntax error messages\"?",
+          "explanation": "Writing a program moves through stages: a text editor creates the high-level code, a translator checks its syntax and converts it to executable form, and a run-time system executes it. Syntax errors come from the translator; other errors appear only while the program runs.",
+          "ref": "Section 1.2, \"Computer Software\", Figure 1-3 (p. 6)"
+        }
+      ]
+    },
+    {
+      "id": "1.3-history",
+      "title": "A not-so-brief history of computing",
+      "subtitle": "Programmable machines, the stored program, abstraction, time-sharing and Moore's Law",
+      "source": "Ch. 1, section 1.3 (pp. 7–16)",
+      "intro": "A 19th-century loom could weave a new pattern without being rebuilt, yet the first electronic computers had to be rewired for each new program. Five questions on the ideas that run through the history.",
+      "takeaways": [
+        "The decisive idea is the stored program: instructions kept in memory like data, so a new task means loading new instructions, not rebuilding the machine.",
+        "Each generation of programming languages adds abstraction: the complexity is hidden, not removed, which is what lets people build ever larger systems.",
+        "Exponential trends like Moore's Law compound: count the doubling periods, then multiply by 2 that many times."
+      ],
+      "questions": [
+        {
+          "id": "jacquard",
+          "concept": "Executing an algorithm automatically",
+          "level": "understand",
+          "stem": "What did Jacquard's loom have that earlier machines, such as Pascal's and Leibniz's calculators, lacked?",
+          "options": [
+            {
+              "text": "Instructions on punched cards that it carried out by itself",
+              "correct": true,
+              "feedback": "Each card described a row of the pattern, and the set of cards was the algorithm. Swapping the cards changed the pattern without changing the machine."
+            },
+            {
+              "text": "Electronic parts that made it much faster than the calculators",
+              "feedback": "The loom was entirely mechanical. Its novelty was in how it was controlled, not in its speed or technology."
+            },
+            {
+              "text": "The ability to add, subtract and multiply arbitrary numbers",
+              "feedback": "Arithmetic was what the calculators already did; Leibniz's even multiplied. The loom did no arithmetic at all."
+            },
+            {
+              "text": "A memory that recorded every pattern it had already woven",
+              "feedback": "The loom recorded nothing about its past work. Its cards described what to do next, which is the input side, not a record."
+            }
+          ],
+          "hint": "What did the loom operator change to get a different pattern?",
+          "explanation": "Pascal's adding machine had its one operation built into its gears. Jacquard's loom separated the machine from the instructions controlling it, which is the core idea of a programmable machine, later taken up by Babbage and Hollerith.",
+          "ref": "Section 1.3, \"Before Electronic Digital Computers\" (p. 8)"
+        },
+        {
+          "id": "stored-program",
+          "concept": "The stored-program computer",
+          "level": "analyze",
+          "stem": "Programming ENIAC meant unplugging and replugging thousands of wires. What was John von Neumann's 1946 idea that ended this?",
+          "options": [
+            {
+              "text": "Keep the program's instructions in memory, in binary, like data",
+              "correct": true,
+              "feedback": "Early computers' memory held only data. Putting the instructions in memory too meant a new program could be loaded instead of wired in."
+            },
+            {
+              "text": "Replace the vacuum tubes with smaller and more reliable transistors",
+              "feedback": "Transistors arrived in the late 1950s and made computers smaller and cheaper, but a transistor machine could still be hardwired. The rewiring problem was solved differently."
+            },
+            {
+              "text": "Use Boolean logic to design the switching circuits of the machine",
+              "feedback": "That was Claude Shannon's contribution in the late 1930s, and ENIAC already relied on it. It explains how circuits compute, not how programs are entered."
+            },
+            {
+              "text": "Write programs in a symbolic language such as assembly instead",
+              "feedback": "Assembly languages appeared in the early 1950s and depend on programs already living in memory, where an assembler can translate them."
+            }
+          ],
+          "hint": "Where were ENIAC's instructions kept, and where was its data kept?",
+          "explanation": "In a stored-program computer, instructions and data share the same memory and the same binary form. This architecture, also anticipated by Jacquard's cards and Babbage's design, has stayed remarkably stable ever since.",
+          "aside": "ENIAC's first programmers, who worked out how to set problems up on it by plugging cables and setting switches, were six women, among them Jean Jennings Bartik and Betty Snyder Holberton.",
+          "ref": "Section 1.3, \"The First Electronic Digital Computers\" (p. 10)"
+        },
+        {
+          "id": "abstraction",
+          "concept": "Abstraction in high-level languages",
+          "level": "understand",
+          "stem": "The book's example: a single FORTRAN expression of about five symbols can replace about ten assembly language instructions. What happens to the complexity of those ten instructions?",
+          "options": [
+            {
+              "text": "It is still there, but the abstraction hides it from view",
+              "correct": true,
+              "feedback": "The machine still carries out the low-level steps. The programmer just no longer has to write or think about them, which is the book's definition of abstraction."
+            },
+            {
+              "text": "It disappears, because the computer now has less work to do",
+              "feedback": "The compiler turns the expression back into machine instructions, so the computer still does the work. Only the programmer's view got simpler."
+            },
+            {
+              "text": "It moves to the programmer, who still tracks all ten steps",
+              "feedback": "This reverses the point: the benefit of abstraction is that the programmer can stop tracking those steps."
+            },
+            {
+              "text": "It is turned into errors that the compiler fixes automatically",
+              "feedback": "Compilers report errors in your code; they do not convert complexity into errors. The low-level steps are generated, not removed or repaired."
+            }
+          ],
+          "hint": "After compiling, does the computer still need to do those ten steps?",
+          "explanation": "An abstraction lets you say more with less by hiding detail behind a simpler idea. The details do not go away; someone else, or some program, handles them. That is what lets people design systems far too complex to hold in mind all at once.",
+          "ref": "Section 1.3, \"The First Programming Languages\" (p. 11)"
+        },
+        {
+          "id": "time-sharing",
+          "concept": "Batch processing versus time-sharing",
+          "level": "apply",
+          "stem": "Before the late 1960s, a programmer handed a deck of punched cards to an operator and could wait days for the output, including error messages. Which development most directly reduced that wait to seconds?",
+          "options": [
+            {
+              "text": "Time-sharing with interactive terminals",
+              "correct": true,
+              "feedback": "With time-sharing, each user's program got slices of CPU time, and users typed at terminals and saw results right away instead of waiting in a batch queue."
+            },
+            {
+              "text": "Faster card readers in the computer room",
+              "feedback": "The delay came from the batch workflow of operators, queues and pickups. Reading cards faster leaves that workflow in place."
+            },
+            {
+              "text": "Moving business programs from FORTRAN to COBOL",
+              "feedback": "COBOL made data processing easier to express, but programs written in it still went through the same batch queue."
+            },
+            {
+              "text": "Cheaper chips predicted by Moore's Law",
+              "feedback": "Faster, bigger hardware made time-sharing possible, but cheaper chips alone did not change how programmers submitted work."
+            }
+          ],
+          "hint": "What was actually slow: the computer, or the way people got their work to it?",
+          "explanation": "Batch processing ran programs one after another, with a human operator in the middle. Time-sharing let a program take over the operator's job, cycling the CPU among many users' processes so fast that each user felt they had the machine to themselves.",
+          "ref": "Section 1.3, \"Integrated Circuits, Interaction, Time-Sharing, and Software Engineering\" (p. 12)"
+        },
+        {
+          "id": "moores-law",
+          "concept": "Moore's Law as exponential growth",
+          "level": "apply",
+          "stem": "Using the book's statement of Moore's Law, with capacity roughly doubling every 18 months, a chip starts with 1 million components. About how many would the trend predict 6 years later?",
+          "options": [
+            {
+              "text": "About 16 million",
+              "correct": true,
+              "feedback": "Six years is 72 months, which is four 18-month periods. Doubling four times multiplies by 2 × 2 × 2 × 2 = 16."
+            },
+            {
+              "text": "About 4 million",
+              "feedback": "This multiplies by the number of periods (4) instead of doubling once per period. Exponential growth compounds."
+            },
+            {
+              "text": "About 64 million",
+              "feedback": "That is six doublings, which assumes doubling every year. The book's period is 18 months."
+            },
+            {
+              "text": "About 8 million",
+              "feedback": "That is three doublings, which matches a two-year period. With 18 months, six years holds four periods."
+            }
+          ],
+          "hint": "How many 18-month periods fit in 72 months? Then double once per period.",
+          "explanation": "Moore's Law describes exponential growth: the quantity is multiplied by the same factor every period. Count the periods first, then apply the factor that many times. The book notes the chip went from about 50 components in 1965 to over 40 million by 2000.",
+          "aside": "Gordon Moore's 1965 article predicted the number of components per chip would double every year; in 1975 he revised it to every two years. The popular \"18 months\" figure is usually credited to Intel executive David House.",
+          "ref": "Section 1.3, \"Integrated Circuits, Interaction, Time-Sharing, and Software Engineering\" (p. 12)"
+        }
+      ]
+    },
+    {
+      "id": "1.4a-shell-print-input",
+      "title": "The shell, print and input",
+      "subtitle": "Shell results versus printed output, print's spacing and end, input returning strings, int and float",
+      "source": "Ch. 1, section 1.4 (pp. 16–19)",
+      "intro": "A classmate's program asks for two numbers, gets 23 and 44, and proudly prints 2344. Six questions on how Python's shell, print and input really behave.",
+      "takeaways": [
+        "`input` always returns a string. Convert it with `int` or `float` before doing arithmetic, or `+` will join the text instead of adding.",
+        "`print` separates its arguments with single spaces and ends with a newline, unless `end` says otherwise.",
+        "The shell shows a value's result, with quotes for strings; `print` shows the plain text."
+      ],
+      "questions": [
+        {
+          "id": "shell-vs-print",
+          "concept": "Shell results versus print output",
+          "level": "understand",
+          "stem": "These two lines are entered at the Python shell prompt. What does the shell display after each one?",
+          "code": {
+            "language": "pycon",
+            "label": "Python shell",
+            "text": ">>> \"Hi\"\n>>> print(\"Hi\")",
+            "verify": {
+              "expect": "skip",
+              "reason": "Interactive shell session; the shell echoes repr('Hi') == \"'Hi'\" while print shows Hi (checked by hand)."
+            }
+          },
+          "options": [
+            {
+              "text": "`'Hi'`, then `Hi`",
+              "correct": true,
+              "feedback": "The shell displays the result of the expression `\"Hi\"`, shown as a string with quotes. `print` displays the text itself, without quotation marks."
+            },
+            {
+              "text": "`Hi`, then `Hi`",
+              "feedback": "`print` does drop the quotes, but the shell's own echo of a string value keeps them, as in the book's `'Python is really cool!'` example."
+            },
+            {
+              "text": "`'Hi'`, then `'Hi'`",
+              "feedback": "The book notes that `print` displays a string without the quotation marks, so the second line shows plain text."
+            },
+            {
+              "text": "Nothing, then `Hi`",
+              "feedback": "The shell evaluates every expression you enter and displays its result if it has one; a string literal does have one."
+            }
+          ],
+          "hint": "Which line asks Python to *show a value*, and which asks it to *output text*?",
+          "explanation": "At the prompt, the shell evaluates what you type and displays the result, using quotes for strings so you can see it is text. `print` is how a program outputs, and it shows strings as plain text. In a script, a bare expression like `\"Hi\"` displays nothing at all.",
+          "aside": "The shell shows a value's *repr*: the form you would type to recreate it. That is why `'Hi'` keeps its quotes. You can ask for it yourself with `print(repr(\"Hi\"))`.",
+          "ref": "Section 1.4, \"Running Code in the Interactive Shell\" and \"Input, Processing, and Output\" (pp. 17–18)"
+        },
+        {
+          "id": "print-commas",
+          "concept": "print with several expressions",
+          "level": "apply",
+          "stem": "What does this program print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "name = \"Ken\"\nprint(\"Hi there,\", name, \"!\")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`Hi there, Ken !`",
+              "correct": true,
+              "feedback": "`print` puts one space between each pair of values: after `Hi there,` and before `!`. That second space is the one people forget."
+            },
+            {
+              "text": "`Hi there, Ken!`",
+              "feedback": "This is what you would write by hand, but `print` adds a space between *every* pair of values, including `Ken` and `!`."
+            },
+            {
+              "text": "`Hi there,Ken!`",
+              "feedback": "The commas separate the values in the code; they are not glued together. `print` inserts a space between each value."
+            },
+            {
+              "text": "`Hi there, name !`",
+              "feedback": "`name` has no quotes, so Python treats it as a variable and prints its value, `Ken`."
+            }
+          ],
+          "hint": "How many values does this `print` receive, and what does it put between each pair?",
+          "explanation": "`print` evaluates each expression, then displays the results on one line separated by single spaces, and finishes with a newline. The commas in the call separate arguments; they never appear in the output unless they are inside a string.",
+          "ref": "Section 1.4, \"Input, Processing, and Output\" (p. 18)"
+        },
+        {
+          "id": "print-end",
+          "concept": "print's end argument",
+          "level": "apply",
+          "stem": "What does this program display?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(\"A\", end=\"\")\nprint(\"B\")\nprint(\"C\")",
+            "verify": {
+              "expect": "output",
+              "output": "AB C"
+            }
+          },
+          "options": [
+            {
+              "text": "`AB` on one line, then `C` on the next line",
+              "correct": true,
+              "feedback": "The first call ends with an empty string instead of a newline, so `B` continues on the same line. The second call ends normally, so `C` starts a new line."
+            },
+            {
+              "text": "`A`, `B` and `C` each on a separate line",
+              "feedback": "That is what happens without `end=\"\"`. Here the first call's newline is replaced by an empty string."
+            },
+            {
+              "text": "`ABC` together on a single line",
+              "feedback": "Only the first call changes its ending. `print(\"B\")` still ends with a newline, so `C` goes on the next line."
+            },
+            {
+              "text": "`A` on one line, then `BC` on the line below",
+              "feedback": "This attaches `end=\"\"` to the wrong call. It changes how *its own* output ends, so it joins `A` to whatever comes next."
+            }
+          ],
+          "hint": "What does each call put after its text by default, and which call changes that?",
+          "explanation": "Every `print` call ends its output with a newline unless you give `end` a different string. `end=\"\"` keeps the cursor on the same line, so the next output continues there.",
+          "ref": "Section 1.4, \"Input, Processing, and Output\" (p. 18)"
+        },
+        {
+          "id": "input-is-string",
+          "concept": "input always returns a string",
+          "level": "analyze",
+          "stem": "The user types `23` at the first prompt and `44` at the second. What is the last thing the program prints?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "first = input(\"First: \")\nsecond = input(\"Second: \")\nprint(first + second)",
+            "verify": {
+              "expect": "output",
+              "stdin": "23\n44\n",
+              "output": "First: Second: 2344"
+            }
+          },
+          "options": [
+            {
+              "text": "`2344`",
+              "correct": true,
+              "feedback": "`input` returns the strings `'23'` and `'44'`. For strings, `+` glues them together, so the result is the text `2344`."
+            },
+            {
+              "text": "`67`",
+              "feedback": "That would be the sum of two numbers. But `input` returns the characters the user typed as a string, and nothing here converts them."
+            },
+            {
+              "text": "`23 44`",
+              "feedback": "A space would appear if they were separate arguments to `print`. Here `+` joins them first into one string, with nothing between."
+            },
+            {
+              "text": "A `TypeError`: text cannot be added",
+              "feedback": "Adding a string to a *number* fails, but two strings can be joined with `+`. Both values here are strings."
+            }
+          ],
+          "hint": "What type of value does `input` give back, even when the user types digits?",
+          "explanation": "`input` always builds a string from the user's keystrokes. Strings that look like numbers are still text, and `+` on two strings joins them. To do arithmetic, convert the input first with `int` or `float`.",
+          "ref": "Section 1.4, \"Input, Processing, and Output\", Table 1-2 (p. 19)"
+        },
+        {
+          "id": "fix-with-int",
+          "concept": "Converting input with int",
+          "level": "apply",
+          "stem": "The program in the previous question reads two values with `input` and prints `first + second`, giving `2344` for `23` and `44`. Which change makes it print `67`?",
+          "options": [
+            {
+              "text": "`first = int(input(\"First: \"))`, and the same for `second`",
+              "correct": true,
+              "feedback": "`int` converts each string of digits to an integer as soon as it is read, so `first + second` adds 23 and 44."
+            },
+            {
+              "text": "`print(int(first + second))` on the last line",
+              "feedback": "This converts too late: the strings are already joined into `'2344'`, so `int` turns that into the number 2344."
+            },
+            {
+              "text": "`first = input(int(\"First: \"))`, and the same for `second`",
+              "feedback": "The order is reversed. This asks `int` to convert the prompt text `\"First: \"`, which is not a number, so it raises a `ValueError`."
+            },
+            {
+              "text": "`print(first, second)` on the last line",
+              "feedback": "This prints the two strings side by side, `23 44`. Nothing is converted or added."
+            }
+          ],
+          "hint": "The conversion has to happen to each value *before* the `+`. Which option does that, and in the right nesting order?",
+          "explanation": "Convert input at the moment you read it: wrap `input(...)` in `int(...)` or `float(...)`. The inner call runs first and returns a string; the outer call turns that string into a number.",
+          "ref": "Section 1.4, \"Input, Processing, and Output\" (p. 19)"
+        },
+        {
+          "id": "int-of-decimal-string",
+          "concept": "int needs a string of digits",
+          "level": "apply",
+          "stem": "The user types `2.5` at the prompt. What happens?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "qty = int(input(\"Quantity: \"))\nprint(qty)",
+            "verify": {
+              "expect": "runtime_error",
+              "stdin": "2.5\n",
+              "error_contains": [
+                "ValueError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `ValueError`, because `'2.5'` is not a whole number",
+              "correct": true,
+              "feedback": "Table 1-2 says `int` converts *a string of digits*. The string `'2.5'` contains a decimal point, so `int` refuses it and the program stops."
+            },
+            {
+              "text": "It prints `2`, because `int` drops the decimal part",
+              "feedback": "That is true for the *number* 2.5: `int(2.5)` is `2`. But `input` gives the *string* `'2.5'`, and `int` will not convert that string."
+            },
+            {
+              "text": "It prints `3`, rounding to the nearest whole number",
+              "feedback": "`int` never rounds, and here it cannot convert the string at all."
+            },
+            {
+              "text": "It prints `2.5`, since the user typed a valid number",
+              "feedback": "`2.5` is a valid *float*, but this program asks for an `int`. Use `float(input(...))` to accept decimals."
+            }
+          ],
+          "hint": "Check Table 1-2: what kind of string does `int` expect?",
+          "explanation": "`int` converts a string of digits to an integer; `float` converts a string of digits that may include a decimal point. Choosing the conversion is choosing which inputs your program accepts, and the wrong one makes valid-looking input crash the program.",
+          "aside": "To read `2.5` and keep only the whole part, convert twice: `int(float(\"2.5\"))` gives `2`, because `int` on a float drops the fractional part instead of rounding.",
+          "ref": "Section 1.4, Table 1-2 (p. 19)"
+        }
+      ]
+    },
+    {
+      "id": "1.4b-how-python-runs",
+      "title": "How Python runs your code",
+      "subtitle": "Scripts, byte code and the Python virtual machine, syntax errors versus errors while running",
+      "source": "Ch. 1, section 1.4 (pp. 19–22)",
+      "intro": "Two typos, two very different error messages: one appears before a single line runs, the other only when Python reaches the line. Five questions on what happens between your file and its output.",
+      "takeaways": [
+        "Python checks and translates a whole script to byte code before running any of it, so one syntax error anywhere means no line runs.",
+        "A misspelled name is still valid grammar: it fails only when the Python virtual machine reaches that line, after earlier lines have already run.",
+        "Python reads exactly what you typed, not what you meant."
+      ],
+      "questions": [
+        {
+          "id": "why-scripts",
+          "concept": "Scripts versus the shell",
+          "level": "understand",
+          "stem": "Why does the book recommend saving longer programs as `.py` script files instead of typing them at the shell prompt?",
+          "options": [
+            {
+              "text": "A saved file can be rerun, edited and shared",
+              "correct": true,
+              "feedback": "Scripts save hours of work permanently, can be run again from IDLE or the command prompt, and are how Python programs are distributed to others."
+            },
+            {
+              "text": "Scripts run faster because they skip the byte code step",
+              "feedback": "Both shell input and scripts are translated to byte code and run on the PVM. The difference is permanence, not speed."
+            },
+            {
+              "text": "Only scripts are allowed to use `input` and `print`",
+              "feedback": "The book's own shell examples use both `input` and `print` at the prompt."
+            },
+            {
+              "text": "The shell accepts expressions but never statements",
+              "feedback": "The shell runs statements too, such as `name = \"Ken Lambert\"` in the book's first session."
+            }
+          ],
+          "hint": "What happens to everything you typed at the shell when you close the window?",
+          "explanation": "The shell is ideal for trying out short expressions and statements. Programs worth keeping belong in files: a script can be saved, edited, rerun with F5 in IDLE or from a command prompt, tested, and shared.",
+          "ref": "Section 1.4, \"Editing, Saving, and Running a Script\" (pp. 19–20)"
+        },
+        {
+          "id": "pipeline",
+          "concept": "Byte code and the Python virtual machine",
+          "level": "understand",
+          "stem": "Which sequence matches Figure 1-9, \"Steps in interpreting a Python program\"?",
+          "options": [
+            {
+              "text": "Check syntax, translate to byte code, then the PVM runs it",
+              "correct": true,
+              "feedback": "The syntax checker and translator turn well-formed source code into byte code, and the Python virtual machine executes that byte code."
+            },
+            {
+              "text": "The PVM executes each line, then checks that line's syntax",
+              "feedback": "This puts checking after running. In Figure 1-9 the syntax checker comes first, so badly formed code never reaches the PVM."
+            },
+            {
+              "text": "Translate to machine code, then the CPU runs it directly",
+              "feedback": "That describes a classic compiler. Python translates to byte code, a low-level form that the PVM, not the CPU directly, executes."
+            },
+            {
+              "text": "Check the byte code's syntax, then translate it into Python",
+              "feedback": "This reverses the direction: Python source code is what gets checked, and byte code is what it is translated into."
+            }
+          ],
+          "hint": "In Figure 1-9, where does each arrow labelled \"error messages\" come from?",
+          "explanation": "Running Python is two stages: the interpreter verifies your source code is well formed and translates it to byte code, then the Python virtual machine executes the byte code. Each stage can stop with its own kind of error message.",
+          "ref": "Section 1.4, \"Behind the Scenes: How Python Works\", Figure 1-9 (pp. 20–21)"
+        },
+        {
+          "id": "syntax-error-nothing-runs",
+          "concept": "A syntax error stops the whole script",
+          "level": "apply",
+          "stem": "This script is saved and run. What happens?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(\"Start\")\nprint(\"Middle\"\nprint(\"End\")",
+            "verify": {
+              "expect": "compile_error",
+              "error_contains": [
+                "SyntaxError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "Nothing prints; Python reports a `SyntaxError`",
+              "correct": true,
+              "feedback": "The interpreter translates the whole script to byte code before running it. The missing `)` stops translation, so not even the first line runs."
+            },
+            {
+              "text": "`Start` prints, then Python reports a `SyntaxError`",
+              "feedback": "This imagines Python checking one line at a time as it runs. For a script, the whole file is checked and translated first."
+            },
+            {
+              "text": "`Start` and `End` print; the broken line is skipped",
+              "feedback": "Python never skips a line it cannot understand. A syntax error halts translation with an error message."
+            },
+            {
+              "text": "All three lines print; the last `)` is optional",
+              "feedback": "Every opening parenthesis needs a matching closing one. Python cannot guess where the missing `)` belongs."
+            }
+          ],
+          "hint": "The book says that when the interpreter runs a script, it *completely* translates it to byte code. When does that happen?",
+          "explanation": "Syntax is checked before execution. In a script, one grammar mistake anywhere in the file prevents every line from running, so the first output you see is the error message.",
+          "ref": "Section 1.4, \"Behind the Scenes: How Python Works\" (pp. 20–21)"
+        },
+        {
+          "id": "nameerror-at-runtime",
+          "concept": "A misspelled name fails while running",
+          "level": "analyze",
+          "stem": "This script is saved and run. What happens?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "length = 44\nprint(\"Length is\")\nprint(lenth)",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "Length is",
+                "NameError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "`Length is` prints, then a `NameError` for `lenth`",
+              "correct": true,
+              "feedback": "`print(lenth)` is grammatically fine, so the script translates. The PVM runs the first two lines, then stops when it looks up `lenth` and finds no such name."
+            },
+            {
+              "text": "Nothing prints; the syntax checker rejects `lenth`",
+              "feedback": "The syntax checker only checks grammar, and `lenth` is a legal name. Whether a name has a value is discovered when the line runs."
+            },
+            {
+              "text": "`Length is` and `44` print; Python fixes the typo",
+              "feedback": "Python reads only what you typed, not what you meant. It never substitutes a similar name."
+            },
+            {
+              "text": "`Length is` prints, then an empty line for `lenth`",
+              "feedback": "A name with no value is an error, not an empty value. Python stops with an error message."
+            }
+          ],
+          "hint": "Is `print(lenth)` badly formed, or just a reference to a name that has no value yet?",
+          "explanation": "A reference to an undefined name follows the grammar rules, so it gets past the syntax checker and fails only when executed. This is one of Figure 1-9's \"other error messages\". The book's summary groups it with syntax errors, but Python reports it as a `NameError` raised while the program runs.",
+          "aside": "Since Python 3.10, this message often adds a suggestion: `NameError: name 'lenth' is not defined. Did you mean: 'length'?` Python still won't make the fix for you.",
+          "ref": "Section 1.4, \"Detecting and Correcting Syntax Errors\" (pp. 21–22) and Figure 1-9 (p. 21)"
+        },
+        {
+          "id": "unexpected-indent",
+          "concept": "Indentation is significant",
+          "level": "apply",
+          "stem": "Why does this script fail before printing anything?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "x = 5\n print(x)",
+            "verify": {
+              "expect": "compile_error",
+              "error_contains": [
+                "unexpected indent"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "Line 2 is indented, but nothing above it starts a block",
+              "correct": true,
+              "feedback": "Each line must begin in the leftmost column unless it is nested inside a control statement or definition. The extra space is an unexpected indent."
+            },
+            {
+              "text": "`x` was assigned on line 1, so it cannot be printed yet",
+              "feedback": "A variable can be used on any line after it is assigned. The problem is the leading space, not the order."
+            },
+            {
+              "text": "`print` must be written in capitals at the start of a line",
+              "feedback": "Python names are case sensitive and the function is `print` in lowercase. Capitalizing it would cause a different error."
+            },
+            {
+              "text": "Spaces only matter at the shell prompt, never in a script",
+              "feedback": "The book's rule applies to every line, whether typed at the prompt or saved in a script."
+            }
+          ],
+          "hint": "Look at the very first character of line 2.",
+          "explanation": "In Python, indentation is part of the grammar. Lines start in the leftmost column; only statements nested inside control statements or definitions are indented. An unexpected indent is a syntax error, so the script never starts.",
+          "aside": "Current Python reports this as `IndentationError: unexpected indent`. `IndentationError` is a special kind of `SyntaxError`, and some shells, like the one in the book, show the general name.",
+          "ref": "Section 1.4, \"Detecting and Correcting Syntax Errors\" (p. 22)"
+        }
+      ]
+    }
+  ]
+}
