@@ -1,0 +1,1052 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 2: Software Development, Data Types, and Expressions",
+  "collection_intro": "Short, ungraded practice checks for sections 2.1–2.5 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+  "theme": "harbor",
+  "background": "pattern",
+  "checks": [
+    {
+      "id": "2.1-software-development",
+      "title": "The software development process",
+      "subtitle": "Waterfall phases, what late fixes cost, where the money goes, and testing with a planned test suite",
+      "source": "Ch. 2, section 2.1 (pp. 27–32)",
+      "intro": "A classmate runs the tax program once, sees a sensible number and submits it. Five questions on why there is more to software than code, and on what testing really takes.",
+      "takeaways": [
+        "Analysis decides *what* a program must do; design decides *how* it will do it. Both come before code.",
+        "The later a mistake is found, the more it costs to fix, and maintenance, not coding, is where most of a program's cost goes.",
+        "One correct run proves very little. A test suite is a small, deliberately chosen set of inputs with known expected outputs that covers each kind of case."
+      ],
+      "questions": [
+        {
+          "id": "analysis-vs-design",
+          "concept": "Analysis versus design",
+          "level": "apply",
+          "stem": "In one meeting, a team agrees that the tax program will ask for gross income and number of dependents and display the tax. In the next meeting, they write pseudocode with the formula for taxable income. Which phases are these?",
+          "options": [
+            {
+              "text": "Analysis, then design",
+              "feedback": "The first meeting settles *what* the program will do (its inputs and outputs). The second settles *how*, as an algorithm in pseudocode. That is exactly the book's split between analysis and design.",
+              "correct": true
+            },
+            {
+              "text": "Design, then implementation",
+              "feedback": "Pseudocode is not code yet. Writing it is still planning how the program works, which is design. Deciding the inputs and outputs comes before that, in analysis."
+            },
+            {
+              "text": "Customer request, then analysis",
+              "feedback": "The customer request is the broad statement \"compute a person's income tax.\" Choosing the inputs and outputs is already analysis, and writing the algorithm goes one step further."
+            },
+            {
+              "text": "Analysis, then implementation",
+              "feedback": "The first meeting is analysis, but pseudocode is not the program. Implementation means writing the actual Python code, and the pseudocode is the design it is written from."
+            }
+          ],
+          "hint": "Which meeting answers \"what will it do?\" and which answers \"how will it do it?\"",
+          "explanation": "Analysis clarifies the specification: what the program must do, including its inputs and outputs. Design decides how, usually by writing an algorithm in pseudocode. Implementation then turns that design into code.",
+          "ref": "Section 2.1, the waterfall model (p. 28) and Case Study 2-1, \"Analysis\" and \"Design\" (p. 30)"
+        },
+        {
+          "id": "cost-of-late-fixes",
+          "concept": "Catching mistakes early",
+          "level": "understand",
+          "stem": "A misunderstood tax rule could be caught by reviewing the analysis, or months later when users run the released program. Why does the book urge you to check each phase's results before moving on?",
+          "options": [
+            {
+              "text": "A mistake costs more time and effort to fix the later it is found",
+              "feedback": "Figure 2-2 shows the cost of correcting a fault rising with every phase it slips through. A wrong rule caught in analysis is a sentence to rewrite; caught after release, it means redesign, recoding and retesting.",
+              "correct": true
+            },
+            {
+              "text": "Testing only applies to the implementation and integration phases",
+              "feedback": "The book says the opposite: many people *think* testing belongs only to those phases, but you should scrutinize the outputs of every phase."
+            },
+            {
+              "text": "Analysis and design account for most of a program's total cost",
+              "feedback": "Figure 2-3 puts analysis and design at about 8% each. The largest share, about 68%, is maintenance."
+            },
+            {
+              "text": "The waterfall model never lets a team go back to an earlier phase",
+              "feedback": "Teams can and do back up to earlier phases; the book says mistakes and maintenance require it. Backing up is possible, just expensive."
+            }
+          ],
+          "hint": "Look at Figure 2-2. What happens to the cost of fixing a fault as the phases go by?",
+          "explanation": "Each phase builds on the one before it, so an early mistake spreads into everything that follows. Fixing it late means redoing all of that work, which is why every phase's output should be checked before the next one starts.",
+          "aside": "The model's name came later. Winston Royce's 1970 paper, often cited as its origin, drew the cascading phases but warned that a single pass straight down was risky and invited failure, and recommended iterating instead. That is close to the incremental, iterative development the book describes as modern practice.",
+          "ref": "Section 2.1, Figure 2-2 and the paragraph before it (pp. 28–29)"
+        },
+        {
+          "id": "maintenance-cost",
+          "concept": "Where software costs go",
+          "level": "analyze",
+          "stem": "Across a program's whole life, which phase typically accounts for the largest share of its cost, and what does the book say reduces that cost?",
+          "options": [
+            {
+              "text": "Maintenance; careful analysis, design and readable code reduce it",
+              "feedback": "Figure 2-3 puts maintenance at about 68% of total cost. Programs live 5 to 15 years and keep changing, and code that was well planned and easy to read is cheaper to change.",
+              "correct": true
+            },
+            {
+              "text": "Implementation; writing the code in fewer lines reduces it",
+              "feedback": "Implementation feels like the biggest job, but Figure 2-3 puts it at about 8%. Squeezing code into fewer lines usually makes it harder to maintain, not cheaper."
+            },
+            {
+              "text": "Integration; building every part at the same time reduces it",
+              "feedback": "Integration is about 8% in Figure 2-3. The big cost comes after release, while the program is maintained."
+            },
+            {
+              "text": "Analysis; skipping it and starting to code sooner reduces it",
+              "feedback": "Skipping analysis saves a little now and costs a lot later: mistakes found late are the most expensive ones, and they land in maintenance."
+            }
+          ],
+          "hint": "Programs usually live for years after they are released. What happens to them during that time?",
+          "explanation": "Most of a program's cost comes after release, as requirements change and errors are found. The cheapest way to lower that cost is to make the program easy to change from the start: thorough analysis, careful design and a good coding style.",
+          "ref": "Section 2.1, Figure 2-3 and the two points that follow it (p. 29)"
+        },
+        {
+          "id": "trace-tax-program",
+          "concept": "Expected output for a test case",
+          "level": "apply",
+          "stem": "This is the case study's tax program, without its docstring. A tester enters `20000` for the gross income and `2` for the number of dependents. What is the last line it prints?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "TAX_RATE = 0.20\nSTANDARD_DEDUCTION = 10000.0\nDEPENDENT_DEDUCTION = 3000.0\n\ngrossIncome = float(input(\"Enter the gross income: \"))\nnumDependents = int(input(\"Enter the number of dependents: \"))\n\ntaxableIncome = grossIncome - STANDARD_DEDUCTION - \\\n                DEPENDENT_DEDUCTION * numDependents\nincomeTax = taxableIncome * TAX_RATE\nprint(\"The income tax is $\" + str(incomeTax))",
+            "verify": {
+              "expect": "output",
+              "stdin": "20000\n2\n",
+              "output": "Enter the gross income: Enter the number of dependents: The income tax is $800.0"
+            }
+          },
+          "options": [
+            {
+              "text": "`The income tax is $800.0`",
+              "feedback": "Taxable income is 20000 − 10000 − 3000 × 2 = 4000, and 20% of 4000 is 800.0. This matches the last row of Table 2-1.",
+              "correct": true
+            },
+            {
+              "text": "`The income tax is $1400.0`",
+              "feedback": "That is the expected tax for *one* dependent. With two, the program subtracts two deductions of 3000."
+            },
+            {
+              "text": "`The income tax is $4000.0`",
+              "feedback": "4000 is the taxable income, not the tax. The program still multiplies it by `TAX_RATE`, which is 0.20."
+            },
+            {
+              "text": "`The income tax is $2000.0`",
+              "feedback": "2000 is the expected tax with no dependents. The `DEPENDENT_DEDUCTION * numDependents` term subtracts 6000 more here."
+            }
+          ],
+          "hint": "Work out the taxable income first, and remember that `*` happens before the subtractions.",
+          "explanation": "Writing down the expected output for each test input *before* running the program is what makes a test useful: the program's output can then be compared with a number you worked out independently. Table 2-1 lists exactly these expected values for the tax program.",
+          "ref": "Case Study 2-1, \"Implementation (Coding)\" and \"Testing\", Table 2-1 (pp. 31–32)"
+        },
+        {
+          "id": "test-suite",
+          "concept": "Testing with a test suite",
+          "level": "evaluate",
+          "stem": "A student runs the tax program once with `150000` and `3`, gets `$26200.0`, which matches the interface sketch, and submits it. What is the best critique?",
+          "options": [
+            {
+              "text": "One correct run is weak evidence; a planned set of test inputs is needed",
+              "feedback": "The book calls a single error-free run with correct output \"just a slight indication\" of correctness. A test suite such as Table 2-1 picks inputs that cover each kind of case, so a logic error is very likely to show up.",
+              "correct": true
+            },
+            {
+              "text": "Nothing is missing, since a run with no syntax errors shows it is correct",
+              "feedback": "A program can run without a single syntax error and still compute the wrong value. That is a logic error, and only testing reveals it."
+            },
+            {
+              "text": "The negative taxes for low incomes are logic errors to fix before testing",
+              "feedback": "The book says those negative outputs are expected for now and are not errors; Chapter 3 shows how to prevent them. The real gap is that only one case was tried."
+            },
+            {
+              "text": "Every possible combination of inputs must be run before it can be submitted",
+              "feedback": "The book calls testing every combination impractical. The point of a test suite is to choose a *small* set of inputs from which you can conclude the program is likely correct."
+            }
+          ],
+          "hint": "What does a single matching output tell you about the inputs you did *not* try?",
+          "explanation": "Testing is planned work: choose inputs that represent each kind of case (here 0, 1 and 2 dependents, and incomes at and above the standard deduction), work out the expected outputs, and compare. A program is correct only if it gives the expected output for every legitimate input.",
+          "aside": "Edsger Dijkstra put the limit of testing in one line: testing can show the presence of bugs, but never their absence. That is why test suites are chosen to make errors as likely as possible to appear.",
+          "ref": "Case Study 2-1, \"Testing\" (p. 32)"
+        }
+      ]
+    },
+    {
+      "id": "2.2-strings-assignment",
+      "title": "Strings, assignment and comments",
+      "subtitle": "Escape sequences, the empty string, how assignment binds names, legal and case-sensitive names, comments worth writing",
+      "source": "Ch. 2, section 2.2 (pp. 32–37)",
+      "intro": "A file path prints with a strange gap in it, and a variable \"forgets\" to follow another one. Six questions on how Python reads strings and names.",
+      "takeaways": [
+        "Inside a string literal, a backslash starts an escape sequence: `\\n` is one newline character, `\\t` one tab, and `\\\\` one backslash.",
+        "Assignment evaluates the right side first, then binds the name on the left to that value. A later assignment to one name never changes another.",
+        "Names are case sensitive and must start with a letter or underscore. Comments should explain purpose, not repeat what the code already says."
+      ],
+      "questions": [
+        {
+          "id": "escape-sequences",
+          "concept": "Escape sequences",
+          "level": "apply",
+          "stem": "What does this statement display?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(\"Name:\\tAda\\nPath: C:\\\\temp\")",
+            "verify": {
+              "expect": "output",
+              "output": "Name: Ada Path: C:\\temp"
+            }
+          },
+          "options": [
+            {
+              "text": "Line 1: `Name:`, a tab, `Ada`. Line 2: `Path: C:\\temp`",
+              "feedback": "`\\t` becomes a tab and `\\n` a newline. `\\\\` is the escape for a single backslash, so the second line shows one `\\`.",
+              "correct": true
+            },
+            {
+              "text": "One line, exactly as typed: `Name:\\tAda\\nPath: C:\\\\temp`",
+              "feedback": "The shell shows escape sequences when it echoes a string's *value*, but `print` displays the characters they stand for."
+            },
+            {
+              "text": "Line 1: `Name:`, a tab, `Ada`. Line 2: `Path: C:\\\\temp`",
+              "feedback": "Because `\\` starts escape sequences, a literal backslash has to be written as `\\\\`, and `print` shows it as just one."
+            },
+            {
+              "text": "Line 1: `Name:`, a tab, `Ada`. Line 2: `Path: C:\\`, a tab, `emp`",
+              "feedback": "Python reads escapes from left to right: `\\\\` is used up as one backslash first, so the `t` after it is an ordinary letter."
+            }
+          ],
+          "hint": "Read the string left to right. Each backslash, together with the character after it, forms one escape sequence.",
+          "explanation": "An escape sequence is a backslash plus one character that together stand for a single special character. `print` displays that character, not the two you typed. To get an actual backslash you must escape the backslash itself.",
+          "aside": "Windows paths are a classic trap: `\"C:\\new\"` contains a newline, because `\\n` is an escape. Python's raw strings, written `r\"C:\\new\"`, treat every backslash as an ordinary character.",
+          "ref": "Section 2.2, \"Escape Sequences\", Table 2-3 (p. 34)"
+        },
+        {
+          "id": "empty-string",
+          "concept": "The empty string versus a space",
+          "level": "apply",
+          "stem": "What does this statement display?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(\"[\" + \"\" + \"]\", \"[\" + \" \" + \"]\")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`[] [ ]`",
+              "feedback": "`\"\"` adds no characters, so the first value is `[]`. `\" \"` adds one space, giving `[ ]`. `print` puts one space between the two values.",
+              "correct": true
+            },
+            {
+              "text": "`[ ] [ ]`",
+              "feedback": "The empty string is not a blank. It contains no characters at all, so nothing appears between the first pair of brackets."
+            },
+            {
+              "text": "`[] []`",
+              "feedback": "`\" \"` is a string with one character in it, a space. Only `\"\"` is empty."
+            },
+            {
+              "text": "`[][ ]`",
+              "feedback": "The brackets are joined with `+`, but the two results are separate arguments to `print`, which separates its arguments with a space."
+            }
+          ],
+          "hint": "How many characters are inside `\"\"`, and how many inside `\" \"`?",
+          "explanation": "The empty string `\"\"` is a real string with zero characters; a single space `\" \"` is a different string with one character. The `+` operator joins strings exactly as they are, adding nothing between them.",
+          "ref": "Section 2.2, \"String Literals\" and \"String Concatenation\" (pp. 33–34)"
+        },
+        {
+          "id": "assignment-binding",
+          "concept": "How assignment binds names",
+          "level": "apply",
+          "stem": "What does this program print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "a = \"Ken\"\nb = a\na = \"Lambert\"\nprint(b)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`Ken`",
+              "feedback": "`b = a` looks up `a`'s value at that moment, `\"Ken\"`, and binds `b` to it. Rebinding `a` afterwards does not touch `b`.",
+              "correct": true
+            },
+            {
+              "text": "`Lambert`",
+              "feedback": "`b = a` is not a permanent link between the two names. It copies over the value `a` had when the line ran."
+            },
+            {
+              "text": "`a`",
+              "feedback": "Without quotes, `a` is a variable reference, so Python uses its value rather than the letter."
+            },
+            {
+              "text": "`Ken Lambert`",
+              "feedback": "Assignment replaces a name's value; it does not add to it. And nothing here joins strings with `+`."
+            }
+          ],
+          "hint": "When `b = a` runs, what does Python evaluate first, and what does it bind `b` to?",
+          "explanation": "The interpreter evaluates the right side of `=` first, then binds the name on the left to that value. The `=` sign means assignment, not equality, so it sets up no lasting relationship between names.",
+          "ref": "Section 2.2, \"Variables and the Assignment Statement\" (p. 35)"
+        },
+        {
+          "id": "legal-names",
+          "concept": "Rules for variable names",
+          "level": "apply",
+          "stem": "Which of these assignment statements runs without a syntax error?",
+          "options": [
+            {
+              "text": "`_total2 = 0`",
+              "feedback": "A name may start with an underscore and may contain digits after the first character, so `_total2` is legal.",
+              "correct": true
+            },
+            {
+              "text": "`2ndTotal = 0`",
+              "feedback": "A name must begin with a letter or an underscore. A leading digit makes Python read the start as a number."
+            },
+            {
+              "text": "`total! = 0`",
+              "feedback": "Names can contain only letters, digits and underscores. The `!` is not allowed."
+            },
+            {
+              "text": "`import = 0`",
+              "feedback": "`import` is a reserved word; Python needs it for importing modules, so it cannot be a variable name."
+            }
+          ],
+          "hint": "Check each name against three rules: the first character, the allowed characters, and the reserved words.",
+          "explanation": "A variable name must start with a letter or underscore, may contain only letters, digits and underscores, and cannot be a reserved word such as `if`, `def` or `import`.",
+          "aside": "The book writes multi-word names in camelCase, like `interestRate`. Python's official style guide, PEP 8, recommends lowercase words joined by underscores instead, like `interest_rate`. Both are legal; teams pick one and stay consistent.",
+          "ref": "Section 2.2, \"Variables and the Assignment Statement\" (p. 35)"
+        },
+        {
+          "id": "case-sensitive",
+          "concept": "Names are case sensitive",
+          "level": "analyze",
+          "stem": "What happens when this program runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "weight = 150\nprint(Weight)",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "NameError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "It stops with a `NameError` on the second line",
+              "feedback": "Python names are case sensitive, so `Weight` is a different name from `weight`. `Weight` was never assigned, and referencing an unbound name is an error.",
+              "correct": true
+            },
+            {
+              "text": "It prints `150`, since names ignore capital letters",
+              "feedback": "Python treats `WEIGHT`, `Weight` and `weight` as three different names, so `Weight` here refers to nothing."
+            },
+            {
+              "text": "It prints `Weight`, the name it was asked to print",
+              "feedback": "Without quotes, `Weight` is a variable reference, not text. Python tries to look up its value."
+            },
+            {
+              "text": "Nothing runs, since Python rejects it as a syntax error",
+              "feedback": "Both lines are well formed. The problem only appears when Python tries to look up `Weight` while running, so the first line does run."
+            }
+          ],
+          "hint": "Is `Weight` the same name as `weight` to Python?",
+          "explanation": "When Python meets a variable reference, it looks up the value bound to that exact name, capitals included. If the name has never been bound, Python signals an error at that point in the run.",
+          "ref": "Section 2.2, \"Variables and the Assignment Statement\" (p. 35)"
+        },
+        {
+          "id": "useful-comments",
+          "concept": "Writing useful comments",
+          "level": "evaluate",
+          "stem": "Which end-of-line comment best follows the book's advice on documenting code?",
+          "options": [
+            {
+              "text": "`RATE = 0.70  # Canada-to-US dollar rate`",
+              "feedback": "This explains a variable's purpose, which the bare number `0.70` cannot. It is the book's own example of a helpful comment.",
+              "correct": true
+            },
+            {
+              "text": "`count = count + 1  # Add 1 to count`",
+              "feedback": "This repeats what the code already says plainly. The book advises against documenting code whose meaning is obvious."
+            },
+            {
+              "text": "`name = input(\"Name: \")  # Run this line second`",
+              "feedback": "Line order is already visible in the file. A good comment explains *why* or *what for*, which this one does not."
+            },
+            {
+              "text": "`total = price * qty  # Fix this line later`",
+              "feedback": "A reminder to yourself says nothing about what the line does or why. Readers months from now will learn nothing from it."
+            }
+          ],
+          "hint": "Which comment tells a reader something they could not learn from the code itself?",
+          "explanation": "The interpreter ignores comments; they exist for human readers. Good documentation explains purpose: what the program is for, what each important variable means, and how tricky code works. It skips what the code already makes obvious.",
+          "ref": "Section 2.2, \"Program Comments and Docstrings\" (pp. 36–37)"
+        }
+      ]
+    },
+    {
+      "id": "2.3-numbers-and-characters",
+      "title": "Numeric data types and character sets",
+      "subtitle": "Choosing int or float, Python's unbounded integers, scientific notation, float precision, ord and chr",
+      "source": "Ch. 2, section 2.3 (pp. 37–39)",
+      "intro": "Why does `0.1 + 0.2` not print `0.3`, and how can a letter be a number? Six questions on how Python stores numbers and characters.",
+      "takeaways": [
+        "Use `int` for whole counts and `float` for measurements with a fractional part. Python's integers grow as large as memory allows.",
+        "A float holds only about 16 significant digits, and most decimal fractions are stored approximately, so results can be off in the last digit.",
+        "Every character maps to an integer code: `ord` gives the code and `chr` gives the character back, so you can do arithmetic on letters."
+      ],
+      "questions": [
+        {
+          "id": "choose-type",
+          "concept": "Choosing int or float",
+          "level": "apply",
+          "stem": "A program stores the number of students enrolled in a section and the average quiz score for that section. Which data types fit these two values best?",
+          "options": [
+            {
+              "text": "`int` for the enrollment, `float` for the average",
+              "feedback": "Enrollment is a count of whole students. An average usually has a fractional part, such as 87.5, so it needs a float.",
+              "correct": true
+            },
+            {
+              "text": "`float` for both, since both are numbers",
+              "feedback": "Both are numbers, but they are different kinds. A count of students can never be 31.4, so `int` describes it exactly."
+            },
+            {
+              "text": "`int` for both, rounding the average to keep it simple",
+              "feedback": "Rounding throws away information the program may need, such as the difference between 87.4 and 87.6."
+            },
+            {
+              "text": "`str` for both, since `input` returns strings",
+              "feedback": "`input` does return strings, but you convert them to numbers before storing or computing. Arithmetic on strings does not add."
+            }
+          ],
+          "hint": "Can either value have a fractional part?",
+          "explanation": "Choose the type that matches the data: `int` for whole numbers such as counts, and `float` for real numbers that can have a fractional part. The type decides which values a variable can hold and which operations make sense on it.",
+          "ref": "Section 2.3, \"Integers\" and \"Floating-Point Numbers\" (p. 37); Exercise 2-3 (p. 39)"
+        },
+        {
+          "id": "unbounded-int",
+          "concept": "Python's integers have no fixed limit",
+          "level": "apply",
+          "stem": "In many languages, the most common `int` stops at 2,147,483,647. What does this Python statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(2147483647 + 1)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`2147483648`",
+              "feedback": "A Python integer is limited only by your computer's memory, so it simply grows by one.",
+              "correct": true
+            },
+            {
+              "text": "`-2147483648`",
+              "feedback": "That wraparound happens in languages whose `int` has a fixed size. Python's integers do not."
+            },
+            {
+              "text": "`2.147483648e9`",
+              "feedback": "Python does not switch an integer to a float when it gets large. Adding two `int` values gives an `int`."
+            },
+            {
+              "text": "An `OverflowError`",
+              "feedback": "Integer arithmetic in Python never overflows; the book suggests trying `2147483647 ** 100` to see a number many lines long."
+            }
+          ],
+          "hint": "According to the book, what limits the size of a Python integer?",
+          "explanation": "The range of integers is infinite in mathematics, and Python comes close: its integers can be as large as memory allows. Many other languages store integers in a fixed number of bits, which caps them at 2³¹ − 1.",
+          "aside": "In December 2014, a music video passed 2,147,483,647 views and outgrew YouTube's view counter, which stored the count as a 32-bit integer. YouTube switched to a 64-bit counter, whose limit is over 9 quintillion.",
+          "ref": "Section 2.3, \"Integers\" (p. 37)"
+        },
+        {
+          "id": "scientific-notation",
+          "concept": "Scientific notation",
+          "level": "apply",
+          "stem": "What does this statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(3.78e-3)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`0.00378`",
+              "feedback": "`e-3` means \"times 10 to the −3\", which moves the decimal point three places to the left.",
+              "correct": true
+            },
+            {
+              "text": "`3780.0`",
+              "feedback": "That is `3.78e3`. The minus sign in the exponent moves the decimal point left, making the number smaller."
+            },
+            {
+              "text": "`0.0378`",
+              "feedback": "This moves the decimal point only two places. `e-3` means three places."
+            },
+            {
+              "text": "`3.78e-3`",
+              "feedback": "Scientific notation is just another way to write the literal. When printing a number this size, Python uses ordinary decimal notation."
+            }
+          ],
+          "hint": "Which way does a negative exponent move the decimal point, and by how many places?",
+          "explanation": "In a float literal, `e` followed by an integer means \"times 10 to that power.\" A positive exponent moves the decimal point right; a negative one moves it left. Table 2-4 shows the same value, 3.78, written five ways.",
+          "ref": "Section 2.3, \"Floating-Point Numbers\", Table 2-4 (p. 38)"
+        },
+        {
+          "id": "float-precision",
+          "concept": "Floating-point precision",
+          "level": "analyze",
+          "stem": "What does this statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(0.1 + 0.2)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`0.30000000000000004`",
+              "feedback": "0.1 and 0.2 cannot be stored exactly in binary, so each is a close approximation, and the tiny errors show up in the 17th significant digit.",
+              "correct": true
+            },
+            {
+              "text": "`0.3`",
+              "feedback": "On paper it is 0.3, but a float has limited precision. The book's own example, `32.153600000000004`, shows the same kind of leftover."
+            },
+            {
+              "text": "`0.2999999999999999`",
+              "feedback": "The stored approximations of 0.1 and 0.2 are both a hair too large, so their sum lands slightly *above* 0.3, not below."
+            },
+            {
+              "text": "`0.3000000000000000`",
+              "feedback": "Python prints the shortest form that identifies a float exactly, so it would never print trailing zeros like these."
+            }
+          ],
+          "hint": "Can a computer store every decimal fraction exactly with a fixed number of binary digits?",
+          "explanation": "A computer's memory limits a float's precision as well as its range: about 16 significant digits. Most decimal fractions have no exact binary form, so arithmetic on them can be off in the last digit. Never test floats for exact equality.",
+          "aside": "This is why money is often not stored as a float. Python's `decimal` module does arithmetic in base 10, so `Decimal(\"0.1\") + Decimal(\"0.2\")` is exactly `Decimal(\"0.3\")`.",
+          "ref": "Section 2.3, \"Floating-Point Numbers\" (p. 37); Section 2.4, the `float(radius)` session (p. 41)"
+        },
+        {
+          "id": "ord-chr",
+          "concept": "ord and chr",
+          "level": "apply",
+          "stem": "Using the book's facts that `ord('a')` is 97 and `ord('A')` is 65, what does this statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(chr(ord('a') - 32))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`A`",
+              "feedback": "`ord('a')` is 97, and 97 − 32 is 65. `chr(65)` turns the code back into the character `'A'`.",
+              "correct": true
+            },
+            {
+              "text": "`65`",
+              "feedback": "65 is the value of `ord('a') - 32`, but `chr` then converts that code back into a character."
+            },
+            {
+              "text": "`@`",
+              "feedback": "That is code 64, one below the answer, as if `ord('a')` were 96. The book gives 97, and 97 − 32 is 65, the code for `'A'`."
+            },
+            {
+              "text": "A `TypeError`: a letter cannot be subtracted",
+              "feedback": "You cannot subtract from `'a'` directly, but `ord('a')` is the integer 97, and integers subtract fine."
+            }
+          ],
+          "hint": "Evaluate from the inside out: what does `ord('a')` return, and what type is it?",
+          "explanation": "A character set maps each character to an integer. `ord` gives a character's code and `chr` gives the character for a code, so arithmetic on codes moves through the alphabet: `chr(ord('A') + 3)` is `'D'`.",
+          "ref": "Section 2.3, \"Character Sets\" (pp. 38–39)"
+        },
+        {
+          "id": "char-is-str",
+          "concept": "Characters are strings in Python",
+          "level": "understand",
+          "stem": "The book writes `'H'` with single quotes and `\"Hi!\"` with double quotes. What does that difference mean to Python?",
+          "options": [
+            {
+              "text": "Nothing; both are values of type `str`",
+              "feedback": "Python has no separate character type. The quote style is only the book's convention for telling you which strings are single characters.",
+              "correct": true
+            },
+            {
+              "text": "`'H'` is a character type, and `\"Hi!\"` is a string type",
+              "feedback": "Some languages, such as Java and C, do have a separate character type. In Python, a one-character string is still a string."
+            },
+            {
+              "text": "Single quotes make a string that cannot be printed",
+              "feedback": "`print('H')` displays `H` just as well. The quote style does not change what you can do with the value."
+            },
+            {
+              "text": "Single quotes can hold only one character at a time",
+              "feedback": "`'Hello there!'` is a valid single-quoted string. Either quote style can hold any number of characters."
+            }
+          ],
+          "hint": "Does Python have a separate data type for single characters?",
+          "explanation": "In Python, character literals look just like string literals and have the string type. Single and double quotes produce exactly the same kind of value; you choose between them mainly so the string can contain the other kind of quotation mark.",
+          "ref": "Section 2.3, \"Character Sets\" (p. 38); Section 2.2, \"String Literals\" (p. 33)"
+        }
+      ]
+    },
+    {
+      "id": "2.4-expressions",
+      "title": "Arithmetic expressions and type conversion",
+      "subtitle": "Precedence, the three division operators, the type of a result, int versus round, mixing strings and numbers",
+      "source": "Ch. 2, section 2.4 (pp. 39–43)",
+      "intro": "`-3 ** 2` is −9, `7 / 7` is a float, and `\"$\" + 1000.55` crashes. Six questions on how Python evaluates the expressions you write.",
+      "takeaways": [
+        "Precedence runs `**`, then unary `-`, then `* / // %`, then `+ -`. Equal operators go left to right, except `**`, which goes right to left.",
+        "`/` always gives a float, `//` gives the whole-number quotient and `%` the remainder; mixing an `int` with a `float` gives a `float`.",
+        "Python is strongly typed: it will not add a string to a number. Convert explicitly with `int`, `float` or `str`, and remember `int` truncates while `round` rounds."
+      ],
+      "questions": [
+        {
+          "id": "precedence",
+          "concept": "Operator precedence",
+          "level": "apply",
+          "stem": "What does this statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(-3 ** 2 + 10 // 4)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`-7`",
+              "feedback": "`**` comes before negation, so `-3 ** 2` is −(9) = −9. `10 // 4` is 2. Then −9 + 2 = −7.",
+              "correct": true
+            },
+            {
+              "text": "`11`",
+              "feedback": "This applies the minus sign first, giving (−3)² = 9. In Python, exponentiation binds tighter than unary negation."
+            },
+            {
+              "text": "`-6.5`",
+              "feedback": "This treats `//` like `/`. The quotient operator `//` gives the whole-number part, 2, not 2.5."
+            },
+            {
+              "text": "`0`",
+              "feedback": "This adds before dividing: (−9 + 10) // 4. Like `*`, the `//` operator is evaluated before `+`."
+            }
+          ],
+          "hint": "List the operators in the order Python applies them. Which comes first: `**` or the minus sign?",
+          "explanation": "Exponentiation has the highest precedence, then unary negation, then multiplication and both kinds of division and remainder, then addition and subtraction. Parentheses override all of this, so write `(-3) ** 2` when you mean it.",
+          "ref": "Section 2.4, \"Arithmetic Expressions\", Table 2-7 (p. 40)"
+        },
+        {
+          "id": "division-operators",
+          "concept": "/, // and %",
+          "level": "apply",
+          "stem": "A program converts minutes into hours. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "minutes = 135\nprint(minutes // 60, minutes % 60, minutes / 60)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`2 15 2.25`",
+              "feedback": "`//` gives the whole hours (2), `%` the leftover minutes (15), and `/` the exact quotient as a float (2.25).",
+              "correct": true
+            },
+            {
+              "text": "`2.25 15 2.25`",
+              "feedback": "`//` is the quotient operator: with two integers it gives an integer, the whole number of times 60 fits into 135."
+            },
+            {
+              "text": "`2 0.25 2.25`",
+              "feedback": "`%` is the remainder, not the fractional part: 135 − 2 × 60 leaves 15 minutes."
+            },
+            {
+              "text": "`2 15 2`",
+              "feedback": "In Python 3, `/` is exact division and always produces a float, even when both operands are integers."
+            }
+          ],
+          "hint": "Which operator answers \"how many whole times?\", which answers \"how much is left over?\", and which gives the exact answer?",
+          "explanation": "Python has three division operators. `//` gives the integer quotient, `%` gives the remainder, and `/` gives the exact result as a float. Together, `//` and `%` split a quantity into whole units and leftovers.",
+          "aside": "With negative numbers, `//` rounds *down*, not toward zero: `-7 // 2` is `-4`, and `-7 % 2` is `1`. The two always fit together so that `(a // b) * b + a % b == a`.",
+          "ref": "Section 2.4, Table 2-6 (p. 40) and the paragraph on result types (p. 41)"
+        },
+        {
+          "id": "result-type",
+          "concept": "The type of an expression's value",
+          "level": "understand",
+          "stem": "Which of these expressions produces a value of type `int`?",
+          "options": [
+            {
+              "text": "`9 // 2`",
+              "feedback": "Both operands are integers and `//` gives the integer quotient, so the result is the `int` 4.",
+              "correct": true
+            },
+            {
+              "text": "`8 / 2`",
+              "feedback": "`8 / 2` is 4.0. Exact division always produces a float, even when the division comes out even."
+            },
+            {
+              "text": "`4 * 1.0`",
+              "feedback": "When the operands have different types, the `int` is converted to the more general `float` first, so the result is 4.0."
+            },
+            {
+              "text": "`2.0 ** 2`",
+              "feedback": "Exponentiation follows the same rule as the other operators: a `float` operand makes the result a `float`, 4.0."
+            }
+          ],
+          "hint": "Check two things for each: the types of the operands, and whether the operator is exact division.",
+          "explanation": "When both operands share a numeric type, the result has that type too, with one exception: `/` always produces a float. When the types differ, the less general `int` is converted to the more general `float` before the operation.",
+          "ref": "Section 2.4, the paragraph on result types and \"Mixed-Mode Arithmetic and Type Conversions\" (p. 41)"
+        },
+        {
+          "id": "int-vs-round",
+          "concept": "Truncating with int, rounding with round",
+          "level": "analyze",
+          "stem": "What does this statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(int(6.75), round(6.75), int(-6.75))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`6 7 -6`",
+              "feedback": "`int` truncates, chopping off the fractional part, so 6.75 becomes 6 and −6.75 becomes −6. `round` goes to the nearest whole number, 7.",
+              "correct": true
+            },
+            {
+              "text": "`7 7 -7`",
+              "feedback": "This assumes `int` rounds. It does not: it simply drops everything after the decimal point."
+            },
+            {
+              "text": "`6 7 -7`",
+              "feedback": "This treats `int` as rounding down. Chopping off `.75` from −6.75 leaves −6, which is *up* on the number line."
+            },
+            {
+              "text": "`6 6 -6`",
+              "feedback": "`round` with one argument returns the *nearest* whole number, and 6.75 is closer to 7."
+            }
+          ],
+          "hint": "Does `int` look at the fractional part at all, or does it just remove it?",
+          "explanation": "Converting a float with `int` truncates: the fractional part is chopped off, which moves positive numbers down and negative numbers up, toward zero. To get the nearest whole number, use `round`.",
+          "aside": "`round` breaks exact ties toward the even neighbor: `round(2.5)` is `2` and `round(3.5)` is `4`. This \"banker's rounding\" stops a long series of halves from always pushing a total upward.",
+          "ref": "Section 2.4, Table 2-8 and the `int(6.75)` session (p. 42)"
+        },
+        {
+          "id": "str-plus-float",
+          "concept": "Strong typing and str",
+          "level": "apply",
+          "stem": "What happens when this program runs, and what is the right fix?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "profit = 1000.55\nprint(\"$\" + profit)",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `TypeError`; write `\"$\" + str(profit)` instead",
+              "feedback": "Python will not apply `+` to a string and a float. `str(profit)` makes the string `\"1000.55\"`, which concatenates with `\"$\"`.",
+              "correct": true
+            },
+            {
+              "text": "It prints `$1000.55`; Python converts the float for you",
+              "feedback": "Python converts automatically only between numeric types, such as `int` to `float`. It never turns a number into text on its own."
+            },
+            {
+              "text": "A `TypeError`; write `float(\"$\") + profit` instead",
+              "feedback": "The error is right, but the fix converts the wrong way: `\"$\"` is not a number, so `float(\"$\")` raises a `ValueError`."
+            },
+            {
+              "text": "A syntax error, since `$` cannot appear in a string",
+              "feedback": "A string literal can contain any character. The line is well formed; the problem only shows up when `+` runs."
+            }
+          ],
+          "hint": "Which kind of automatic conversion does Python do, and which kind does it refuse?",
+          "explanation": "Python is strongly typed: before applying an operator, it checks that the operands' types make sense together, and halts with an error if they do not. To build output text from a number, convert the number with `str` first.",
+          "ref": "Section 2.4, \"Mixed-Mode Arithmetic and Type Conversions\" (p. 42)"
+        },
+        {
+          "id": "semantic-error",
+          "concept": "Syntax errors versus semantic errors",
+          "level": "analyze",
+          "stem": "What happens when this script runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(\"Start\")\ntotal = 45 / 0\nprint(\"Done\")",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "Start",
+                "ZeroDivisionError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "`Start` prints, then the run halts with an error on line 2",
+              "feedback": "`45 / 0` is well formed, so Python starts running. The problem is semantic: when line 2 is carried out, the division cannot be done, and the program stops there.",
+              "correct": true
+            },
+            {
+              "text": "Nothing prints, because Python rejects the script before it starts",
+              "feedback": "That is what a *syntax* error does. Each line here is well formed, so the script starts and the error appears only when line 2 runs."
+            },
+            {
+              "text": "`Start` and `Done` both print, and `total` is set to `0`",
+              "feedback": "Python does not quietly replace an impossible result. Dividing by zero is an error that halts the program."
+            },
+            {
+              "text": "`Start` and `Done` both print, and `total` is set to infinity",
+              "feedback": "Python's `/` does not return infinity for a zero divisor. It raises an error and stops at that line."
+            }
+          ],
+          "hint": "Is `45 / 0` badly *formed*, or well formed but impossible to *carry out*?",
+          "explanation": "Syntax is the set of rules for well-formed code; semantics is what the code means. A syntax error stops the program before it runs at all. A semantic error is detected only when Python tries to carry out a well-formed statement that has no meaning, such as dividing by zero.",
+          "ref": "Section 2.4, Table 2-7 and the discussion of syntax and semantics (pp. 40–41)"
+        }
+      ]
+    },
+    {
+      "id": "2.5-functions-and-modules",
+      "title": "Using functions and modules",
+      "subtitle": "Arguments and return values, import math versus from math import, program structure, running a script",
+      "source": "Ch. 2, section 2.5 (pp. 43–47)",
+      "intro": "A script imports `math`, calls `sqrt` and crashes on the very next line. Six questions on calling functions, importing them and organizing a program.",
+      "takeaways": [
+        "A function call evaluates its arguments first, then returns a value that can be used inside a larger expression.",
+        "`import math` gives you qualified names like `math.sqrt`; `from math import sqrt` lets you write `sqrt`. The qualified form is usually clearer.",
+        "A well-structured script runs top to bottom: docstring, imports, constants, inputs, processing, output."
+      ],
+      "questions": [
+        {
+          "id": "args-and-returns",
+          "concept": "Arguments and return values",
+          "level": "apply",
+          "stem": "What does this statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(abs(4 - 9) + round(2.567, 1))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`7.6`",
+              "feedback": "`4 - 9` is evaluated first, so `abs` gets −5 and returns 5. `round(2.567, 1)` rounds to one decimal place, 2.6. Then 5 + 2.6 is 7.6.",
+              "correct": true
+            },
+            {
+              "text": "`8`",
+              "feedback": "This rounds 2.567 to the nearest whole number. The optional second argument, 1, asks for one decimal place instead."
+            },
+            {
+              "text": "`-2.4`",
+              "feedback": "This skips `abs`. It returns the absolute value of its argument, so −5 becomes 5."
+            },
+            {
+              "text": "`7.567`",
+              "feedback": "The value returned by `round`, not the original number, is what gets added. `round(2.567, 1)` returns 2.6."
+            }
+          ],
+          "hint": "Work from the inside out: evaluate each argument, then replace each call with the value it returns.",
+          "explanation": "When an argument is an expression, Python evaluates it first and passes the value to the function. The function's returned value then takes the call's place in the larger expression. Optional arguments, like `round`'s second one, change the default behavior.",
+          "ref": "Section 2.5, \"Calling Functions: Arguments and Return Values\" (p. 43)"
+        },
+        {
+          "id": "qualified-names",
+          "concept": "Using a module's resources after import",
+          "level": "analyze",
+          "stem": "What happens when this program runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "import math\nprint(sqrt(16))",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "NameError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `NameError`; it must be called as `math.sqrt`",
+              "feedback": "`import math` makes only the name `math` available. Its resources are reached through the qualifier, as `math.sqrt(16)`.",
+              "correct": true
+            },
+            {
+              "text": "It prints `4.0`, since the whole `math` module is imported",
+              "feedback": "Importing the module does not put its functions' names into your program. Without the `math.` qualifier, `sqrt` is undefined."
+            },
+            {
+              "text": "It prints `4`, since 16 is a perfect square number",
+              "feedback": "Even written correctly as `math.sqrt(16)`, the result is the float `4.0`. Here the call never happens at all."
+            },
+            {
+              "text": "An `ImportError`; `sqrt` is not part of `math`",
+              "feedback": "The import succeeds, and `sqrt` is in the `math` module, as `dir(math)` shows. The error is in how it is referenced."
+            }
+          ],
+          "hint": "After `import math`, which name has your program actually learned?",
+          "explanation": "`import math` binds just the module's name. To use one of its resources, write the module name as a qualifier, a dot and the resource name: `math.pi`, `math.sqrt(2)`. `dir(math)` lists what is available.",
+          "ref": "Section 2.5, \"The math Module\" (p. 44)"
+        },
+        {
+          "id": "from-import",
+          "concept": "Importing individual resources",
+          "level": "apply",
+          "stem": "What does this program print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "from math import pi, sqrt\nprint(round(pi, 2), sqrt(16))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`3.14 4.0`",
+              "feedback": "`from math import pi, sqrt` lets you use both names without a qualifier. `round(pi, 2)` is 3.14, and `sqrt` always returns a float.",
+              "correct": true
+            },
+            {
+              "text": "`3.14 4`",
+              "feedback": "`sqrt` returns a float even when the answer is a whole number, so it prints `4.0`."
+            },
+            {
+              "text": "`3.141592653589793 4.0`",
+              "feedback": "`round(pi, 2)` rounds to two decimal places, so only `3.14` is printed."
+            },
+            {
+              "text": "A `NameError`; `pi` still needs the `math.` qualifier",
+              "feedback": "That is true after `import math`. Here `from math import pi, sqrt` brings those two names directly into the program."
+            }
+          ],
+          "hint": "Which names does this form of `import` make available, and does it require a qualifier?",
+          "explanation": "`from <module> import <names>` brings the listed resources into your program so you can use them without the module qualifier. It is handy when you use a couple of resources often.",
+          "ref": "Section 2.5, \"The math Module\" (pp. 44–45)"
+        },
+        {
+          "id": "why-qualify",
+          "concept": "Choosing an import style",
+          "level": "evaluate",
+          "stem": "A teammate starts every script with `from math import *` to avoid typing `math.`. What is the book's reason for generally preferring `import math` instead?",
+          "options": [
+            {
+              "text": "The qualifier shows where a name comes from and keeps same-named functions apart",
+              "feedback": "The book prefers the qualified form for both reasons: it reminds the reader of a function's purpose, and it lets Python tell apart functions with the same name from different modules.",
+              "correct": true
+            },
+            {
+              "text": "`import *` brings in only the functions, leaving out constants such as `pi`",
+              "feedback": "`from math import *` imports *all* of the module's resources, constants included."
+            },
+            {
+              "text": "Qualified names make the program run noticeably faster than unqualified ones",
+              "feedback": "The book's reasons are about readability and avoiding name clashes, not speed."
+            },
+            {
+              "text": "Functions from `math` can only be called with the qualifier in front",
+              "feedback": "Both `from math import sqrt` and `from math import *` let you call `sqrt` without a qualifier. It is a style choice, not a rule."
+            }
+          ],
+          "hint": "Imagine two modules that each define a function with the same name. What does the qualifier tell Python, and the reader?",
+          "explanation": "Importing just the module's name and using qualifiers is the preferred style. Each call then says which module it comes from, which helps readers, and two modules can define the same name without one silently replacing the other.",
+          "aside": "Type `import this` in the shell. The module prints *The Zen of Python*, Tim Peters's 19 guidelines for Python's design. The last one praises namespaces, the idea that qualifiers like `math.` rely on.",
+          "ref": "Section 2.5, \"The math Module\" (p. 45)"
+        },
+        {
+          "id": "program-structure",
+          "concept": "Program format and structure",
+          "level": "apply",
+          "stem": "A script has six sections: **A** prompt for inputs, **B** docstring, **C** import modules, **D** display results, **E** process the inputs, **F** initialize constants. Which order follows the book's recommended structure?",
+          "options": [
+            {
+              "text": "B, C, F, A, E, D",
+              "feedback": "Docstring first, then imports, then the commented constants, then input, processing and output. This is the order of the tax program in the case study.",
+              "correct": true
+            },
+            {
+              "text": "C, B, F, A, E, D",
+              "feedback": "The introductory docstring comes before everything else, imports included. It is the first thing a programmer reads."
+            },
+            {
+              "text": "B, F, C, A, E, D",
+              "feedback": "Imports come right after the docstring, before the variables are initialized, so every module the program needs is in place."
+            },
+            {
+              "text": "B, C, A, F, E, D",
+              "feedback": "Important constants are initialized before the program asks for input, as the tax program does with `TAX_RATE`."
+            }
+          ],
+          "hint": "The book lists the sections in the order a reader needs them: what the program is, what it uses, then input, processing, output.",
+          "explanation": "A simple program should read like an essay: a docstring stating the author and purpose, then imports, then important variables with comments, then input, processing and output, with blank lines separating the sections.",
+          "ref": "Section 2.5, \"Program Format and Structure\" (p. 46)"
+        },
+        {
+          "id": "fly-by-window",
+          "concept": "Running a script outside IDLE",
+          "level": "apply",
+          "stem": "A student double-clicks their finished script in Windows. A window flashes open with the output and closes before they can read it. What does the book suggest?",
+          "options": [
+            {
+              "text": "End the script with an `input(...)` call that waits for Enter",
+              "feedback": "The window closes as soon as the script ends. A final `input` keeps the script running until the user presses Enter, so the output stays visible.",
+              "correct": true
+            },
+            {
+              "text": "End the script with an empty `print()` call to hold the output",
+              "feedback": "`print()` only outputs a blank line and finishes at once, so the window still closes immediately afterward."
+            },
+            {
+              "text": "Launch it with `python` rather than `python3` to keep it open",
+              "feedback": "The book warns the opposite: `python` might launch Python 2, which cannot run all of the book's programs. And it would not keep the window open."
+            },
+            {
+              "text": "Add a final `#` comment that asks Windows to keep it open",
+              "feedback": "The interpreter ignores comments entirely, so a comment cannot make the program do anything, including pause."
+            }
+          ],
+          "hint": "What keeps a program running until the user does something?",
+          "explanation": "A script launched by double-clicking opens a terminal window that closes as soon as the script finishes. Ending the script with an `input` statement makes it wait for the Enter key, so the user can read the output first.",
+          "ref": "Section 2.5, \"Running a Script from a Terminal Command Prompt\" (p. 47)"
+        }
+      ]
+    }
+  ]
+}

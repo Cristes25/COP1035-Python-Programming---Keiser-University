@@ -1,0 +1,6 @@
+MC	What does this statement print?<pre>print(-3 ** 2 + 10 // 4)</pre>	11	incorrect	-6.5	incorrect	-7	correct	0	incorrect
+MC	A program converts minutes into hours. What does it print?<pre>minutes = 135<br>print(minutes // 60, minutes % 60, minutes / 60)</pre>	2.25 15 2.25	incorrect	2 15 2.25	correct	2 0.25 2.25	incorrect	2 15 2	incorrect
+MC	Which of these expressions produces a value of type int?	9 // 2	correct	8 / 2	incorrect	4 * 1.0	incorrect	2.0 ** 2	incorrect
+MC	What does this statement print?<pre>print(int(6.75), round(6.75), int(-6.75))</pre>	7 7 -7	incorrect	6 7 -6	correct	6 7 -7	incorrect	6 6 -6	incorrect
+MC	What happens when this program runs, and what is the right fix?<pre>profit = 1000.55<br>print("$" + profit)</pre>	A TypeError; write "$" + str(profit) instead	correct	It prints $1000.55; Python converts the float for you	incorrect	A TypeError; write float("$") + profit instead	incorrect	A syntax error, since $ cannot appear in a string	incorrect
+MC	What happens when this script runs?<pre>print("Start")<br>total = 45 / 0<br>print("Done")</pre>	Nothing prints, because Python rejects the script before it starts	incorrect	Start and Done both print, and total is set to 0	incorrect	Start and Done both print, and total is set to infinity	incorrect	Start prints, then the run halts with an error on line 2	correct
