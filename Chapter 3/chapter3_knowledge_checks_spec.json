@@ -1,0 +1,904 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 3: Loops and Selection Statements",
+  "collection_intro": "Short, ungraded practice checks for sections 3.1–3.4 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+  "theme": "harbor",
+  "background": "pattern",
+  "checks": [
+    {
+      "id": "3.1-for-loop",
+      "title": "Definite iteration: the for loop",
+      "subtitle": "range bounds and steps, off-by-one errors, traversing sequences, accumulators, augmented assignment",
+      "source": "Ch. 3, section 3.1 (pp. 53–58)",
+      "intro": "You asked for the numbers 1 through 5 and got four of them, with no error message. Six questions on how a `for` loop decides how many times to run, and what it hands you on each pass.",
+      "takeaways": [
+        "`range(a, b)` counts from `a` up to `b - 1`, so to include an upper bound you write `upper + 1`. With a negative step it counts down and stops before reaching the second argument.",
+        "A `for` loop binds its variable to each item of a sequence in turn: the numbers from `range`, the characters of a string, the items of a list.",
+        "An accumulator starts before the loop at the value that changes nothing (0 for a sum, 1 for a product) and is updated in the body. Augmented assignment evaluates its whole right side first."
+      ],
+      "questions": [
+        {
+          "id": "off-by-one",
+          "concept": "Off-by-one errors and range's upper bound",
+          "level": "analyze",
+          "stem": "A student wants to print the numbers 1 through 5 on one line. What happens when this runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "for count in range(1, 5):\n    print(count, end=\" \")",
+            "verify": {
+              "expect": "output",
+              "output": "1 2 3 4"
+            }
+          },
+          "options": [
+            {
+              "text": "It prints `1 2 3 4`, and Python reports nothing wrong",
+              "feedback": "`range(1, 5)` stops one short of its second argument, so 5 is never produced. Because the code is grammatically fine, Python has nothing to report: this is a logic error that only a careful look at the output reveals.",
+              "correct": true
+            },
+            {
+              "text": "It prints `1 2 3 4 5`, as the student intended",
+              "feedback": "This reads the second argument of `range` as the last value. The count actually stops at the second argument minus 1, so the header needs `range(1, 6)`."
+            },
+            {
+              "text": "It prints `1 2 3 4`, then raises an error about the bound",
+              "feedback": "The output is right, but Python cannot know which bound you meant. A loop that runs one time too few is a logic error, and the interpreter detects only syntax and runtime errors."
+            },
+            {
+              "text": "It prints `0 1 2 3 4`, starting from zero",
+              "feedback": "A `range` starts at 0 only when you give it a single argument. With two arguments, the first one is the starting value."
+            }
+          ],
+          "hint": "What is the last number `range(1, 5)` produces? And could Python know that you wanted one more?",
+          "explanation": "With two arguments, `range` counts from the first argument up to the second argument minus 1, so including an upper bound means writing `upper + 1`. Getting this wrong makes a loop run one time too many or too few, an off-by-one error. It is a logic error: the program runs, so only the output gives it away.",
+          "aside": "Programmers also call this a *fencepost error*: a 100-foot fence with a post every 10 feet needs 11 posts, not 10. Counting the gaps instead of the posts is the same slip as counting to `b` instead of `b - 1`.",
+          "ref": "Section 3.1, \"Count-Controlled Loops\" (p. 55) and \"Loop Errors: Off-by-One Error\" (p. 56)"
+        },
+        {
+          "id": "accumulator-indent",
+          "concept": "Accumulators and the loop body",
+          "level": "apply",
+          "stem": "What does this program print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "total = 0\nfor n in range(1, 5):\n    total += n * 2\nprint(total)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`20`",
+              "feedback": "`n` takes the values 1, 2, 3 and 4, so the loop adds 2 + 4 + 6 + 8 to `total`. The `print` is not indented, so it runs once, after the loop ends.",
+              "correct": true
+            },
+            {
+              "text": "`30`",
+              "feedback": "This includes 5 in the range. `range(1, 5)` stops at 4, so the last amount added is 8, not 10."
+            },
+            {
+              "text": "`8`",
+              "feedback": "This treats `+=` as plain assignment, keeping only the last value. `total += n * 2` adds to the running total; it does not replace it."
+            },
+            {
+              "text": "`2 6 12 20`",
+              "feedback": "These are the running totals, which you would see only if `print` were indented under the header. Because it lines up with `for`, it is outside the loop body and runs once."
+            }
+          ],
+          "hint": "List the values `n` takes. Then look at the indentation of `print`: is it inside the loop body?",
+          "explanation": "The loop body is exactly the indented lines under the header; the first unindented line runs after the loop finishes. An accumulator such as `total` is initialized before the loop and updated on every pass, so after the loop it holds the combined result.",
+          "ref": "Section 3.1, \"Executing a Statement a Given Number of Times\" (p. 54) and the summation example (pp. 55–56)"
+        },
+        {
+          "id": "count-down",
+          "concept": "Stepping and counting down with range",
+          "level": "apply",
+          "stem": "What does this loop print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "for count in range(9, 0, -2):\n    print(count, end=\" \")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`9 7 5 3 1`",
+              "feedback": "The count starts at 9 and drops by 2 each pass. The next value after 1 would be −1, which is past the stopping value 0, so the loop ends after printing 1.",
+              "correct": true
+            },
+            {
+              "text": "`9 7 5 3`",
+              "feedback": "This stops before 1, as if 1 were the excluded bound. The excluded value is the second argument, 0, and 1 has not reached it yet."
+            },
+            {
+              "text": "`8 6 4 2`",
+              "feedback": "This applies the \"minus 1\" rule to the start. The first argument is always included; only the second argument is excluded."
+            },
+            {
+              "text": "`9 7 5 3 1 -1`",
+              "feedback": "This keeps going until the count passes 0. A `range` never produces its second argument or anything beyond it, so −1 is not generated."
+            }
+          ],
+          "hint": "Which argument of `range` is always produced, and which one is never reached?",
+          "explanation": "The third argument of `range` is the step between values. With a negative step, the count runs from the first argument down toward the second, stopping before it reaches the second argument. So the first argument is the upper bound and the second should be the lower bound minus 1.",
+          "ref": "Section 3.1, \"Specifying the Steps in the Range\" (p. 57) and \"Loops That Count Down\" (p. 58)"
+        },
+        {
+          "id": "traverse-string",
+          "concept": "Traversing a sequence",
+          "level": "understand",
+          "stem": "What does this loop print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "for character in \"Hi!\":\n    print(character, end=\"-\")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`H-i-!-`",
+              "feedback": "On each pass, `character` is bound to the next character of the string, and `print` writes it followed by the `end` text, a dash.",
+              "correct": true
+            },
+            {
+              "text": "`Hi!-`",
+              "feedback": "This treats the loop variable as the whole string, so the body would run once. A string is a sequence, and the loop visits it one character at a time."
+            },
+            {
+              "text": "`0-1-2-`",
+              "feedback": "This assumes the loop variable is a position number, as with `range`. When the loop runs over a string, the variable holds the characters themselves."
+            },
+            {
+              "text": "`H-i-!`",
+              "feedback": "This puts the dash only between characters. The `end` text is written after every call to `print`, including the last one."
+            }
+          ],
+          "hint": "What is `character` bound to on the first pass? And what does `end=\"-\"` add after each `print`?",
+          "explanation": "A `for` loop can traverse any sequence: on each pass its variable is bound to the next item, from the first to the last. For `range` the items are integers; for a string they are characters; for a list they are its elements.",
+          "aside": "`range` never builds its numbers all at once. In Python 3, `range(1000000000)` takes the same small amount of memory as `range(4)`, because it works out each number when the loop asks for it. That is why the book wraps it in `list(...)` to show its contents.",
+          "ref": "Section 3.1, \"Traversing the Contents of a Data Sequence\" (p. 57)"
+        },
+        {
+          "id": "augmented-assignment",
+          "concept": "Augmented assignment",
+          "level": "apply",
+          "stem": "What does this program print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "x = 5\nx *= 2 + 1\nx -= 3\nprint(x)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`12`",
+              "feedback": "The whole right side is evaluated first: `x *= 2 + 1` means `x = x * (2 + 1)`, which is 15. Then `x -= 3` gives 12.",
+              "correct": true
+            },
+            {
+              "text": "`8`",
+              "feedback": "This reads `x *= 2 + 1` as `x * 2 + 1`, which is 11. Augmented assignment has the same low precedence as `=`, so the right side is computed first, as a unit."
+            },
+            {
+              "text": "`0`",
+              "feedback": "This treats `*=` as plain assignment, setting `x` to 3. The `*` means the old value of `x` is multiplied by the right side."
+            },
+            {
+              "text": "`-12`",
+              "feedback": "This reads `x -= 3` as `x = 3 - x`. The variable is always the left operand: `x -= 3` is `x = x - 3`."
+            }
+          ],
+          "hint": "Rewrite each augmented assignment in the long form `x = x <operator> (...)`. What goes inside the parentheses?",
+          "explanation": "`<variable> <operator>= <expression>` is shorthand for `<variable> = <variable> <operator> <expression>`, with the expression evaluated first because augmented assignment has the same precedence as `=`. The variable is always the left operand, which matters for `-`, `/` and `%`.",
+          "ref": "Section 3.1, \"Augmented Assignment\" (p. 56)"
+        },
+        {
+          "id": "zero-passes",
+          "concept": "A loop that runs zero times",
+          "level": "analyze",
+          "stem": "This is the textbook's exponentiation loop, run with an exponent of 0. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "number = 7\nexponent = 0\nproduct = 1\nfor eachPass in range(exponent):\n    product = product * number\nprint(product)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`1`",
+              "feedback": "`range(0)` produces no numbers, so the body never runs and `product` keeps its starting value, 1. That is also the right answer: any number to the power 0 is 1.",
+              "correct": true
+            },
+            {
+              "text": "`0`",
+              "feedback": "This multiplies by the exponent somewhere. The body multiplies by `number`, and here it does not run at all, so nothing changes `product`."
+            },
+            {
+              "text": "`7`",
+              "feedback": "This assumes a loop body always runs at least once. A `for` loop runs once per item, and `range(0)` has no items."
+            },
+            {
+              "text": "`ValueError`, since `range(0)` is not a valid range",
+              "feedback": "`range(0)` is perfectly legal; it is simply empty. Python raises an error for `range` only when an argument is not an integer, or when the step is 0."
+            }
+          ],
+          "hint": "How many numbers does `range(0)` produce? What is `product` before the loop starts?",
+          "explanation": "A `for` loop runs its body once for each item in the sequence, which can be zero times. Initializing the accumulator to the identity value (1 for products, 0 for sums) makes the zero-pass case come out right with no extra code.",
+          "ref": "Section 3.1, \"Executing a Statement a Given Number of Times\" (pp. 54–55)"
+        }
+      ]
+    },
+    {
+      "id": "3.2-formatting-output",
+      "title": "Formatting text for output",
+      "subtitle": "Field width and justification, the s, d and f codes, precision, formatting several values, testing a loop",
+      "source": "Ch. 3, section 3.2 (pp. 58–63)",
+      "intro": "Your salary report prints `$100.0`, and the columns drift when a number gains a digit. Six questions on the `%` format operator and on testing the investment report.",
+      "takeaways": [
+        "A format string pairs each `%` code with one value: `s` for strings, `d` for integers, `f` for floats. Two or more values go in a tuple after the `%` operator.",
+        "Field width counts every character, decimal point included. A positive width right-justifies by padding on the left; a negative width left-justifies by padding on the right.",
+        "`.precision` fixes the number of digits after the decimal point, which is what money needs: `str(100.0)` is `100.0`, but `\"%0.2f\" % 100.0` is `100.00`."
+      ],
+      "questions": [
+        {
+          "id": "justify",
+          "concept": "Field width and justification",
+          "level": "understand",
+          "stem": "What string is stored in `label`?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "label = \"%-6s\" % \"cat\"",
+            "verify": {
+              "expect": "output",
+              "program": "label = \"%-6s\" % \"cat\"\nprint(len(label), label.index(\"c\"), label.count(\" \"))",
+              "output": "6 0 3"
+            }
+          },
+          "options": [
+            {
+              "text": "`cat` followed by three spaces, six characters in all",
+              "feedback": "The width is 6 and `cat` has 3 characters, so 3 spaces are added. The minus sign left-justifies, which puts the padding on the right.",
+              "correct": true
+            },
+            {
+              "text": "Three spaces followed by `cat`, six characters in all",
+              "feedback": "That is right-justification, what `%6s` does. The minus sign in `%-6s` flips it: the text starts in the first column and the spaces go after it."
+            },
+            {
+              "text": "`cat` followed by six spaces, nine characters in all",
+              "feedback": "The field width is the total length, text included, not the number of spaces to add. `cat` uses 3 of the 6 columns."
+            },
+            {
+              "text": "`-cat` padded with two spaces, six characters in all",
+              "feedback": "The minus sign belongs to the format code, not to the output. It tells `%` to left-justify; it never appears in the result."
+            }
+          ],
+          "hint": "Is the 6 the total length or the number of spaces? And which side does the minus sign put the padding on?",
+          "explanation": "In `%<width>s`, the width is the total number of characters in the field. A positive width right-justifies the datum (spaces on the left); a negative width left-justifies it (spaces on the right). If the datum is already as long as the width or longer, nothing is added.",
+          "ref": "Section 3.2, the `%6s` and `%-6s` session and the paragraph after it (p. 59)"
+        },
+        {
+          "id": "money",
+          "concept": "Precision with %f",
+          "level": "apply",
+          "stem": "What does this statement print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "salary = 1250.5\nprint(\"Pay: $%0.2f\" % salary)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`Pay: $1250.50`",
+              "feedback": "`.2` asks for exactly two digits after the decimal point, so a zero is added. The width 0 is smaller than the number's length, so no padding is added.",
+              "correct": true
+            },
+            {
+              "text": "`Pay: $1250.5`",
+              "feedback": "That is what `str(salary)` gives, which is why the book introduces format strings. `%0.2f` always shows two decimal places."
+            },
+            {
+              "text": "`Pay: $01250.50`",
+              "feedback": "This reads the 0 as \"pad with a zero\". Here it is a field width of 0, which is less than the length of the number, so nothing is added."
+            },
+            {
+              "text": "`Pay: $1250.500000`",
+              "feedback": "Six decimal places is what `%f` shows when no precision is given. The `.2` sets the precision to two."
+            }
+          ],
+          "hint": "Which part of `%0.2f` sets the number of decimal places? Is a width of 0 enough to add any padding?",
+          "explanation": "A float format has the form `%<width>.<precision>f`. The precision fixes how many digits follow the decimal point, rounding or adding zeros as needed. Using a width of 0 is a common way to say \"no padding, just the precision\", as in the book's `$%0.2f`.",
+          "aside": "Even `%0.2f` can surprise you: `\"%0.2f\" % 24.325` gives `24.32`, not `24.33`. The float 24.325 can't be stored exactly in binary; the stored value is a hair below it, so it rounds down. Real banking software often uses Python's `decimal` module for exactly this reason.",
+          "ref": "Section 3.2, the float format and the salary example (p. 60)"
+        },
+        {
+          "id": "width-precision",
+          "concept": "Width includes the decimal point",
+          "level": "apply",
+          "stem": "Which description matches the string stored in `s`?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "s = \"%8.2f\" % 3.14159",
+            "verify": {
+              "expect": "output",
+              "program": "s = \"%8.2f\" % 3.14159\nprint(len(s), len(s) - len(s.lstrip()), s.strip())",
+              "output": "8 4 3.14"
+            }
+          },
+          "options": [
+            {
+              "text": "Four spaces, then `3.14`: eight characters in all",
+              "feedback": "`3.14` takes four characters, decimal point included, so four spaces of padding fill the width of 8. A positive width right-justifies, so the spaces go first.",
+              "correct": true
+            },
+            {
+              "text": "Five spaces, then `3.14`: nine characters in all",
+              "feedback": "This leaves the decimal point out of the width. The width counts every character in the field, the decimal point included."
+            },
+            {
+              "text": "`3.14`, then four spaces: eight characters in all",
+              "feedback": "Numbers are not left-justified by default. The width here is positive, so the padding goes on the left; you would need `%-8.2f` to pad on the right."
+            },
+            {
+              "text": "Four spaces, then `3.15`: eight characters in all",
+              "feedback": "This rounds the third decimal digit up. The digit after 3.14 is 1, so rounding to two places keeps 3.14."
+            }
+          ],
+          "hint": "Count the characters in the number after rounding to two places. Does the decimal point count toward the width?",
+          "explanation": "In `%<width>.<precision>f`, the precision decides how the number is rounded, and the width is the total length of the resulting string, decimal point included. The book's example shows this: `\"%6.3f\" % 3.14` is `' 3.140'`, one space plus five characters.",
+          "ref": "Section 3.2, the `%6.3f` example (p. 60)"
+        },
+        {
+          "id": "row-format",
+          "concept": "Formatting several values in one string",
+          "level": "apply",
+          "stem": "Which statement prints `year` right-justified in 4 columns, then `balance` right-justified in 10 columns with exactly 2 decimal places?",
+          "options": [
+            {
+              "text": "`print(\"%4d%10.2f\" % (year, balance))`",
+              "feedback": "One format code per value, in order, with the values in a tuple: `%4d` for the integer year and `%10.2f` for the balance.",
+              "correct": true
+            },
+            {
+              "text": "`print(\"%-4d%-10.2f\" % (year, balance))`",
+              "feedback": "The minus signs left-justify both columns. For right-justified columns, as in the investment report, the widths must be positive."
+            },
+            {
+              "text": "`print(\"%4d%10.2f\" % year, balance)`",
+              "feedback": "Without parentheses, `%` receives only `year`, so the second code has no value and Python raises a `TypeError`. Several values must be grouped in a tuple."
+            },
+            {
+              "text": "`print(\"%d4%f10.2\" % (year, balance))`",
+              "feedback": "The width and precision go between the `%` and the type letter. As written, `4` and `10.2` are plain text printed after each value."
+            }
+          ],
+          "hint": "Where do the width and precision go in a format code, and how do you hand `%` more than one value?",
+          "explanation": "To format several values, write one format code for each in the format string and put the values in a tuple after `%`: `<format string> % (<datum-1>, ..., <datum-n>)`. Each code has the form `%<width>.<precision><type>`, with the type letter last.",
+          "ref": "Section 3.2, the tuple form of the format operation (p. 59) and Case Study 3-1 (p. 63)"
+        },
+        {
+          "id": "missing-tuple",
+          "concept": "Matching codes to values",
+          "level": "analyze",
+          "stem": "What happens when this program runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "name = \"Ana\"\nscore = 93\nprint(\"%s scored %d\" % name, score)",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError",
+                "not enough arguments"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `TypeError`: `%d` is left with no value",
+              "feedback": "`%` binds more tightly than the comma, so `\"%s scored %d\" % name` is evaluated on its own, with one value for two codes. The fix is `% (name, score)`.",
+              "correct": true
+            },
+            {
+              "text": "It prints `Ana scored 93` on one line",
+              "feedback": "That needs the values grouped: `% (name, score)`. Here the comma separates two arguments to `print`, so `score` never reaches the format string."
+            },
+            {
+              "text": "It prints `Ana scored %d 93`",
+              "feedback": "Python does not leave an unused code in the output. When a format string has more codes than values, the format operation fails."
+            },
+            {
+              "text": "A `TypeError`: `%d` cannot format 93",
+              "feedback": "`%d` is the code for integers, so 93 would be fine. The problem is that 93 is never passed to the format operation at all."
+            }
+          ],
+          "hint": "Which happens first: the `%` operation, or the comma that separates `print`'s arguments? How many values does `%` receive?",
+          "explanation": "The format operation needs exactly one value per format code. One value can follow `%` directly, but two or more must be grouped in a tuple. When the counts don't match, Python raises a `TypeError` before anything is printed.",
+          "ref": "Section 3.2, \"<format string> % (<datum-1>, …, <datum-n>)\" (p. 59)"
+        },
+        {
+          "id": "loop-testing",
+          "concept": "Testing a loop's controlling input",
+          "level": "evaluate",
+          "stem": "You are testing the investment report from Case Study 3-1, where `years` sets how many times the loop runs. Following the textbook's strategy, which values of `years` should you try first, keeping the other inputs small and fixed?",
+          "options": [
+            {
+              "text": "1, 2, 5 and 50",
+              "feedback": "The smallest number of passes, one more than that, a slightly larger number, and a value near the realistic maximum. Together they show whether the loop starts, repeats and finishes correctly.",
+              "correct": true
+            },
+            {
+              "text": "5, 10, 15 and 20",
+              "feedback": "Evenly spaced typical values miss the edges. Off-by-one errors show up at the smallest counts, and formatting problems often appear only at the largest."
+            },
+            {
+              "text": "50 only, since shorter runs are covered",
+              "feedback": "A loop that works for 50 years can still be wrong for 1, for example if the first row is printed or computed incorrectly. Each edge needs its own test."
+            },
+            {
+              "text": "Random values between 1 and 50",
+              "feedback": "Random values may never hit the smallest or largest cases, which are where loop errors usually hide. Choose test values on purpose."
+            }
+          ],
+          "hint": "Where do loop errors tend to hide: in typical values, or at the edges of the range?",
+          "explanation": "Test a loop first through the input that sets its number of passes: the minimum, the minimum plus one, a small typical value, and a value near the maximum, with the other inputs held fixed. Then vary the other inputs, including large values that stress the output format.",
+          "ref": "Section 3.2, Case Study 3-1, \"Testing\" and Table 3-1 (p. 63)"
+        }
+      ]
+    },
+    {
+      "id": "3.3-selection",
+      "title": "Selection: if and if-else statements",
+      "subtitle": "Comparisons, one-way, two-way and multiway if, and, or and not, precedence, short-circuit evaluation, testing",
+      "source": "Ch. 3, section 3.3 (pp. 64–71)",
+      "intro": "A student scores 95 and the program gives them a C. Six questions on how Python chooses which branch to run, and how to test that it chose correctly.",
+      "takeaways": [
+        "A multiway `if` tests its conditions from top to bottom and runs only the first branch whose condition is true, so the order of the conditions is part of the logic.",
+        "Comparisons are evaluated before `not`, `not` before `and`, and `and` before `or`. When in doubt, add parentheses.",
+        "`and` and `or` stop as soon as the result is known (short-circuit evaluation), so put a guard such as `count > 0` before the operation it protects."
+      ],
+      "questions": [
+        {
+          "id": "elif-order",
+          "concept": "How a multiway if chooses a branch",
+          "level": "analyze",
+          "stem": "The grade ladder below was written in the wrong order. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "number = 95\nif number > 69:\n    print(\"C\", end=\" \")\nelif number > 79:\n    print(\"B\", end=\" \")\nelif number > 89:\n    print(\"A\", end=\" \")\nelse:\n    print(\"F\", end=\" \")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`C`",
+              "feedback": "95 > 69 is true, so the first branch runs and control skips to the end of the whole statement. The later conditions are never tested.",
+              "correct": true
+            },
+            {
+              "text": "`A`",
+              "feedback": "This picks the most specific true condition. Python doesn't compare the conditions; it takes the first true one, from the top."
+            },
+            {
+              "text": "`C B A`",
+              "feedback": "This runs every branch whose condition is true. That is what three separate `if` statements would do; `elif` branches are tried only while every condition above them is false."
+            },
+            {
+              "text": "`C F`",
+              "feedback": "This treats `else` as something that always runs at the end. The `else` branch runs only when no condition was true."
+            }
+          ],
+          "hint": "After a condition turns out true and its branch runs, where does control go next?",
+          "explanation": "A multiway `if` considers its conditions in order until one is true, runs that branch, and skips the rest; the trailing `else` runs only if none is true. That is why the book's grade ladder tests `> 89` first: the most restrictive condition has to come before the looser ones.",
+          "ref": "Section 3.3, \"Multiway if Statements\" and Table 3-3 (p. 67)"
+        },
+        {
+          "id": "assign-vs-equals",
+          "concept": "= versus ==",
+          "level": "understand",
+          "stem": "What happens when this program runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "score = 100\nif score = 100:\n    print(\"Perfect\")",
+            "verify": {
+              "expect": "compile_error",
+              "error_contains": [
+                "SyntaxError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `SyntaxError`, because `=` cannot be a condition",
+              "feedback": "`=` is assignment, which is a statement, not an expression with a value. Python rejects the line before running anything; the comparison is written `score == 100`.",
+              "correct": true
+            },
+            {
+              "text": "It prints `Perfect`, since `score` equals 100",
+              "feedback": "This reads `=` as a comparison. In Python, comparing for equality is `==`; the single `=` is reserved for assignment."
+            },
+            {
+              "text": "It assigns 100 again, then prints `Perfect`",
+              "feedback": "Some languages, C among them, allow an assignment inside a condition. Python does not, which prevents this classic bug."
+            },
+            {
+              "text": "Nothing is printed, because an assignment counts as false",
+              "feedback": "An assignment has no true-or-false value in Python, so it cannot serve as a condition at all. The program never starts running."
+            }
+          ],
+          "hint": "Which symbol asks a question, and which one changes a variable?",
+          "explanation": "`==` compares two values and produces `True` or `False`; `=` binds a name to a value. The condition of an `if` must be a Boolean expression, so writing `=` there is a syntax error that Python reports before the program runs.",
+          "aside": "Since Python 3.10, the error message guesses what you meant: it says `invalid syntax. Maybe you meant '==' or ':=' instead of '='?`. The `:=` it mentions is the \"walrus\" operator, added in Python 3.8, which deliberately allows assignment inside an expression.",
+          "ref": "Section 3.3, Table 3-2 and the note on `==` versus `=` (pp. 64–65)"
+        },
+        {
+          "id": "and-or-precedence",
+          "concept": "Precedence of and and or",
+          "level": "apply",
+          "stem": "A cinema gives a discount to seniors, or to children who have a coupon. What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "age = 70\ncoupon = False\nprint(age >= 65 or coupon and age < 12)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`True`",
+              "feedback": "`and` is applied before `or`, so this is `age >= 65 or (coupon and age < 12)`. The left side is already true, so the whole expression is true.",
+              "correct": true
+            },
+            {
+              "text": "`False`",
+              "feedback": "This works left to right: `(age >= 65 or coupon) and age < 12`. But `and` has higher precedence than `or`, so the `and` is grouped first."
+            },
+            {
+              "text": "A `SyntaxError`, since `and` and `or` need parentheses",
+              "feedback": "Python allows mixing them freely and settles the grouping by precedence. Parentheses are optional, though they make the intent clearer to a reader."
+            }
+          ],
+          "hint": "Which binds more tightly, `and` or `or`? Add the parentheses Python adds, then evaluate.",
+          "explanation": "Comparisons are evaluated before the logical operators, and among those `not` comes first, then `and`, then `or`. So `A or B and C` means `A or (B and C)`, just as `a + b * c` means `a + (b * c)`.",
+          "ref": "Section 3.3, \"Logical Operators and Compound Boolean Expressions\" and Table 3-4 (pp. 69–70)"
+        },
+        {
+          "id": "short-circuit",
+          "concept": "Short-circuit evaluation",
+          "level": "apply",
+          "stem": "What does this program print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "count = 0\ntotal = 50\nif count > 0 and total // count > 10:\n    print(\"average > 10\")\nelse:\n    print(\"no average yet\")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`no average yet`",
+              "feedback": "`count > 0` is false, so the whole `and` must be false and Python never evaluates `total // count`. The division by zero is skipped.",
+              "correct": true
+            },
+            {
+              "text": "A `ZeroDivisionError`",
+              "feedback": "This assumes both sides of `and` are always evaluated. Python stops as soon as the result is known, and a false left side settles an `and`."
+            },
+            {
+              "text": "`average > 10`",
+              "feedback": "With `count` equal to 0, the condition `count > 0` is false, and an `and` with a false operand is false."
+            }
+          ],
+          "hint": "Once Python knows the left side of an `and` is false, does it still need the right side?",
+          "explanation": "In `A and B`, if `A` is false the result is false, and in `A or B`, if `A` is true the result is true; in both cases Python skips `B`. Placing a guard such as `count > 0` first lets the condition protect the operation that follows it.",
+          "aside": "Order matters: written as `total // count > 10 and count > 0`, the same test crashes, because the division now comes first. Short-circuiting only protects what is to the *right* of the guard.",
+          "ref": "Section 3.3, \"Short-Circuit Evaluation\" (p. 70)"
+        },
+        {
+          "id": "range-check",
+          "concept": "Combining comparisons with and versus or",
+          "level": "analyze",
+          "stem": "This check should reject grades outside 0–100. What does it print for 150?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "number = 150\nif number >= 0 or number <= 100:\n    print(\"valid\")\nelse:\n    print(\"Error\")",
+            "verify": {
+              "expect": "output",
+              "output": "valid"
+            }
+          },
+          "options": [
+            {
+              "text": "`valid`, because one true comparison makes `or` true",
+              "feedback": "150 >= 0 is true, and `or` needs only one true operand. In fact every number passes this test, since each one is at least 0 or at most 100.",
+              "correct": true
+            },
+            {
+              "text": "`Error`, because 150 is greater than 100",
+              "feedback": "That is what the programmer meant, but `or` is satisfied by `number >= 0` alone. A value must be in the range on *both* sides, which calls for `and`."
+            },
+            {
+              "text": "`Error`, because `or` is true only if both sides are",
+              "feedback": "This describes `and`. The `or` operator is false only when both of its operands are false (Figure 3-5)."
+            }
+          ],
+          "hint": "Look at the truth table for `or`. What does it take to make the whole condition true?",
+          "explanation": "A value is in a range when it is above the lower bound *and* below the upper bound, as in `number >= 0 and number <= 100`. The opposite test, for a value outside the range, uses `or`: `number < 0 or number > 100`. Mixing the two patterns produces a condition that is always true.",
+          "ref": "Section 3.3, \"Logical Operators and Compound Boolean Expressions\" and Figure 3-5 (pp. 68–69)"
+        },
+        {
+          "id": "boundary-tests",
+          "concept": "Testing selection statements",
+          "level": "evaluate",
+          "stem": "A ticket program uses `if age >= 18:` to choose the adult price. Following the textbook's advice for a condition with a single comparison, which test values for `age` are best?",
+          "options": [
+            {
+              "text": "17, 18 and 19",
+              "feedback": "Equal to the boundary, one less and one more. A mistaken `>` instead of `>=`, or a wrong bound, changes the result for at least one of these.",
+              "correct": true
+            },
+            {
+              "text": "0 and 120",
+              "feedback": "Extreme values exercise both branches, but they would pass even if the code said `> 18` or `>= 17`. Errors hide at the boundary, not at the extremes."
+            },
+            {
+              "text": "10 and 30",
+              "feedback": "One value per branch shows that both branches run, which is the first rule. It doesn't check that the boundary itself is in the right place."
+            },
+            {
+              "text": "18 only",
+              "feedback": "The boundary value alone tests one branch. You also need the values just below and just above it to see where the switch happens."
+            }
+          ],
+          "hint": "If the programmer had typed `>` instead of `>=`, which age would reveal it?",
+          "explanation": "Test data should make every condition both true and false, so that every branch runs. For a comparison of two numbers, also test the boundary: operands that are equal, a left operand one less, and one more. For a compound condition, use its truth table as a blueprint.",
+          "ref": "Section 3.3, \"Testing Selection Statements\" (pp. 70–71)"
+        }
+      ]
+    },
+    {
+      "id": "3.4-while-loop",
+      "title": "Conditional iteration: the while loop",
+      "subtitle": "Continuation conditions, infinite loops, sentinel input, entry control, while True and break, random numbers",
+      "source": "Ch. 3, section 3.4 (pp. 71–79)",
+      "intro": "Your program has printed `1` four thousand times and is still going. Six questions on loops that run until a condition changes, and on making sure it does.",
+      "takeaways": [
+        "A `while` loop tests its condition at the top, so the body can run zero times. Something in the body must eventually make the condition false, or the loop never ends.",
+        "A sentinel loop reads once before the loop and again at the bottom of the body. A `while True` loop reads inside the body and leaves with `break`; use it when the body must run at least once.",
+        "Use `for` when the number of passes is known in advance; use `while` when only a condition can tell you when to stop."
+      ],
+      "questions": [
+        {
+          "id": "infinite-loop",
+          "concept": "Updating the loop control variable",
+          "level": "analyze",
+          "stem": "What happens when this runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "count = 1\nwhile count <= 5:\n    print(count, end=\" \")\ncount += 1",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "still running after 50 passes, count = 1"
+              ],
+              "program": "import sys\ncount = 1\npasses = 0\nwhile count <= 5:\n    print(count, end=\" \")\n    passes += 1\n    if passes == 50:\n        sys.exit(\"still running after 50 passes, count = \" + str(count))\ncount += 1"
+            }
+          },
+          "options": [
+            {
+              "text": "It prints `1` over and over and never stops",
+              "feedback": "`count += 1` is not indented, so it is not in the loop body. Nothing inside the loop changes `count`, so `count <= 5` stays true forever.",
+              "correct": true
+            },
+            {
+              "text": "It prints `1 2 3 4 5`",
+              "feedback": "That needs `count += 1` inside the body. The indentation decides what belongs to the loop, and this line lines up with `while`."
+            },
+            {
+              "text": "It prints `1` once, then `count` becomes 2",
+              "feedback": "The line after the loop can run only once the loop ends, and the loop can end only when `count` exceeds 5. Neither ever happens."
+            },
+            {
+              "text": "A `SyntaxError`, because the body never changes `count`",
+              "feedback": "The code is grammatically correct. Python cannot tell that a condition will never change; an infinite loop is a logic error."
+            }
+          ],
+          "hint": "Which lines form the loop body? Does any of them change the variable the condition tests?",
+          "explanation": "A `while` loop repeats as long as its continuation condition is true, so at least one statement in the body must update a variable that affects the condition. Forgetting the update, or putting it outside the body, gives an infinite loop. To stop one while testing, press Control-c.",
+          "aside": "Control-c doesn't kill Python outright: it raises a `KeyboardInterrupt` exception inside the running program. That is why the traceback you see points to the exact line the loop was executing when you pressed the keys.",
+          "ref": "Section 3.4, \"The Structure and Behavior of a while Loop\" (p. 72) and \"Loop Logic, Errors, and Testing\" (p. 76)"
+        },
+        {
+          "id": "sentinel-zero",
+          "concept": "Sentinel loops and entry control",
+          "level": "apply",
+          "stem": "The user presses Enter at the very first prompt, without typing a number. What happens?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "theSum = 0.0\ndata = input(\"Number, or Enter to quit: \")\nwhile data != \"\":\n    theSum += float(data)\n    data = input(\"Number, or Enter to quit: \")\nprint(\"The sum is\", theSum)",
+            "verify": {
+              "expect": "output",
+              "stdin": "\n",
+              "output": "Number, or Enter to quit: The sum is 0.0"
+            }
+          },
+          "options": [
+            {
+              "text": "The body never runs, and it prints `The sum is 0.0`",
+              "feedback": "The first input is the empty string, so `data != \"\"` is false on the very first test. The loop body is skipped and `theSum` keeps its starting value.",
+              "correct": true
+            },
+            {
+              "text": "The body runs once and `float(\"\")` raises a `ValueError`",
+              "feedback": "That would happen only if the body ran before the test. A `while` loop checks its condition first, so the empty string never reaches `float`."
+            },
+            {
+              "text": "It asks again, since a `while` loop always runs at least once",
+              "feedback": "That describes a loop that tests at the bottom. Python's `while` is an entry-control loop: it tests at the top and can run zero times."
+            },
+            {
+              "text": "It prints `The sum is 0`, since no float was ever added",
+              "feedback": "`theSum` was created as `0.0`, a float, and stays a float even when nothing is added to it."
+            }
+          ],
+          "hint": "Where is the condition tested: before the body runs, or after?",
+          "explanation": "The `while` loop is an entry-control loop: its condition is tested before each pass, so the body runs zero or more times. In a sentinel loop, the input before the loop gives the condition something to test, and the input at the bottom of the body fetches the next value, including the sentinel that ends the loop.",
+          "ref": "Section 3.4, the summation script and \"entry-control loop\" (pp. 72–73)"
+        },
+        {
+          "id": "trace-while",
+          "concept": "Tracing a count-controlled while loop",
+          "level": "apply",
+          "stem": "What does this loop print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "count = 10\nwhile count >= 1:\n    count -= 3\n    print(count, end=\" \")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`7 4 1 -2`",
+              "feedback": "The update comes before the `print`, so the first value printed is 7. When `count` is 1, the test passes, the body runs, and −2 is printed before the next test fails.",
+              "correct": true
+            },
+            {
+              "text": "`10 7 4 1`",
+              "feedback": "This prints before updating. In this body, `count -= 3` comes first, so 10 is never printed."
+            },
+            {
+              "text": "`7 4 1`",
+              "feedback": "This assumes the loop stops the moment `count` drops below 1. The condition is checked only at the top, so the pass that starts with `count` at 1 finishes."
+            },
+            {
+              "text": "`7 4 1 -2 -5`",
+              "feedback": "After −2 is printed, the test `-2 >= 1` is false, so there is no further pass."
+            }
+          ],
+          "hint": "Write down `count` at the moment each test happens, and what the body prints after it.",
+          "explanation": "A `while` loop checks its condition only at the top of each pass; changes in the middle of the body take effect at the next check. With a manual count you control three things the `for` loop handles for you: the starting value, the update and its position, and the continuation condition.",
+          "ref": "Section 3.4, \"Count Control with a while Loop\" (pp. 73–74)"
+        },
+        {
+          "id": "while-true-break",
+          "concept": "while True and break",
+          "level": "apply",
+          "stem": "The user types `101`, then `-1`, then `45`. What does the program print? (Each `print` starts a new line; the options show the lines separated by spaces.)",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "attempts = 0\nwhile True:\n    attempts += 1\n    grade = int(input())\n    if grade >= 0 and grade <= 100:\n        break\n    print(\"Error\")\nprint(attempts)",
+            "verify": {
+              "expect": "output",
+              "stdin": "101\n-1\n45\n"
+            }
+          },
+          "options": [
+            {
+              "text": "`Error Error 3`",
+              "feedback": "The first two inputs fail the test and reach `print(\"Error\")`. On the third pass, 45 passes the test and `break` leaves the loop at once, so `attempts` is 3.",
+              "correct": true
+            },
+            {
+              "text": "`Error Error Error 3`",
+              "feedback": "This lets the rest of the body run after `break`. `break` exits the loop immediately, so the `print(\"Error\")` below it is skipped on the valid input."
+            },
+            {
+              "text": "`Error Error 2`",
+              "feedback": "This counts only the failed attempts. `attempts` is increased at the top of every pass, including the one that ends with `break`."
+            },
+            {
+              "text": "Nothing ends: `while True` can never become false",
+              "feedback": "The condition never becomes false, but the loop doesn't need it to. `break` is the exit, and it runs as soon as a valid grade arrives."
+            }
+          ],
+          "hint": "What does `break` do to the statements that follow it in the body?",
+          "explanation": "`while True` guarantees that the body runs at least once and moves the exit test into the middle of the body, where the data it needs is available. A `break` ends the loop immediately and continues after it. Use a single `break` as the loop's one exit point.",
+          "ref": "Section 3.4, \"The while True Loop and the break Statement\" (pp. 74–75)"
+        },
+        {
+          "id": "randint",
+          "concept": "Random numbers with random.randint",
+          "level": "understand",
+          "stem": "A dice game calls `random.randint(1, 6)`. Which values can it return?",
+          "options": [
+            {
+              "text": "Any of 1, 2, 3, 4, 5 and 6",
+              "feedback": "`randint` includes both of its arguments, so all six faces of the die are possible.",
+              "correct": true
+            },
+            {
+              "text": "1 through 5, the same numbers as `range(1, 6)`",
+              "feedback": "This carries over `range`'s rule. Unlike `range`, `randint` includes its upper bound."
+            },
+            {
+              "text": "Any number from 1 to 6, fractions such as 3.7 included",
+              "feedback": "`randint` returns integers only. The *int* in its name is the clue."
+            },
+            {
+              "text": "0 through 6, since counting starts at 0",
+              "feedback": "The first argument is the lowest value `randint` can return; nothing below 1 is possible here."
+            }
+          ],
+          "hint": "Does `randint` follow the same \"stop before the end\" rule as `range`?",
+          "explanation": "`random.randint(a, b)` returns a random integer from `a` to `b`, including both. Over many calls each value comes up about equally often, which is how a program simulates a die or a coin.",
+          "aside": "In the book's guessing game, guessing the middle of what remains halves the possibilities each time. That's why 100 numbers need at most 7 guesses, and a million numbers need only 20, since 2 to the 20th power is just over a million.",
+          "ref": "Section 3.4, \"Random Numbers\" (p. 75)"
+        },
+        {
+          "id": "for-vs-while",
+          "concept": "Choosing between for and while",
+          "level": "evaluate",
+          "stem": "Both loops in the textbook add the numbers 1 through 100,000 and print the same result. What is the trade-off between them?",
+          "options": [
+            {
+              "text": "The `while` version manages its counter by hand, adding chances for error",
+              "feedback": "The `while` loop must initialize `count`, test it in the condition and update it in the body. The `for` header does all three, so there is less to get wrong.",
+              "correct": true
+            },
+            {
+              "text": "The `while` version is faster, because it doesn't call `range`",
+              "feedback": "Speed is not the trade-off the book describes; the concern is complexity. The extra statements in the `while` version are more for the programmer to write and check."
+            },
+            {
+              "text": "The `for` version cannot reach 100,000, because `range` has a limit",
+              "feedback": "`range` can count to 100,000 and well beyond. The book's `for` version uses `range(1, 100001)` and works."
+            },
+            {
+              "text": "They differ only in style; each can solve every looping problem",
+              "feedback": "A `while` loop can do anything a `for` loop can, but not the reverse: when the number of passes is unknown, as with sentinel input, `while` is the only choice."
+            }
+          ],
+          "hint": "Count the statements that touch `count` in each version.",
+          "explanation": "A `for` loop states its control information once, in the header, and manages it behind the scenes, so prefer it when the number of passes is known. A `while` loop is the right tool when only a condition can tell you when to stop, at the price of initializing, testing and updating the control variable yourself.",
+          "ref": "Section 3.4, \"Count Control with a while Loop\" (p. 73)"
+        }
+      ]
+    }
+  ]
+}

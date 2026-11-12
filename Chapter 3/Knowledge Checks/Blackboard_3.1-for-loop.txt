@@ -1,0 +1,6 @@
+MC	A student wants to print the numbers 1 through 5 on one line. What happens when this runs?<pre>for count in range(1, 5):<br>    print(count, end=" ")</pre>	It prints 1 2 3 4 5, as the student intended	incorrect	It prints 1 2 3 4, then raises an error about the bound	incorrect	It prints 1 2 3 4, and Python reports nothing wrong	correct	It prints 0 1 2 3 4, starting from zero	incorrect
+MC	What does this program print?<pre>total = 0<br>for n in range(1, 5):<br>    total += n * 2<br>print(total)</pre>	20	correct	30	incorrect	8	incorrect	2 6 12 20	incorrect
+MC	What does this loop print?<pre>for count in range(9, 0, -2):<br>    print(count, end=" ")</pre>	9 7 5 3	incorrect	9 7 5 3 1	correct	8 6 4 2	incorrect	9 7 5 3 1 -1	incorrect
+MC	What does this loop print?<pre>for character in "Hi!":<br>    print(character, end="-")</pre>	H-i-!-	correct	Hi!-	incorrect	0-1-2-	incorrect	H-i-!	incorrect
+MC	What does this program print?<pre>x = 5<br>x *= 2 + 1<br>x -= 3<br>print(x)</pre>	8	incorrect	0	incorrect	-12	incorrect	12	correct
+MC	This is the textbook's exponentiation loop, run with an exponent of 0. What does it print?<pre>number = 7<br>exponent = 0<br>product = 1<br>for eachPass in range(exponent):<br>    product = product * number<br>print(product)</pre>	0	incorrect	1	correct	7	incorrect	ValueError, since range(0) is not a valid range	incorrect
