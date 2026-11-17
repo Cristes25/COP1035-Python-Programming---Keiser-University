@@ -1,0 +1,1092 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 4: Strings and Text Files",
+ "collection_intro": "Short, ungraded practice checks for sections 4.1–4.5 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "4.1-characters-substrings",
+   "title": "Accessing characters and substrings",
+   "subtitle": "Positions and len, the subscript operator, negative indexes, slicing, immutability, the in operator",
+   "source": "Ch. 4, section 4.1 (pp. 87–90)",
+   "intro": "A script that sorts downloads by file type keeps calling `report.docx` a \"ocx\" file. Six questions on how Python numbers the characters in a string and how a slice decides where to start and stop.",
+   "takeaways": [
+    "A string of length `n` has positions `0` to `n - 1`; negative positions count from `-1` at the right end. Position `len(s)` does not exist, so asking for it raises `IndexError`.",
+    "`s[a:b]` runs from position `a` up to but not including `b`. Leaving out a side runs to that end of the string, so `s[-3:]` is always the last three characters.",
+    "Strings are immutable: you cannot change a character in place, but you can build a new string from pieces and slices and make the variable refer to it."
+   ],
+   "questions": [
+    {
+     "id": "index-past-end",
+     "concept": "Valid positions and len",
+     "level": "apply",
+     "stem": "What happens when this runs?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "word = \"Python\"\nprint(word[len(word)])",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "IndexError"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "An `IndexError`: the last valid position is 5",
+       "feedback": "`len(word)` is 6, but positions are numbered from 0, so they run 0 to 5. Position 6 is one past the end, and Python stops with `IndexError: string index out of range`.",
+       "correct": true
+      },
+      {
+       "text": "It prints `n`, the sixth and last character",
+       "feedback": "`n` is the sixth character, but it sits at position 5, because counting starts at 0. To reach it you write `word[len(word) - 1]` or `word[-1]`."
+      },
+      {
+       "text": "It prints nothing, since position 6 is empty",
+       "feedback": "A string has no empty slot after its last character. Asking for a position that does not exist is an error, not an empty result."
+      },
+      {
+       "text": "It prints `P`, wrapping round to the start",
+       "feedback": "Indexing never wraps around. Negative indexes count back from the end, but a too-large positive index is simply out of range."
+      }
+     ],
+     "hint": "If a string has 6 characters and the first is at position 0, where is the last one?",
+     "explanation": "A string's positions run from 0 to its length minus 1, so `len(s)` is always one past the last valid position. The last character is `s[len(s) - 1]`, which Python lets you shorten to `s[-1]`.",
+     "ref": "Section 4.1, \"The Structure of Strings\" and \"The Subscript Operator\" (pp. 88–89)"
+    },
+    {
+     "id": "negative-index",
+     "concept": "Negative indexes",
+     "level": "apply",
+     "stem": "What does this print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "tag = \"PYTHON\"\nprint(tag[-2], tag[1])",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`O Y`",
+       "feedback": "`-1` is the last character, `N`, so `-2` is the one before it, `O`. Position `1` is the second character, `Y`, because counting from the left starts at 0.",
+       "correct": true
+      },
+      {
+       "text": "`H Y`",
+       "feedback": "This treats `-1` as the next-to-last character, so `-2` lands one further left. Counting from the right starts at `-1` for the very last character."
+      },
+      {
+       "text": "`O P`",
+       "feedback": "This counts from 1 on the left. Position 1 is the *second* character; the first is at position 0."
+      },
+      {
+       "text": "`H P`",
+       "feedback": "Both counts are shifted here. From the right, `-1` is the last character; from the left, `0` is the first."
+      }
+     ],
+     "hint": "Which character does `-1` name? Count left from there.",
+     "explanation": "Positive positions count from 0 at the left; negative positions count from -1 at the right. So `s[-k]` is the same as `s[len(s) - k]`.",
+     "ref": "Section 4.1, \"The Subscript Operator\" (pp. 88–89)"
+    },
+    {
+     "id": "slice-extension",
+     "concept": "Slicing for substrings",
+     "level": "apply",
+     "stem": "Which expression gives the substring `\"docx\"`?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "filename = \"report_final.docx\"",
+      "verify": {
+       "expect": "output",
+       "output": "docx",
+       "program": "filename = \"report_final.docx\"\nprint(filename[-4:])"
+      }
+     },
+     "options": [
+      {
+       "text": "`filename[-4:]`",
+       "feedback": "The slice starts four characters from the end, at `d`, and leaving out the second number runs it to the end of the string.",
+       "correct": true
+      },
+      {
+       "text": "`filename[13:16]`",
+       "feedback": "`d` is at 13 and `x` at 16, but a slice stops *before* its second position, so this gives `\"doc\"`. You would need `filename[13:17]`, or simply `filename[13:]`."
+      },
+      {
+       "text": "`filename[-5:]`",
+       "feedback": "Five characters from the end includes the dot, so this gives `\".docx\"`. The extension without the dot is the last four characters."
+      },
+      {
+       "text": "`filename[-4]`",
+       "feedback": "Without a colon, the subscript picks one character: `\"d\"`. A colon is what turns a subscript into a slice."
+      }
+     ],
+     "hint": "Does a slice include the character at its second position? And what does leaving a number out mean?",
+     "explanation": "In `s[a:b]` the substring starts at `a` and stops just before `b`; a missing `a` means \"from the start\" and a missing `b` means \"to the end\". Counting from the end with a negative start, as in `s[-4:]`, works whatever the string's length.",
+     "aside": "A slice never raises an `IndexError`, even with positions far past the end: `\"Hi\"[5:10]` is simply the empty string `\"\"`. Only single-character subscripts are checked against the string's length.",
+     "ref": "Section 4.1, \"Slicing for Substrings\" (pp. 89–90)"
+    },
+    {
+     "id": "immutable",
+     "concept": "Strings are immutable",
+     "level": "understand",
+     "stem": "A student tries to turn `\"jello\"` into `\"hello\"`. What happens?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "word = \"jello\"\nword[0] = \"h\"\nprint(word)",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "TypeError"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A `TypeError`: a string's characters can't be replaced",
+       "feedback": "Strings are immutable: you can read `word[0]`, but you cannot assign to it. Python stops at the second line, so nothing is printed.",
+       "correct": true
+      },
+      {
+       "text": "It prints `hello`, with the first letter replaced",
+       "feedback": "This would be true of a structure you can change in place, but a string is not one. Its characters can be accessed, never replaced."
+      },
+      {
+       "text": "It prints `hjello`, with `h` added at the front",
+       "feedback": "Assigning to a position would replace, not insert, if it were allowed. For strings it isn't allowed at all."
+      },
+      {
+       "text": "It prints `jello`; the assignment is ignored",
+       "feedback": "Python does not silently skip a statement it cannot carry out. An assignment to a string position is an error that stops the program."
+      }
+     ],
+     "hint": "The reading calls a string an *immutable* data structure. What does that rule out?",
+     "explanation": "Because strings are immutable, you never change one in place; you build a new string and make the variable refer to it. Here that is `word = \"h\" + word[1:]`.",
+     "aside": "Immutability is why strings can be dictionary keys, which you will meet in Chapter 5. A key whose characters could change after it was stored could no longer be found.",
+     "ref": "Section 4.1, \"The Structure of Strings\" (p. 88)"
+    },
+    {
+     "id": "in-operator",
+     "concept": "Testing for a substring with in",
+     "level": "analyze",
+     "stem": "This loop is meant to list Python source files. Which name does it print even though the file is **not** Python source?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "names = [\"main.py\", \"backup.py.txt\", \"copy.txt\",\n         \"my_py_notes.txt\", \"SCRIPT.PY\"]\nfor name in names:\n    if \".py\" in name:\n        print(name)",
+      "verify": {
+       "expect": "output",
+       "output": "main.py backup.py.txt"
+      }
+     },
+     "options": [
+      {
+       "text": "`backup.py.txt`",
+       "feedback": "`in` asks whether `\".py\"` appears *anywhere* in the name, and it does, in the middle. The file is really a text file, so the test lets it through.",
+       "correct": true
+      },
+      {
+       "text": "`copy.txt`",
+       "feedback": "`copy` contains the letters `py`, but the target is `\".py\"`, dot included. No dot comes right before `py` here, so `in` returns `False`."
+      },
+      {
+       "text": "`my_py_notes.txt`",
+       "feedback": "The letters `py` appear, but preceded by an underscore, not a dot. `in` matches the whole target exactly, so this name is not printed."
+      },
+      {
+       "text": "`SCRIPT.PY`",
+       "feedback": "`in` is case-sensitive, so `\".py\"` does not match `\".PY\"` and this name is skipped. It is the opposite mistake: a source file the test misses."
+      }
+     ],
+     "hint": "`in` checks whether the target occurs somewhere in the string. Where must `.py` be for a file to be Python source?",
+     "explanation": "`target in s` is `True` when the target occurs anywhere in `s`, exactly as written, including case. That makes it quick for \"contains\" questions but loose for \"ends with\" questions such as file extensions, where a slice like `name[-3:] == \".py\"` is precise.",
+     "aside": "Section 4.4's string methods include `endswith`, built for exactly this test: `name.endswith(\".py\")` is `True` only when the name ends with the extension.",
+     "ref": "Section 4.1, \"Testing for a Substring with in Operator\" (p. 90)"
+    },
+    {
+     "id": "reverse-build",
+     "concept": "Building a new string in a loop",
+     "level": "apply",
+     "stem": "What does this print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "s = \"stop\"\nresult = \"\"\nfor ch in s:\n    result = ch + result\nprint(result)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`pots`",
+       "feedback": "Each character goes *in front of* what has been built so far: `s`, then `ts`, `ots`, `pots`. Prepending in left-to-right order reverses the string.",
+       "correct": true
+      },
+      {
+       "text": "`stop`",
+       "feedback": "That is what `result = result + ch` would build. Here the new character is placed before `result`, not after it."
+      },
+      {
+       "text": "`p`",
+       "feedback": "This treats the assignment as keeping only the newest character. The right side joins `ch` with everything already in `result`."
+      },
+      {
+       "text": "A `TypeError`, since strings are immutable",
+       "feedback": "Immutability stops you changing a string in place. This loop never does that: it builds a brand-new string each time and rebinds `result` to it."
+      }
+     ],
+     "hint": "Trace `result` after each pass. Does the new character go before or after what is already there?",
+     "explanation": "An accumulator can build a string just as it builds a sum: start with `\"\"` and combine on each pass. Where you put the new piece, before or after, decides the order of the result.",
+     "aside": "Python can also reverse a string with a slice that has a third number, a step: `\"stop\"[::-1]` is `\"pots\"`.",
+     "ref": "Section 4.1, Exercise 4-1, questions 3–4 (p. 90)"
+    }
+   ]
+  },
+  {
+   "id": "4.2-data-encryption",
+   "title": "Data encryption",
+   "subtitle": "Plaintext and cipher text, keys, the Caesar cipher and its wraparound, decryption, why Caesar is weak, block ciphers",
+   "source": "Ch. 4, section 4.2 (pp. 91–92)",
+   "intro": "Anyone in a hotel parking lot with the right software can read unprotected Wi-Fi traffic. Six questions on the oldest trick for hiding a message, how its code works, and why a computer breaks it in under a second.",
+   "takeaways": [
+    "A Caesar cipher replaces each character with the one a fixed distance away in the character sequence; letters near the end wrap around to the start. Decrypting uses the same distance in the opposite direction.",
+    "Its weakness is that each cipher character depends only on one plaintext character and one fixed key, so there are few keys to try and the text's patterns survive encryption.",
+    "A block cipher computes each encrypted character from a block of plaintext characters, which hides those patterns and makes the key much harder to find."
+   ],
+   "questions": [
+    {
+     "id": "trace-encrypt",
+     "concept": "Tracing the Caesar encryption script",
+     "level": "apply",
+     "stem": "This is the reading's encryption loop with the inputs filled in. What does it print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "plainText = \"wax\"\ndistance = 3\ncode = \"\"\nfor ch in plainText:\n    ordvalue = ord(ch)\n    cipherValue = ordvalue + distance\n    if cipherValue > ord('z'):\n        cipherValue = ord('a') + distance - \\\n                      (ord('z') - ordvalue + 1)\n    code += chr(cipherValue)\nprint(code)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`zda`",
+       "feedback": "`w` and `a` shift three places to `z` and `d`. `x` plus 3 passes `z`, so the `if` wraps it: `x`→`y`→`z`→`a`.",
+       "correct": true
+      },
+      {
+       "text": "`zd{`",
+       "feedback": "This skips the wraparound. In ASCII the character after `z` is `{`, which is exactly what the `if` branch exists to prevent."
+      },
+      {
+       "text": "`txu`",
+       "feedback": "This shifts each letter three places to the *left*, which is decryption. Encryption adds the distance."
+      },
+      {
+       "text": "`zdb`",
+       "feedback": "The wrap is counted one step short: from `x`, one step is `y`, two is `z`, and the third wraps to `a`, not `b`."
+      }
+     ],
+     "hint": "Shift each letter three places forward. What should come after `z`?",
+     "explanation": "Encryption adds the distance to each character's code. When the result passes `z`, the cipher wraps around to the start of the alphabet, so every letter maps to another letter.",
+     "aside": "The Roman historian Suetonius records that Julius Caesar used exactly this shift of three for private letters, which is how the cipher got its name.",
+     "ref": "Section 4.2, Figure 4-2 and encrypt.py (pp. 91–92)"
+    },
+    {
+     "id": "why-wrap",
+     "concept": "Why the wraparound branch exists",
+     "level": "understand",
+     "stem": "Why does the encryption script need the line `if cipherValue > ord('z'):`?",
+     "options": [
+      {
+       "text": "Letters near `z` would otherwise become non-letters",
+       "feedback": "`ord('z')` is 122, and adding the distance to `x`, `y` or `z` gives codes beyond it, such as `{` and `|`. The branch wraps those codes back to the start of the alphabet.",
+       "correct": true
+      },
+      {
+       "text": "It keeps the cipher text as long as the plaintext",
+       "feedback": "The loop adds exactly one character per input character either way. The branch changes *which* character is added, not how many."
+      },
+      {
+       "text": "It handles uppercase letters, whose codes are larger",
+       "feedback": "Uppercase codes (65–90) are actually *smaller* than lowercase ones (97–122). The script is written for lowercase letters only."
+      },
+      {
+       "text": "`chr` would raise an error for codes above 122",
+       "feedback": "`chr(123)` is a perfectly valid character, `{`. Nothing crashes without the branch; the output just stops being letters."
+      }
+     ],
+     "hint": "What is the ASCII character right after `z`? Is it a letter?",
+     "explanation": "The character set is one long ordered sequence, and the lowercase letters are a short run inside it. To keep cipher text inside that run, any shifted code past the end of the run is moved back to its start.",
+     "ref": "Section 4.2, Figure 4-2 and the paragraph after it (p. 91)"
+    },
+    {
+     "id": "decrypt",
+     "concept": "Decryption with the same key",
+     "level": "understand",
+     "stem": "Ana encrypted a lowercase message with a Caesar cipher, distance 5. How does Ben turn the cipher text back into plaintext?",
+     "options": [
+      {
+       "text": "Shift each letter 5 places left, wrapping `a` back to `z`",
+       "feedback": "Decryption uses the same key in the opposite direction, so each character moves back 5 places. Near the start of the alphabet it must wrap round to the end.",
+       "correct": true
+      },
+      {
+       "text": "Run the encryption script again with the same distance",
+       "feedback": "Encrypting twice moves each letter 10 places from the original, not back to it. Undoing a shift means shifting the other way."
+      },
+      {
+       "text": "Shift each letter 5 places left; no wraparound is needed",
+       "feedback": "Wrapping matters in both directions. A plaintext `x` became `c`, and moving `c` back 5 places has to wrap past `a` to reach `x`."
+      },
+      {
+       "text": "Reverse the order of the characters in the cipher text",
+       "feedback": "A Caesar cipher keeps the characters in their original order and replaces each one. Reversing the string would not undo any replacement."
+      }
+     ],
+     "hint": "Encryption moved each letter 5 places forward. What undoes that, and what happens near `a`?",
+     "explanation": "Sender and receiver share the key, here the distance. Encryption adds it with wraparound at the end of the alphabet; decryption subtracts it with wraparound at the start.",
+     "aside": "With a distance of 13 on the 26 letters, encrypting twice *does* restore the message, because 13 + 13 = 26. That special case, ROT13, has long been used online to hide spoilers and puzzle answers.",
+     "ref": "Section 4.2, decrypt.py (p. 92)"
+    },
+    {
+     "id": "brute-force",
+     "concept": "Why a Caesar cipher is easy to break",
+     "level": "evaluate",
+     "stem": "Why would a Caesar cipher be no match for a spy with a computer, even if the spy doesn't know the distance?",
+     "options": [
+      {
+       "text": "The spy can try every distance until readable text appears",
+       "feedback": "With 128 ASCII characters there are only 128 possible distances. A program can decrypt the text with each one and stop when the result makes sense, in under a second.",
+       "correct": true
+      },
+      {
+       "text": "The distance value has to travel along with the message",
+       "feedback": "Nothing in the method sends the key with the message; sender and receiver agree on it in advance. The weakness is how few keys there are."
+      },
+      {
+       "text": "The cipher text shows the letters of the plaintext directly",
+       "feedback": "Each character is replaced, so the letters themselves are not visible. What leaks is their pattern, and the tiny number of keys."
+      },
+      {
+       "text": "Anyone can look up how the `ord` and `chr` functions work",
+       "feedback": "Knowing the method is not supposed to matter: a good cipher stays secure when only the key is secret. Caesar fails because its key is so easy to guess."
+      }
+     ],
+     "hint": "How many different distance values could the sender possibly have used?",
+     "explanation": "A cipher with very few possible keys falls to brute force: try them all. Each Caesar character depends only on itself and one fixed number, so checking every number is trivial for a computer.",
+     "aside": "In 1883 Auguste Kerckhoffs argued that a cipher should stay secure even when the enemy knows everything about it except the key. Modern encryption follows that rule: the methods are published, and only the keys are secret.",
+     "ref": "Section 4.2, the paragraph after the sample runs (p. 92)"
+    },
+    {
+     "id": "pattern-leak",
+     "concept": "Structure preserved in cipher text",
+     "level": "analyze",
+     "stem": "A spy intercepts the Caesar cipher text `khoor` but has no key. What can the spy already tell about the plaintext?",
+     "options": [
+      {
+       "text": "Its third and fourth letters are the same letter",
+       "feedback": "Equal plaintext letters always become equal cipher letters, because each depends only on itself and the fixed distance. The doubled `oo` must come from a doubled letter.",
+       "correct": true
+      },
+      {
+       "text": "Nothing, because the cipher text looks random",
+       "feedback": "It only looks random letter by letter. The text's structure, its length and its repeated letters, passes straight through the cipher."
+      },
+      {
+       "text": "The plaintext begins with the letter `k`",
+       "feedback": "Every letter is replaced, including the first. `k` stands for some other letter, depending on the distance."
+      },
+      {
+       "text": "The distance is 3, because `k` is 3 after `h`",
+       "feedback": "This reasons from the plaintext, which the spy doesn't have. Without knowing the first letter is `h`, `k` alone reveals nothing about the distance."
+      }
+     ],
+     "hint": "Two plaintext letters are the same. After a Caesar shift, can they become different letters?",
+     "explanation": "A Caesar cipher encrypts one character at a time with a fixed key, so the structure of the original text survives in the cipher text. Repeated letters, word lengths and letter frequencies all leak.",
+     "aside": "The Arab scholar al-Kindi described *frequency analysis* in the 9th century: in long text the most common cipher letter probably stands for the language's most common letter, such as `e` in English.",
+     "ref": "Section 4.2, \"the structure of the original text is preserved\" (p. 92)"
+    },
+    {
+     "id": "block-cipher",
+     "concept": "Block ciphers",
+     "level": "understand",
+     "stem": "According to the reading, what makes a block cipher harder to crack than a Caesar cipher?",
+     "options": [
+      {
+       "text": "Each cipher character comes from a block of characters",
+       "feedback": "A block cipher uses a block of plaintext characters, with an invertible matrix as the key, to compute the encrypted characters. Single-letter patterns no longer show through.",
+       "correct": true
+      },
+      {
+       "text": "It shifts by a much larger distance value than three",
+       "feedback": "A bigger distance is still one fixed shift per character, with the same small set of keys to try. The block cipher changes *how* characters are computed."
+      },
+      {
+       "text": "It runs the Caesar cipher twice, with two different keys",
+       "feedback": "Two shifts in a row add up to one shift, so that is just another Caesar cipher. The block cipher combines characters, not shifts."
+      },
+      {
+       "text": "The receiver decrypts it with a different key",
+       "feedback": "In the reading's block cipher, the receiver uses the same matrix that encrypted the message. The strength comes from mixing characters."
+      }
+     ],
+     "hint": "In a Caesar cipher, each cipher character depends on one plaintext character. What changes in a block cipher?",
+     "explanation": "When each encrypted character depends on a whole block of the plaintext, a change in one letter changes several cipher characters, and repeated letters no longer give themselves away. That makes recovering the key far harder.",
+     "ref": "Section 4.2, last paragraph (p. 92); Case Study 10-3 builds one"
+    }
+   ]
+  },
+  {
+   "id": "4.3-number-systems",
+   "title": "Strings and number systems",
+   "subtitle": "Positional notation, binary to decimal and back, shortcuts, octal and hexadecimal",
+   "source": "Ch. 4, section 4.3 (pp. 93–97)",
+   "intro": "Your router's settings page shows `FF:FF:FF:00`, and a Linux tutorial tells you to run `chmod 755`. Both are numbers in bases other than ten. Six questions on reading and converting them, by hand and in code.",
+   "takeaways": [
+    "In positional notation each digit is worth digit × base^position, with positions numbered from 0 at the right. Converting to decimal means adding those products.",
+    "Converting from decimal repeatedly divides by the base; the remainders are the digits, produced right to left, so each one goes at the *front* of the result.",
+    "One octal digit is exactly 3 bits and one hex digit exactly 4 bits, so you convert to and from binary by grouping bits from the right, with no arithmetic."
+   ],
+   "questions": [
+    {
+     "id": "binary-to-decimal",
+     "concept": "Converting binary to decimal",
+     "level": "apply",
+     "stem": "This is the reading's conversion loop with the input filled in. What does it print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "bitString = \"110100\"\ndecimal = 0\nexponent = len(bitString) - 1\nfor digit in bitString:\n    decimal = decimal + int(digit) * 2 ** exponent\n    exponent = exponent - 1\nprint(decimal)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`52`",
+       "feedback": "The 1s sit at positions 5, 4 and 2 counted from the right, worth 32 + 16 + 4. The loop starts the exponent at `len - 1` = 5 and counts down as it moves right.",
+       "correct": true
+      },
+      {
+       "text": "`104`",
+       "feedback": "This starts the exponent at `len(bitString)`, 6, so every bit is worth twice too much. The leftmost of six bits is at position 5."
+      },
+      {
+       "text": "`11`",
+       "feedback": "This numbers the positions from the left, as if the first bit were worth 1. In positional notation the *rightmost* digit has position 0."
+      },
+      {
+       "text": "`26`",
+       "feedback": "This starts the exponent one too low, at 4, so every bit is worth half. With six bits the leftmost one is worth 2⁵ = 32."
+      }
+     ],
+     "hint": "Which bit is worth 1? Write the positional value above each 1, then add.",
+     "explanation": "A digit's value is the digit times the base raised to its position, and positions count from 0 at the right. For binary you can skip the 0s and add the powers of 2 where the 1s are.",
+     "aside": "Python can do this conversion for you: `int(\"110100\", 2)` returns `52`, and `bin(52)` goes the other way, returning `'0b110100'`.",
+     "ref": "Section 4.3, \"Converting Binary to Decimal\" and binarytodecimal.py (p. 94)"
+    },
+    {
+     "id": "decimal-to-binary",
+     "concept": "Converting decimal to binary",
+     "level": "analyze",
+     "stem": "A student changes one line of the reading's decimal-to-binary loop, as shown. What does the program print now?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "decimal = 6\nbitString = \"\"\nwhile decimal > 0:\n    remainder = decimal % 2\n    decimal = decimal // 2\n    bitString = bitString + str(remainder)\nprint(bitString)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`011`",
+       "feedback": "The remainders come out 0, 1, 1: the rightmost bit first. Adding each one at the *end* writes them in that order, which is 110 backwards.",
+       "correct": true
+      },
+      {
+       "text": "`110`",
+       "feedback": "That is the correct binary for 6, which the original line `str(remainder) + bitString` builds. Placing each new bit at the end reverses it."
+      },
+      {
+       "text": "`11`",
+       "feedback": "A leading 0 vanishes from a *number*, but `bitString` is a string, and a string keeps every character it is given."
+      }
+     ],
+     "hint": "Which bit does the first remainder give you, the leftmost or the rightmost? Where does this version put it?",
+     "explanation": "Repeated division by 2 produces the bits from right to left, so each new remainder belongs at the front of the bit string. That is why the reading's script writes `bitString = str(remainder) + bitString`.",
+     "ref": "Section 4.3, \"Converting Decimal to Binary\" and decimaltobinary.py (p. 95)"
+    },
+    {
+     "id": "all-ones-shortcut",
+     "concept": "Conversion shortcuts",
+     "level": "apply",
+     "stem": "Without adding term by term, what is the decimal value of `1111111` in binary (seven 1s)?",
+     "options": [
+      {
+       "text": "`127`",
+       "feedback": "Seven 1s is one less than `10000000`, a 1 followed by seven 0s, which is 2⁷ = 128. So the value is 128 − 1.",
+       "correct": true
+      },
+      {
+       "text": "`128`",
+       "feedback": "128 is `10000000`, a 1 followed by seven 0s. Seven 1s is the number just before it."
+      },
+      {
+       "text": "`63`",
+       "feedback": "That is six 1s, 2⁶ − 1. Count the digits: the shortcut uses the next power of 2 after seven bits, which is 2⁷."
+      },
+      {
+       "text": "`255`",
+       "feedback": "That is eight 1s, 2⁸ − 1. Seven bits can reach only 2⁷ − 1."
+      }
+     ],
+     "hint": "Add 1 to a row of seven 1s. What binary number do you get?",
+     "explanation": "A 1 followed by n zeros is 2ⁿ, and n ones is one less than that, 2ⁿ − 1. These two patterns let you read many binary numbers at a glance.",
+     "ref": "Section 4.3, \"Conversion Shortcuts\" and Table 4-1 (pp. 95–96)"
+    },
+    {
+     "id": "octal-to-binary",
+     "concept": "Octal and binary",
+     "level": "apply",
+     "stem": "What is the octal number `752` (base 8) in binary?",
+     "options": [
+      {
+       "text": "`111101010`",
+       "feedback": "Each octal digit becomes exactly 3 bits: 7 → 111, 5 → 101, 2 → 010. Written together, that is 111 101 010.",
+       "correct": true
+      },
+      {
+       "text": "`11110110`",
+       "feedback": "The 2 was written as `10` instead of `010`. Every octal digit after the first must fill all 3 bits, or the digits to its left shift place."
+      },
+      {
+       "text": "`011101010010`",
+       "feedback": "This uses 4 bits per digit, the rule for hexadecimal. One octal digit stands for 3 bits, because 8 = 2³."
+      },
+      {
+       "text": "`1011110000`",
+       "feedback": "This converts *decimal* 752. In base 8 the digits 752 stand for 7·64 + 5·8 + 2 = 490, a different quantity."
+      }
+     ],
+     "hint": "How many bits does one octal digit stand for, given that 8 = 2³?",
+     "explanation": "Because 8 is 2³, each octal digit corresponds to exactly 3 bits, so conversion is a lookup per digit, padding each group to 3 bits. Going the other way, you group bits in threes starting from the right.",
+     "aside": "Unix file permissions use octal for exactly this reason. In `chmod 755`, each digit is 3 bits: read, write, execute. 7 = 111 (all three) for the owner and 5 = 101 (read and execute) for everyone else.",
+     "ref": "Section 4.3, \"Octal and Hexadecimal Numbers\" and Figure 4-4 (p. 96)"
+    },
+    {
+     "id": "binary-to-hex",
+     "concept": "Binary to hexadecimal",
+     "level": "apply",
+     "stem": "What is the binary number `101111110` (nine bits) in hexadecimal?",
+     "options": [
+      {
+       "text": "`17E`",
+       "feedback": "Group in fours from the right: 1 | 0111 | 1110, which is 1, 7 and 14. Hex writes 14 as the digit E.",
+       "correct": true
+      },
+      {
+       "text": "`BF0`",
+       "feedback": "This groups from the left: 1011 | 1111 | 0. Groups must start at the right, so any short group falls at the left, where leading zeros change nothing."
+      },
+      {
+       "text": "`576`",
+       "feedback": "This groups the bits in threes, which gives the *octal* form. Hexadecimal digits each stand for 4 bits."
+      },
+      {
+       "text": "`382`",
+       "feedback": "That is the decimal value of the number. Hexadecimal needs base-16 digits, which the 4-bit groups give directly."
+      }
+     ],
+     "hint": "From which end do you start grouping, and how many bits are in a hex digit?",
+     "explanation": "Each hex digit is exactly 4 bits, because 16 = 2⁴, with A–F standing for 10–15. Group bits in fours from the right and look up each group; pad the leftmost group with zeros if it is short.",
+     "aside": "Web colours are written this way: `#FF8800` is three bytes, red FF (255), green 88 (136) and blue 00. Two hex digits always describe exactly one 8-bit byte.",
+     "ref": "Section 4.3, \"Octal and Hexadecimal Numbers\" and Figure 4-5 (pp. 96–97)"
+    },
+    {
+     "id": "why-hex",
+     "concept": "Expressive power of a base",
+     "level": "evaluate",
+     "stem": "Programmers usually write long bit patterns, like a 32-bit value, in hexadecimal rather than octal. What is the best reason?",
+     "options": [
+      {
+       "text": "Each hex digit packs 4 bits, so the same bits need fewer digits",
+       "feedback": "A larger base says more with less: 32 bits take exactly 8 hex digits but 11 octal digits. Both convert to binary just as easily by grouping.",
+       "correct": true
+      },
+      {
+       "text": "Hexadecimal can represent quantities octal cannot",
+       "feedback": "Every base can represent every nonnegative integer; they differ only in how many digits it takes. The difference is length, not range."
+      },
+      {
+       "text": "Computers store their numbers in hexadecimal form",
+       "feedback": "Computers store everything in binary. Octal and hex are shorthands that people use to read and write those bits."
+      },
+      {
+       "text": "Octal to binary needs arithmetic; hex only needs a table",
+       "feedback": "Both work by lookup: 3 bits per octal digit, 4 per hex digit. Neither requires multiplying or dividing."
+      }
+     ],
+     "hint": "Both bases convert to binary by grouping. What differs as the bit strings get longer?",
+     "explanation": "As a base grows, so does its expressive power: each digit carries more information, so numbers get shorter. Hex fits computers neatly because 4 bits is half a byte, so a byte is always exactly two hex digits.",
+     "ref": "Section 4.3, \"Octal and Hexadecimal Numbers\" (p. 96)"
+    }
+   ]
+  },
+  {
+   "id": "4.4-string-methods",
+   "title": "String methods",
+   "subtitle": "Method calls and dot notation, split and join, find and count, upper and lower, isdigit, extracting a file extension",
+   "source": "Ch. 4, section 4.4 (pp. 97–100)",
+   "intro": "A sign-up form crashes when someone types their age as `twenty`, and a word counter says a 4-word sentence has 7 words. Six questions on the string methods that handle cases like these, and the one rule they all share.",
+   "takeaways": [
+    "A method is called on an object with dot notation, `s.method(args)`. String methods never change the string they are called on; methods like `upper` and `replace` *return* a new string, which you must use or store.",
+    "`split()` with no argument breaks at any run of whitespace; `split(sep)` breaks at every single `sep`. `sep.join(list)` puts `sep` only *between* the items.",
+    "`filename.split('.')[-1]` gives the extension whatever its length, because the extension is always the last item."
+   ],
+   "questions": [
+    {
+     "id": "split-extension",
+     "concept": "split and the last item",
+     "level": "apply",
+     "stem": "What does this print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "name = \"archive.tar.gz\"\nparts = name.split('.')\nprint(len(parts), parts[-1])",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 gz`",
+       "feedback": "`split('.')` breaks the name at *every* dot, giving `['archive', 'tar', 'gz']`. That is 3 items, and `[-1]` picks the last one.",
+       "correct": true
+      },
+      {
+       "text": "`2 tar.gz`",
+       "feedback": "This splits only at the first dot. `split` uses every occurrence of the separator, so `tar` and `gz` become separate items."
+      },
+      {
+       "text": "`2 gz`",
+       "feedback": "This splits only at the last dot. Every dot is a separator, so `archive.tar` is split as well."
+      },
+      {
+       "text": "`3 z`",
+       "feedback": "Here `[-1]` is applied to a *list*, so it gives the last item, `'gz'`, not the last character."
+      }
+     ],
+     "hint": "How many dots are in the name? Each one is a place where `split` cuts.",
+     "explanation": "`s.split(sep)` returns a list of the pieces between every occurrence of `sep`. Because `[-1]` selects the last item of a list, `filename.split('.')[-1]` finds an extension of any length.",
+     "ref": "Section 4.4, using split to extract an extension (pp. 99–100)"
+    },
+    {
+     "id": "methods-return-new",
+     "concept": "Methods return new strings",
+     "level": "understand",
+     "stem": "What does this print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "greeting = \"hi there\"\ngreeting.replace(\"hi\", \"bye\")\nprint(greeting)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`hi there`",
+       "feedback": "`replace` returns a changed *copy*. The program never stores that copy, so `greeting` still refers to the original string.",
+       "correct": true
+      },
+      {
+       "text": "`bye there`",
+       "feedback": "This assumes `replace` changes the string it is called on. Strings are immutable, so string methods return new strings instead."
+      },
+      {
+       "text": "`None`",
+       "feedback": "`replace` does return a value, the new string. It is lost only because nothing stores it; `greeting` is untouched."
+      },
+      {
+       "text": "`bye there`, then `hi there`",
+       "feedback": "In the shell, a bare expression's value is echoed, but in a program it is computed and thrown away. Only `print` displays anything here."
+      }
+     ],
+     "hint": "Table 4-2 says `replace` *returns a copy*. Where does this program put that copy?",
+     "explanation": "Because strings are immutable, a string method can only hand back a new string. To keep it, assign it: `greeting = greeting.replace(\"hi\", \"bye\")`.",
+     "aside": "Lists, coming in Chapter 5, work the other way: list methods such as `append` change the list itself and return `None`. Mixing up the two habits is one of the most common bugs in early Python code.",
+     "ref": "Section 4.4, Table 4-2 (p. 98)"
+    },
+    {
+     "id": "find-count",
+     "concept": "find and count",
+     "level": "analyze",
+     "stem": "What does this print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "word = \"banana\"\nprint(word.find(\"an\"), word.count(\"ana\"))",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`1 1`",
+       "feedback": "`find` returns the *lowest* position of `an`, and `b` is at 0, so that is 1. `count` finds `ana` at 1 and resumes after it, at position 4, where only `na` is left.",
+       "correct": true
+      },
+      {
+       "text": "`1 2`",
+       "feedback": "`ana` does appear starting at 1 and at 3, but those overlap. `count` counts nonoverlapping occurrences, so the second one is not counted."
+      },
+      {
+       "text": "`2 1`",
+       "feedback": "This counts positions from 1. Like subscripts, `find` returns positions counted from 0."
+      },
+      {
+       "text": "`3 1`",
+       "feedback": "This gives the position of the *last* `an`. `find` returns the lowest position where the substring starts."
+      }
+     ],
+     "hint": "Table 4-2: `find` returns the *lowest* index; `count` counts *nonoverlapping* occurrences.",
+     "explanation": "`s.find(sub)` returns the lowest position where `sub` starts, using 0-based positions. `s.count(sub)` counts nonoverlapping occurrences: after a match it continues searching after the end of that match.",
+     "ref": "Section 4.4, Table 4-2 (p. 98)"
+    },
+    {
+     "id": "join-separator",
+     "concept": "join",
+     "level": "apply",
+     "stem": "This is Exercise 4-4, question 2b. What does it print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "data = \"Python rules!\"\nprint(\"totally \".join(data.split()))",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`Pythontotally rules!`",
+       "feedback": "`split()` gives `['Python', 'rules!']` with the space removed. `join` puts `\"totally \"` *between* the items, and its only space is at its end.",
+       "correct": true
+      },
+      {
+       "text": "`Python totally rules!`",
+       "feedback": "This assumes the original space survives. `split()` throws the whitespace away, so the only spaces left are the ones inside the separator."
+      },
+      {
+       "text": "`totally Python totally rules!`",
+       "feedback": "This puts the separator before each item. `join` puts it only *between* items: with 2 items, it appears once."
+      },
+      {
+       "text": "`Python rules!totally `",
+       "feedback": "This treats `join` as adding the separator to the end. The separator is the object `join` is called on, and it goes between the items."
+      }
+     ],
+     "hint": "What does `split()` do with the space? Then: where exactly does `join` place its separator?",
+     "explanation": "`sep.join(items)` builds one string from a list of strings, with `sep` placed only between neighbouring items. `split()` and `\" \".join(...)` are near-inverses: one removes the separators, the other puts them back.",
+     "ref": "Section 4.4, Table 4-2 and Exercise 4-4 (pp. 98–100)"
+    },
+    {
+     "id": "split-whitespace",
+     "concept": "split with and without an argument",
+     "level": "analyze",
+     "stem": "A sentence was typed with extra spaces. What does this print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "text = \"This  sentence has   gaps.\"\nprint(len(text.split()), len(text.split(\" \")))",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`4 7`",
+       "feedback": "`split()` treats any run of whitespace as one separator: 4 words. `split(\" \")` cuts at every single space, so the extra spaces leave empty strings in the list: 7 items.",
+       "correct": true
+      },
+      {
+       "text": "`4 4`",
+       "feedback": "This assumes both calls behave alike. When you name the separator, every space is a cut, and two spaces in a row have an empty string between them."
+      },
+      {
+       "text": "`7 7`",
+       "feedback": "`split()` without an argument is designed for exactly this: it ignores extra whitespace, so it finds the 4 words."
+      },
+      {
+       "text": "`7 4`",
+       "feedback": "These are the right numbers in the wrong order. It is the call *with* `\" \"` that keeps the empty pieces."
+      }
+     ],
+     "hint": "Two spaces in a row: if each one is a cut, what lies between them?",
+     "explanation": "With no argument, `split` uses any whitespace (spaces, tabs, newlines) as the separator and ignores runs of it, which suits counting words. With an argument, every single occurrence is a separator, and adjacent separators produce empty strings.",
+     "ref": "Section 4.4, Table 4-2, `s.split([sep])` (p. 98)"
+    },
+    {
+     "id": "isdigit-validate",
+     "concept": "Testing a string before converting",
+     "level": "evaluate",
+     "stem": "A program reads an age with `text = input(\"Age: \")` and must check that the text is a whole number like `19` before calling `int(text)`. Which test does that?",
+     "options": [
+      {
+       "text": "`text.isdigit()`",
+       "feedback": "`isdigit` returns `True` only when every character is a digit, so `\"19\"` passes while `\"twenty\"`, `\"19.5\"` and `\"\"` fail.",
+       "correct": true
+      },
+      {
+       "text": "`not text.isalpha()`",
+       "feedback": "This only rules out text made *entirely* of letters. `\"19.5\"`, `\"1 9\"` and `\"19a\"` all pass it, and `int` then fails on them."
+      },
+      {
+       "text": "`text.find(\"0\") >= 0`",
+       "feedback": "This only asks whether a `0` appears somewhere. `\"19\"` fails it, and `\"10 years\"` passes."
+      },
+      {
+       "text": "`text.count(\"9\") > 0`",
+       "feedback": "Counting one digit says nothing about the other characters. `\"19\"` passes but so does `\"9 lives\"`, and `\"23\"` fails."
+      }
+     ],
+     "hint": "Which method in Table 4-2 checks *every* character of the string at once?",
+     "explanation": "The `is...` methods test the whole string: `isdigit` is `True` only if it is non-empty and every character is a digit. Checking first lets a program ask again instead of crashing with a `ValueError` from `int`.",
+     "aside": "`isdigit` also accepts some characters `int` rejects, such as the superscript `\"²\"`. For text from a keyboard this rarely matters, but Python's stricter `isdecimal` exists for exactly that gap.",
+     "ref": "Section 4.4, Table 4-2, `s.isdigit()` (p. 98)"
+    }
+   ]
+  },
+  {
+   "id": "4.5-text-files",
+   "title": "Text files",
+   "subtitle": "Opening files for output and input, write and close, read, readline and for loops, numbers in files, pathnames, the os module",
+   "source": "Ch. 4, section 4.5 (pp. 100–106)",
+   "intro": "You run your grade logger a second time and yesterday's scores are gone. Six questions on how Python writes, reads and finds text files, and why everything in one is a string.",
+   "takeaways": [
+    "`open(name, 'w')` creates the file or *erases* an existing one; `'r'` opens it for reading. Close an output file, or the last buffered data may never reach the disk.",
+    "Everything written to or read from a text file is a string. Convert numbers with `str` before writing and with `int` or `float` after reading, separating items with spaces or newlines.",
+    "A relative pathname starts from the current working directory and uses `..` to move up one level; an absolute pathname starts at the root."
+   ],
+   "questions": [
+    {
+     "id": "w-erases",
+     "concept": "Opening a file for output",
+     "level": "apply",
+     "stem": "What does this program print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "f = open(\"log.txt\", 'w')\nf.write(\"first\\n\")\nf.close()\nf = open(\"log.txt\", 'w')\nf.write(\"second\\n\")\nf.close()\nf = open(\"log.txt\", 'r')\nprint(f.read())",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`second`",
+       "feedback": "Opening an existing file with mode `'w'` erases what it holds. The second `open` wipes out `first`, so only `second` is left to read.",
+       "correct": true
+      },
+      {
+       "text": "`first second`",
+       "feedback": "This treats `'w'` as adding to the end. Mode `'w'` starts the file over; adding to the end is a different mode, `'a'`."
+      },
+      {
+       "text": "`first`",
+       "feedback": "This assumes the second `open` leaves the existing file alone. Python opens it, but for output that means erasing it first."
+      },
+      {
+       "text": "An error, because `log.txt` already exists",
+       "feedback": "`open` with `'w'` creates the file if it is missing and reuses it if it exists. It never refuses."
+      }
+     ],
+     "hint": "Section 4.5: what happens to the data in an existing file when it is opened for output?",
+     "explanation": "Mode `'w'` creates a missing file and empties an existing one, so each run of a program that opens with `'w'` starts from a blank file. To keep earlier contents and add to them, open with append mode, `'a'`.",
+     "ref": "Section 4.5, \"Writing Text to a File\" (p. 101) and Table 4-3 (p. 103)"
+    },
+    {
+     "id": "write-number",
+     "concept": "Writing numbers to a file",
+     "level": "apply",
+     "stem": "A program has opened `f` for output and holds a score in `score = 42`. Which statement writes the score on its own line?",
+     "options": [
+      {
+       "text": "`f.write(str(score) + '\\n')`",
+       "feedback": "`write` expects one string, so the number is converted with `str` and joined to a newline. The next number will start on a new line.",
+       "correct": true
+      },
+      {
+       "text": "`f.write(score + '\\n')`",
+       "feedback": "Python cannot add an integer and a string, so this raises a `TypeError` before `write` is even called. Convert with `str` first."
+      },
+      {
+       "text": "`f.write(str(score))`",
+       "feedback": "This writes the digits, but nothing separates them from the next value. After writing 42 and 17 the file would read `4217`."
+      },
+      {
+       "text": "`f.write(str(score), '\\n')`",
+       "feedback": "Unlike `print`, `write` takes exactly one string argument; it doesn't accept several values and join them for you."
+      }
+     ],
+     "hint": "What type must `write`'s argument be, and what keeps one number apart from the next?",
+     "explanation": "All data written to a text file must be strings, and `write` takes one string and adds nothing to it. Convert numbers with `str`, and include a separator such as `'\\n'` or a space yourself.",
+     "aside": "Python's `with` statement closes a file for you: inside `with open(\"scores.txt\", 'w') as f:` you write as usual, and the file is closed when the block ends, even if an error interrupts it.",
+     "ref": "Section 4.5, \"Writing Numbers to a File\" (p. 101)"
+    },
+    {
+     "id": "read-strings",
+     "concept": "Everything read is a string",
+     "level": "analyze",
+     "stem": "`data.txt` holds two lines, `5` and `10`. What happens when this runs?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "f = open(\"data.txt\", 'r')\ntotal = 0\nfor line in f:\n    total += line\nprint(total)",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "TypeError"
+       ],
+       "program": "f = open(\"data.txt\", 'w')\nf.write(\"5\\n10\\n\")\nf.close()\nf = open(\"data.txt\", 'r')\ntotal = 0\nfor line in f:\n    total += line\nprint(total)"
+      }
+     },
+     "options": [
+      {
+       "text": "A `TypeError`: each line is a string, not a number",
+       "feedback": "Every file input operation returns strings. `total += line` tries to add the string `'5\\n'` to the integer 0, which Python refuses.",
+       "correct": true
+      },
+      {
+       "text": "It prints `15`, the sum of the two numbers",
+       "feedback": "This assumes Python reads numbers as numbers. A text file only holds characters, so you must convert each line with `int`."
+      },
+      {
+       "text": "It prints `510`, the two lines joined together",
+       "feedback": "That would happen if `total` started as `\"\"`, joining strings. Starting at the integer 0, the first `+=` already fails."
+      },
+      {
+       "text": "A `ValueError`, caused by the newline at the end of each line",
+       "feedback": "The newline is not the problem here, and `int` would even accept `'5\\n'`. The error comes from mixing an integer and a string."
+      }
+     ],
+     "hint": "What type does a `for` loop over a file give you on each pass?",
+     "explanation": "Reading a file always produces strings, so numbers in a file must be converted after input: `total += int(line.strip())`. The reading strips the newline first, which makes the intent clear.",
+     "ref": "Section 4.5, \"Reading Numbers from a File\" (pp. 102–103)"
+    },
+    {
+     "id": "line-newline",
+     "concept": "Lines keep their newline",
+     "level": "understand",
+     "stem": "A file holds the lines `First line.` and `Second line.` This loop prints a blank line after each one. Why?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "f = open(\"myfile.txt\", 'r')\nfor line in f:\n    print(line)",
+      "verify": {
+       "expect": "runs",
+       "program": "f = open(\"myfile.txt\", 'w')\nf.write(\"First line.\\nSecond line.\\n\")\nf.close()\nf = open(\"myfile.txt\", 'r')\nfor line in f:\n    print(line)"
+      }
+     },
+     "options": [
+      {
+       "text": "Each line keeps its newline, and `print` adds another",
+       "feedback": "A line read from a file ends with `'\\n'`, and `print` ends its output with its own newline. Two newlines in a row show as a blank line.",
+       "correct": true
+      },
+      {
+       "text": "The file was written with a blank line after each line",
+       "feedback": "The file contains just `'First line.\\nSecond line.\\n'`, one newline per line. The extra one comes from `print`."
+      },
+      {
+       "text": "A `for` loop reads a blank line between real lines",
+       "feedback": "The loop gets exactly one line per pass, here two passes. The blank line on screen is printed, not read."
+      },
+      {
+       "text": "`print` double-spaces whatever comes from a file",
+       "feedback": "`print` treats every string the same way. It is the string itself, ending in `'\\n'`, that causes the gap."
+      }
+     ],
+     "hint": "What is the last character of each line the loop receives? What does `print` add after its output?",
+     "explanation": "Each line of text input from a file retains its newline character. Remove it with `line.strip()`, or stop `print` from adding its own with `print(line, end=\"\")`.",
+     "ref": "Section 4.5, \"Reading Text from a File\" (p. 102)"
+    },
+    {
+     "id": "space-separated",
+     "concept": "Numbers separated by spaces",
+     "level": "analyze",
+     "stem": "`numbers.txt` holds `3 4` on its first line and `5` on its second. What happens when this runs?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "f = open(\"numbers.txt\", 'r')\ntheSum = 0\nfor line in f:\n    line = line.strip()\n    number = int(line)\n    theSum += number\nprint(\"The sum is\", theSum)",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "ValueError"
+       ],
+       "program": "f = open(\"numbers.txt\", 'w')\nf.write(\"3 4\\n5\\n\")\nf.close()\nf = open(\"numbers.txt\", 'r')\ntheSum = 0\nfor line in f:\n    line = line.strip()\n    number = int(line)\n    theSum += number\nprint(\"The sum is\", theSum)"
+      }
+     },
+     "options": [
+      {
+       "text": "A `ValueError`: `'3 4'` is not one integer",
+       "feedback": "`strip` removes the newline but not the space in the middle. `int` must turn the whole string into one integer, and `'3 4'` holds two.",
+       "correct": true
+      },
+      {
+       "text": "It prints `The sum is 12`, adding all three numbers",
+       "feedback": "That is the right total, but this loop treats each *line* as one number. It needs `split` to get the separate numbers on a line."
+      },
+      {
+       "text": "It prints `The sum is 8`, using each line's first number",
+       "feedback": "This assumes `int` reads the first number and ignores the rest. `int` accepts only a string that is one integer, apart from whitespace at the ends."
+      },
+      {
+       "text": "It prints `The sum is 39`, reading line 1 as `34`",
+       "feedback": "This assumes `int` skips the inner space and reads `34`. It does not; a space inside the digits makes the string invalid."
+      }
+     ],
+     "hint": "After `strip`, what is the first line's string? Is it one integer?",
+     "explanation": "When a line can hold several numbers, split it into words and convert each one: `for word in line.split(): theSum += int(word)`. `split` also discards the newline, so no `strip` is needed.",
+     "ref": "Section 4.5, \"Reading Numbers from a File\" (p. 103)"
+    },
+    {
+     "id": "relative-path",
+     "concept": "Relative pathnames",
+     "level": "apply",
+     "stem": "As in Figure 4-6, the current working directory is `current`. Its parent directory, `parent`, also contains a directory named `sibling`. Which relative pathname opens `myfile.txt` in `sibling`?",
+     "options": [
+      {
+       "text": "`\"../sibling/myfile.txt\"`",
+       "feedback": "`..` moves up from `current` to `parent`, and from there `sibling/myfile.txt` goes down into the sibling directory.",
+       "correct": true
+      },
+      {
+       "text": "`\"sibling/myfile.txt\"`",
+       "feedback": "A path that starts with a directory name looks *below* the current directory. `sibling` is beside `current`, not inside it."
+      },
+      {
+       "text": "`\"/sibling/myfile.txt\"`",
+       "feedback": "A leading `/` makes the path absolute, starting at the root of the whole file system rather than at `current`."
+      },
+      {
+       "text": "`\"../../sibling/myfile.txt\"`",
+       "feedback": "Each `..` moves up one level. Two of them would reach `lambertk`, the directory above `parent`, which has no `sibling` in it."
+      }
+     ],
+     "hint": "From `current`, how many levels up must you go before `sibling` is below you?",
+     "explanation": "A relative pathname starts at the current working directory: names go down into subdirectories and `..` goes up one level. An absolute pathname starts at the root, with `/` on Unix and macOS or a drive letter on Windows.",
+     "aside": "Forward slashes work in Python pathnames on Windows too: `open(\"../sibling/myfile.txt\")` runs unchanged there, which avoids having to double every `\\` in a string.",
+     "ref": "Section 4.5, \"Accessing and Manipulating Files and Directories on Disk\", Figure 4-6 and Table 4-4 (pp. 104–105)"
+    }
+   ]
+  }
+ ]
+}

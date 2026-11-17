@@ -1,0 +1,6 @@
+MC	What does this print?<pre>name = "archive.tar.gz"<br>parts = name.split('.')<br>print(len(parts), parts[-1])</pre>	2 tar.gz	incorrect	3 gz	correct	2 gz	incorrect	3 z	incorrect
+MC	What does this print?<pre>greeting = "hi there"<br>greeting.replace("hi", "bye")<br>print(greeting)</pre>	bye there	incorrect	hi there	correct	None	incorrect	bye there, then hi there	incorrect
+MC	What does this print?<pre>word = "banana"<br>print(word.find("an"), word.count("ana"))</pre>	1 1	correct	1 2	incorrect	2 1	incorrect	3 1	incorrect
+MC	This is Exercise 4-4, question 2b. What does it print?<pre>data = "Python rules!"<br>print("totally ".join(data.split()))</pre>	Pythontotally rules!	correct	Python totally rules!	incorrect	totally Python totally rules!	incorrect	Python rules!totally 	incorrect
+MC	A sentence was typed with extra spaces. What does this print?<pre>text = "This  sentence has   gaps."<br>print(len(text.split()), len(text.split(" ")))</pre>	4 4	incorrect	7 7	incorrect	7 4	incorrect	4 7	correct
+MC	A program reads an age with text = input("Age: ") and must check that the text is a whole number like 19 before calling int(text). Which test does that?	not text.isalpha()	incorrect	text.find("0") &gt;= 0	incorrect	text.isdigit()	correct	text.count("9") &gt; 0	incorrect
