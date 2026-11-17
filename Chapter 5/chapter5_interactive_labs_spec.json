@@ -1,0 +1,717 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 5 labs: Lists and Dictionaries",
+ "collection_intro": "Four hands-on labs for sections 5.1 to 5.3 of *Fundamentals of Python: First Programs*. Each one runs in your browser: read the given code, predict, write, run the test program and explain your choices. Your work saves as you type.",
+ "theme": "harbor",
+ "language": "python",
+ "labs": [
+  {
+   "id": "5.1a",
+   "title": "The tutoring waitlist",
+   "subtitle": "List methods: append, insert, pop, searching safely and replacing elements",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 5.1, Lists (List Literals and Basic Operators to Sorting a List), pp. 115-121",
+   "minutes": 30,
+   "objectives": [
+    "Add and remove list elements at either end with `append`, `insert` and `pop`",
+    "Find an element's position safely by testing with `in` before calling `index`",
+    "Replace the elements of a list with a loop over its indexes, and explain why a loop over the elements can't do it"
+   ],
+   "scenario": "The campus tutoring center keeps its walk-in line in a Python list: the student at index 0 is helped next. Students who just walk in go to the end of the line, and students with an appointment go to the front. The front desk types names in a hurry, so they arrive as `\"  dana WHITE\"` or `\"luis ortega \"`.\n\nThe script `waitlist.py` runs the line. Two of its functions are empty and three have bugs that only show up on a busy afternoon. Every function receives the center's list as `queue` and must work on **that same list**, because the front desk keeps using it.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`join(queue, name)` adds `name` at the **end** of the list it receives, and `join_with_appointment(queue, name)` adds it at the **front**. Both change the caller's list; neither builds a new one."
+    },
+    {
+     "id": "R2",
+     "text": "`call_next(queue)` removes and returns the student at the **front** (index 0). If nobody is waiting, it returns `None` instead of crashing."
+    },
+    {
+     "id": "R3",
+     "text": "`position(queue, name)` returns the place in line counting from 1, or `-1` when `name` is not in the queue. It never raises an error."
+    },
+    {
+     "id": "R4",
+     "text": "`clean_up(queue)` replaces each name **inside the list** with its tidy form (`\"  dana WHITE\"` becomes `\"Dana White\"`)."
+    },
+    {
+     "id": "R5",
+     "text": "The waitlist behaves correctly through the whole afternoon in the test program.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "waitlist.py",
+   "starter_code": "\"\"\"waitlist.py - the walk-in queue at the campus tutoring center.\"\"\"\n\n\ndef join(queue, name):\n    \"\"\"Add name to the end of the queue.\"\"\"\n    # TODO (R1): add name at the end of this same list.\n\n\ndef join_with_appointment(queue, name):\n    \"\"\"Put name at the front of the queue.\"\"\"\n    # TODO (R1): add name before everyone else.\n\n\ndef call_next(queue):\n    \"\"\"Remove and return the student at the front, or None if nobody is waiting.\"\"\"\n    # TODO (R2): this calls the wrong student, and it crashes on an empty queue.\n    return queue.pop()\n\n\ndef position(queue, name):\n    \"\"\"Return name's place in line (1 is the front), or -1 if name is not waiting.\"\"\"\n    # TODO (R3): this crashes when name is not in the queue, and people\n    #            count their place in line from 1, not from 0.\n    return queue.index(name)\n\n\ndef clean_up(queue):\n    \"\"\"Tidy every name in the queue: no outer spaces, Title Case.\"\"\"\n    # TODO (R4): this loop runs without errors, but the list never changes. Why?\n    for name in queue:\n        name = name.strip().title()\n",
+   "solution": "\"\"\"waitlist.py - the walk-in queue at the campus tutoring center.\"\"\"\n\n\ndef join(queue, name):\n    \"\"\"Add name to the end of the queue.\"\"\"\n    queue.append(name)\n\n\ndef join_with_appointment(queue, name):\n    \"\"\"Put name at the front of the queue.\"\"\"\n    queue.insert(0, name)\n\n\ndef call_next(queue):\n    \"\"\"Remove and return the student at the front, or None if nobody is waiting.\"\"\"\n    if len(queue) == 0:\n        return None\n    return queue.pop(0)\n\n\ndef position(queue, name):\n    \"\"\"Return name's place in line (1 is the front), or -1 if name is not waiting.\"\"\"\n    if name in queue:\n        return queue.index(name) + 1\n    else:\n        return -1\n\n\ndef clean_up(queue):\n    \"\"\"Tidy every name in the queue: no outer spaces, Title Case.\"\"\"\n    for index in range(len(queue)):\n        queue[index] = queue[index].strip().title()\n",
+   "solution_notes": "`append` and `insert` are mutators: they change the list object the caller passed in and return `None`, so the functions need no `return`. `pop()` with no argument removes the **last** element; the front of the line is `pop(0)`, and `pop` raises an error on an empty list, so the length is tested first. Unlike the string method `find`, `index` raises an error when the element is absent, which is why the textbook tests with `in` first. In `clean_up`, the loop variable of `for name in queue` is only a name for each element; assigning to it never touches the list. A subscript on the left of `=` targets a position in the list, so the loop has to run over the indexes.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`join` adds to the end of the same list",
+     "within": "join",
+     "require": [
+      "queue\\.append\\s*\\(",
+      "queue\\.insert\\s*\\(\\s*len\\s*\\(",
+      "queue\\.extend\\s*\\(",
+      "queue\\s*\\+=",
+      "queue\\s*\\[\\s*len\\s*\\(\\s*queue\\s*\\)\\s*:\\s*\\]\\s*="
+     ],
+     "forbid": "queue\\s*=\\s*queue\\s*\\+",
+     "message": "Use the list method that adds one element at the end of `queue`. Writing `queue = queue + [name]` builds a **new** list and leaves the front desk's list unchanged, because `+` returns a new list while a mutator method changes the list it is called on."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`join_with_appointment` inserts at index 0",
+     "within": "join_with_appointment",
+     "require": [
+      "queue\\.insert\\s*\\(\\s*0\\s*,",
+      "queue\\s*\\[\\s*:?\\s*0\\s*:\\s*0\\s*\\]\\s*="
+     ],
+     "message": "The front of the line is index 0. `insert(index, element)` places the new element at that index and shifts everyone else one position to the right."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "`call_next` removes the front of the line",
+     "within": "call_next",
+     "require": [
+      "queue\\.pop\\s*\\(\\s*0\\s*\\)",
+      "\\bdel\\s+queue\\s*\\[\\s*0\\s*\\]"
+     ],
+     "forbid": "queue\\.pop\\s*\\(\\s*\\)",
+     "message": "`pop()` with no argument removes the **last** element, so the student who arrived last is helped first. Give `pop` the index of the front of the line."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "`call_next` handles an empty queue",
+     "within": "call_next",
+     "require": [
+      "\\blen\\s*\\(\\s*queue\\s*\\)",
+      "\\bnot\\s+queue\\b",
+      "\\bif\\s+queue\\s*:",
+      "queue\\s*[!=]=\\s*\\[\\s*\\]"
+     ],
+     "message": "`pop` raises an error when the list is empty. Test the length of `queue` first and return `None` when nobody is waiting."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "`position` tests for presence before searching",
+     "within": "position",
+     "require": [
+      "\\bin\\s+queue\\b",
+      "queue\\.count\\s*\\(",
+      "range\\s*\\(\\s*len\\s*\\(\\s*queue"
+     ],
+     "message": "`index` raises an error when the element is not in the list (it does not return -1 the way the string method `find` does). Test with the `in` operator first, and return `-1` when the name is absent."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "`position` counts from 1",
+     "within": "position",
+     "require": [
+      "\\+\\s*1\\b",
+      "\\b1\\s*\\+"
+     ],
+     "message": "Indexes start at 0, but people count their place in line from 1. Add 1 to the index you return."
+    },
+    {
+     "id": "C7",
+     "requirement": "R4",
+     "title": "`clean_up` assigns to positions in the list",
+     "within": "clean_up",
+     "require": "queue\\s*\\[[^\\]]+\\]\\s*=(?!=)",
+     "message": "`name = name.strip().title()` only makes the variable `name` refer to a new string; the list still holds the old one. To replace an element, the subscript must be on the left of the `=`, so the loop has to run over the indexes, not over the elements."
+    }
+   ],
+   "hints": [
+    "Table 5-2 in the reading lists five methods. Decide for each function whether it adds or removes, and at which end of the list. Two of the methods take an index.",
+    "Use **Run** to try things on a small list: add `q = [\"Ana\", \"Ben\", \"Cy\"]`, then print `q.pop()` and `q`. Then try `q.index(\"Zoe\")` and read the error message.",
+    "For `clean_up`, the textbook's loop that squares every number in a list is the pattern: the loop variable is an index, and the element at that index appears on both sides of the `=`."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from waitlist import join, join_with_appointment, call_next, position, clean_up\n\nqueue = []\njoin(queue, \"  dana WHITE\")\njoin(queue, \"luis ortega \")\njoin(queue, \"Mei Chen\")\njoin_with_appointment(queue, \"omar haddad\")\nclean_up(queue)\nprint(queue)\n\nprint(\"Luis is number\", position(queue, \"Luis Ortega\"))\nprint(\"Zoe is number\", position(queue, \"Zoe Park\"))\n\nprint(\"Now helping:\", call_next(queue))\nprint(\"Now helping:\", call_next(queue))\nprint(len(queue), \"still waiting:\", queue)\n\ncall_next(queue)\ncall_next(queue)\nprint(\"Nobody waiting:\", call_next(queue))\n",
+    "predict": "Before running: four students join, one of them with an appointment. Write the list you expect after `clean_up`, in order, and what the last line prints when the queue is empty.",
+    "expected_output": "['Omar Haddad', 'Dana White', 'Luis Ortega', 'Mei Chen']\nLuis is number 3\nZoe is number -1\nNow helping: Omar Haddad\nNow helping: Dana White\n2 still waiting: ['Luis Ortega', 'Mei Chen']\nNobody waiting: None\n"
+   },
+   "warmup": [
+    {
+     "question": "With the starter code and `queue = [\"Ana\", \"Ben\", \"Cy\"]`, who does `call_next(queue)` return? Why is that unfair to the students in line?",
+     "model_answer": "It returns 'Cy'. pop() with no argument removes and returns the last element, so the student who arrived last is helped first while Ana, at index 0, keeps waiting."
+    },
+    {
+     "question": "The starter's `clean_up` loop runs with no error. After it finishes, has the list changed? Predict first, then explain what `name = ...` actually changes.",
+     "model_answer": "No, the list is unchanged. On each pass the variable name refers to one element. Strings are immutable, so strip().title() builds a new string, and the assignment only makes the variable name refer to that new string. Nothing is assigned to a position in the list."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "`join` has no `return` statement, yet after `join(queue, \"Mei Chen\")` the test program's list is longer. Explain how, using the word *mutator*. What would `print(join(queue, \"Ana\"))` display?",
+     "model_answer": "append is a mutator: it changes the internal state of the list object it is called on, and the function received the same list object the test program uses, so the change is visible there. A function with no return statement returns None, so the print would display None (after adding Ana to the list)."
+    },
+    {
+     "question": "For strings, `find` returns -1 when the text is missing. Why does `position` need the `in` test before `index`? What would the front desk see without it when they look up a student who already left?",
+     "model_answer": "The list method index raises an error (an exception) when the element is not found instead of returning -1. Without the in test the program would stop with a ValueError the moment someone looked up a name that is not in line. Testing first lets the function return -1, which the caller can handle."
+    },
+    {
+     "question": "Why does replacing every element need a loop over `range(len(queue))` when printing every element works fine with `for name in queue`?",
+     "model_answer": "Printing only reads each element, and the loop variable gives the value. Replacing needs to say which position in the list receives the new value, and only the subscript queue[index] on the left of the assignment names a position. The index is needed to access the positions for the replacements."
+    }
+   ],
+   "extension": "Write `leave(queue, name)` for a student who gives up waiting: remove them from the list wherever they are and return `True`, or return `False` if they were not in line. Then write `merge(queue, late_arrivals)` that adds every name in a second list to the end of the queue with a single method call.",
+   "worth_knowing": "`pop(0)` makes Python shift every remaining element one position to the left, so on a list of a million names each call does a million small moves. For long queues, Python's standard library offers `collections.deque`, a sequence built to add and remove at both ends without shifting anything.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "5.1b",
+   "title": "A gradebook that keeps its order",
+   "subtitle": "Aliasing and side effects, sort() and None, is versus ==, and tuples",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 5.1, Lists (Mutator Methods and the Value None to Tuples), pp. 121-125",
+   "minutes": 30,
+   "objectives": [
+    "Recognise when two variables are aliases for one list and predict the side effect of changing it",
+    "Copy a list before sorting it, and explain why `aList = aList.sort()` loses the list",
+    "Tell object identity (`is`) from structural equivalence (`==`), and write a one-element tuple"
+   ],
+   "scenario": "An instructor keeps a quiz in two **parallel lists**: `names[i]` is the student and `quiz[i]` is that student's score. The position is the only thing that connects a score to its owner.\n\nA colleague wrote `gradebook.py` to report the median score. It crashes, and once the crash is fixed something worse happens: after asking for the median, every student has somebody else's grade.\n\nRepair `median` so it never disturbs the caller's list. Then write `drop_lowest`, where changing the caller's list is exactly what the instructor wants, and fix `same_list` and `EXTRA_CREDIT`. Fix one thing at a time and press **Run the test program** after each fix: the output tells you what is still wrong.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`median(scores)` returns the median and leaves the caller's list exactly as it was: it sorts a **copy**, and it does not store the result of `sort()`."
+    },
+    {
+     "id": "R2",
+     "text": "`drop_lowest(scores)` removes the lowest score from the caller's list itself, keeps the other scores in their positions, and returns the removed value."
+    },
+    {
+     "id": "R3",
+     "text": "`same_list(a, b)` returns `True` only when both names refer to the **same list object**, not when two different lists happen to have equal contents."
+    },
+    {
+     "id": "R4",
+     "text": "`EXTRA_CREDIT` is a **tuple** that contains the single quiz number 4."
+    },
+    {
+     "id": "R5",
+     "text": "In the test program, the names and scores still line up after the median is computed, and the dropped score disappears from every alias of the gradebook.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "gradebook.py",
+   "starter_code": "\"\"\"gradebook.py - quiz statistics that must not disturb the gradebook.\"\"\"\n\n# Quiz numbers that count as extra credit. There is only one so far.\nEXTRA_CREDIT = (4)   # TODO (R4): is this really a tuple?\n\n\ndef median(scores):\n    \"\"\"Return the median of scores. The caller's list must keep its order.\"\"\"\n    ordered = scores            # TODO (R1): a second list, or a second name?\n    ordered = ordered.sort()    # TODO (R1): what does sort() return?\n    midpoint = len(ordered) // 2\n    if len(ordered) % 2 == 1:\n        return ordered[midpoint]\n    else:\n        return (ordered[midpoint] + ordered[midpoint - 1]) / 2\n\n\ndef drop_lowest(scores):\n    \"\"\"Remove the lowest score from the caller's list and return it.\"\"\"\n    # TODO (R2): here, changing the caller's list IS the job.\n\n\ndef same_list(a, b):\n    \"\"\"Return True only if a and b are two names for the same list object.\"\"\"\n    # TODO (R3): == is True for any two lists with equal contents.\n    return a == b\n\n\ndef is_extra_credit(quiz_number):\n    \"\"\"Given: True if quiz_number is one of the extra-credit quizzes.\"\"\"\n    return quiz_number in EXTRA_CREDIT\n",
+   "solution": "\"\"\"gradebook.py - quiz statistics that must not disturb the gradebook.\"\"\"\n\n# Quiz numbers that count as extra credit. There is only one so far.\nEXTRA_CREDIT = (4,)\n\n\ndef median(scores):\n    \"\"\"Return the median of scores. The caller's list must keep its order.\"\"\"\n    ordered = list(scores)\n    ordered.sort()\n    midpoint = len(ordered) // 2\n    if len(ordered) % 2 == 1:\n        return ordered[midpoint]\n    else:\n        return (ordered[midpoint] + ordered[midpoint - 1]) / 2\n\n\ndef drop_lowest(scores):\n    \"\"\"Remove the lowest score from the caller's list and return it.\"\"\"\n    lowest = min(scores)\n    scores.pop(scores.index(lowest))\n    return lowest\n\n\ndef same_list(a, b):\n    \"\"\"Return True only if a and b are two names for the same list object.\"\"\"\n    return a is b\n\n\ndef is_extra_credit(quiz_number):\n    \"\"\"Given: True if quiz_number is one of the extra-credit quizzes.\"\"\"\n    return quiz_number in EXTRA_CREDIT\n",
+   "solution_notes": "`ordered = scores` creates an alias: one list object with two names, so sorting `ordered` reorders the instructor's `quiz` list and breaks the pairing with `names`. `list(scores)` (or `scores[:]`) builds a new list with the same elements. `sort` is a mutator and returns `None`, so `ordered = ordered.sort()` sorts the list and then throws away the only reference to it. `drop_lowest` is the opposite case: the side effect is the purpose, so it uses a mutator on the parameter and never rebinds or sorts it. `is` tests object identity, `==` structural equivalence. `(4)` is just the integer 4 in parentheses; the comma in `(4,)` is what makes a tuple.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`median` works on a copy of the list",
+     "within": "median",
+     "require": [
+      "\\blist\\s*\\(\\s*scores\\s*\\)",
+      "scores\\s*\\[\\s*:\\s*\\]",
+      "\\bsorted\\s*\\(\\s*scores\\s*\\)",
+      "\\.append\\s*\\(",
+      "scores\\.copy\\s*\\(\\s*\\)",
+      "scores\\s*\\+\\s*\\[\\s*\\]",
+      "\\[\\s*\\]\\s*\\+\\s*scores"
+     ],
+     "forbid": [
+      "=\\s*scores[ \\t]*$",
+      "\\bscores\\.sort\\s*\\("
+     ],
+     "flags": "m",
+     "message": "`ordered = scores` does not copy anything: both names now refer to the same list object, so sorting one sorts the instructor's gradebook too. Build a new list from `scores` (the textbook shows a one-line way with the `list` function) and sort that."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`median` does not store the result of `sort()`",
+     "within": "median",
+     "require": [
+      "\\.sort\\s*\\(\\s*\\)",
+      "\\bsorted\\s*\\("
+     ],
+     "forbid": "=\\s*\\w+\\.sort\\s*\\(",
+     "message": "`sort` is a mutator: it rearranges the list in place and returns `None`. Assigning its result makes your variable `None`, and the sorted list is lost. Call `sort()` as a statement on its own line."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "`drop_lowest` removes from the caller's list",
+     "within": "drop_lowest",
+     "require": [
+      "scores\\.pop\\s*\\(",
+      "scores\\.remove\\s*\\(",
+      "\\bdel\\s+scores\\s*\\["
+     ],
+     "forbid": [
+      "scores\\.sort\\s*\\(",
+      "\\bscores\\s*=(?!=)"
+     ],
+     "message": "Remove the element from `scores` itself with a mutator such as `pop`. Don't sort `scores` (that would reorder the gradebook) and don't assign a new list to the name `scores` (the caller would never see it)."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "`drop_lowest` returns the removed score",
+     "within": "drop_lowest",
+     "require": "\\breturn\\s+\\S",
+     "message": "The instructor wants to know which score was dropped. Return the removed value."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "`same_list` tests object identity",
+     "within": "same_list",
+     "require": [
+      "\\ba\\s+is\\s+b\\b",
+      "\\bb\\s+is\\s+a\\b",
+      "\\bid\\s*\\(\\s*a\\s*\\)\\s*==\\s*id\\s*\\(\\s*b\\s*\\)"
+     ],
+     "forbid": "\\ba\\s*==\\s*b\\b",
+     "message": "`==` returns `True` for two different lists with the same contents (structural equivalence). Python has a separate operator that is `True` only when both operands are the exact same object."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "`EXTRA_CREDIT` is a one-element tuple",
+     "require": [
+      "EXTRA_CREDIT\\s*=\\s*\\(\\s*4\\s*,\\s*\\)",
+      "EXTRA_CREDIT\\s*=\\s*4\\s*,",
+      "EXTRA_CREDIT\\s*=\\s*tuple\\s*\\("
+     ],
+     "message": "`(4)` is the integer 4 with parentheses around it, so `quiz_number in EXTRA_CREDIT` fails. A tuple of one element needs a comma after the element, inside the parentheses."
+    }
+   ],
+   "hints": [
+    "Read the red error message first: it names the line and the type involved. `NoneType` means a variable holds `None`. Which statement in `median` could have put `None` in `ordered`?",
+    "Use **Run** to experiment: make `first = [3, 1, 2]`, then `second = first`, sort `second` and print `first`. Repeat with `third = list(first)`. The section *Aliasing and Side Effects* shows both.",
+    "For `drop_lowest`, find the lowest value, then its position, then remove the element at that position from `scores`. For the tuple, compare `badSingleton` and `goodSingleton` in the reading."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from gradebook import median, drop_lowest, same_list, is_extra_credit\n\nnames = [\"Ana\", \"Ben\", \"Chloe\", \"Dev\", \"Eli\", \"Fay\"]\nquiz = [88, 61, 95, 73, 100, 79]\n\nprint(\"Median:\", median(quiz))\nfor i in range(len(names)):\n    print(names[i], quiz[i], end=\"  \")\nprint()\n\nbackup = list(quiz)\nshortcut = quiz\nprint(\"shortcut is quiz:\", same_list(quiz, shortcut))\nprint(\"backup is quiz:\", same_list(quiz, backup), \"| equal contents:\", backup == quiz)\n\nprint(\"Dropped:\", drop_lowest(quiz))\nprint(\"Gradebook now:\", quiz)\nprint(\"shortcut has\", len(shortcut), \"scores, backup has\", len(backup))\nprint(\"Median of five:\", median(quiz))\nprint(\"Quiz 4 extra credit:\", is_extra_credit(4), \"| Quiz 2:\", is_extra_credit(2))\n",
+    "predict": "Before running: the scores are 88, 61, 95, 73, 100, 79. What is their median? After the median is printed, which score should appear beside **Ben**? And how many scores will `shortcut` and `backup` have after the lowest one is dropped?",
+    "expected_output": "Median: 83.5\nAna 88  Ben 61  Chloe 95  Dev 73  Eli 100  Fay 79\nshortcut is quiz: True\nbackup is quiz: False | equal contents: True\nDropped: 61\nGradebook now: [88, 95, 73, 100, 79]\nshortcut has 5 scores, backup has 6\nMedian of five: 88\nQuiz 4 extra credit: True | Quiz 2: False\n"
+   },
+   "warmup": [
+    {
+     "question": "In the starter's `median`, after the line `ordered = scores` runs, how many list objects exist: one or two? What does your answer mean for the instructor's `quiz` list when `ordered` gets sorted?",
+     "model_answer": "One. Assignment does not copy a list; it makes ordered a second name (an alias) for the same list object. Sorting ordered therefore sorts the instructor's quiz list as a side effect, so the scores no longer sit at the same positions as their students' names."
+    },
+    {
+     "question": "The next line is `ordered = ordered.sort()`. What value does `ordered` hold afterwards, and why does the following line, `len(ordered)`, crash?",
+     "model_answer": "None. sort is a mutator: it sorts the list in place and returns None, so the assignment replaces the reference to the list with None. len(None) raises a TypeError because None has no length."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "`names` and `quiz` are parallel lists. Describe concretely what the instructor would have seen if `median` had sorted the caller's list (use the students in the test program). Which line of your solution prevents it?",
+     "model_answer": "The scores would be reordered to 61, 73, 79, 88, 95, 100 while the names stayed in place, so Ana would show 61 instead of 88 and Ben 73 instead of 61: every student gets someone else's grade, with no error message. The line that builds a new list, ordered = list(scores), prevents it because the sort then changes only the copy."
+    },
+    {
+     "question": "In `median` you avoided changing the caller's list; in `drop_lowest` you changed it on purpose. How should a programmer decide which one a function does, and how do the people who call the function find out?",
+     "model_answer": "It depends on the function's job. A function that only computes an answer (a median) should have no side effects, so callers can trust their data afterwards. A function whose job is to update the data (drop a score) must mutate the list it receives. Either way the docstring should say so, as these do: 'must keep its order' and 'remove ... from the caller's list'."
+    },
+    {
+     "question": "Before the drop, `backup == quiz` was `True` but `same_list(quiz, backup)` was `False`. Explain the difference in your own words, and say which of the two tells you whether changing one list will change the other.",
+     "model_answer": "== compares contents position by position (structural equivalence): the two lists held the same numbers. is compares identity: backup was built by list(quiz), so it is a different object. Only identity tells you about side effects: shortcut is quiz, so the drop showed up in shortcut, while backup kept all six scores."
+    }
+   ],
+   "extension": "Write `curve(scores, points)` that returns a **new** list with `points` added to every score (never above 100) and leaves the original untouched, and `curve_in_place(scores, points)` that changes the caller's list and returns nothing. Show with `is` and `==` that they behave differently.",
+   "worth_knowing": "`is` can surprise you with numbers. CPython keeps one shared object for each small integer from -5 to 256, so `a = 100; b = 100; a is b` is `True`, yet two equal lists are never the same object. That is an implementation detail, not a rule of the language: compare values with `==` and keep `is` for identity.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "5.2",
+   "title": "Pizza night for the programming club",
+   "subtitle": "Defining functions: parameters, return, Boolean functions and main",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 5.2, Defining Simple Functions, pp. 126-128",
+   "minutes": 30,
+   "objectives": [
+    "Define a function with a header, parameters, a docstring and a `return` statement",
+    "Explain the difference between returning a value and printing it, and write a Boolean function",
+    "Organise a script around a `main` function that runs only when the file is run as a program"
+   ],
+   "scenario": "The programming club orders pizza for its monthly meeting, and every month someone redoes the same arithmetic on a napkin: how many slices, how many whole pizzas, what it costs, and whether the club's budget covers it.\n\nThe treasurer started `pizza_night.py` so the club can reuse each step. `pizzas_needed` is finished; read it first. One function is missing, one prints when it should return, one is empty, and `main` still uses placeholder values instead of calling the functions.\n\nNext month the events committee wants to **import** these functions into its own script, so importing the file must not start asking questions.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Define `slices_needed(people, slices_each)`: two parameters, a docstring, and it **returns** the total number of slices."
+    },
+    {
+     "id": "R2",
+     "text": "`order_cost(pizzas, price)` **returns** the cost (pizzas times price) to its caller. It prints nothing."
+    },
+    {
+     "id": "R3",
+     "text": "`within_budget(cost, budget)` is a Boolean function: it returns `True` when `cost` is less than or equal to `budget`, and `False` otherwise."
+    },
+    {
+     "id": "R4",
+     "text": "`main` gets `slices`, `pizzas`, `cost` and `affordable` by **calling** the four functions with the right arguments. It does none of the arithmetic itself."
+    },
+    {
+     "id": "R5",
+     "text": "`main()` is called only when the file is run as a program (the `if __name__ == \"__main__\":` entry point), so importing the module asks no questions."
+    },
+    {
+     "id": "R6",
+     "text": "The test program can import the functions, combine their results and run `main` with the answers 13, 2, 11.5 and 40.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "pizza_night.py",
+   "stdin": "13\n2\n11.5\n40\n",
+   "starter_code": "\"\"\"pizza_night.py - plans the order for the programming club's pizza night.\"\"\"\n\nSLICES_PER_PIZZA = 8\n\n\ndef pizzas_needed(slices):\n    \"\"\"Given: return how many whole pizzas are needed to cover slices.\"\"\"\n    pizzas = slices // SLICES_PER_PIZZA\n    if slices % SLICES_PER_PIZZA != 0:\n        pizzas += 1\n    return pizzas\n\n\n# TODO (R1): define slices_needed(people, slices_each) here, with a docstring.\n#            It returns the total number of slices the club will eat.\n\n\ndef order_cost(pizzas, price):\n    \"\"\"Return the cost of pizzas at price each.\"\"\"\n    # TODO (R2): the caller needs this value back, not on the screen.\n    print(pizzas * price)\n\n\ndef within_budget(cost, budget):\n    \"\"\"Return True if cost is no more than budget, or False otherwise.\"\"\"\n    # TODO (R3)\n\n\ndef main():\n    \"\"\"Ask for the numbers, call the functions and print the plan.\"\"\"\n    people = int(input(\"How many people? \"))\n    slices_each = int(input(\"Slices per person? \"))\n    price = float(input(\"Price per pizza? \"))\n    budget = float(input(\"Budget? \"))\n    print()\n\n    # TODO (R4): replace these four placeholder values with calls to the\n    #            functions above. Pass each call the arguments it needs.\n    slices = 0\n    pizzas = 0\n    cost = 0.0\n    affordable = False\n\n    print(\"Order\", pizzas, \"pizzas for\", slices, \"slices. Cost:\", cost)\n    if affordable:\n        print(\"Within budget.\")\n    else:\n        print(\"Over budget: collect more money.\")\n\n\n# TODO (R5): main should run only when this file is run as a program,\n#            not when another file imports it.\nmain()\n",
+   "solution": "\"\"\"pizza_night.py - plans the order for the programming club's pizza night.\"\"\"\n\nSLICES_PER_PIZZA = 8\n\n\ndef pizzas_needed(slices):\n    \"\"\"Given: return how many whole pizzas are needed to cover slices.\"\"\"\n    pizzas = slices // SLICES_PER_PIZZA\n    if slices % SLICES_PER_PIZZA != 0:\n        pizzas += 1\n    return pizzas\n\n\ndef slices_needed(people, slices_each):\n    \"\"\"Return the total number of slices for people who eat slices_each each.\"\"\"\n    return people * slices_each\n\n\ndef order_cost(pizzas, price):\n    \"\"\"Return the cost of pizzas at price each.\"\"\"\n    return pizzas * price\n\n\ndef within_budget(cost, budget):\n    \"\"\"Return True if cost is no more than budget, or False otherwise.\"\"\"\n    if cost <= budget:\n        return True\n    else:\n        return False\n\n\ndef main():\n    \"\"\"Ask for the numbers, call the functions and print the plan.\"\"\"\n    people = int(input(\"How many people? \"))\n    slices_each = int(input(\"Slices per person? \"))\n    price = float(input(\"Price per pizza? \"))\n    budget = float(input(\"Budget? \"))\n    print()\n\n    slices = slices_needed(people, slices_each)\n    pizzas = pizzas_needed(slices)\n    cost = order_cost(pizzas, price)\n    affordable = within_budget(cost, budget)\n\n    print(\"Order\", pizzas, \"pizzas for\", slices, \"slices. Cost:\", cost)\n    if affordable:\n        print(\"Within budget.\")\n    else:\n        print(\"Over budget: collect more money.\")\n\n\n# The entry point for program execution\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "A parameter is the name in the header; the argument is the value a call passes in, matched by position. `return` sends a value back to the caller, who can store it, compare it or add it to another result; `print` only shows text to a person and the function then returns `None`, which is why `order_cost(2, 10) + order_cost(1, 10)` crashed in the starter. `within_budget` may use `if`/`else` with two exit points, as the textbook's `odd` does, or simply `return cost <= budget`, because the comparison already evaluates to `True` or `False`. In `main`, each result feeds the next call. When the file is imported, `__name__` is the module's name, so the `if` keeps `main` from running; when the file is run directly, `__name__` is `\"__main__\"`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`slices_needed` is defined with two parameters",
+     "require": "\\bdef\\s+slices_needed\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)\\s*:",
+     "message": "Write a header with the keyword `def`, the name `slices_needed`, two parameters in parentheses separated by a comma, and a colon. The body goes on the next lines, indented."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`slices_needed` has a docstring",
+     "strings": true,
+     "require": "\\bdef\\s+slices_needed\\s*\\([^)]*\\)\\s*:\\s*\\n\\s+(?:\"\"\"|''')\\s*\\S",
+     "message": "Make the first line of the body a docstring in triple quotes that says what the function returns. It is what `help(slices_needed)` displays to whoever uses your function."
+    },
+    {
+     "id": "C3",
+     "requirement": "R1",
+     "title": "`slices_needed` returns the product",
+     "within": "slices_needed",
+     "require": "\\breturn\\b[^\\n]*\\w",
+     "forbid": "\\bprint\\s*\\(",
+     "message": "The function must hand the total back with a `return` statement. Don't print inside it: `main` decides what appears on the screen."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "`order_cost` returns instead of printing",
+     "within": "order_cost",
+     "require": "\\breturn\\b[^\\n]*\\w",
+     "forbid": "\\bprint\\s*\\(",
+     "message": "`print` shows the number to a person, and then the function returns `None`, so `cost = order_cost(4, 11.5)` stores `None`. Replace the `print` with a `return` statement so the caller receives the value."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "`within_budget` returns the result of a comparison",
+     "within": "within_budget",
+     "require": "^(?=[\\s\\S]*\\breturn\\b)(?=[\\s\\S]*(?:<=|>=|<|>))",
+     "forbid": "\\bprint\\s*\\(",
+     "message": "Compare `cost` with `budget` and return `True` or `False`. A cost exactly equal to the budget is still within it, so think about which comparison operator you need."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "`main` calls all four functions and leaves the arithmetic to them",
+     "within": "main",
+     "require": "^(?=[\\s\\S]*\\bslices_needed\\s*\\()(?=[\\s\\S]*\\bpizzas_needed\\s*\\()(?=[\\s\\S]*\\border_cost\\s*\\()(?=[\\s\\S]*\\bwithin_budget\\s*\\()",
+     "forbid": [
+      "\\*",
+      "//",
+      "<=|>="
+     ],
+     "message": "Replace each placeholder value with a call: `slices_needed`, then `pizzas_needed`, then `order_cost`, then `within_budget`. The value one call returns becomes an argument of the next. `main` should not multiply, divide or compare: that work already lives in the functions, so a change in how the cost is computed touches only `order_cost`."
+    },
+    {
+     "id": "C7",
+     "requirement": "R5",
+     "title": "`main` is called from the entry point",
+     "strings": true,
+     "require": "\\bif\\s+__name__\\s*==\\s*[\"']__main__[\"']\\s*:\\s*\\n?\\s*main\\s*\\(\\s*\\)",
+     "message": "End the script with the entry point from the reading: an `if` statement that compares `__name__` with `\"__main__\"` and calls `main()` in its body."
+    },
+    {
+     "id": "C8",
+     "requirement": "R5",
+     "title": "No call to `main()` outside the entry point",
+     "forbid": "^main\\s*\\(",
+     "flags": "m",
+     "message": "A `main()` call at the left margin runs every time the file is loaded, even when another script only wants to import your functions. Indent it under the `if __name__ == \"__main__\":` line."
+    }
+   ],
+   "hints": [
+    "Use `pizzas_needed` as your model: header with `def`, parameters in parentheses, a docstring, and a `return` at every exit point. `square` and `odd` in the reading have the same shape.",
+    "Press **Run** on the starter and look at the plan it prints. Which numbers are placeholders? In `main`, each of the four variables should get its value from one function call, and the result of one call is an argument of the next.",
+    "The last four lines of the textbook's `computesquare.py` are the entry point you need. Compare them with the bare `main()` at the bottom of the starter."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from pizza_night import slices_needed, pizzas_needed, order_cost, within_budget, main\n\nprint(\"Imported without starting the program.\")\nslices = slices_needed(9, 3)\nprint(slices, \"slices,\", pizzas_needed(slices), \"pizzas\")\n\ncost = order_cost(4, 11.5)\nprint(\"Cost:\", cost)\nprint(\"Budget 50:\", within_budget(cost, 50))\nprint(\"Budget 46:\", within_budget(cost, 46))\nprint(\"Budget 40:\", within_budget(cost, 40))\nprint(\"Two orders:\", order_cost(2, 10) + order_cost(1, 10))\n\nmain()\n",
+    "stdin": "13\n2\n11.5\n40\n",
+    "predict": "The test program answers `main`'s questions with **13** people, **2** slices each, **11.5** per pizza and a budget of **40**. Before running: how many pizzas will the plan order, what will they cost, and is that within budget?",
+    "expected_output": "Imported without starting the program.\n27 slices, 4 pizzas\nCost: 46.0\nBudget 50: True\nBudget 46: True\nBudget 40: False\nTwo orders: 30\nHow many people? Slices per person? Price per pizza? Budget?\nOrder 4 pizzas for 26 slices. Cost: 46.0\nOver budget: collect more money.\n"
+   },
+   "warmup": [
+    {
+     "question": "`pizzas_needed` is finished. Trace `pizzas_needed(26)` and `pizzas_needed(24)` by hand. Why is `slices // SLICES_PER_PIZZA` alone not enough?",
+     "model_answer": "pizzas_needed(26): 26 // 8 is 3, the remainder 26 % 8 is 2, which is not 0, so one more pizza is added and it returns 4. pizzas_needed(24): 24 // 8 is 3 and the remainder is 0, so it returns 3. Integer division alone rounds down, which would leave two people without a slice."
+    },
+    {
+     "question": "In the starter, what appears on the screen when `cost = order_cost(4, 11.5)` runs, and what value ends up in `cost`?",
+     "model_answer": "46.0 appears on the screen because the function prints it. But the function has no return statement, so it returns None, and cost holds None. The number was shown to a person but never given back to the program."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Pick one of the calls you wrote in `main` and name its arguments and the parameters they are matched with. What decides which argument goes to which parameter?",
+     "model_answer": "For example, in cost = order_cost(pizzas, price) the arguments are the values of main's variables pizzas and price; they are matched with the parameters pizzas and price in the header of order_cost. Position decides the match, not the names: the first argument goes to the first parameter and the second to the second."
+    },
+    {
+     "question": "The test program prints `Imported without starting the program.` before anything else. What would it have printed first with a bare `main()` at the end of your file, and why?",
+     "model_answer": "It would have shown the four questions first (and used up the typed answers), because importing a module runs all of its top-level statements, including a bare call to main. With the entry point, __name__ is the module's name 'pizza_night' during an import, not '__main__', so main is not called until the test program calls it."
+    },
+    {
+     "question": "`order_cost` now returns its result instead of printing it. Give two things the test program does with that returned value that would be impossible if the function only printed.",
+     "model_answer": "It stores the value in a variable and passes it to within_budget three times, and it adds the results of two calls together (order_cost(2, 10) + order_cost(1, 10)). A printed number is only text on the screen; a returned value can be stored, compared, passed to another function or used in arithmetic."
+    }
+   ],
+   "extension": "Add `share(cost, people)` that returns what each person pays, rounded to 2 decimals, and print it in `main`. Then simplify `within_budget` to a single `return` statement, the way Exercise 5-2 asks you to simplify `odd`.",
+   "worth_knowing": "`def` is a statement that runs like any other: it builds a function object and assigns it to the function's name. Nothing inside the body runs until the function is called. That is why `main` can call functions written below it, as long as the call to `main()` comes after all the definitions have been loaded.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "5.3",
+   "title": "Which course needs another tutor?",
+   "subtitle": "Dictionaries: lookup tables, get with a default, counting, sorted keys and pop",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 5.3, Dictionaries, pp. 132-136",
+   "minutes": 35,
+   "objectives": [
+    "Read a value from a dictionary safely when the key may be missing, using `get` with a default",
+    "Build a dictionary from scratch that counts how often each value occurs in a list",
+    "Traverse a dictionary in a chosen order by sorting a list of its keys, and remove a key safely with `pop`"
+   ],
+   "scenario": "The tutoring center logs the course code of every request for help. At the end of the week the coordinator has a list such as `[\"MAC1105\", \"COP1035\", \"ENC1101\", \"COP1035\", ...]` and one question: which course needs another tutor?\n\nA list organises data by **position**, but here nobody cares where a course sits in the list. What matters is the **association** between a course and its number of requests, and between a course and its room. That is a job for dictionaries.\n\nFinish `demand.py`. Requests also arrive for courses that have no room yet (`\"STA2023\"`) and the coordinator sometimes closes a course that was never requested, so two of the functions must decide what to do when a key is missing.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`room_for(course)` returns the room from the `ROOMS` lookup table, or `\"Front desk\"` when the course is not a key in it. It never raises a `KeyError`."
+    },
+    {
+     "id": "R2",
+     "text": "`tally(requests)` returns a dictionary built from scratch in which each course in the list is a key and its value is the number of times it was requested."
+    },
+    {
+     "id": "R3",
+     "text": "`busiest(counts)` returns the course (the key) with the highest count. The dictionary has at least one course; if two courses tie, either may be returned."
+    },
+    {
+     "id": "R4",
+     "text": "`report(counts)` prints one line per course, with the courses in **alphabetical order**, whatever order they were added in."
+    },
+    {
+     "id": "R5",
+     "text": "`close_course(counts, course)` removes the course from the dictionary and returns its count, or returns `0` when the course is not in the dictionary."
+    },
+    {
+     "id": "R6",
+     "text": "The weekly log in the test program is counted, reported and closed correctly.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "demand.py",
+   "starter_code": "\"\"\"demand.py - counts which courses students ask the tutoring center about.\"\"\"\n\n# A lookup table: the room where each course is tutored.\nROOMS = {\"COP1035\": \"Lab 2\", \"MAC1105\": \"Room 14\", \"ENC1101\": \"Room 9\"}\n\n\ndef room_for(course):\n    \"\"\"Return the room for course, or \"Front desk\" if the course has no room yet.\"\"\"\n    # TODO (R1): this crashes for a course that is not in ROOMS.\n    return ROOMS[course]\n\n\ndef tally(requests):\n    \"\"\"Return a dictionary that maps each course in requests to its count.\"\"\"\n    counts = {}\n    # TODO (R2): visit every course in requests and count it in counts.\n    return counts\n\n\ndef busiest(counts):\n    \"\"\"Return the course with the most requests.\"\"\"\n    # TODO (R3)\n\n\ndef report(counts):\n    \"\"\"Print one line per course, in alphabetical order: the course, then its count.\"\"\"\n    # TODO (R4): this prints the courses in the order they were first requested.\n    for course in counts:\n        print(course, counts[course])\n\n\ndef close_course(counts, course):\n    \"\"\"Remove course from counts and return its count (0 if it is not there).\"\"\"\n    # TODO (R5)\n",
+   "solution": "\"\"\"demand.py - counts which courses students ask the tutoring center about.\"\"\"\n\n# A lookup table: the room where each course is tutored.\nROOMS = {\"COP1035\": \"Lab 2\", \"MAC1105\": \"Room 14\", \"ENC1101\": \"Room 9\"}\n\n\ndef room_for(course):\n    \"\"\"Return the room for course, or \"Front desk\" if the course has no room yet.\"\"\"\n    return ROOMS.get(course, \"Front desk\")\n\n\ndef tally(requests):\n    \"\"\"Return a dictionary that maps each course in requests to its count.\"\"\"\n    counts = {}\n    for course in requests:\n        counts[course] = counts.get(course, 0) + 1\n    return counts\n\n\ndef busiest(counts):\n    \"\"\"Return the course with the most requests.\"\"\"\n    most = max(counts.values())\n    for course in counts:\n        if counts[course] == most:\n            return course\n\n\ndef report(counts):\n    \"\"\"Print one line per course, in alphabetical order: the course, then its count.\"\"\"\n    courses = list(counts.keys())\n    courses.sort()\n    for course in courses:\n        print(course, counts[course])\n\n\ndef close_course(counts, course):\n    \"\"\"Remove course from counts and return its count (0 if it is not there).\"\"\"\n    return counts.pop(course, 0)\n",
+   "solution_notes": "A subscript with a missing key raises `KeyError`; `get(key, default)` returns the default instead, so `room_for` needs no `if`. In `tally`, the statement `counts[course] = ...` inserts the key the first time a course appears and replaces its value every time after that; `get(course, 0)` supplies the starting count for a course not seen before. The textbook's mode example does the same with `get(word, None)` and an `if`. `busiest` finds the largest value with `max(counts.values())` and then looks for a key that has it. Dictionary order should not be relied on, so `report` sorts a list of the keys first (and must not write `courses = courses.sort()`). `pop(key, default)` removes the key and returns its value, or returns the default when the key is absent.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`room_for` handles a missing course",
+     "within": "room_for",
+     "require": [
+      "ROOMS\\.get\\s*\\(\\s*course\\s*,",
+      "\\bin\\s+ROOMS\\b"
+     ],
+     "message": "`ROOMS[course]` raises a `KeyError` when the course is not a key. Use the dictionary method that takes a key and a default value, or test with `in` before using the subscript."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "`tally` visits every request",
+     "within": "tally",
+     "require": "\\bfor\\s+\\w+\\s+in\\s+requests\\b|\\bfor\\s+\\w+\\s+in\\s+range\\s*\\(\\s*len\\s*\\(\\s*requests",
+     "message": "Loop over the list `requests` so that every logged course is counted once."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "`tally` reads the current count safely",
+     "within": "tally",
+     "require": [
+      "counts\\.get\\s*\\(\\s*\\w+\\s*,",
+      "\\bin\\s+counts\\b"
+     ],
+     "message": "The first time a course appears it is not yet a key, so `counts[course] + 1` raises a `KeyError`. Ask for the current count with `get` and a default, or test with `in` to tell a new course from one already seen."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "`tally` stores the count under the course",
+     "within": "tally",
+     "require": "counts\\s*\\[\\s*\\w+\\s*\\]\\s*(?:=(?!=)|\\+=)",
+     "message": "Store the new count with the subscript on the left of the assignment. The same statement inserts a new key or replaces the value at an existing key."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "`busiest` finds the highest count",
+     "within": "busiest",
+     "require": [
+      "\\bmax\\s*\\(",
+      ">\\s*\\w"
+     ],
+     "message": "Find the largest number of requests first. `max` accepts a collection of values, and a dictionary can give you all of its values."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "`busiest` returns a course",
+     "within": "busiest",
+     "require": "\\breturn\\s+\\w",
+     "message": "The coordinator needs the course code back, not the count. Traverse the keys and return the one whose value equals the highest count."
+    },
+    {
+     "id": "C7",
+     "requirement": "R4",
+     "title": "`report` sorts the keys before printing",
+     "within": "report",
+     "require": [
+      "\\.sort\\s*\\(\\s*\\)",
+      "\\bsorted\\s*\\("
+     ],
+     "forbid": "=\\s*\\w+\\.sort\\s*\\(",
+     "message": "The order of a dictionary's entries is not something to rely on. Get a list of the keys, sort that list, and traverse it. Remember from Lab 5.1b that `sort()` returns `None`, so call it on its own line."
+    },
+    {
+     "id": "C8",
+     "requirement": "R5",
+     "title": "`close_course` removes the key safely",
+     "within": "close_course",
+     "require": [
+      "counts\\.pop\\s*\\(\\s*course\\s*,",
+      "\\bin\\s+counts\\b"
+     ],
+     "message": "`pop` with only a key raises a `KeyError` when the key is absent. Give `pop` a second argument, the value to return when the course is not in the dictionary."
+    }
+   ],
+   "hints": [
+    "Table 5-4 in the reading lists the operations you need. For each function, decide whether it reads a value, stores a value, removes a key or visits every key, and whether the key might be missing.",
+    "For `tally`, work through the list `[\"A\", \"B\", \"A\"]` on paper: what must `counts` be after each element? The first time a course appears it needs a starting count; after that, one more than it had. The textbook's example that finds the mode of a list of words builds the same dictionary.",
+    "For `report`, the reading prints the `info` dictionary in alphabetical order in three steps: a list of the keys, a sort, a loop. For `busiest`, find the largest value first, then look for a key that has that value."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from demand import room_for, tally, busiest, report, close_course\n\nrequests = [\"MAC1105\", \"COP1035\", \"ENC1101\", \"COP1035\", \"MAC1105\", \"COP1035\", \"STA2023\"]\n\nprint(room_for(\"COP1035\"), \"|\", room_for(\"STA2023\"))\n\ncounts = tally(requests)\nprint(len(counts), \"courses,\", counts[\"COP1035\"], \"requests for COP1035\")\nreport(counts)\nprint(\"Busiest:\", busiest(counts))\n\nprint(\"Closed STA2023:\", close_course(counts, \"STA2023\"))\nprint(\"Closed ART1000:\", close_course(counts, \"ART1000\"))\nprint(len(counts), \"courses left\")\n",
+    "predict": "Before running: the log has seven requests. How many **keys** will `counts` have, which course will be the busiest, and what will the two `close_course` calls return?",
+    "expected_output": "Lab 2 | Front desk\n4 courses, 3 requests for COP1035\nCOP1035 3\nENC1101 1\nMAC1105 2\nSTA2023 1\nBusiest: COP1035\nClosed STA2023: 1\nClosed ART1000: 0\n3 courses left\n"
+   },
+   "warmup": [
+    {
+     "question": "`ROOMS` is a dictionary literal. Name one of its keys and that key's value. With the starter code, what does `room_for(\"MAC1105\")` return, and what happens with `room_for(\"STA2023\")`?",
+     "model_answer": "For example the key 'COP1035' has the value 'Lab 2'. room_for('MAC1105') returns 'Room 14'. 'STA2023' is not a key in ROOMS, so the subscript raises a KeyError and the program stops."
+    },
+    {
+     "question": "In the starter's `report`, what is the loop variable `course` bound to on each pass: a key, a value or a pair? How does the loop reach the count?",
+     "model_answer": "A for loop over a dictionary binds the variable to each key. The count is the value associated with that key, obtained with the subscript counts[course]."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "In `tally`, one statement both adds a course the first time it appears and updates it every time after. Explain how `counts[course] = ...` does both jobs, and what the default value in `get` contributes the first time.",
+     "model_answer": "The subscript assignment inserts the key and value when the key is absent and replaces the value when the key already exists. The first time a course appears, get returns the default 0 instead of raising an error, so the stored count is 0 + 1 = 1. On later appearances get returns the current count, and one more than that replaces it."
+    },
+    {
+     "question": "You could have kept the counts in two parallel lists, as the gradebook in Lab 5.1b did with names and scores. Why is a dictionary a better fit here? Use the words *position* and *association*.",
+     "model_answer": "With parallel lists the only link between a course and its count is that they share a position, so every update means searching one list for the course's index and then using it in the other, and any reordering breaks the link. A dictionary stores the association itself: the course is the key and the count is its value, so the count is found directly from the course and position does not matter."
+    },
+    {
+     "question": "`room_for` and `close_course` both return a default when the key is missing instead of letting the program stop with a `KeyError`. Why is that the right choice for the front desk? Describe a situation where stopping with an error would be the better choice.",
+     "model_answer": "A request for a course without a room, or closing a course nobody asked about, is a normal event at the front desk, and a sensible answer exists (send the student to the front desk; zero requests). Stopping would lose the week's counts for nothing. An error is better when a missing key means the data or the program is wrong and continuing would hide it, for example looking up the price of a product code that should always exist: a made-up default price would be worse than stopping."
+    }
+   ],
+   "extension": "Write `needs_tutor(counts, minimum)` that returns a **sorted list** of the courses with at least `minimum` requests. Then write `rooms_in_use(counts)` that uses `room_for` to return a dictionary mapping each room to the total requests for the courses tutored there.",
+   "worth_knowing": "The textbook tells you not to rely on the order of a dictionary's entries. Since Python 3.7 the language does guarantee one thing: a dictionary keeps its keys in the order they were inserted. That is still rarely the order a reader wants, which is why reports sort the keys.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Pizza night for the programming club</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 5.2</div>
+  <h1>Pizza night for the programming club</h1>
+<h2>Objectives</h2><ul><li>Define a function with a header, parameters, a docstring and a <code>return</code> statement</li><li>Explain the difference between returning a value and printing it, and write a Boolean function</li><li>Organise a script around a <code>main</code> function that runs only when the file is run as a program</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Define <code>slices_needed(people, slices_each)</code>: two parameters, a docstring, and it <strong>returns</strong> the total number of slices.</li><li><strong>R2</strong> <code>order_cost(pizzas, price)</code> <strong>returns</strong> the cost (pizzas times price) to its caller. It prints nothing.</li><li><strong>R3</strong> <code>within_budget(cost, budget)</code> is a Boolean function: it returns <code>True</code> when <code>cost</code> is less than or equal to <code>budget</code>, and <code>False</code> otherwise.</li><li><strong>R4</strong> <code>main</code> gets <code>slices</code>, <code>pizzas</code>, <code>cost</code> and <code>affordable</code> by <strong>calling</strong> the four functions with the right arguments. It does none of the arithmetic itself.</li><li><strong>R5</strong> <code>main()</code> is called only when the file is run as a program (the <code>if __name__ == &quot;__main__&quot;:</code> entry point), so importing the module asks no questions.</li><li><strong>R6</strong> The test program can import the functions, combine their results and run <code>main</code> with the answers 13, 2, 11.5 and 40. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p><code>pizzas_needed</code> is finished. Trace <code>pizzas_needed(26)</code> and <code>pizzas_needed(24)</code> by hand. Why is <code>slices // SLICES_PER_PIZZA</code> alone not enough?</p><div class="answer"><p>pizzas_needed(26): 26 // 8 is 3, the remainder 26 % 8 is 2, which is not 0, so one more pizza is added and it returns 4. pizzas_needed(24): 24 // 8 is 3 and the remainder is 0, so it returns 3. Integer division alone rounds down, which would leave two people without a slice.</p></div></li><li><p>In the starter, what appears on the screen when <code>cost = order_cost(4, 11.5)</code> runs, and what value ends up in <code>cost</code>?</p><div class="answer"><p>46.0 appears on the screen because the function prints it. But the function has no return statement, so it returns None, and cost holds None. The number was shown to a person but never given back to the program.</p></div></li></ol>
+<h2>Solution</h2><div class="file">pizza_night.py</div><pre class="code-block"><code><span class="t-sd">"""pizza_night.py - plans the order for the programming club's pizza night."""</span>
+
+<span class="t-n">SLICES_PER_PIZZA</span> <span class="t-o">=</span> <span class="t-mi">8</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">pizzas_needed</span><span class="t-p">(</span><span class="t-n">slices</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Given: return how many whole pizzas are needed to cover slices."""</span>
+    <span class="t-n">pizzas</span> <span class="t-o">=</span> <span class="t-n">slices</span> <span class="t-o">//</span> <span class="t-n">SLICES_PER_PIZZA</span>
+    <span class="t-k">if</span> <span class="t-n">slices</span> <span class="t-o">%</span> <span class="t-n">SLICES_PER_PIZZA</span> <span class="t-o">!=</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-n">pizzas</span> <span class="t-o">+=</span> <span class="t-mi">1</span>
+    <span class="t-k">return</span> <span class="t-n">pizzas</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">slices_needed</span><span class="t-p">(</span><span class="t-n">people</span><span class="t-p">,</span> <span class="t-n">slices_each</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the total number of slices for people who eat slices_each each."""</span>
+    <span class="t-k">return</span> <span class="t-n">people</span> <span class="t-o">*</span> <span class="t-n">slices_each</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">order_cost</span><span class="t-p">(</span><span class="t-n">pizzas</span><span class="t-p">,</span> <span class="t-n">price</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the cost of pizzas at price each."""</span>
+    <span class="t-k">return</span> <span class="t-n">pizzas</span> <span class="t-o">*</span> <span class="t-n">price</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">within_budget</span><span class="t-p">(</span><span class="t-n">cost</span><span class="t-p">,</span> <span class="t-n">budget</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return True if cost is no more than budget, or False otherwise."""</span>
+    <span class="t-k">if</span> <span class="t-n">cost</span> <span class="t-o">&lt;=</span> <span class="t-n">budget</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-kc">True</span>
+    <span class="t-k">else</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-kc">False</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Ask for the numbers, call the functions and print the plan."""</span>
+    <span class="t-n">people</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"How many people? "</span><span class="t-p">))</span>
+    <span class="t-n">slices_each</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Slices per person? "</span><span class="t-p">))</span>
+    <span class="t-n">price</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Price per pizza? "</span><span class="t-p">))</span>
+    <span class="t-n">budget</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Budget? "</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">()</span>
+
+    <span class="t-n">slices</span> <span class="t-o">=</span> <span class="t-n">slices_needed</span><span class="t-p">(</span><span class="t-n">people</span><span class="t-p">,</span> <span class="t-n">slices_each</span><span class="t-p">)</span>
+    <span class="t-n">pizzas</span> <span class="t-o">=</span> <span class="t-n">pizzas_needed</span><span class="t-p">(</span><span class="t-n">slices</span><span class="t-p">)</span>
+    <span class="t-n">cost</span> <span class="t-o">=</span> <span class="t-n">order_cost</span><span class="t-p">(</span><span class="t-n">pizzas</span><span class="t-p">,</span> <span class="t-n">price</span><span class="t-p">)</span>
+    <span class="t-n">affordable</span> <span class="t-o">=</span> <span class="t-n">within_budget</span><span class="t-p">(</span><span class="t-n">cost</span><span class="t-p">,</span> <span class="t-n">budget</span><span class="t-p">)</span>
+
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Order"</span><span class="t-p">,</span> <span class="t-n">pizzas</span><span class="t-p">,</span> <span class="t-s2">"pizzas for"</span><span class="t-p">,</span> <span class="t-n">slices</span><span class="t-p">,</span> <span class="t-s2">"slices. Cost:"</span><span class="t-p">,</span> <span class="t-n">cost</span><span class="t-p">)</span>
+    <span class="t-k">if</span> <span class="t-n">affordable</span><span class="t-p">:</span>
+        <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Within budget."</span><span class="t-p">)</span>
+    <span class="t-k">else</span><span class="t-p">:</span>
+        <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Over budget: collect more money."</span><span class="t-p">)</span>
+
+
+<span class="t-c1"># The entry point for program execution</span>
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p>A parameter is the name in the header; the argument is the value a call passes in, matched by position. <code>return</code> sends a value back to the caller, who can store it, compare it or add it to another result; <code>print</code> only shows text to a person and the function then returns <code>None</code>, which is why <code>order_cost(2, 10) + order_cost(1, 10)</code> crashed in the starter. <code>within_budget</code> may use <code>if</code>/<code>else</code> with two exit points, as the textbook&#x27;s <code>odd</code> does, or simply <code>return cost &lt;= budget</code>, because the comparison already evaluates to <code>True</code> or <code>False</code>. In <code>main</code>, each result feeds the next call. When the file is imported, <code>__name__</code> is the module&#x27;s name, so the <code>if</code> keeps <code>main</code> from running; when the file is run directly, <code>__name__</code> is <code>&quot;__main__&quot;</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">pizza_night</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">slices_needed</span><span class="t-p">,</span> <span class="t-n">pizzas_needed</span><span class="t-p">,</span> <span class="t-n">order_cost</span><span class="t-p">,</span> <span class="t-n">within_budget</span><span class="t-p">,</span> <span class="t-n">main</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Imported without starting the program."</span><span class="t-p">)</span>
+<span class="t-n">slices</span> <span class="t-o">=</span> <span class="t-n">slices_needed</span><span class="t-p">(</span><span class="t-mi">9</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">slices</span><span class="t-p">,</span> <span class="t-s2">"slices,"</span><span class="t-p">,</span> <span class="t-n">pizzas_needed</span><span class="t-p">(</span><span class="t-n">slices</span><span class="t-p">),</span> <span class="t-s2">"pizzas"</span><span class="t-p">)</span>
+
+<span class="t-n">cost</span> <span class="t-o">=</span> <span class="t-n">order_cost</span><span class="t-p">(</span><span class="t-mi">4</span><span class="t-p">,</span> <span class="t-mf">11.5</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Cost:"</span><span class="t-p">,</span> <span class="t-n">cost</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Budget 50:"</span><span class="t-p">,</span> <span class="t-n">within_budget</span><span class="t-p">(</span><span class="t-n">cost</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Budget 46:"</span><span class="t-p">,</span> <span class="t-n">within_budget</span><span class="t-p">(</span><span class="t-n">cost</span><span class="t-p">,</span> <span class="t-mi">46</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Budget 40:"</span><span class="t-p">,</span> <span class="t-n">within_budget</span><span class="t-p">(</span><span class="t-n">cost</span><span class="t-p">,</span> <span class="t-mi">40</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Two orders:"</span><span class="t-p">,</span> <span class="t-n">order_cost</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-n">order_cost</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">))</span>
+
+<span class="t-n">main</span><span class="t-p">()</span></code></pre><h3>Program input it receives</h3><pre class="output">13
+2
+11.5
+40
+</pre><h3>Expected output</h3><pre class="output">Imported without starting the program.
+27 slices, 4 pizzas
+Cost: 46.0
+Budget 50: True
+Budget 46: True
+Budget 40: False
+Two orders: 30
+How many people? Slices per person? Price per pizza? Budget?
+Order 4 pizzas for 26 slices. Cost: 46.0
+Over budget: collect more money.
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>slices_needed</code> is defined with two parameters<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bdef\s+slices_needed\s*\(\s*\w+\s*,\s*\w+\s*\)\s*:</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>slices_needed</code> has a docstring<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bdef\s+slices_needed\s*\([^)]*\)\s*:\s*\n\s+(?:&quot;&quot;&quot;|&#x27;&#x27;&#x27;)\s*\S</code></div></td></tr><tr><td>C3</td><td>R1</td><td><code>slices_needed</code> returns the product<div class="small">in <code>slices_needed</code></div></td><td><div><span class="tag">require</span> <code>\breturn\b[^\n]*\w</code></div><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>order_cost</code> returns instead of printing<div class="small">in <code>order_cost</code></div></td><td><div><span class="tag">require</span> <code>\breturn\b[^\n]*\w</code></div><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div></td></tr><tr><td>C5</td><td>R3</td><td><code>within_budget</code> returns the result of a comparison<div class="small">in <code>within_budget</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\breturn\b)(?=[\s\S]*(?:&lt;=|&gt;=|&lt;|&gt;))</code></div><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div></td></tr><tr><td>C6</td><td>R4</td><td><code>main</code> calls all four functions and leaves the arithmetic to them<div class="small">in <code>main</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bslices_needed\s*\()(?=[\s\S]*\bpizzas_needed\s*\()(?=[\s\S]*\border_cost\s*\()(?=[\s\S]*\bwithin_budget\s*\()</code></div><div><span class="tag">forbid</span> <code>\*</code></div><div><span class="tag">forbid</span> <code>//</code></div><div><span class="tag">forbid</span> <code>&lt;=|&gt;=</code></div></td></tr><tr><td>C7</td><td>R5</td><td><code>main</code> is called from the entry point<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bif\s+__name__\s*==\s*[&quot;&#x27;]__main__[&quot;&#x27;]\s*:\s*\n?\s*main\s*\(\s*\)</code></div></td></tr><tr><td>C8</td><td>R5</td><td>No call to <code>main()</code> outside the entry point<div class="small">whole file, flags m</div></td><td><div><span class="tag">forbid</span> <code>^main\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>slices_needed</code> is defined with two parameters</dt><dd><p>Write a header with the keyword <code>def</code>, the name <code>slices_needed</code>, two parameters in parentheses separated by a comma, and a colon. The body goes on the next lines, indented.</p></dd><dt>C2 · <code>slices_needed</code> has a docstring</dt><dd><p>Make the first line of the body a docstring in triple quotes that says what the function returns. It is what <code>help(slices_needed)</code> displays to whoever uses your function.</p></dd><dt>C3 · <code>slices_needed</code> returns the product</dt><dd><p>The function must hand the total back with a <code>return</code> statement. Don&#x27;t print inside it: <code>main</code> decides what appears on the screen.</p></dd><dt>C4 · <code>order_cost</code> returns instead of printing</dt><dd><p><code>print</code> shows the number to a person, and then the function returns <code>None</code>, so <code>cost = order_cost(4, 11.5)</code> stores <code>None</code>. Replace the <code>print</code> with a <code>return</code> statement so the caller receives the value.</p></dd><dt>C5 · <code>within_budget</code> returns the result of a comparison</dt><dd><p>Compare <code>cost</code> with <code>budget</code> and return <code>True</code> or <code>False</code>. A cost exactly equal to the budget is still within it, so think about which comparison operator you need.</p></dd><dt>C6 · <code>main</code> calls all four functions and leaves the arithmetic to them</dt><dd><p>Replace each placeholder value with a call: <code>slices_needed</code>, then <code>pizzas_needed</code>, then <code>order_cost</code>, then <code>within_budget</code>. The value one call returns becomes an argument of the next. <code>main</code> should not multiply, divide or compare: that work already lives in the functions, so a change in how the cost is computed touches only <code>order_cost</code>.</p></dd><dt>C7 · <code>main</code> is called from the entry point</dt><dd><p>End the script with the entry point from the reading: an <code>if</code> statement that compares <code>__name__</code> with <code>&quot;__main__&quot;</code> and calls <code>main()</code> in its body.</p></dd><dt>C8 · No call to <code>main()</code> outside the entry point</dt><dd><p>A <code>main()</code> call at the left margin runs every time the file is loaded, even when another script only wants to import your functions. Indent it under the <code>if __name__ == &quot;__main__&quot;:</code> line.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Use <code>pizzas_needed</code> as your model: header with <code>def</code>, parameters in parentheses, a docstring, and a <code>return</code> at every exit point. <code>square</code> and <code>odd</code> in the reading have the same shape.</p></li><li><p>Press <strong>Run</strong> on the starter and look at the plan it prints. Which numbers are placeholders? In <code>main</code>, each of the four variables should get its value from one function call, and the result of one call is an argument of the next.</p></li><li><p>The last four lines of the textbook&#x27;s <code>computesquare.py</code> are the entry point you need. Compare them with the bare <code>main()</code> at the bottom of the starter.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Pick one of the calls you wrote in <code>main</code> and name its arguments and the parameters they are matched with. What decides which argument goes to which parameter?</p><div class="answer"><p>For example, in cost = order_cost(pizzas, price) the arguments are the values of main&#x27;s variables pizzas and price; they are matched with the parameters pizzas and price in the header of order_cost. Position decides the match, not the names: the first argument goes to the first parameter and the second to the second.</p></div></li><li><p>The test program prints <code>Imported without starting the program.</code> before anything else. What would it have printed first with a bare <code>main()</code> at the end of your file, and why?</p><div class="answer"><p>It would have shown the four questions first (and used up the typed answers), because importing a module runs all of its top-level statements, including a bare call to main. With the entry point, __name__ is the module&#x27;s name &#x27;pizza_night&#x27; during an import, not &#x27;__main__&#x27;, so main is not called until the test program calls it.</p></div></li><li><p><code>order_cost</code> now returns its result instead of printing it. Give two things the test program does with that returned value that would be impossible if the function only printed.</p><div class="answer"><p>It stores the value in a variable and passes it to within_budget three times, and it adds the results of two calls together (order_cost(2, 10) + order_cost(1, 10)). A printed number is only text on the screen; a returned value can be stored, compared, passed to another function or used in arithmetic.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>share(cost, people)</code> that returns what each person pays, rounded to 2 decimals, and print it in <code>main</code>. Then simplify <code>within_budget</code> to a single <code>return</code> statement, the way Exercise 5-2 asks you to simplify <code>odd</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

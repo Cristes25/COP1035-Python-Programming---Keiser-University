@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · The tutoring waitlist</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 5.1a</div>
+  <h1>The tutoring waitlist</h1>
+<h2>Objectives</h2><ul><li>Add and remove list elements at either end with <code>append</code>, <code>insert</code> and <code>pop</code></li><li>Find an element&#x27;s position safely by testing with <code>in</code> before calling <code>index</code></li><li>Replace the elements of a list with a loop over its indexes, and explain why a loop over the elements can&#x27;t do it</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>join(queue, name)</code> adds <code>name</code> at the <strong>end</strong> of the list it receives, and <code>join_with_appointment(queue, name)</code> adds it at the <strong>front</strong>. Both change the caller&#x27;s list; neither builds a new one.</li><li><strong>R2</strong> <code>call_next(queue)</code> removes and returns the student at the <strong>front</strong> (index 0). If nobody is waiting, it returns <code>None</code> instead of crashing.</li><li><strong>R3</strong> <code>position(queue, name)</code> returns the place in line counting from 1, or <code>-1</code> when <code>name</code> is not in the queue. It never raises an error.</li><li><strong>R4</strong> <code>clean_up(queue)</code> replaces each name <strong>inside the list</strong> with its tidy form (<code>&quot;  dana WHITE&quot;</code> becomes <code>&quot;Dana White&quot;</code>).</li><li><strong>R5</strong> The waitlist behaves correctly through the whole afternoon in the test program. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter code and <code>queue = [&quot;Ana&quot;, &quot;Ben&quot;, &quot;Cy&quot;]</code>, who does <code>call_next(queue)</code> return? Why is that unfair to the students in line?</p><div class="answer"><p>It returns &#x27;Cy&#x27;. pop() with no argument removes and returns the last element, so the student who arrived last is helped first while Ana, at index 0, keeps waiting.</p></div></li><li><p>The starter&#x27;s <code>clean_up</code> loop runs with no error. After it finishes, has the list changed? Predict first, then explain what <code>name = ...</code> actually changes.</p><div class="answer"><p>No, the list is unchanged. On each pass the variable name refers to one element. Strings are immutable, so strip().title() builds a new string, and the assignment only makes the variable name refer to that new string. Nothing is assigned to a position in the list.</p></div></li></ol>
+<h2>Solution</h2><div class="file">waitlist.py</div><pre class="code-block"><code><span class="t-sd">"""waitlist.py - the walk-in queue at the campus tutoring center."""</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">join</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-n">name</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Add name to the end of the queue."""</span>
+    <span class="t-n">queue</span><span class="t-o">.</span><span class="t-n">append</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">join_with_appointment</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-n">name</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Put name at the front of the queue."""</span>
+    <span class="t-n">queue</span><span class="t-o">.</span><span class="t-n">insert</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-n">name</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">call_next</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Remove and return the student at the front, or None if nobody is waiting."""</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-kc">None</span>
+    <span class="t-k">return</span> <span class="t-n">queue</span><span class="t-o">.</span><span class="t-n">pop</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">position</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-n">name</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return name's place in line (1 is the front), or -1 if name is not waiting."""</span>
+    <span class="t-k">if</span> <span class="t-n">name</span> <span class="t-ow">in</span> <span class="t-n">queue</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-n">queue</span><span class="t-o">.</span><span class="t-n">index</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-mi">1</span>
+    <span class="t-k">else</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-o">-</span><span class="t-mi">1</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">clean_up</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Tidy every name in the queue: no outer spaces, Title Case."""</span>
+    <span class="t-k">for</span> <span class="t-n">index</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">)):</span>
+        <span class="t-n">queue</span><span class="t-p">[</span><span class="t-n">index</span><span class="t-p">]</span> <span class="t-o">=</span> <span class="t-n">queue</span><span class="t-p">[</span><span class="t-n">index</span><span class="t-p">]</span><span class="t-o">.</span><span class="t-n">strip</span><span class="t-p">()</span><span class="t-o">.</span><span class="t-n">title</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p><code>append</code> and <code>insert</code> are mutators: they change the list object the caller passed in and return <code>None</code>, so the functions need no <code>return</code>. <code>pop()</code> with no argument removes the <strong>last</strong> element; the front of the line is <code>pop(0)</code>, and <code>pop</code> raises an error on an empty list, so the length is tested first. Unlike the string method <code>find</code>, <code>index</code> raises an error when the element is absent, which is why the textbook tests with <code>in</code> first. In <code>clean_up</code>, the loop variable of <code>for name in queue</code> is only a name for each element; assigning to it never touches the list. A subscript on the left of <code>=</code> targets a position in the list, so the loop has to run over the indexes.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">waitlist</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">join</span><span class="t-p">,</span> <span class="t-n">join_with_appointment</span><span class="t-p">,</span> <span class="t-n">call_next</span><span class="t-p">,</span> <span class="t-n">position</span><span class="t-p">,</span> <span class="t-n">clean_up</span>
+
+<span class="t-n">queue</span> <span class="t-o">=</span> <span class="t-p">[]</span>
+<span class="t-n">join</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-s2">"  dana WHITE"</span><span class="t-p">)</span>
+<span class="t-n">join</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-s2">"luis ortega "</span><span class="t-p">)</span>
+<span class="t-n">join</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-s2">"Mei Chen"</span><span class="t-p">)</span>
+<span class="t-n">join_with_appointment</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-s2">"omar haddad"</span><span class="t-p">)</span>
+<span class="t-n">clean_up</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">)</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Luis is number"</span><span class="t-p">,</span> <span class="t-n">position</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-s2">"Luis Ortega"</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Zoe is number"</span><span class="t-p">,</span> <span class="t-n">position</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">,</span> <span class="t-s2">"Zoe Park"</span><span class="t-p">))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Now helping:"</span><span class="t-p">,</span> <span class="t-n">call_next</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Now helping:"</span><span class="t-p">,</span> <span class="t-n">call_next</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">),</span> <span class="t-s2">"still waiting:"</span><span class="t-p">,</span> <span class="t-n">queue</span><span class="t-p">)</span>
+
+<span class="t-n">call_next</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">)</span>
+<span class="t-n">call_next</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Nobody waiting:"</span><span class="t-p">,</span> <span class="t-n">call_next</span><span class="t-p">(</span><span class="t-n">queue</span><span class="t-p">))</span></code></pre><h3>Expected output</h3><pre class="output">[&#x27;Omar Haddad&#x27;, &#x27;Dana White&#x27;, &#x27;Luis Ortega&#x27;, &#x27;Mei Chen&#x27;]
+Luis is number 3
+Zoe is number -1
+Now helping: Omar Haddad
+Now helping: Dana White
+2 still waiting: [&#x27;Luis Ortega&#x27;, &#x27;Mei Chen&#x27;]
+Nobody waiting: None
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>join</code> adds to the end of the same list<div class="small">in <code>join</code></div></td><td><div><span class="tag">require</span> <code>queue\.append\s*\(</code></div><div><span class="tag">require</span> <code>queue\.insert\s*\(\s*len\s*\(</code></div><div><span class="tag">require</span> <code>queue\.extend\s*\(</code></div><div><span class="tag">require</span> <code>queue\s*\+=</code></div><div><span class="tag">require</span> <code>queue\s*\[\s*len\s*\(\s*queue\s*\)\s*:\s*\]\s*=</code></div><div><span class="tag">forbid</span> <code>queue\s*=\s*queue\s*\+</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>join_with_appointment</code> inserts at index 0<div class="small">in <code>join_with_appointment</code></div></td><td><div><span class="tag">require</span> <code>queue\.insert\s*\(\s*0\s*,</code></div><div><span class="tag">require</span> <code>queue\s*\[\s*:?\s*0\s*:\s*0\s*\]\s*=</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>call_next</code> removes the front of the line<div class="small">in <code>call_next</code></div></td><td><div><span class="tag">require</span> <code>queue\.pop\s*\(\s*0\s*\)</code></div><div><span class="tag">require</span> <code>\bdel\s+queue\s*\[\s*0\s*\]</code></div><div><span class="tag">forbid</span> <code>queue\.pop\s*\(\s*\)</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>call_next</code> handles an empty queue<div class="small">in <code>call_next</code></div></td><td><div><span class="tag">require</span> <code>\blen\s*\(\s*queue\s*\)</code></div><div><span class="tag">require</span> <code>\bnot\s+queue\b</code></div><div><span class="tag">require</span> <code>\bif\s+queue\s*:</code></div><div><span class="tag">require</span> <code>queue\s*[!=]=\s*\[\s*\]</code></div></td></tr><tr><td>C5</td><td>R3</td><td><code>position</code> tests for presence before searching<div class="small">in <code>position</code></div></td><td><div><span class="tag">require</span> <code>\bin\s+queue\b</code></div><div><span class="tag">require</span> <code>queue\.count\s*\(</code></div><div><span class="tag">require</span> <code>range\s*\(\s*len\s*\(\s*queue</code></div></td></tr><tr><td>C6</td><td>R3</td><td><code>position</code> counts from 1<div class="small">in <code>position</code></div></td><td><div><span class="tag">require</span> <code>\+\s*1\b</code></div><div><span class="tag">require</span> <code>\b1\s*\+</code></div></td></tr><tr><td>C7</td><td>R4</td><td><code>clean_up</code> assigns to positions in the list<div class="small">in <code>clean_up</code></div></td><td><div><span class="tag">require</span> <code>queue\s*\[[^\]]+\]\s*=(?!=)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>join</code> adds to the end of the same list</dt><dd><p>Use the list method that adds one element at the end of <code>queue</code>. Writing <code>queue = queue + [name]</code> builds a <strong>new</strong> list and leaves the front desk&#x27;s list unchanged, because <code>+</code> returns a new list while a mutator method changes the list it is called on.</p></dd><dt>C2 · <code>join_with_appointment</code> inserts at index 0</dt><dd><p>The front of the line is index 0. <code>insert(index, element)</code> places the new element at that index and shifts everyone else one position to the right.</p></dd><dt>C3 · <code>call_next</code> removes the front of the line</dt><dd><p><code>pop()</code> with no argument removes the <strong>last</strong> element, so the student who arrived last is helped first. Give <code>pop</code> the index of the front of the line.</p></dd><dt>C4 · <code>call_next</code> handles an empty queue</dt><dd><p><code>pop</code> raises an error when the list is empty. Test the length of <code>queue</code> first and return <code>None</code> when nobody is waiting.</p></dd><dt>C5 · <code>position</code> tests for presence before searching</dt><dd><p><code>index</code> raises an error when the element is not in the list (it does not return -1 the way the string method <code>find</code> does). Test with the <code>in</code> operator first, and return <code>-1</code> when the name is absent.</p></dd><dt>C6 · <code>position</code> counts from 1</dt><dd><p>Indexes start at 0, but people count their place in line from 1. Add 1 to the index you return.</p></dd><dt>C7 · <code>clean_up</code> assigns to positions in the list</dt><dd><p><code>name = name.strip().title()</code> only makes the variable <code>name</code> refer to a new string; the list still holds the old one. To replace an element, the subscript must be on the left of the <code>=</code>, so the loop has to run over the indexes, not over the elements.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Table 5-2 in the reading lists five methods. Decide for each function whether it adds or removes, and at which end of the list. Two of the methods take an index.</p></li><li><p>Use <strong>Run</strong> to try things on a small list: add <code>q = [&quot;Ana&quot;, &quot;Ben&quot;, &quot;Cy&quot;]</code>, then print <code>q.pop()</code> and <code>q</code>. Then try <code>q.index(&quot;Zoe&quot;)</code> and read the error message.</p></li><li><p>For <code>clean_up</code>, the textbook&#x27;s loop that squares every number in a list is the pattern: the loop variable is an index, and the element at that index appears on both sides of the <code>=</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p><code>join</code> has no <code>return</code> statement, yet after <code>join(queue, &quot;Mei Chen&quot;)</code> the test program&#x27;s list is longer. Explain how, using the word <em>mutator</em>. What would <code>print(join(queue, &quot;Ana&quot;))</code> display?</p><div class="answer"><p>append is a mutator: it changes the internal state of the list object it is called on, and the function received the same list object the test program uses, so the change is visible there. A function with no return statement returns None, so the print would display None (after adding Ana to the list).</p></div></li><li><p>For strings, <code>find</code> returns -1 when the text is missing. Why does <code>position</code> need the <code>in</code> test before <code>index</code>? What would the front desk see without it when they look up a student who already left?</p><div class="answer"><p>The list method index raises an error (an exception) when the element is not found instead of returning -1. Without the in test the program would stop with a ValueError the moment someone looked up a name that is not in line. Testing first lets the function return -1, which the caller can handle.</p></div></li><li><p>Why does replacing every element need a loop over <code>range(len(queue))</code> when printing every element works fine with <code>for name in queue</code>?</p><div class="answer"><p>Printing only reads each element, and the loop variable gives the value. Replacing needs to say which position in the list receives the new value, and only the subscript queue[index] on the left of the assignment names a position. The index is needed to access the positions for the replacements.</p></div></li></ol>
+<h2>Extension</h2><p>Write <code>leave(queue, name)</code> for a student who gives up waiting: remove them from the list wherever they are and return <code>True</code>, or return <code>False</code> if they were not in line. Then write <code>merge(queue, late_arrivals)</code> that adds every name in a second list to the end of the queue with a single method call.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

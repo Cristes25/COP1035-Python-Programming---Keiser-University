@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Which course needs another tutor?</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 5.3</div>
+  <h1>Which course needs another tutor?</h1>
+<h2>Objectives</h2><ul><li>Read a value from a dictionary safely when the key may be missing, using <code>get</code> with a default</li><li>Build a dictionary from scratch that counts how often each value occurs in a list</li><li>Traverse a dictionary in a chosen order by sorting a list of its keys, and remove a key safely with <code>pop</code></li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>room_for(course)</code> returns the room from the <code>ROOMS</code> lookup table, or <code>&quot;Front desk&quot;</code> when the course is not a key in it. It never raises a <code>KeyError</code>.</li><li><strong>R2</strong> <code>tally(requests)</code> returns a dictionary built from scratch in which each course in the list is a key and its value is the number of times it was requested.</li><li><strong>R3</strong> <code>busiest(counts)</code> returns the course (the key) with the highest count. The dictionary has at least one course; if two courses tie, either may be returned.</li><li><strong>R4</strong> <code>report(counts)</code> prints one line per course, with the courses in <strong>alphabetical order</strong>, whatever order they were added in.</li><li><strong>R5</strong> <code>close_course(counts, course)</code> removes the course from the dictionary and returns its count, or returns <code>0</code> when the course is not in the dictionary.</li><li><strong>R6</strong> The weekly log in the test program is counted, reported and closed correctly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p><code>ROOMS</code> is a dictionary literal. Name one of its keys and that key&#x27;s value. With the starter code, what does <code>room_for(&quot;MAC1105&quot;)</code> return, and what happens with <code>room_for(&quot;STA2023&quot;)</code>?</p><div class="answer"><p>For example the key &#x27;COP1035&#x27; has the value &#x27;Lab 2&#x27;. room_for(&#x27;MAC1105&#x27;) returns &#x27;Room 14&#x27;. &#x27;STA2023&#x27; is not a key in ROOMS, so the subscript raises a KeyError and the program stops.</p></div></li><li><p>In the starter&#x27;s <code>report</code>, what is the loop variable <code>course</code> bound to on each pass: a key, a value or a pair? How does the loop reach the count?</p><div class="answer"><p>A for loop over a dictionary binds the variable to each key. The count is the value associated with that key, obtained with the subscript counts[course].</p></div></li></ol>
+<h2>Solution</h2><div class="file">demand.py</div><pre class="code-block"><code><span class="t-sd">"""demand.py - counts which courses students ask the tutoring center about."""</span>
+
+<span class="t-c1"># A lookup table: the room where each course is tutored.</span>
+<span class="t-n">ROOMS</span> <span class="t-o">=</span> <span class="t-p">{</span><span class="t-s2">"COP1035"</span><span class="t-p">:</span> <span class="t-s2">"Lab 2"</span><span class="t-p">,</span> <span class="t-s2">"MAC1105"</span><span class="t-p">:</span> <span class="t-s2">"Room 14"</span><span class="t-p">,</span> <span class="t-s2">"ENC1101"</span><span class="t-p">:</span> <span class="t-s2">"Room 9"</span><span class="t-p">}</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">room_for</span><span class="t-p">(</span><span class="t-n">course</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the room for course, or "Front desk" if the course has no room yet."""</span>
+    <span class="t-k">return</span> <span class="t-n">ROOMS</span><span class="t-o">.</span><span class="t-n">get</span><span class="t-p">(</span><span class="t-n">course</span><span class="t-p">,</span> <span class="t-s2">"Front desk"</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">tally</span><span class="t-p">(</span><span class="t-n">requests</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return a dictionary that maps each course in requests to its count."""</span>
+    <span class="t-n">counts</span> <span class="t-o">=</span> <span class="t-p">{}</span>
+    <span class="t-k">for</span> <span class="t-n">course</span> <span class="t-ow">in</span> <span class="t-n">requests</span><span class="t-p">:</span>
+        <span class="t-n">counts</span><span class="t-p">[</span><span class="t-n">course</span><span class="t-p">]</span> <span class="t-o">=</span> <span class="t-n">counts</span><span class="t-o">.</span><span class="t-n">get</span><span class="t-p">(</span><span class="t-n">course</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-mi">1</span>
+    <span class="t-k">return</span> <span class="t-n">counts</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">busiest</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the course with the most requests."""</span>
+    <span class="t-n">most</span> <span class="t-o">=</span> <span class="t-nb">max</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-o">.</span><span class="t-n">values</span><span class="t-p">())</span>
+    <span class="t-k">for</span> <span class="t-n">course</span> <span class="t-ow">in</span> <span class="t-n">counts</span><span class="t-p">:</span>
+        <span class="t-k">if</span> <span class="t-n">counts</span><span class="t-p">[</span><span class="t-n">course</span><span class="t-p">]</span> <span class="t-o">==</span> <span class="t-n">most</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-n">course</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">report</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Print one line per course, in alphabetical order: the course, then its count."""</span>
+    <span class="t-n">courses</span> <span class="t-o">=</span> <span class="t-nb">list</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-o">.</span><span class="t-n">keys</span><span class="t-p">())</span>
+    <span class="t-n">courses</span><span class="t-o">.</span><span class="t-n">sort</span><span class="t-p">()</span>
+    <span class="t-k">for</span> <span class="t-n">course</span> <span class="t-ow">in</span> <span class="t-n">courses</span><span class="t-p">:</span>
+        <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">course</span><span class="t-p">,</span> <span class="t-n">counts</span><span class="t-p">[</span><span class="t-n">course</span><span class="t-p">])</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">close_course</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">,</span> <span class="t-n">course</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Remove course from counts and return its count (0 if it is not there)."""</span>
+    <span class="t-k">return</span> <span class="t-n">counts</span><span class="t-o">.</span><span class="t-n">pop</span><span class="t-p">(</span><span class="t-n">course</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p>A subscript with a missing key raises <code>KeyError</code>; <code>get(key, default)</code> returns the default instead, so <code>room_for</code> needs no <code>if</code>. In <code>tally</code>, the statement <code>counts[course] = ...</code> inserts the key the first time a course appears and replaces its value every time after that; <code>get(course, 0)</code> supplies the starting count for a course not seen before. The textbook&#x27;s mode example does the same with <code>get(word, None)</code> and an <code>if</code>. <code>busiest</code> finds the largest value with <code>max(counts.values())</code> and then looks for a key that has it. Dictionary order should not be relied on, so <code>report</code> sorts a list of the keys first (and must not write <code>courses = courses.sort()</code>). <code>pop(key, default)</code> removes the key and returns its value, or returns the default when the key is absent.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">demand</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">room_for</span><span class="t-p">,</span> <span class="t-n">tally</span><span class="t-p">,</span> <span class="t-n">busiest</span><span class="t-p">,</span> <span class="t-n">report</span><span class="t-p">,</span> <span class="t-n">close_course</span>
+
+<span class="t-n">requests</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-s2">"MAC1105"</span><span class="t-p">,</span> <span class="t-s2">"COP1035"</span><span class="t-p">,</span> <span class="t-s2">"ENC1101"</span><span class="t-p">,</span> <span class="t-s2">"COP1035"</span><span class="t-p">,</span> <span class="t-s2">"MAC1105"</span><span class="t-p">,</span> <span class="t-s2">"COP1035"</span><span class="t-p">,</span> <span class="t-s2">"STA2023"</span><span class="t-p">]</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">room_for</span><span class="t-p">(</span><span class="t-s2">"COP1035"</span><span class="t-p">),</span> <span class="t-s2">"|"</span><span class="t-p">,</span> <span class="t-n">room_for</span><span class="t-p">(</span><span class="t-s2">"STA2023"</span><span class="t-p">))</span>
+
+<span class="t-n">counts</span> <span class="t-o">=</span> <span class="t-n">tally</span><span class="t-p">(</span><span class="t-n">requests</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">),</span> <span class="t-s2">"courses,"</span><span class="t-p">,</span> <span class="t-n">counts</span><span class="t-p">[</span><span class="t-s2">"COP1035"</span><span class="t-p">],</span> <span class="t-s2">"requests for COP1035"</span><span class="t-p">)</span>
+<span class="t-n">report</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Busiest:"</span><span class="t-p">,</span> <span class="t-n">busiest</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Closed STA2023:"</span><span class="t-p">,</span> <span class="t-n">close_course</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">,</span> <span class="t-s2">"STA2023"</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Closed ART1000:"</span><span class="t-p">,</span> <span class="t-n">close_course</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">,</span> <span class="t-s2">"ART1000"</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">counts</span><span class="t-p">),</span> <span class="t-s2">"courses left"</span><span class="t-p">)</span></code></pre><h3>Expected output</h3><pre class="output">Lab 2 | Front desk
+4 courses, 3 requests for COP1035
+COP1035 3
+ENC1101 1
+MAC1105 2
+STA2023 1
+Busiest: COP1035
+Closed STA2023: 1
+Closed ART1000: 0
+3 courses left
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>room_for</code> handles a missing course<div class="small">in <code>room_for</code></div></td><td><div><span class="tag">require</span> <code>ROOMS\.get\s*\(\s*course\s*,</code></div><div><span class="tag">require</span> <code>\bin\s+ROOMS\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td><code>tally</code> visits every request<div class="small">in <code>tally</code></div></td><td><div><span class="tag">require</span> <code>\bfor\s+\w+\s+in\s+requests\b|\bfor\s+\w+\s+in\s+range\s*\(\s*len\s*\(\s*requests</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>tally</code> reads the current count safely<div class="small">in <code>tally</code></div></td><td><div><span class="tag">require</span> <code>counts\.get\s*\(\s*\w+\s*,</code></div><div><span class="tag">require</span> <code>\bin\s+counts\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>tally</code> stores the count under the course<div class="small">in <code>tally</code></div></td><td><div><span class="tag">require</span> <code>counts\s*\[\s*\w+\s*\]\s*(?:=(?!=)|\+=)</code></div></td></tr><tr><td>C5</td><td>R3</td><td><code>busiest</code> finds the highest count<div class="small">in <code>busiest</code></div></td><td><div><span class="tag">require</span> <code>\bmax\s*\(</code></div><div><span class="tag">require</span> <code>&gt;\s*\w</code></div></td></tr><tr><td>C6</td><td>R3</td><td><code>busiest</code> returns a course<div class="small">in <code>busiest</code></div></td><td><div><span class="tag">require</span> <code>\breturn\s+\w</code></div></td></tr><tr><td>C7</td><td>R4</td><td><code>report</code> sorts the keys before printing<div class="small">in <code>report</code></div></td><td><div><span class="tag">require</span> <code>\.sort\s*\(\s*\)</code></div><div><span class="tag">require</span> <code>\bsorted\s*\(</code></div><div><span class="tag">forbid</span> <code>=\s*\w+\.sort\s*\(</code></div></td></tr><tr><td>C8</td><td>R5</td><td><code>close_course</code> removes the key safely<div class="small">in <code>close_course</code></div></td><td><div><span class="tag">require</span> <code>counts\.pop\s*\(\s*course\s*,</code></div><div><span class="tag">require</span> <code>\bin\s+counts\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>room_for</code> handles a missing course</dt><dd><p><code>ROOMS[course]</code> raises a <code>KeyError</code> when the course is not a key. Use the dictionary method that takes a key and a default value, or test with <code>in</code> before using the subscript.</p></dd><dt>C2 · <code>tally</code> visits every request</dt><dd><p>Loop over the list <code>requests</code> so that every logged course is counted once.</p></dd><dt>C3 · <code>tally</code> reads the current count safely</dt><dd><p>The first time a course appears it is not yet a key, so <code>counts[course] + 1</code> raises a <code>KeyError</code>. Ask for the current count with <code>get</code> and a default, or test with <code>in</code> to tell a new course from one already seen.</p></dd><dt>C4 · <code>tally</code> stores the count under the course</dt><dd><p>Store the new count with the subscript on the left of the assignment. The same statement inserts a new key or replaces the value at an existing key.</p></dd><dt>C5 · <code>busiest</code> finds the highest count</dt><dd><p>Find the largest number of requests first. <code>max</code> accepts a collection of values, and a dictionary can give you all of its values.</p></dd><dt>C6 · <code>busiest</code> returns a course</dt><dd><p>The coordinator needs the course code back, not the count. Traverse the keys and return the one whose value equals the highest count.</p></dd><dt>C7 · <code>report</code> sorts the keys before printing</dt><dd><p>The order of a dictionary&#x27;s entries is not something to rely on. Get a list of the keys, sort that list, and traverse it. Remember from Lab 5.1b that <code>sort()</code> returns <code>None</code>, so call it on its own line.</p></dd><dt>C8 · <code>close_course</code> removes the key safely</dt><dd><p><code>pop</code> with only a key raises a <code>KeyError</code> when the key is absent. Give <code>pop</code> a second argument, the value to return when the course is not in the dictionary.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Table 5-4 in the reading lists the operations you need. For each function, decide whether it reads a value, stores a value, removes a key or visits every key, and whether the key might be missing.</p></li><li><p>For <code>tally</code>, work through the list <code>[&quot;A&quot;, &quot;B&quot;, &quot;A&quot;]</code> on paper: what must <code>counts</code> be after each element? The first time a course appears it needs a starting count; after that, one more than it had. The textbook&#x27;s example that finds the mode of a list of words builds the same dictionary.</p></li><li><p>For <code>report</code>, the reading prints the <code>info</code> dictionary in alphabetical order in three steps: a list of the keys, a sort, a loop. For <code>busiest</code>, find the largest value first, then look for a key that has that value.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>In <code>tally</code>, one statement both adds a course the first time it appears and updates it every time after. Explain how <code>counts[course] = ...</code> does both jobs, and what the default value in <code>get</code> contributes the first time.</p><div class="answer"><p>The subscript assignment inserts the key and value when the key is absent and replaces the value when the key already exists. The first time a course appears, get returns the default 0 instead of raising an error, so the stored count is 0 + 1 = 1. On later appearances get returns the current count, and one more than that replaces it.</p></div></li><li><p>You could have kept the counts in two parallel lists, as the gradebook in Lab 5.1b did with names and scores. Why is a dictionary a better fit here? Use the words <em>position</em> and <em>association</em>.</p><div class="answer"><p>With parallel lists the only link between a course and its count is that they share a position, so every update means searching one list for the course&#x27;s index and then using it in the other, and any reordering breaks the link. A dictionary stores the association itself: the course is the key and the count is its value, so the count is found directly from the course and position does not matter.</p></div></li><li><p><code>room_for</code> and <code>close_course</code> both return a default when the key is missing instead of letting the program stop with a <code>KeyError</code>. Why is that the right choice for the front desk? Describe a situation where stopping with an error would be the better choice.</p><div class="answer"><p>A request for a course without a room, or closing a course nobody asked about, is a normal event at the front desk, and a sensible answer exists (send the student to the front desk; zero requests). Stopping would lose the week&#x27;s counts for nothing. An error is better when a missing key means the data or the program is wrong and continuing would hide it, for example looking up the price of a product code that should always exist: a made-up default price would be worse than stopping.</p></div></li></ol>
+<h2>Extension</h2><p>Write <code>needs_tutor(counts, minimum)</code> that returns a <strong>sorted list</strong> of the courses with at least <code>minimum</code> requests. Then write <code>rooms_in_use(counts)</code> that uses <code>room_for</code> to return a dictionary mapping each room to the total requests for the courses tutored there.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
