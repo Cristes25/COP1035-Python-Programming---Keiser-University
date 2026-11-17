@@ -1,0 +1,730 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 4 labs: Strings and Text Files",
+  "collection_intro": "Five hands-on labs for sections 4.1 to 4.5 of *Fundamentals of Python: First Programs*. Each one runs in your browser: read the given code, predict, write, run the test program and explain your choices. Your work saves as you type.",
+  "theme": "harbor",
+  "language": "python",
+  "labs": [
+    {
+      "id": "4.1",
+      "title": "Reading a section code",
+      "subtitle": "The subscript operator, slicing and the in operator",
+      "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 4.1, Accessing Characters and Substrings in Strings, pp. 87-91",
+      "minutes": 25,
+      "objectives": [
+        "Use the subscript operator `s[i]` to read one character, and convert it with `int`",
+        "Extract substrings with slices, counting from the left or from the right end",
+        "Test for a substring with the `in` operator, choosing a target that can't match by accident"
+      ],
+      "scenario": "The registrar exports every class section as a code such as `COP1035-02`. Lab sections carry an extra `L`: `COP1035L-01`. The advising dashboard needs each piece of a code on its own: the subject prefix, the course number, the level, the section, and whether it is a lab.\n\nFinish the five functions in `course_codes.py`. The `describe` function at the bottom is given and uses yours.\n\n```\nC  O  P  1  0  3  5  L  -  0  1\n0  1  2  3  4  5  6  7  8  9  10\n```\n\nWatch out: the `L` only appears in lab codes, so everything after it moves one position to the right.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`prefix(code)` returns the three-letter prefix (`COP`) and `course_number(code)` the four digits (`1035`), using slices."
+        },
+        {
+          "id": "R2",
+          "text": "`level(code)` returns the first digit of the course number as an `int` (`COP1035-02` gives `1`)."
+        },
+        {
+          "id": "R3",
+          "text": "`section(code)` returns the two-digit section for regular and lab codes alike (`COP1035-02` gives `02`, `COP1035L-01` gives `01`)."
+        },
+        {
+          "id": "R4",
+          "text": "`is_lab(code)` returns `True` only for lab sections; `LIT2000-01` is **not** a lab."
+        },
+        {
+          "id": "R5",
+          "text": "Every code in the test program is described correctly.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "course_codes.py",
+      "starter_code": "\"\"\"course_codes.py - pulls apart section codes such as COP1035-02 and COP1035L-01.\"\"\"\n\n\ndef prefix(code):\n    \"\"\"Return the three-letter subject prefix, e.g. 'COP'.\"\"\"\n    # TODO (R1): slice the first three characters.\n    return \"\"\n\n\ndef course_number(code):\n    \"\"\"Return the four-digit course number as a string, e.g. '1035'.\"\"\"\n    # TODO (R1): slice the four digits that follow the prefix.\n    return \"\"\n\n\ndef level(code):\n    \"\"\"Return the course level as an int, e.g. 1 for COP1035.\"\"\"\n    # TODO (R2): read one character with the subscript operator, then convert it.\n    return 0\n\n\ndef section(code):\n    \"\"\"Return the two-digit section, e.g. '02'.\"\"\"\n    # TODO (R3): this works for COP1035-02. Does it work for COP1035L-01?\n    return code[8:10]\n\n\ndef is_lab(code):\n    \"\"\"Return True if the code is a lab section.\"\"\"\n    # TODO (R4): use the in operator.\n    return False\n\n\ndef describe(code):\n    \"\"\"Given: builds a one-line label from the functions above.\"\"\"\n    label = prefix(code) + \" \" + course_number(code) + \", section \" + section(code)\n    if is_lab(code):\n        label += \" (lab)\"\n    return label\n",
+      "solution": "\"\"\"course_codes.py - pulls apart section codes such as COP1035-02 and COP1035L-01.\"\"\"\n\n\ndef prefix(code):\n    \"\"\"Return the three-letter subject prefix, e.g. 'COP'.\"\"\"\n    return code[:3]\n\n\ndef course_number(code):\n    \"\"\"Return the four-digit course number as a string, e.g. '1035'.\"\"\"\n    return code[3:7]\n\n\ndef level(code):\n    \"\"\"Return the course level as an int, e.g. 1 for COP1035.\"\"\"\n    return int(code[3])\n\n\ndef section(code):\n    \"\"\"Return the two-digit section, e.g. '02'.\"\"\"\n    return code[-2:]\n\n\ndef is_lab(code):\n    \"\"\"Return True if the code is a lab section.\"\"\"\n    return \"L-\" in code\n\n\ndef describe(code):\n    \"\"\"Given: builds a one-line label from the functions above.\"\"\"\n    label = prefix(code) + \" \" + course_number(code) + \", section \" + section(code)\n    if is_lab(code):\n        label += \" (lab)\"\n    return label\n",
+      "solution_notes": "The prefix and number sit at fixed positions from the left, so positive slices are right for them. The section is fixed from the **right** end, so `code[-2:]` works whether or not an `L` pushes it along. `\"L-\" in code` looks for the two characters that only lab codes have together; `\"L\" in code` would also match prefixes such as `LIT` or `MLS`. `code[7] == \"L\"` is also correct.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`prefix` slices the first three characters",
+          "within": "prefix",
+          "require": "\\bcode\\s*\\[\\s*0?\\s*:\\s*3\\s*\\]",
+          "message": "Take a slice that starts at the beginning and stops before position 3. The second number in a slice is where it stops, and that position is **not** included.",
+          "hint": "Positions 0, 1 and 2 hold the prefix."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "`course_number` slices positions 3 to 6",
+          "within": "course_number",
+          "require": "\\bcode\\s*\\[\\s*3\\s*:\\s*7\\s*\\]",
+          "message": "The four digits occupy positions 3, 4, 5 and 6. A slice stops *before* its second number, so which number must end it?"
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`level` converts one character to an int",
+          "within": "level",
+          "require": [
+            "\\bint\\s*\\(\\s*code\\s*\\[\\s*3\\s*\\]\\s*\\)",
+            "\\bint\\s*\\(\\s*course_number\\s*\\(\\s*code\\s*\\)\\s*\\[\\s*0\\s*\\]\\s*\\)"
+          ],
+          "message": "Read the single character where the course number starts with the subscript operator, then pass it to `int(...)`. That character is the string `'1'`; the dashboard needs the number `1`."
+        },
+        {
+          "id": "C4",
+          "requirement": "R3",
+          "title": "`section` counts from the right end",
+          "within": "section",
+          "require": [
+            "\\bcode\\s*\\[\\s*-\\s*2\\s*:\\s*\\]",
+            "\\bcode\\s*\\[\\s*len\\s*\\(\\s*code\\s*\\)\\s*-\\s*2\\s*:\\s*(?:len\\s*\\(\\s*code\\s*\\)\\s*)?\\]"
+          ],
+          "forbid": "\\bcode\\s*\\[\\s*8\\s*:\\s*10\\s*\\]",
+          "message": "`code[8:10]` breaks on lab codes: the `L` moves the section one position right. The section is always the **last two** characters, so count from the right end: a negative start position does that."
+        },
+        {
+          "id": "C5",
+          "requirement": "R4",
+          "title": "`is_lab` searches for a target only lab codes contain",
+          "within": "is_lab",
+          "strings": true,
+          "require": [
+            "[\"']L-[\"']\\s+in\\s+code\\b",
+            "\\bcode\\s*\\[\\s*7\\s*\\]\\s*==\\s*[\"']L[\"']"
+          ],
+          "message": "Use `in` with a target that only lab codes contain. Searching for just `\"L\"` says `LIT2000-01` is a lab, because `L` is also in the prefix. What comes right after the `L` in a lab code?"
+        }
+      ],
+      "hints": [
+        "Write a code's positions on paper first. A slice `s[a:b]` takes positions `a` up to, but **not** including, `b`.",
+        "For the section, count from the right: `-1` is the last character, `-2` the one before it. Negative positions don't move when an `L` appears in the middle.",
+        "`\"L\" in code` is too eager: the prefix can contain an L. In a lab code the `L` is always followed by one particular character."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "from course_codes import prefix, course_number, level, section, is_lab, describe\n\ncodes = [\"COP1035-02\", \"COP1035L-01\", \"LIT2000-01\", \"CGS2100L-11\"]\nfor code in codes:\n    parts = [prefix(code), course_number(code), level(code), section(code)]\n    print(code, \"->\", parts, is_lab(code))\n\nprint(describe(\"COP1035L-01\"))\nprint(describe(\"LIT2000-01\"))\n",
+        "predict": "Look at `LIT2000-01` and `CGS2100L-11`. Before running, write down what `section` and `is_lab` should return for each.",
+        "expected_output": "COP1035-02 -> ['COP', '1035', 1, '02'] False\nCOP1035L-01 -> ['COP', '1035', 1, '01'] True\nLIT2000-01 -> ['LIT', '2000', 2, '01'] False\nCGS2100L-11 -> ['CGS', '2100', 2, '11'] True\nCOP 1035, section 01 (lab)\nLIT 2000, section 01\n"
+      },
+      "warmup": [
+        {
+          "question": "Before changing anything: the starter's `section` returns `code[8:10]`. What does it return for `COP1035-02`, and for `COP1035L-01`? Why does one of them go wrong?",
+          "model_answer": "It returns '02' for COP1035-02 but '-0' for COP1035L-01. The L takes position 7, so the hyphen and section digits each move one position right; fixed positions from the left break when the length changes."
+        },
+        {
+          "question": "What is `len(\"COP1035L-01\")`, and what is the position of its last character?",
+          "model_answer": "The length is 11, so the last character is at position 10 (length minus 1), which Python also lets you write as -1."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "Why is `code[-2:]` a better choice than `code[8:10]` for the section, even if every code were a regular section today?",
+          "model_answer": "The section is defined by where it sits relative to the end of the code, not the start. Counting from the right keeps working when something is added in the middle (a lab L, a longer course number), so the function doesn't silently return the wrong text when the format grows."
+        },
+        {
+          "question": "Give a code that would fool `\"L\" in code`, and explain how searching for `\"L-\"` avoids it.",
+          "model_answer": "LIT2000-01 (or any prefix with an L) contains an L but is not a lab. In a valid code the hyphen comes only after the number, so the two characters L- appear together only when the lab L is present; the longer target can't match by accident in the prefix."
+        }
+      ],
+      "extension": "Write `next_section(code)` that returns the code for the following section, e.g. `COP1035-02` gives `COP1035-03` and `COP1035L-09` gives `COP1035L-10`. Use slices to separate the parts and `int`/`str` to do the arithmetic. Try it with **Run**.",
+      "worth_knowing": "Slices never raise an `IndexError`: `\"abc\"[1:100]` is simply `\"bc\"`, and `\"abc\"[5:]` is `\"\"`. A single index is strict: `\"abc\"[5]` crashes. That is why slices are the safer tool when a string might be shorter than you expect.",
+      "rubric": [
+        {
+          "criterion": "Code meets every requirement (all structure checks pass)",
+          "points": 6,
+          "evidence": "Check results in the lab report"
+        },
+        {
+          "criterion": "Test program output matches",
+          "points": 2,
+          "evidence": "Output section of the report"
+        },
+        {
+          "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+          "points": 2,
+          "evidence": "Answers in the report"
+        }
+      ]
+    },
+    {
+      "id": "4.2",
+      "title": "Caesar cipher clues",
+      "subtitle": "ord, chr and wraparound: encrypting and decrypting text",
+      "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 4.2, Data Encryption, pp. 91-92",
+      "minutes": 30,
+      "objectives": [
+        "Turn characters into numbers and back with `ord` and `chr`",
+        "Wrap around the end of the alphabet so `x`, `y` and `z` encrypt correctly",
+        "Decide which characters to encrypt and which to copy unchanged, and explain what that reveals"
+      ],
+      "scenario": "The campus Cybersecurity Club opens each capture-the-flag night with clues hidden by a Caesar cipher: every lowercase letter is shifted a fixed `distance` along the alphabet. The club's script in `caesar.py` encrypts single words, but it shifts `z` off the end of the alphabet into symbols, and it mangles spaces and punctuation.\n\nFix `encrypt` and write `decrypt` so the club can encrypt whole clues such as `meet at lab b, 3pm!`. Only the 26 lowercase letters are shifted; anything else (spaces, digits, punctuation, capital letters) is copied as it is.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`encrypt(text, distance)` shifts each lowercase letter `distance` places to the right, wrapping from `z` back to `a` (`\"invaders\"`, 3 gives `\"lqydghuv\"`; `\"xyz\"`, 3 gives `\"abc\"`)."
+        },
+        {
+          "id": "R2",
+          "text": "Any character that is not a lowercase letter is copied unchanged (`\"Gate B\"`, 1 gives `\"Gbuf B\"`)."
+        },
+        {
+          "id": "R3",
+          "text": "`decrypt(text, distance)` undoes `encrypt`, wrapping from `a` back to `z`."
+        },
+        {
+          "id": "R4",
+          "text": "Decrypting an encrypted clue gives back the original for every distance from 0 to 26.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "caesar.py",
+      "starter_code": "\"\"\"caesar.py - Caesar cipher for the Cybersecurity Club's clues.\"\"\"\n\n\ndef encrypt(text, distance):\n    \"\"\"Return text with each lowercase letter shifted distance places to the right.\"\"\"\n    code = \"\"\n    for ch in text:\n        cipher_value = ord(ch) + distance\n        # TODO (R1): letters past 'z' must wrap around to the start of the alphabet.\n        # TODO (R2): only lowercase letters are shifted; copy anything else unchanged.\n        code += chr(cipher_value)\n    return code\n\n\ndef decrypt(text, distance):\n    \"\"\"Return the original text from a clue made by encrypt(text, distance).\"\"\"\n    # TODO (R3): shift each lowercase letter back, wrapping from 'a' to 'z'.\n    return text\n",
+      "solution": "\"\"\"caesar.py - Caesar cipher for the Cybersecurity Club's clues.\"\"\"\n\nALPHABET_SIZE = 26\n\n\ndef encrypt(text, distance):\n    \"\"\"Return text with each lowercase letter shifted distance places to the right.\"\"\"\n    code = \"\"\n    for ch in text:\n        if 'a' <= ch <= 'z':\n            offset = ord(ch) - ord('a')\n            cipher_value = ord('a') + (offset + distance) % ALPHABET_SIZE\n            code += chr(cipher_value)\n        else:\n            code += ch\n    return code\n\n\ndef decrypt(text, distance):\n    \"\"\"Return the original text from a clue made by encrypt(text, distance).\"\"\"\n    return encrypt(text, -distance)\n",
+      "solution_notes": "Working with the letter's offset from `'a'` (0 to 25) turns wraparound into arithmetic: `% 26` keeps any shifted offset in 0..25. Python's `%` also gives a non-negative remainder for a negative number (`-1 % 26` is `25`), so decrypting is just encrypting by `-distance`. The textbook's version, with an `if cipherValue > ord('z')` correction in `encrypt` and a mirror-image `decrypt`, is equally correct.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`encrypt` wraps past `z`",
+          "within": "encrypt",
+          "require": [
+            "%\\s*\\w+",
+            ">\\s*ord\\s*\\(",
+            ">=?\\s*12[23]\\b",
+            "-=?\\s*26\\b"
+          ],
+          "message": "A shifted value beyond `ord('z')` has to start again at `'a'`. Either subtract 26 when it goes past `z` (the textbook's `if`), or work with the offset from `'a'` and take `% 26`.",
+          "hint": "`ord('z')` is 122. With distance 3, `x` (120) must become `a` (97), not 123."
+        },
+        {
+          "id": "C2",
+          "requirement": "R2",
+          "title": "`encrypt` only shifts lowercase letters",
+          "within": "encrypt",
+          "require": [
+            "\\bif\\b[^\\n]*\\bch\\b[\\s\\S]*\\belse\\b",
+            "\\bif\\s+not\\b[^\\n]*\\bch\\b[\\s\\S]*\\bcontinue\\b"
+          ],
+          "message": "Decide for each character: if it is a lowercase letter, shift it; **else** add it to the result unchanged. Test the character itself (for example `'a' <= ch <= 'z'` or `ch.islower()`), before shifting it.",
+          "hint": "`ch.isalpha()` is too broad: it is also true for capital letters, which must stay as they are."
+        },
+        {
+          "id": "C3",
+          "requirement": "R3",
+          "title": "`decrypt` shifts letters back",
+          "within": "decrypt",
+          "require": [
+            "\\bencrypt\\s*\\(",
+            "\\bord\\s*\\("
+          ],
+          "message": "`decrypt` must move each letter `distance` places to the **left**, wrapping from `a` to `z`. Write it like `encrypt` with a subtraction, or reuse `encrypt` with a distance that undoes the shift."
+        }
+      ],
+      "hints": [
+        "Think of each letter as its offset from `'a'`: `a` is 0, `z` is 25. Wraparound is then arithmetic on numbers from 0 to 25.",
+        "The remainder operator keeps a number inside 0..25 after you add the distance, and in Python it gives a non-negative answer even when the number is negative.",
+        "Shifting left by `d` is the same as shifting right by `-d` (or by `26 - d`). Could `decrypt` be one line?"
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "from caesar import encrypt, decrypt\n\nprint(encrypt(\"invaders\", 3))\nprint(encrypt(\"xyz\", 3))\nprint(encrypt(\"meet at lab b, 3pm!\", 5))\nprint(encrypt(\"Gate B\", 1))\nprint(decrypt(\"lqydghuv\", 3))\nprint(decrypt(\"abc\", 3))\n\nclue = \"the flag is in the readme\"\nall_ok = True\nfor distance in range(27):\n    if decrypt(encrypt(clue, distance), distance) != clue:\n        all_ok = False\nprint(\"Round trip for distances 0-26:\", all_ok)\n",
+        "predict": "Before running, encrypt `xyz` with distance 3 and decrypt `abc` with distance 3 by hand. What happens to the space, the comma and `3pm!` in the third clue?",
+        "expected_output": "lqydghuv\nabc\nrjjy fy qfg g, 3ur!\nGbuf B\ninvaders\nxyz\nRound trip for distances 0-26: True\n"
+      },
+      "warmup": [
+        {
+          "question": "The starter has no wraparound. What does the starter's `encrypt(\"zoo\", 3)` return? (Hint: `ord('z')` is 122 and `chr(125)` is `}`.)",
+          "model_answer": "It returns '}rr'. The z becomes 122 + 3 = 125, which is '}' rather than 'c', while each o (111) correctly becomes r (114). Without wraparound, letters near the end of the alphabet are shifted into punctuation."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "A clue arrives encrypted with an unknown distance. Describe how a program could find the message, and why that makes the Caesar cipher weak.",
+          "model_answer": "Try every distance from 0 to 25 with decrypt and look for the one that produces readable English. There are only 26 possible keys, so a computer checks them all instantly; the key space is far too small to protect anything."
+        },
+        {
+          "question": "Your cipher copies spaces and punctuation unchanged. What does that reveal to someone who intercepts the clue?",
+          "model_answer": "They can see how many words there are, how long each one is, and where sentences and commas fall. Short words like 'a', 'at' or 'the' are easy to guess, and each guess reveals the distance. The cipher text keeps the structure of the plaintext, which is the weakness the textbook points out."
+        }
+      ],
+      "extension": "Write `crack(cipher_text)` that prints all 26 possible decryptions, each with its distance, so a human can spot the readable one. Run it on `encrypt(\"capture the flag\", 11)`.",
+      "worth_knowing": "ROT13, a Caesar cipher with distance 13, is its own inverse: 13 + 13 = 26, so encrypting twice gives back the original. Python even includes it: `import codecs` then `codecs.encode(\"hello\", \"rot13\")` gives `\"uryyb\"`. Online forums used it to hide spoilers, not secrets.",
+      "rubric": [
+        {
+          "criterion": "Code meets every requirement (all structure checks pass)",
+          "points": 6,
+          "evidence": "Check results in the lab report"
+        },
+        {
+          "criterion": "Test program output matches",
+          "points": 2,
+          "evidence": "Output section of the report"
+        },
+        {
+          "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+          "points": 2,
+          "evidence": "Answers in the report"
+        }
+      ]
+    },
+    {
+      "id": "4.3",
+      "title": "A base converter for the network lab",
+      "subtitle": "Positional notation, binary, octal and hexadecimal",
+      "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 4.3, Strings and Number Systems, pp. 93-97",
+      "minutes": 30,
+      "objectives": [
+        "Convert a string of digits in base 2, 8 or 16 to a decimal integer using positional values",
+        "Convert a decimal integer to any of those bases by repeated division",
+        "Use a string as a lookup table to turn a value into a digit, including A-F"
+      ],
+      "scenario": "In the networking course, students read IPv4 addresses such as `192.168.4.10` in binary and MAC addresses in hexadecimal. The help-desk tool in `bases.py` should convert in both directions for bases 2, 8 and 16, and it must do the arithmetic itself: the instructor wants to see the algorithm, not a call to `int(text, 16)`, `bin`, `oct`, `hex` or `format`.\n\nThe constant `DIGITS` and the helper `digit_value` are given. The test program checks your answers against Python's built-ins.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`to_decimal(digits, base)` returns the integer a digit string represents, by adding each digit's value times its positional value (`\"1100111\"`, 2 gives `103`; `\"19F\"`, 16 gives `415`). No `int(text, base)`."
+        },
+        {
+          "id": "R2",
+          "text": "`from_decimal(number, base)` returns the digit string for a non-negative integer by repeated division (`415`, 16 gives `\"19F\"`). No `bin`, `oct`, `hex` or `format`."
+        },
+        {
+          "id": "R3",
+          "text": "`from_decimal(0, base)` returns `\"0\"`."
+        },
+        {
+          "id": "R4",
+          "text": "Both functions agree with Python's built-ins for every number from 0 to 299 in bases 2, 8 and 16.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "bases.py",
+      "starter_code": "\"\"\"bases.py - converts between decimal and bases 2 to 16 for the network lab.\"\"\"\n\nDIGITS = \"0123456789ABCDEF\"\n\n\ndef digit_value(ch):\n    \"\"\"Given: the value of one digit character, e.g. '7' -> 7, 'F' or 'f' -> 15.\"\"\"\n    return DIGITS.find(ch.upper())\n\n\ndef to_decimal(digits, base):\n    \"\"\"Return the int that the string digits represents in base (2 to 16).\"\"\"\n    decimal = 0\n    # TODO (R1): add each digit's value times base raised to its position.\n    return decimal\n\n\ndef from_decimal(number, base):\n    \"\"\"Return the digit string that represents number (0 or more) in base (2 to 16).\"\"\"\n    result = \"\"\n    # TODO (R3): 0 is a special case.\n    # TODO (R2): divide repeatedly by base; each remainder is the next digit, from the right.\n    return result\n",
+      "solution": "\"\"\"bases.py - converts between decimal and bases 2 to 16 for the network lab.\"\"\"\n\nDIGITS = \"0123456789ABCDEF\"\n\n\ndef digit_value(ch):\n    \"\"\"Given: the value of one digit character, e.g. '7' -> 7, 'F' or 'f' -> 15.\"\"\"\n    return DIGITS.find(ch.upper())\n\n\ndef to_decimal(digits, base):\n    \"\"\"Return the int that the string digits represents in base (2 to 16).\"\"\"\n    decimal = 0\n    exponent = len(digits) - 1\n    for ch in digits:\n        decimal += digit_value(ch) * base ** exponent\n        exponent -= 1\n    return decimal\n\n\ndef from_decimal(number, base):\n    \"\"\"Return the digit string that represents number (0 or more) in base (2 to 16).\"\"\"\n    if number == 0:\n        return \"0\"\n    result = \"\"\n    while number > 0:\n        remainder = number % base\n        number = number // base\n        result = DIGITS[remainder] + result\n    return result\n",
+      "solution_notes": "This is the textbook's binary algorithm with the base as a parameter. The leftmost digit has exponent `len(digits) - 1`, and the exponent drops by one per digit. Another correct form needs no exponent: `decimal = decimal * base + digit_value(ch)` (Horner's method). In `from_decimal` the remainders come out right to left, so each new digit goes in **front**. `DIGITS[remainder]` turns 15 into `F`; `str(15)` would add two characters, `15`.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`to_decimal` uses positional values",
+          "within": "to_decimal",
+          "require": [
+            "\\*\\*",
+            "\\*\\s*base\\b"
+          ],
+          "forbid": "\\bint\\s*\\([^()]*,",
+          "message": "Multiply each digit's value by `base ** exponent`, where the leftmost digit's exponent is `len(digits) - 1`, and add the results. Don't call `int(text, base)`: the point is to do the conversion yourself."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "`to_decimal` gets each digit's value with `digit_value`",
+          "within": "to_decimal",
+          "require": [
+            "\\bdigit_value\\s*\\(",
+            "\\bDIGITS\\s*\\.\\s*(?:find|index)\\s*\\("
+          ],
+          "message": "`int(ch)` works for 0-9 but crashes on `F`. Use the given `digit_value(ch)`, which looks the character up in `DIGITS`."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`from_decimal` divides repeatedly by the base",
+          "within": "from_decimal",
+          "require": [
+            "^(?=[\\s\\S]*%\\s*base\\b)(?=[\\s\\S]*//=?\\s*base\\b)",
+            "\\bdivmod\\s*\\("
+          ],
+          "forbid": [
+            "\\bbin\\s*\\(",
+            "\\boct\\s*\\(",
+            "\\bhex\\s*\\(",
+            "\\bformat\\s*\\("
+          ],
+          "message": "In a loop, `number % base` gives the next digit (from the right) and `number // base` gives what's left to convert. Keep going while `number > 0`. Built-ins such as `bin`, `hex` or `format` skip the algorithm."
+        },
+        {
+          "id": "C4",
+          "requirement": "R2",
+          "title": "`from_decimal` looks digits up in `DIGITS` and puts them in front",
+          "within": "from_decimal",
+          "require": "=\\s*DIGITS\\s*\\[\\s*\\w+\\s*\\]\\s*\\+\\s*\\w+",
+          "message": "Turn each remainder into a digit with `DIGITS[remainder]` (so 15 becomes `F`), and place it in **front** of the digits found so far: the remainders come out right to left."
+        },
+        {
+          "id": "C5",
+          "requirement": "R3",
+          "title": "`from_decimal` handles 0",
+          "within": "from_decimal",
+          "require": [
+            "\\bnumber\\s*==\\s*0\\b",
+            "\\bnot\\s+number\\b",
+            "\\bresult\\s*==\\s*[\"'][\"']",
+            "\\bnot\\s+result\\b"
+          ],
+          "message": "`while number > 0` never runs when `number` is 0, so the result would be an empty string. Check for 0 before the loop and return `\"0\"`."
+        }
+      ],
+      "hints": [
+        "For `\"637\"` in base 8 the positional values, from the left, are 8 squared, 8 to the 1st and 8 to the 0th power. Start the exponent at `len(digits) - 1` and count down.",
+        "Division gives you the digits from the right, the same way as the textbook's `decimaltobinary.py`. Each new digit belongs at the front of the string you have so far.",
+        "A loop that runs `while number > 0` does nothing for 0. Handle it before the loop."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "from bases import to_decimal, from_decimal\n\nprint(to_decimal(\"1100111\", 2), to_decimal(\"1111\", 2))\nprint(to_decimal(\"637\", 8), to_decimal(\"19F\", 16), to_decimal(\"ff\", 16))\nprint(from_decimal(34, 2))\nprint(from_decimal(415, 2), from_decimal(415, 8), from_decimal(415, 16))\nprint(from_decimal(0, 2), from_decimal(0, 16))\n\nprint(\"IPv4 192.168.4.10 in binary:\")\nfor octet in [192, 168, 4, 10]:\n    print(\" \", octet, from_decimal(octet, 2))\n\n# Cross-check against Python's built-ins\nall_ok = True\nfor n in range(300):\n    if from_decimal(n, 2) != format(n, \"b\"):\n        all_ok = False\n    if from_decimal(n, 8) != format(n, \"o\"):\n        all_ok = False\n    if from_decimal(n, 16) != format(n, \"X\"):\n        all_ok = False\n    for base in [2, 8, 16]:\n        if to_decimal(from_decimal(n, base), base) != n:\n            all_ok = False\nprint(\"Matches Python's built-ins for 0-299:\", all_ok)\n",
+        "predict": "Work out `from_decimal(34, 2)` and `to_decimal(\"ff\", 16)` on paper before running. How many binary digits does the octet 10 need?",
+        "expected_output": "103 15\n415 415 255\n100010\n110011111 637 19F\n0 0\nIPv4 192.168.4.10 in binary:\n  192 11000000\n  168 10101000\n  4 100\n  10 1010\nMatches Python's built-ins for 0-299: True\n"
+      },
+      "warmup": [
+        {
+          "question": "In the base-8 number `637`, what is the positional value of the digit 6, and what decimal number does `637` (base 8) represent?",
+          "model_answer": "The 6 is in position 2, so its positional value is 8 squared, 64. The number is 6*64 + 3*8 + 7*1 = 384 + 24 + 7 = 415."
+        },
+        {
+          "question": "The given `digit_value` uses `DIGITS.find(ch.upper())`. What does it return for `'c'`, and why does it call `upper()` first?",
+          "model_answer": "It returns 12: 'c' becomes 'C', which is at position 12 in DIGITS. DIGITS only holds capital letters, so upper() lets lowercase hex digits such as 'ff' work too."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "`from_decimal` uses `DIGITS[remainder]` instead of `str(remainder)`. What would the `str` version return for 415 in base 16, and why is that wrong?",
+          "model_answer": "The remainders are 15, 9 and 1, so the str version builds '1' + '9' + '15' = '1915'. A digit must be a single character; '15' takes two places and makes the number unreadable (it looks like four hex digits). DIGITS[15] is the single digit 'F', giving '19F'."
+        },
+        {
+          "question": "Why does each hexadecimal digit correspond to exactly four binary digits? Use that to convert `C0` to binary without your program.",
+          "model_answer": "16 is 2 to the 4th power, so the 16 possible hex digits match the 16 patterns of four bits exactly. C is 12, which is 1100, and 0 is 0000, so C0 is 11000000, which is the octet 192."
+        }
+      ],
+      "extension": "Add `convert(digits, from_base, to_base)` that converts directly between any two bases using your two functions, and use it to turn the octal permission `755` into binary. What do the three groups of three bits mean?",
+      "worth_knowing": "Python reads number literals in these bases directly: `0b110011111`, `0o637` and `0x19F` in your code all mean the same int, 415. The prefixes `0b`, `0o` and `0x` are just notation; inside the computer there is only the one binary value.",
+      "rubric": [
+        {
+          "criterion": "Code meets every requirement (all structure checks pass)",
+          "points": 6,
+          "evidence": "Check results in the lab report"
+        },
+        {
+          "criterion": "Test program output matches",
+          "points": 2,
+          "evidence": "Output section of the report"
+        },
+        {
+          "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+          "points": 2,
+          "evidence": "Answers in the report"
+        }
+      ]
+    },
+    {
+      "id": "4.4",
+      "title": "Cleaning up upload names",
+      "subtitle": "String methods: strip, lower, replace, split and the dot notation",
+      "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 4.4, String Methods, pp. 97-100",
+      "minutes": 25,
+      "objectives": [
+        "Call string methods with dot notation and chain them, knowing each returns a new string",
+        "Get a file's extension of any length with `split('.')[-1]`, and handle a name with no dot",
+        "Count words with `split()`, and explain why `split(\" \")` miscounts"
+      ],
+      "scenario": "Students upload their work to a Blackboard assignment, and the file names arrive in every style: `\"  Lab 4 Strings.PY \"`, `\"notes.final.TXT\"`, `\"README\"`. The instructor's sorting script in `submissions.py` has to tidy each name, read its extension, and count the words in each written reflection.\n\nFinish `clean_name`, `extension` and `count_words`. The given `is_accepted` uses them to decide whether a file is a Python (`py`) or text (`txt`) file.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`clean_name(raw)` removes spaces at both ends, converts to lowercase and replaces each remaining space with `_` (`\"  Lab 4 Strings.PY \"` gives `\"lab_4_strings.py\"`)."
+        },
+        {
+          "id": "R2",
+          "text": "`extension(filename)` returns the text after the **last** dot, in lowercase, whatever its length (`\"notes.final.TXT\"` gives `\"txt\"`, `\"index.html\"` gives `\"html\"`), or `\"\"` when there is no dot."
+        },
+        {
+          "id": "R3",
+          "text": "`count_words(text)` returns the number of words, even when words are separated by several spaces or by line breaks."
+        },
+        {
+          "id": "R4",
+          "text": "Every upload in the test program is cleaned and sorted correctly.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "submissions.py",
+      "starter_code": "\"\"\"submissions.py - tidies uploaded file names and reflections for grading.\"\"\"\n\nACCEPTED = [\"py\", \"txt\"]\n\n\ndef clean_name(raw):\n    \"\"\"Return raw without outer spaces, in lowercase, with inner spaces as underscores.\"\"\"\n    # TODO (R1): use string methods; each one returns a new string.\n    return raw\n\n\ndef extension(filename):\n    \"\"\"Return the lowercase extension after the last dot, or \"\" if there is none.\"\"\"\n    # TODO (R2): this assumes three-letter extensions. Fix it.\n    return filename[-3:]\n\n\ndef count_words(text):\n    \"\"\"Return the number of words in text.\"\"\"\n    # TODO (R3): words can be separated by several spaces or by line breaks.\n    return len(text.split(\" \"))\n\n\ndef is_accepted(filename):\n    \"\"\"Given: True if the upload is a type the assignment accepts.\"\"\"\n    return extension(clean_name(filename)) in ACCEPTED\n",
+      "solution": "\"\"\"submissions.py - tidies uploaded file names and reflections for grading.\"\"\"\n\nACCEPTED = [\"py\", \"txt\"]\n\n\ndef clean_name(raw):\n    \"\"\"Return raw without outer spaces, in lowercase, with inner spaces as underscores.\"\"\"\n    return raw.strip().lower().replace(\" \", \"_\")\n\n\ndef extension(filename):\n    \"\"\"Return the lowercase extension after the last dot, or \"\" if there is none.\"\"\"\n    if \".\" not in filename:\n        return \"\"\n    return filename.split(\".\")[-1].lower()\n\n\ndef count_words(text):\n    \"\"\"Return the number of words in text.\"\"\"\n    return len(text.split())\n\n\ndef is_accepted(filename):\n    \"\"\"Given: True if the upload is a type the assignment accepts.\"\"\"\n    return extension(clean_name(filename)) in ACCEPTED\n",
+      "solution_notes": "Strings are immutable, so each method returns a new string and the calls chain from left to right. `strip()` must run before `replace`, or the outer spaces become underscores. `split(\".\")[-1]` is the last piece whatever its length, which is the textbook's general rule for extensions; the `in` test first handles names with no dot (otherwise `\"README\"` would come back as its own extension). `split()` with no argument treats any run of spaces, tabs and newlines as one separator; `split(\" \")` produces an empty word for each extra space.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`clean_name` strips the outer spaces",
+          "within": "clean_name",
+          "require": "\\.strip\\s*\\(\\s*\\)",
+          "message": "Call `strip()` to remove the spaces (and tabs or newlines) at both ends. Do it before replacing spaces, or the outer spaces turn into underscores."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "`clean_name` converts to lowercase",
+          "within": "clean_name",
+          "require": "\\.lower\\s*\\(\\s*\\)",
+          "message": "Use `lower()` so `Strings.PY` and `strings.py` become the same name."
+        },
+        {
+          "id": "C3",
+          "requirement": "R1",
+          "title": "`clean_name` replaces inner spaces",
+          "within": "clean_name",
+          "require": [
+            "\\.replace\\s*\\(",
+            "\\.join\\s*\\("
+          ],
+          "message": "Turn each remaining space into `_` with `replace(old, new)` (or join the words from `split()` with `\"_\"`)."
+        },
+        {
+          "id": "C4",
+          "requirement": "R2",
+          "title": "`extension` takes the piece after the last dot",
+          "within": "extension",
+          "require": [
+            "\\.r?split\\s*\\([^)]*\\)\\s*\\[\\s*-\\s*1\\s*\\]",
+            "\\.rfind\\s*\\("
+          ],
+          "forbid": "\\[\\s*-\\s*3\\s*:\\s*\\]",
+          "message": "`filename[-3:]` assumes every extension has three letters: it gives `.py` for `lab4.py` and `tml` for `index.html`. Split on the dot and take the **last** piece with `[-1]`, which works for any length and for names with several dots."
+        },
+        {
+          "id": "C5",
+          "requirement": "R2",
+          "title": "`extension` handles a name with no dot",
+          "within": "extension",
+          "require": [
+            "\\bnot\\s+in\\s+filename\\b",
+            "\\bin\\s+filename\\b",
+            "\\.(?:r?find|count)\\s*\\(",
+            "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*[<>=!]=?\\s*[12]\\b"
+          ],
+          "message": "`\"README\".split(\".\")` gives `[\"README\"]`, so `[-1]` would return the whole name as its \"extension\". Test whether the name contains a dot first, and return `\"\"` if it doesn't."
+        },
+        {
+          "id": "C6",
+          "requirement": "R2",
+          "title": "`extension` returns lowercase",
+          "within": "extension",
+          "require": "\\.lower\\s*\\(\\s*\\)",
+          "message": "`notes.final.TXT` must give `txt`, so call `lower()` on the extension you return."
+        },
+        {
+          "id": "C7",
+          "requirement": "R3",
+          "title": "`count_words` splits on any whitespace",
+          "within": "count_words",
+          "require": "\\.split\\s*\\(\\s*\\)",
+          "message": "`split(\" \")` makes an empty word for every extra space and keeps the line break inside a word. `split()` with **no** argument treats any run of spaces, tabs and newlines as one separator."
+        }
+      ],
+      "hints": [
+        "Each method returns a new string, so you can chain them: the next method works on the result of the previous one. Order matters.",
+        "Look at what `\"notes.final.TXT\".split(\".\")` gives you in the shell (or with **Run**). Which piece is the extension? Then try `\"README\"`.",
+        "Compare `\"a  b\".split(\" \")` and `\"a  b\".split()` with **Run**. Only one of them gives two words."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "from submissions import clean_name, extension, count_words, is_accepted\n\nuploads = [\"  Lab 4 Strings.PY \", \"notes.final.TXT\", \"index.html\", \"README\", \"Screen Shot.png\"]\nfor raw in uploads:\n    name = clean_name(raw)\n    print(\"[\" + name + \"]\", \"ext=[\" + extension(name) + \"]\", is_accepted(raw))\n\nprint(extension(\"notes.final.TXT\"))\nreflection = \"Slicing  surprised me.\\nNegative indexes   count from the end.\"\nprint(count_words(reflection), \"words\")\n",
+        "predict": "Before running: what will `README` and `Screen Shot.png` look like after cleaning, and how many words are in the reflection (it has double spaces and a line break)?",
+        "expected_output": "[lab_4_strings.py] ext=[py] True\n[notes.final.txt] ext=[txt] True\n[index.html] ext=[html] False\n[readme] ext=[] False\n[screen_shot.png] ext=[png] False\ntxt\n9 words\n"
+      },
+      "warmup": [
+        {
+          "question": "With the starter, what do `extension(\"lab4.py\")` and `extension(\"index.html\")` return? Which accepted file does `is_accepted` wrongly reject?",
+          "model_answer": "They return '.py' and 'tml'. '.py' is not in ACCEPTED (which holds 'py'), so a real Python file, lab4.py, is rejected; the slice only works for three-letter extensions."
+        },
+        {
+          "question": "The given `is_accepted` calls `extension(clean_name(filename))`. Why clean the name first?",
+          "model_answer": "Uploads can have trailing spaces and capital letters, such as '  Lab 4 Strings.PY '. Cleaning first removes the space after the extension and makes it lowercase, so it can be compared with 'py' in ACCEPTED."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "Why does `split(\".\")[-1]` work for `.py`, `.txt` and `.html`, when a slice such as `[-3:]` doesn't? What does the `[-1]` refer to?",
+          "model_answer": "split('.') cuts the name at every dot and returns a list of the pieces; the extension is always the last piece whatever its length, and [-1] means the last element of that list, the same negative indexing used on strings. A fixed slice assumes a length, which is wrong for py (2) or html (4)."
+        },
+        {
+          "question": "For the same reflection, `split()` and `split(\" \")` give different counts. Which is right, and what exactly goes wrong with the other?",
+          "model_answer": "split() is right. split(' ') splits at every single space, so two spaces in a row produce an empty string counted as a word, and a newline is not a separator, so 'me.\\nNegative' counts as one word. split() treats any run of whitespace as one separator and ignores it at the ends."
+        }
+      ],
+      "extension": "Write `average_word_length(text)` that returns the average number of characters per word, rounded to 1 decimal, like the textbook's writing-style analysis. Ignore punctuation by stripping `.,!?` from each word with `strip(\".,!?\")`.",
+      "worth_knowing": "Strings are immutable, so a method never changes the string it is called on. `name.upper()` on a line by itself computes a new string and throws it away; `name` is unchanged. You have to keep the result: `name = name.upper()`. This is one of the most common bugs in beginners' string code.",
+      "rubric": [
+        {
+          "criterion": "Code meets every requirement (all structure checks pass)",
+          "points": 6,
+          "evidence": "Check results in the lab report"
+        },
+        {
+          "criterion": "Test program output matches",
+          "points": 2,
+          "evidence": "Output section of the report"
+        },
+        {
+          "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+          "points": 2,
+          "evidence": "Answers in the report"
+        }
+      ]
+    },
+    {
+      "id": "4.5",
+      "title": "A quiz score log that survives",
+      "subtitle": "Writing, appending and reading numbers in text files",
+      "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 4.5, Text Files, pp. 100-106",
+      "minutes": 30,
+      "objectives": [
+        "Write numbers to a text file, converting them to strings and separating them with newlines",
+        "Read numbers back from a file where they are separated by spaces and/or newlines",
+        "Choose the right file mode (`'w'`, `'r'`, `'a'`) and check that a file exists before reading it"
+      ],
+      "scenario": "A teaching assistant records quiz scores, and they must still be there after the program closes, so they go in a text file, one per line. Some older files were typed by hand in a text editor, with several scores on a line separated by spaces, and sometimes a blank line.\n\nFinish the three functions in `score_log.py`. The given `summary` uses `average_score` to report on a file. Files your code writes during a run exist only for that run, so the test program creates every file it needs.",
+      "requirements": [
+        {
+          "id": "R1",
+          "text": "`save_scores(filename, scores)` writes each score on its own line (replacing anything already in the file) and closes the file."
+        },
+        {
+          "id": "R2",
+          "text": "`average_score(filename)` reads every score, whether separated by spaces or newlines, converts each one to a number and returns the average rounded to 1 decimal."
+        },
+        {
+          "id": "R3",
+          "text": "`average_score` returns `None` when the file does not exist (check with `os.path.exists` before opening) or holds no scores."
+        },
+        {
+          "id": "R4",
+          "text": "`add_score(filename, score)` adds one score at the end of the file without erasing the scores already there."
+        },
+        {
+          "id": "R5",
+          "text": "The test program's files are written, extended and summarised correctly.",
+          "verified_by_output": true
+        }
+      ],
+      "file_name": "score_log.py",
+      "starter_code": "\"\"\"score_log.py - keeps quiz scores in a text file, one per line.\"\"\"\nimport os\n\n\ndef save_scores(filename, scores):\n    \"\"\"Write each score on its own line, replacing anything already in the file.\"\"\"\n    f = open(filename, 'w')\n    # TODO (R1): write each score. write() only accepts strings and adds no newline.\n    # TODO (R1): close the file so the last scores are not lost.\n\n\ndef average_score(filename):\n    \"\"\"Return the average of the scores in the file, rounded to 1 decimal.\n\n    Returns None if the file does not exist or contains no scores.\n    \"\"\"\n    # TODO (R3): return None if the file does not exist.\n    f = open(filename, 'r')\n    total = 0\n    count = 0\n    # TODO (R2): visit each line; a line may hold several scores separated by spaces.\n    f.close()\n    # TODO (R3): return None if there were no scores.\n    return round(total / count, 1)\n\n\ndef add_score(filename, score):\n    \"\"\"Add one score at the end of the file, keeping the scores already there.\"\"\"\n    # TODO (R4): which file mode adds to the end instead of erasing?\n    pass\n\n\ndef summary(filename):\n    \"\"\"Given: a one-line report built from average_score.\"\"\"\n    average = average_score(filename)\n    if average is None:\n        return filename + \": no scores yet\"\n    return filename + \": average \" + str(average)\n",
+      "solution": "\"\"\"score_log.py - keeps quiz scores in a text file, one per line.\"\"\"\nimport os\n\n\ndef save_scores(filename, scores):\n    \"\"\"Write each score on its own line, replacing anything already in the file.\"\"\"\n    f = open(filename, 'w')\n    for score in scores:\n        f.write(str(score) + '\\n')\n    f.close()\n\n\ndef average_score(filename):\n    \"\"\"Return the average of the scores in the file, rounded to 1 decimal.\n\n    Returns None if the file does not exist or contains no scores.\n    \"\"\"\n    if not os.path.exists(filename):\n        return None\n    f = open(filename, 'r')\n    total = 0\n    count = 0\n    for line in f:\n        for word in line.split():\n            total += int(word)\n            count += 1\n    f.close()\n    if count == 0:\n        return None\n    return round(total / count, 1)\n\n\ndef add_score(filename, score):\n    \"\"\"Add one score at the end of the file, keeping the scores already there.\"\"\"\n    f = open(filename, 'a')\n    f.write(str(score) + '\\n')\n    f.close()\n\n\ndef summary(filename):\n    \"\"\"Given: a one-line report built from average_score.\"\"\"\n    average = average_score(filename)\n    if average is None:\n        return filename + \": no scores yet\"\n    return filename + \": average \" + str(average)\n",
+      "solution_notes": "`write` takes one string and adds no newline, so each score becomes `str(score) + '\\n'`. Reading uses two loops: the `for` over the file gives lines, and `split()` breaks each line into the score strings; it also drops the newline and returns nothing for a blank line, so no `strip()` is needed. Mode `'a'` (append) keeps the existing contents; `'w'` would erase them. `with open(filename, 'a') as f:` is an equally good form that closes the file automatically.",
+      "checks": [
+        {
+          "id": "C1",
+          "requirement": "R1",
+          "title": "`save_scores` writes each score as a string",
+          "within": "save_scores",
+          "require": [
+            "\\.write\\s*\\(\\s*str\\s*\\(",
+            "\\.write\\s*\\(\\s*f[\"']"
+          ],
+          "message": "`write` only accepts a string, so convert each score with `str(score)` and add `'\\n'` yourself: `write` does not start a new line."
+        },
+        {
+          "id": "C2",
+          "requirement": "R1",
+          "title": "`save_scores` closes the file",
+          "within": "save_scores",
+          "require": [
+            "\\.close\\s*\\(\\s*\\)",
+            "\\bwith\\s+open\\s*\\("
+          ],
+          "message": "Call `f.close()` after the loop (or open the file with `with`). Output is buffered: without closing, the last chunk of data may never reach the disk."
+        },
+        {
+          "id": "C3",
+          "requirement": "R2",
+          "title": "`average_score` splits each line into scores",
+          "within": "average_score",
+          "require": "\\.split\\s*\\(\\s*\\)",
+          "message": "A line such as `90 85 77` holds three scores. Use `line.split()` and loop over the pieces; `split()` also discards the newline and returns nothing for a blank line."
+        },
+        {
+          "id": "C4",
+          "requirement": "R2",
+          "title": "`average_score` converts the strings to numbers",
+          "within": "average_score",
+          "require": "\\b(?:int|float)\\s*\\(",
+          "message": "Everything read from a text file is a string. Convert each piece with `int(...)` before adding it to the total."
+        },
+        {
+          "id": "C5",
+          "requirement": "R3",
+          "title": "`average_score` checks that the file exists",
+          "within": "average_score",
+          "require": [
+            "\\bos\\.path\\.(?:exists|isfile)\\s*\\(",
+            "\\bexcept\\s+(?:FileNotFoundError|OSError|IOError)\\b"
+          ],
+          "message": "Opening a missing file for reading crashes the program. Check `os.path.exists(filename)` first and return `None` if it is `False`."
+        },
+        {
+          "id": "C6",
+          "requirement": "R4",
+          "title": "`add_score` opens the file in append mode",
+          "within": "add_score",
+          "strings": true,
+          "require": "\\bopen\\s*\\(\\s*\\w+\\s*,\\s*[\"']a\\+?[\"']",
+          "forbid": "\\bopen\\s*\\([^)]*,\\s*[\"']w",
+          "message": "Opening with `'w'` erases the file, so all earlier scores would be lost. Table 4-3 lists a mode that writes after the existing contents instead. Then write the score as a string with a newline and close the file."
+        }
+      ],
+      "hints": [
+        "`write` has two demands: a string argument, and you supply the `'\\n'` yourself.",
+        "Use two loops: one `for` over the file object gives you lines; a second `for` over `line.split()` gives you the score strings on that line.",
+        "Table 4-3 lists the file modes. One of them adds to the end of the file instead of starting it over."
+      ],
+      "test_program": {
+        "file_name": "run_tests.py",
+        "code": "from score_log import save_scores, average_score, add_score, summary\n\nsave_scores(\"quiz1.txt\", [88, 92, 79])\nf = open(\"quiz1.txt\", 'r')\nprint(repr(f.read()))\nf.close()\nprint(summary(\"quiz1.txt\"))\n\nadd_score(\"quiz1.txt\", 95)\nadd_score(\"quiz1.txt\", 70)\nprint(summary(\"quiz1.txt\"))\n\n# A file typed by hand: several scores per line and a blank line\nf = open(\"quiz2.txt\", 'w')\nf.write(\"90 85 77\\n\\n100 64\\n\")\nf.close()\nprint(summary(\"quiz2.txt\"))\n\nprint(summary(\"quiz3.txt\"))\nsave_scores(\"empty.txt\", [])\nprint(summary(\"empty.txt\"))\n",
+        "predict": "`repr` shows the newlines inside the file as `\\n`. Before running, write down what the first line will print, and the averages for quiz1.txt after the two added scores and for quiz2.txt.",
+        "expected_output": "'88\\n92\\n79\\n'\nquiz1.txt: average 86.3\nquiz1.txt: average 84.8\nquiz2.txt: average 83.2\nquiz3.txt: no scores yet\nempty.txt: no scores yet\n"
+      },
+      "warmup": [
+        {
+          "question": "The starter opens the file in `save_scores` with `'w'`. If `quiz1.txt` already holds ten scores and you call `save_scores(\"quiz1.txt\", [88])`, what will the file contain afterward? Why is that the right behaviour for this function?",
+          "model_answer": "Only 88. Opening an existing file with 'w' erases its contents. That is what save_scores promises (replace the file with this list), but it would be wrong for adding a single score."
+        },
+        {
+          "question": "Why would `f.write(88)` fail, and what does `f.write(\"88\")` leave out?",
+          "model_answer": "write only accepts a string, so passing the int 88 raises a TypeError. f.write(\"88\") works but adds no newline, so the next score would be written on the same line: 8892."
+        }
+      ],
+      "reflection": [
+        {
+          "question": "`average_score` uses `line.split()`, while the textbook's first example uses `line.strip()` and then `int(line)`. Which file would break the `strip()` version, and why?",
+          "model_answer": "quiz2.txt breaks it. strip() only removes whitespace at the ends, so '90 85 77' stays one string and int('90 85 77') raises ValueError, and the blank line becomes '' which int() also rejects. split() separates the scores and returns an empty list for a blank line."
+        },
+        {
+          "question": "Why check `os.path.exists` before opening, instead of letting `open` fail? Who benefits?",
+          "model_answer": "A missing file is a normal situation here (no scores recorded yet), not a bug. Checking first lets the function return None so summary prints a clear message instead of the program crashing with a FileNotFoundError traceback the TA can't act on. The textbook calls this error recovery."
+        }
+      ],
+      "extension": "Add `best_score(filename)` that returns the highest score in the file (or `None`) without using `max`. Then change `summary` to report it too.",
+      "worth_knowing": "Most Python code opens files with `with open(\"quiz1.txt\", \"a\") as f:`. When the indented block ends, the file is closed automatically, even if an error happens inside it, so the close that output files need can't be forgotten.",
+      "rubric": [
+        {
+          "criterion": "Code meets every requirement (all structure checks pass)",
+          "points": 6,
+          "evidence": "Check results in the lab report"
+        },
+        {
+          "criterion": "Test program output matches",
+          "points": 2,
+          "evidence": "Output section of the report"
+        },
+        {
+          "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+          "points": 2,
+          "evidence": "Answers in the report"
+        }
+      ]
+    }
+  ]
+}

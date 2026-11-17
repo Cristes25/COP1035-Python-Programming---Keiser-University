@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Caesar cipher clues</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 4.2</div>
+  <h1>Caesar cipher clues</h1>
+<h2>Objectives</h2><ul><li>Turn characters into numbers and back with <code>ord</code> and <code>chr</code></li><li>Wrap around the end of the alphabet so <code>x</code>, <code>y</code> and <code>z</code> encrypt correctly</li><li>Decide which characters to encrypt and which to copy unchanged, and explain what that reveals</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>encrypt(text, distance)</code> shifts each lowercase letter <code>distance</code> places to the right, wrapping from <code>z</code> back to <code>a</code> (<code>&quot;invaders&quot;</code>, 3 gives <code>&quot;lqydghuv&quot;</code>; <code>&quot;xyz&quot;</code>, 3 gives <code>&quot;abc&quot;</code>).</li><li><strong>R2</strong> Any character that is not a lowercase letter is copied unchanged (<code>&quot;Gate B&quot;</code>, 1 gives <code>&quot;Gbuf B&quot;</code>).</li><li><strong>R3</strong> <code>decrypt(text, distance)</code> undoes <code>encrypt</code>, wrapping from <code>a</code> back to <code>z</code>.</li><li><strong>R4</strong> Decrypting an encrypted clue gives back the original for every distance from 0 to 26. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter has no wraparound. What does the starter&#x27;s <code>encrypt(&quot;zoo&quot;, 3)</code> return? (Hint: <code>ord(&#x27;z&#x27;)</code> is 122 and <code>chr(125)</code> is <code>}</code>.)</p><div class="answer"><p>It returns &#x27;}rr&#x27;. The z becomes 122 + 3 = 125, which is &#x27;}&#x27; rather than &#x27;c&#x27;, while each o (111) correctly becomes r (114). Without wraparound, letters near the end of the alphabet are shifted into punctuation.</p></div></li></ol>
+<h2>Solution</h2><div class="file">caesar.py</div><pre class="code-block"><code><span class="t-sd">"""caesar.py - Caesar cipher for the Cybersecurity Club's clues."""</span>
+
+<span class="t-n">ALPHABET_SIZE</span> <span class="t-o">=</span> <span class="t-mi">26</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">encrypt</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">,</span> <span class="t-n">distance</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return text with each lowercase letter shifted distance places to the right."""</span>
+    <span class="t-n">code</span> <span class="t-o">=</span> <span class="t-s2">""</span>
+    <span class="t-k">for</span> <span class="t-n">ch</span> <span class="t-ow">in</span> <span class="t-n">text</span><span class="t-p">:</span>
+        <span class="t-k">if</span> <span class="t-s1">'a'</span> <span class="t-o">&lt;=</span> <span class="t-n">ch</span> <span class="t-o">&lt;=</span> <span class="t-s1">'z'</span><span class="t-p">:</span>
+            <span class="t-n">offset</span> <span class="t-o">=</span> <span class="t-nb">ord</span><span class="t-p">(</span><span class="t-n">ch</span><span class="t-p">)</span> <span class="t-o">-</span> <span class="t-nb">ord</span><span class="t-p">(</span><span class="t-s1">'a'</span><span class="t-p">)</span>
+            <span class="t-n">cipher_value</span> <span class="t-o">=</span> <span class="t-nb">ord</span><span class="t-p">(</span><span class="t-s1">'a'</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-p">(</span><span class="t-n">offset</span> <span class="t-o">+</span> <span class="t-n">distance</span><span class="t-p">)</span> <span class="t-o">%</span> <span class="t-n">ALPHABET_SIZE</span>
+            <span class="t-n">code</span> <span class="t-o">+=</span> <span class="t-nb">chr</span><span class="t-p">(</span><span class="t-n">cipher_value</span><span class="t-p">)</span>
+        <span class="t-k">else</span><span class="t-p">:</span>
+            <span class="t-n">code</span> <span class="t-o">+=</span> <span class="t-n">ch</span>
+    <span class="t-k">return</span> <span class="t-n">code</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">decrypt</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">,</span> <span class="t-n">distance</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the original text from a clue made by encrypt(text, distance)."""</span>
+    <span class="t-k">return</span> <span class="t-n">encrypt</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-n">distance</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p>Working with the letter&#x27;s offset from <code>&#x27;a&#x27;</code> (0 to 25) turns wraparound into arithmetic: <code>% 26</code> keeps any shifted offset in 0..25. Python&#x27;s <code>%</code> also gives a non-negative remainder for a negative number (<code>-1 % 26</code> is <code>25</code>), so decrypting is just encrypting by <code>-distance</code>. The textbook&#x27;s version, with an <code>if cipherValue &gt; ord(&#x27;z&#x27;)</code> correction in <code>encrypt</code> and a mirror-image <code>decrypt</code>, is equally correct.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">caesar</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">encrypt</span><span class="t-p">,</span> <span class="t-n">decrypt</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">encrypt</span><span class="t-p">(</span><span class="t-s2">"invaders"</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">encrypt</span><span class="t-p">(</span><span class="t-s2">"xyz"</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">encrypt</span><span class="t-p">(</span><span class="t-s2">"meet at lab b, 3pm!"</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">encrypt</span><span class="t-p">(</span><span class="t-s2">"Gate B"</span><span class="t-p">,</span> <span class="t-mi">1</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">decrypt</span><span class="t-p">(</span><span class="t-s2">"lqydghuv"</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">decrypt</span><span class="t-p">(</span><span class="t-s2">"abc"</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">))</span>
+
+<span class="t-n">clue</span> <span class="t-o">=</span> <span class="t-s2">"the flag is in the readme"</span>
+<span class="t-n">all_ok</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+<span class="t-k">for</span> <span class="t-n">distance</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">27</span><span class="t-p">):</span>
+    <span class="t-k">if</span> <span class="t-n">decrypt</span><span class="t-p">(</span><span class="t-n">encrypt</span><span class="t-p">(</span><span class="t-n">clue</span><span class="t-p">,</span> <span class="t-n">distance</span><span class="t-p">),</span> <span class="t-n">distance</span><span class="t-p">)</span> <span class="t-o">!=</span> <span class="t-n">clue</span><span class="t-p">:</span>
+        <span class="t-n">all_ok</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Round trip for distances 0-26:"</span><span class="t-p">,</span> <span class="t-n">all_ok</span><span class="t-p">)</span></code></pre><h3>Expected output</h3><pre class="output">lqydghuv
+abc
+rjjy fy qfg g, 3ur!
+Gbuf B
+invaders
+xyz
+Round trip for distances 0-26: True
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>encrypt</code> wraps past <code>z</code><div class="small">in <code>encrypt</code></div></td><td><div><span class="tag">require</span> <code>%\s*\w+</code></div><div><span class="tag">require</span> <code>&gt;\s*ord\s*\(</code></div><div><span class="tag">require</span> <code>&gt;=?\s*12[23]\b</code></div><div><span class="tag">require</span> <code>-=?\s*26\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td><code>encrypt</code> only shifts lowercase letters<div class="small">in <code>encrypt</code></div></td><td><div><span class="tag">require</span> <code>\bif\b[^\n]*\bch\b[\s\S]*\belse\b</code></div><div><span class="tag">require</span> <code>\bif\s+not\b[^\n]*\bch\b[\s\S]*\bcontinue\b</code></div></td></tr><tr><td>C3</td><td>R3</td><td><code>decrypt</code> shifts letters back<div class="small">in <code>decrypt</code></div></td><td><div><span class="tag">require</span> <code>\bencrypt\s*\(</code></div><div><span class="tag">require</span> <code>\bord\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>encrypt</code> wraps past <code>z</code></dt><dd><p>A shifted value beyond <code>ord(&#x27;z&#x27;)</code> has to start again at <code>&#x27;a&#x27;</code>. Either subtract 26 when it goes past <code>z</code> (the textbook&#x27;s <code>if</code>), or work with the offset from <code>&#x27;a&#x27;</code> and take <code>% 26</code>.</p><div class='small'><strong>Hint:</strong></div><p><code>ord(&#x27;z&#x27;)</code> is 122. With distance 3, <code>x</code> (120) must become <code>a</code> (97), not 123.</p></dd><dt>C2 · <code>encrypt</code> only shifts lowercase letters</dt><dd><p>Decide for each character: if it is a lowercase letter, shift it; <strong>else</strong> add it to the result unchanged. Test the character itself (for example <code>&#x27;a&#x27; &lt;= ch &lt;= &#x27;z&#x27;</code> or <code>ch.islower()</code>), before shifting it.</p><div class='small'><strong>Hint:</strong></div><p><code>ch.isalpha()</code> is too broad: it is also true for capital letters, which must stay as they are.</p></dd><dt>C3 · <code>decrypt</code> shifts letters back</dt><dd><p><code>decrypt</code> must move each letter <code>distance</code> places to the <strong>left</strong>, wrapping from <code>a</code> to <code>z</code>. Write it like <code>encrypt</code> with a subtraction, or reuse <code>encrypt</code> with a distance that undoes the shift.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Think of each letter as its offset from <code>&#x27;a&#x27;</code>: <code>a</code> is 0, <code>z</code> is 25. Wraparound is then arithmetic on numbers from 0 to 25.</p></li><li><p>The remainder operator keeps a number inside 0..25 after you add the distance, and in Python it gives a non-negative answer even when the number is negative.</p></li><li><p>Shifting left by <code>d</code> is the same as shifting right by <code>-d</code> (or by <code>26 - d</code>). Could <code>decrypt</code> be one line?</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>A clue arrives encrypted with an unknown distance. Describe how a program could find the message, and why that makes the Caesar cipher weak.</p><div class="answer"><p>Try every distance from 0 to 25 with decrypt and look for the one that produces readable English. There are only 26 possible keys, so a computer checks them all instantly; the key space is far too small to protect anything.</p></div></li><li><p>Your cipher copies spaces and punctuation unchanged. What does that reveal to someone who intercepts the clue?</p><div class="answer"><p>They can see how many words there are, how long each one is, and where sentences and commas fall. Short words like &#x27;a&#x27;, &#x27;at&#x27; or &#x27;the&#x27; are easy to guess, and each guess reveals the distance. The cipher text keeps the structure of the plaintext, which is the weakness the textbook points out.</p></div></li></ol>
+<h2>Extension</h2><p>Write <code>crack(cipher_text)</code> that prints all 26 possible decryptions, each with its distance, so a human can spot the readable one. Run it on <code>encrypt(&quot;capture the flag&quot;, 11)</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

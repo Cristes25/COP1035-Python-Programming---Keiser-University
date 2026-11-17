@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Cleaning up upload names</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 4.4</div>
+  <h1>Cleaning up upload names</h1>
+<h2>Objectives</h2><ul><li>Call string methods with dot notation and chain them, knowing each returns a new string</li><li>Get a file&#x27;s extension of any length with <code>split(&#x27;.&#x27;)[-1]</code>, and handle a name with no dot</li><li>Count words with <code>split()</code>, and explain why <code>split(&quot; &quot;)</code> miscounts</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>clean_name(raw)</code> removes spaces at both ends, converts to lowercase and replaces each remaining space with <code>_</code> (<code>&quot;  Lab 4 Strings.PY &quot;</code> gives <code>&quot;lab_4_strings.py&quot;</code>).</li><li><strong>R2</strong> <code>extension(filename)</code> returns the text after the <strong>last</strong> dot, in lowercase, whatever its length (<code>&quot;notes.final.TXT&quot;</code> gives <code>&quot;txt&quot;</code>, <code>&quot;index.html&quot;</code> gives <code>&quot;html&quot;</code>), or <code>&quot;&quot;</code> when there is no dot.</li><li><strong>R3</strong> <code>count_words(text)</code> returns the number of words, even when words are separated by several spaces or by line breaks.</li><li><strong>R4</strong> Every upload in the test program is cleaned and sorted correctly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>With the starter, what do <code>extension(&quot;lab4.py&quot;)</code> and <code>extension(&quot;index.html&quot;)</code> return? Which accepted file does <code>is_accepted</code> wrongly reject?</p><div class="answer"><p>They return &#x27;.py&#x27; and &#x27;tml&#x27;. &#x27;.py&#x27; is not in ACCEPTED (which holds &#x27;py&#x27;), so a real Python file, lab4.py, is rejected; the slice only works for three-letter extensions.</p></div></li><li><p>The given <code>is_accepted</code> calls <code>extension(clean_name(filename))</code>. Why clean the name first?</p><div class="answer"><p>Uploads can have trailing spaces and capital letters, such as &#x27;  Lab 4 Strings.PY &#x27;. Cleaning first removes the space after the extension and makes it lowercase, so it can be compared with &#x27;py&#x27; in ACCEPTED.</p></div></li></ol>
+<h2>Solution</h2><div class="file">submissions.py</div><pre class="code-block"><code><span class="t-sd">"""submissions.py - tidies uploaded file names and reflections for grading."""</span>
+
+<span class="t-n">ACCEPTED</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-s2">"py"</span><span class="t-p">,</span> <span class="t-s2">"txt"</span><span class="t-p">]</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">clean_name</span><span class="t-p">(</span><span class="t-n">raw</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return raw without outer spaces, in lowercase, with inner spaces as underscores."""</span>
+    <span class="t-k">return</span> <span class="t-n">raw</span><span class="t-o">.</span><span class="t-n">strip</span><span class="t-p">()</span><span class="t-o">.</span><span class="t-n">lower</span><span class="t-p">()</span><span class="t-o">.</span><span class="t-n">replace</span><span class="t-p">(</span><span class="t-s2">" "</span><span class="t-p">,</span> <span class="t-s2">"_"</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">extension</span><span class="t-p">(</span><span class="t-n">filename</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the lowercase extension after the last dot, or "" if there is none."""</span>
+    <span class="t-k">if</span> <span class="t-s2">"."</span> <span class="t-ow">not</span> <span class="t-ow">in</span> <span class="t-n">filename</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-s2">""</span>
+    <span class="t-k">return</span> <span class="t-n">filename</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">(</span><span class="t-s2">"."</span><span class="t-p">)[</span><span class="t-o">-</span><span class="t-mi">1</span><span class="t-p">]</span><span class="t-o">.</span><span class="t-n">lower</span><span class="t-p">()</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">count_words</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the number of words in text."""</span>
+    <span class="t-k">return</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">text</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">())</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">is_accepted</span><span class="t-p">(</span><span class="t-n">filename</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Given: True if the upload is a type the assignment accepts."""</span>
+    <span class="t-k">return</span> <span class="t-n">extension</span><span class="t-p">(</span><span class="t-n">clean_name</span><span class="t-p">(</span><span class="t-n">filename</span><span class="t-p">))</span> <span class="t-ow">in</span> <span class="t-n">ACCEPTED</span></code></pre>
+<h3>Walkthrough</h3><p>Strings are immutable, so each method returns a new string and the calls chain from left to right. <code>strip()</code> must run before <code>replace</code>, or the outer spaces become underscores. <code>split(&quot;.&quot;)[-1]</code> is the last piece whatever its length, which is the textbook&#x27;s general rule for extensions; the <code>in</code> test first handles names with no dot (otherwise <code>&quot;README&quot;</code> would come back as its own extension). <code>split()</code> with no argument treats any run of spaces, tabs and newlines as one separator; <code>split(&quot; &quot;)</code> produces an empty word for each extra space.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">submissions</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">clean_name</span><span class="t-p">,</span> <span class="t-n">extension</span><span class="t-p">,</span> <span class="t-n">count_words</span><span class="t-p">,</span> <span class="t-n">is_accepted</span>
+
+<span class="t-n">uploads</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-s2">"  Lab 4 Strings.PY "</span><span class="t-p">,</span> <span class="t-s2">"notes.final.TXT"</span><span class="t-p">,</span> <span class="t-s2">"index.html"</span><span class="t-p">,</span> <span class="t-s2">"README"</span><span class="t-p">,</span> <span class="t-s2">"Screen Shot.png"</span><span class="t-p">]</span>
+<span class="t-k">for</span> <span class="t-n">raw</span> <span class="t-ow">in</span> <span class="t-n">uploads</span><span class="t-p">:</span>
+    <span class="t-n">name</span> <span class="t-o">=</span> <span class="t-n">clean_name</span><span class="t-p">(</span><span class="t-n">raw</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"["</span> <span class="t-o">+</span> <span class="t-n">name</span> <span class="t-o">+</span> <span class="t-s2">"]"</span><span class="t-p">,</span> <span class="t-s2">"ext=["</span> <span class="t-o">+</span> <span class="t-n">extension</span><span class="t-p">(</span><span class="t-n">name</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">"]"</span><span class="t-p">,</span> <span class="t-n">is_accepted</span><span class="t-p">(</span><span class="t-n">raw</span><span class="t-p">))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">extension</span><span class="t-p">(</span><span class="t-s2">"notes.final.TXT"</span><span class="t-p">))</span>
+<span class="t-n">reflection</span> <span class="t-o">=</span> <span class="t-s2">"Slicing  surprised me.</span><span class="t-se">\n</span><span class="t-s2">Negative indexes   count from the end."</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">count_words</span><span class="t-p">(</span><span class="t-n">reflection</span><span class="t-p">),</span> <span class="t-s2">"words"</span><span class="t-p">)</span></code></pre><h3>Expected output</h3><pre class="output">[lab_4_strings.py] ext=[py] True
+[notes.final.txt] ext=[txt] True
+[index.html] ext=[html] False
+[readme] ext=[] False
+[screen_shot.png] ext=[png] False
+txt
+9 words
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>clean_name</code> strips the outer spaces<div class="small">in <code>clean_name</code></div></td><td><div><span class="tag">require</span> <code>\.strip\s*\(\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>clean_name</code> converts to lowercase<div class="small">in <code>clean_name</code></div></td><td><div><span class="tag">require</span> <code>\.lower\s*\(\s*\)</code></div></td></tr><tr><td>C3</td><td>R1</td><td><code>clean_name</code> replaces inner spaces<div class="small">in <code>clean_name</code></div></td><td><div><span class="tag">require</span> <code>\.replace\s*\(</code></div><div><span class="tag">require</span> <code>\.join\s*\(</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>extension</code> takes the piece after the last dot<div class="small">in <code>extension</code></div></td><td><div><span class="tag">require</span> <code>\.r?split\s*\([^)]*\)\s*\[\s*-\s*1\s*\]</code></div><div><span class="tag">require</span> <code>\.rfind\s*\(</code></div><div><span class="tag">forbid</span> <code>\[\s*-\s*3\s*:\s*\]</code></div></td></tr><tr><td>C5</td><td>R2</td><td><code>extension</code> handles a name with no dot<div class="small">in <code>extension</code></div></td><td><div><span class="tag">require</span> <code>\bnot\s+in\s+filename\b</code></div><div><span class="tag">require</span> <code>\bin\s+filename\b</code></div><div><span class="tag">require</span> <code>\.(?:r?find|count)\s*\(</code></div><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*[&lt;&gt;=!]=?\s*[12]\b</code></div></td></tr><tr><td>C6</td><td>R2</td><td><code>extension</code> returns lowercase<div class="small">in <code>extension</code></div></td><td><div><span class="tag">require</span> <code>\.lower\s*\(\s*\)</code></div></td></tr><tr><td>C7</td><td>R3</td><td><code>count_words</code> splits on any whitespace<div class="small">in <code>count_words</code></div></td><td><div><span class="tag">require</span> <code>\.split\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>clean_name</code> strips the outer spaces</dt><dd><p>Call <code>strip()</code> to remove the spaces (and tabs or newlines) at both ends. Do it before replacing spaces, or the outer spaces turn into underscores.</p></dd><dt>C2 · <code>clean_name</code> converts to lowercase</dt><dd><p>Use <code>lower()</code> so <code>Strings.PY</code> and <code>strings.py</code> become the same name.</p></dd><dt>C3 · <code>clean_name</code> replaces inner spaces</dt><dd><p>Turn each remaining space into <code>_</code> with <code>replace(old, new)</code> (or join the words from <code>split()</code> with <code>&quot;_&quot;</code>).</p></dd><dt>C4 · <code>extension</code> takes the piece after the last dot</dt><dd><p><code>filename[-3:]</code> assumes every extension has three letters: it gives <code>.py</code> for <code>lab4.py</code> and <code>tml</code> for <code>index.html</code>. Split on the dot and take the <strong>last</strong> piece with <code>[-1]</code>, which works for any length and for names with several dots.</p></dd><dt>C5 · <code>extension</code> handles a name with no dot</dt><dd><p><code>&quot;README&quot;.split(&quot;.&quot;)</code> gives <code>[&quot;README&quot;]</code>, so <code>[-1]</code> would return the whole name as its &quot;extension&quot;. Test whether the name contains a dot first, and return <code>&quot;&quot;</code> if it doesn&#x27;t.</p></dd><dt>C6 · <code>extension</code> returns lowercase</dt><dd><p><code>notes.final.TXT</code> must give <code>txt</code>, so call <code>lower()</code> on the extension you return.</p></dd><dt>C7 · <code>count_words</code> splits on any whitespace</dt><dd><p><code>split(&quot; &quot;)</code> makes an empty word for every extra space and keeps the line break inside a word. <code>split()</code> with <strong>no</strong> argument treats any run of spaces, tabs and newlines as one separator.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Each method returns a new string, so you can chain them: the next method works on the result of the previous one. Order matters.</p></li><li><p>Look at what <code>&quot;notes.final.TXT&quot;.split(&quot;.&quot;)</code> gives you in the shell (or with <strong>Run</strong>). Which piece is the extension? Then try <code>&quot;README&quot;</code>.</p></li><li><p>Compare <code>&quot;a  b&quot;.split(&quot; &quot;)</code> and <code>&quot;a  b&quot;.split()</code> with <strong>Run</strong>. Only one of them gives two words.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why does <code>split(&quot;.&quot;)[-1]</code> work for <code>.py</code>, <code>.txt</code> and <code>.html</code>, when a slice such as <code>[-3:]</code> doesn&#x27;t? What does the <code>[-1]</code> refer to?</p><div class="answer"><p>split(&#x27;.&#x27;) cuts the name at every dot and returns a list of the pieces; the extension is always the last piece whatever its length, and [-1] means the last element of that list, the same negative indexing used on strings. A fixed slice assumes a length, which is wrong for py (2) or html (4).</p></div></li><li><p>For the same reflection, <code>split()</code> and <code>split(&quot; &quot;)</code> give different counts. Which is right, and what exactly goes wrong with the other?</p><div class="answer"><p>split() is right. split(&#x27; &#x27;) splits at every single space, so two spaces in a row produce an empty string counted as a word, and a newline is not a separator, so &#x27;me.\nNegative&#x27; counts as one word. split() treats any run of whitespace as one separator and ignores it at the ends.</p></div></li></ol>
+<h2>Extension</h2><p>Write <code>average_word_length(text)</code> that returns the average number of characters per word, rounded to 1 decimal, like the textbook&#x27;s writing-style analysis. Ignore punctuation by stripping <code>.,!?</code> from each word with <code>strip(&quot;.,!?&quot;)</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

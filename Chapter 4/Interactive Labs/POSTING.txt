@@ -1,0 +1,40 @@
+POSTING CHECKLIST
+=================
+
+  Lab 4.1: Reading a section code
+    students : 4.1.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.1_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.1_guide.html
+
+  Lab 4.2: Caesar cipher clues
+    students : 4.2.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.2_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.2_guide.html
+
+  Lab 4.3: A base converter for the network lab
+    students : 4.3.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.3_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.3_guide.html
+
+  Lab 4.4: Cleaning up upload names
+    students : 4.4.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.4_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.4_guide.html
+
+  Lab 4.5: A quiz score log that survives
+    students : 4.5.html  (upload as a file; open in a new window)
+    assignment instructions : blackboard/4.5_assignment.html  (paste in the editor's HTML/source view)
+    you only : instructor/4.5_guide.html
+
+Optional: upload index.html together with every lab page in the same folder for a single entry point.
+
+Before posting
+  1. Open one lab from Blackboard as a student (Student Preview). Type in the editor and reload: if the code
+     is still there, saving works. If the page shows as text or nothing runs, your institution blocks scripts
+     in uploaded HTML: host the files on a web server and add links instead.
+  2. Create the Assignment, paste the instructions, then set points, due date and attempts in Blackboard.
+  3. Never upload the instructor/ folder where students can open it.
+
+Python labs run in the browser. Students need the page opened from a web address (Blackboard is fine) and,
+unless you built with --python-runtime, an internet connection the first time (about 12 MB, then cached).
+If you built with --python-runtime, upload the runtime/ folder next to the lab pages, keeping its structure.

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · A base converter for the network lab</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 4.3</div>
+  <h1>A base converter for the network lab</h1>
+<h2>Objectives</h2><ul><li>Convert a string of digits in base 2, 8 or 16 to a decimal integer using positional values</li><li>Convert a decimal integer to any of those bases by repeated division</li><li>Use a string as a lookup table to turn a value into a digit, including A-F</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>to_decimal(digits, base)</code> returns the integer a digit string represents, by adding each digit&#x27;s value times its positional value (<code>&quot;1100111&quot;</code>, 2 gives <code>103</code>; <code>&quot;19F&quot;</code>, 16 gives <code>415</code>). No <code>int(text, base)</code>.</li><li><strong>R2</strong> <code>from_decimal(number, base)</code> returns the digit string for a non-negative integer by repeated division (<code>415</code>, 16 gives <code>&quot;19F&quot;</code>). No <code>bin</code>, <code>oct</code>, <code>hex</code> or <code>format</code>.</li><li><strong>R3</strong> <code>from_decimal(0, base)</code> returns <code>&quot;0&quot;</code>.</li><li><strong>R4</strong> Both functions agree with Python&#x27;s built-ins for every number from 0 to 299 in bases 2, 8 and 16. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>In the base-8 number <code>637</code>, what is the positional value of the digit 6, and what decimal number does <code>637</code> (base 8) represent?</p><div class="answer"><p>The 6 is in position 2, so its positional value is 8 squared, 64. The number is 6*64 + 3*8 + 7*1 = 384 + 24 + 7 = 415.</p></div></li><li><p>The given <code>digit_value</code> uses <code>DIGITS.find(ch.upper())</code>. What does it return for <code>&#x27;c&#x27;</code>, and why does it call <code>upper()</code> first?</p><div class="answer"><p>It returns 12: &#x27;c&#x27; becomes &#x27;C&#x27;, which is at position 12 in DIGITS. DIGITS only holds capital letters, so upper() lets lowercase hex digits such as &#x27;ff&#x27; work too.</p></div></li></ol>
+<h2>Solution</h2><div class="file">bases.py</div><pre class="code-block"><code><span class="t-sd">"""bases.py - converts between decimal and bases 2 to 16 for the network lab."""</span>
+
+<span class="t-n">DIGITS</span> <span class="t-o">=</span> <span class="t-s2">"0123456789ABCDEF"</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">digit_value</span><span class="t-p">(</span><span class="t-n">ch</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Given: the value of one digit character, e.g. '7' -&gt; 7, 'F' or 'f' -&gt; 15."""</span>
+    <span class="t-k">return</span> <span class="t-n">DIGITS</span><span class="t-o">.</span><span class="t-n">find</span><span class="t-p">(</span><span class="t-n">ch</span><span class="t-o">.</span><span class="t-n">upper</span><span class="t-p">())</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">to_decimal</span><span class="t-p">(</span><span class="t-n">digits</span><span class="t-p">,</span> <span class="t-n">base</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the int that the string digits represents in base (2 to 16)."""</span>
+    <span class="t-n">decimal</span> <span class="t-o">=</span> <span class="t-mi">0</span>
+    <span class="t-n">exponent</span> <span class="t-o">=</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">digits</span><span class="t-p">)</span> <span class="t-o">-</span> <span class="t-mi">1</span>
+    <span class="t-k">for</span> <span class="t-n">ch</span> <span class="t-ow">in</span> <span class="t-n">digits</span><span class="t-p">:</span>
+        <span class="t-n">decimal</span> <span class="t-o">+=</span> <span class="t-n">digit_value</span><span class="t-p">(</span><span class="t-n">ch</span><span class="t-p">)</span> <span class="t-o">*</span> <span class="t-n">base</span> <span class="t-o">**</span> <span class="t-n">exponent</span>
+        <span class="t-n">exponent</span> <span class="t-o">-=</span> <span class="t-mi">1</span>
+    <span class="t-k">return</span> <span class="t-n">decimal</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">from_decimal</span><span class="t-p">(</span><span class="t-n">number</span><span class="t-p">,</span> <span class="t-n">base</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the digit string that represents number (0 or more) in base (2 to 16)."""</span>
+    <span class="t-k">if</span> <span class="t-n">number</span> <span class="t-o">==</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-s2">"0"</span>
+    <span class="t-n">result</span> <span class="t-o">=</span> <span class="t-s2">""</span>
+    <span class="t-k">while</span> <span class="t-n">number</span> <span class="t-o">&gt;</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-n">remainder</span> <span class="t-o">=</span> <span class="t-n">number</span> <span class="t-o">%</span> <span class="t-n">base</span>
+        <span class="t-n">number</span> <span class="t-o">=</span> <span class="t-n">number</span> <span class="t-o">//</span> <span class="t-n">base</span>
+        <span class="t-n">result</span> <span class="t-o">=</span> <span class="t-n">DIGITS</span><span class="t-p">[</span><span class="t-n">remainder</span><span class="t-p">]</span> <span class="t-o">+</span> <span class="t-n">result</span>
+    <span class="t-k">return</span> <span class="t-n">result</span></code></pre>
+<h3>Walkthrough</h3><p>This is the textbook&#x27;s binary algorithm with the base as a parameter. The leftmost digit has exponent <code>len(digits) - 1</code>, and the exponent drops by one per digit. Another correct form needs no exponent: <code>decimal = decimal * base + digit_value(ch)</code> (Horner&#x27;s method). In <code>from_decimal</code> the remainders come out right to left, so each new digit goes in <strong>front</strong>. <code>DIGITS[remainder]</code> turns 15 into <code>F</code>; <code>str(15)</code> would add two characters, <code>15</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">bases</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">to_decimal</span><span class="t-p">,</span> <span class="t-n">from_decimal</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">to_decimal</span><span class="t-p">(</span><span class="t-s2">"1100111"</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">),</span> <span class="t-n">to_decimal</span><span class="t-p">(</span><span class="t-s2">"1111"</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">to_decimal</span><span class="t-p">(</span><span class="t-s2">"637"</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">),</span> <span class="t-n">to_decimal</span><span class="t-p">(</span><span class="t-s2">"19F"</span><span class="t-p">,</span> <span class="t-mi">16</span><span class="t-p">),</span> <span class="t-n">to_decimal</span><span class="t-p">(</span><span class="t-s2">"ff"</span><span class="t-p">,</span> <span class="t-mi">16</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-mi">34</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-mi">415</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">),</span> <span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-mi">415</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">),</span> <span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-mi">415</span><span class="t-p">,</span> <span class="t-mi">16</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">),</span> <span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">16</span><span class="t-p">))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"IPv4 192.168.4.10 in binary:"</span><span class="t-p">)</span>
+<span class="t-k">for</span> <span class="t-n">octet</span> <span class="t-ow">in</span> <span class="t-p">[</span><span class="t-mi">192</span><span class="t-p">,</span> <span class="t-mi">168</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">]:</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">" "</span><span class="t-p">,</span> <span class="t-n">octet</span><span class="t-p">,</span> <span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-n">octet</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">))</span>
+
+<span class="t-c1"># Cross-check against Python's built-ins</span>
+<span class="t-n">all_ok</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+<span class="t-k">for</span> <span class="t-n">n</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">300</span><span class="t-p">):</span>
+    <span class="t-k">if</span> <span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-n">n</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">)</span> <span class="t-o">!=</span> <span class="t-nb">format</span><span class="t-p">(</span><span class="t-n">n</span><span class="t-p">,</span> <span class="t-s2">"b"</span><span class="t-p">):</span>
+        <span class="t-n">all_ok</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+    <span class="t-k">if</span> <span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-n">n</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">)</span> <span class="t-o">!=</span> <span class="t-nb">format</span><span class="t-p">(</span><span class="t-n">n</span><span class="t-p">,</span> <span class="t-s2">"o"</span><span class="t-p">):</span>
+        <span class="t-n">all_ok</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+    <span class="t-k">if</span> <span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-n">n</span><span class="t-p">,</span> <span class="t-mi">16</span><span class="t-p">)</span> <span class="t-o">!=</span> <span class="t-nb">format</span><span class="t-p">(</span><span class="t-n">n</span><span class="t-p">,</span> <span class="t-s2">"X"</span><span class="t-p">):</span>
+        <span class="t-n">all_ok</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+    <span class="t-k">for</span> <span class="t-n">base</span> <span class="t-ow">in</span> <span class="t-p">[</span><span class="t-mi">2</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">,</span> <span class="t-mi">16</span><span class="t-p">]:</span>
+        <span class="t-k">if</span> <span class="t-n">to_decimal</span><span class="t-p">(</span><span class="t-n">from_decimal</span><span class="t-p">(</span><span class="t-n">n</span><span class="t-p">,</span> <span class="t-n">base</span><span class="t-p">),</span> <span class="t-n">base</span><span class="t-p">)</span> <span class="t-o">!=</span> <span class="t-n">n</span><span class="t-p">:</span>
+            <span class="t-n">all_ok</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Matches Python's built-ins for 0-299:"</span><span class="t-p">,</span> <span class="t-n">all_ok</span><span class="t-p">)</span></code></pre><h3>Expected output</h3><pre class="output">103 15
+415 415 255
+100010
+110011111 637 19F
+0 0
+IPv4 192.168.4.10 in binary:
+  192 11000000
+  168 10101000
+  4 100
+  10 1010
+Matches Python&#x27;s built-ins for 0-299: True
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>to_decimal</code> uses positional values<div class="small">in <code>to_decimal</code></div></td><td><div><span class="tag">require</span> <code>\*\*</code></div><div><span class="tag">require</span> <code>\*\s*base\b</code></div><div><span class="tag">forbid</span> <code>\bint\s*\([^()]*,</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>to_decimal</code> gets each digit&#x27;s value with <code>digit_value</code><div class="small">in <code>to_decimal</code></div></td><td><div><span class="tag">require</span> <code>\bdigit_value\s*\(</code></div><div><span class="tag">require</span> <code>\bDIGITS\s*\.\s*(?:find|index)\s*\(</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>from_decimal</code> divides repeatedly by the base<div class="small">in <code>from_decimal</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*%\s*base\b)(?=[\s\S]*//=?\s*base\b)</code></div><div><span class="tag">require</span> <code>\bdivmod\s*\(</code></div><div><span class="tag">forbid</span> <code>\bbin\s*\(</code></div><div><span class="tag">forbid</span> <code>\boct\s*\(</code></div><div><span class="tag">forbid</span> <code>\bhex\s*\(</code></div><div><span class="tag">forbid</span> <code>\bformat\s*\(</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>from_decimal</code> looks digits up in <code>DIGITS</code> and puts them in front<div class="small">in <code>from_decimal</code></div></td><td><div><span class="tag">require</span> <code>=\s*DIGITS\s*\[\s*\w+\s*\]\s*\+\s*\w+</code></div></td></tr><tr><td>C5</td><td>R3</td><td><code>from_decimal</code> handles 0<div class="small">in <code>from_decimal</code></div></td><td><div><span class="tag">require</span> <code>\bnumber\s*==\s*0\b</code></div><div><span class="tag">require</span> <code>\bnot\s+number\b</code></div><div><span class="tag">require</span> <code>\bresult\s*==\s*[&quot;&#x27;][&quot;&#x27;]</code></div><div><span class="tag">require</span> <code>\bnot\s+result\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>to_decimal</code> uses positional values</dt><dd><p>Multiply each digit&#x27;s value by <code>base ** exponent</code>, where the leftmost digit&#x27;s exponent is <code>len(digits) - 1</code>, and add the results. Don&#x27;t call <code>int(text, base)</code>: the point is to do the conversion yourself.</p></dd><dt>C2 · <code>to_decimal</code> gets each digit&#x27;s value with <code>digit_value</code></dt><dd><p><code>int(ch)</code> works for 0-9 but crashes on <code>F</code>. Use the given <code>digit_value(ch)</code>, which looks the character up in <code>DIGITS</code>.</p></dd><dt>C3 · <code>from_decimal</code> divides repeatedly by the base</dt><dd><p>In a loop, <code>number % base</code> gives the next digit (from the right) and <code>number // base</code> gives what&#x27;s left to convert. Keep going while <code>number &gt; 0</code>. Built-ins such as <code>bin</code>, <code>hex</code> or <code>format</code> skip the algorithm.</p></dd><dt>C4 · <code>from_decimal</code> looks digits up in <code>DIGITS</code> and puts them in front</dt><dd><p>Turn each remainder into a digit with <code>DIGITS[remainder]</code> (so 15 becomes <code>F</code>), and place it in <strong>front</strong> of the digits found so far: the remainders come out right to left.</p></dd><dt>C5 · <code>from_decimal</code> handles 0</dt><dd><p><code>while number &gt; 0</code> never runs when <code>number</code> is 0, so the result would be an empty string. Check for 0 before the loop and return <code>&quot;0&quot;</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>For <code>&quot;637&quot;</code> in base 8 the positional values, from the left, are 8 squared, 8 to the 1st and 8 to the 0th power. Start the exponent at <code>len(digits) - 1</code> and count down.</p></li><li><p>Division gives you the digits from the right, the same way as the textbook&#x27;s <code>decimaltobinary.py</code>. Each new digit belongs at the front of the string you have so far.</p></li><li><p>A loop that runs <code>while number &gt; 0</code> does nothing for 0. Handle it before the loop.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p><code>from_decimal</code> uses <code>DIGITS[remainder]</code> instead of <code>str(remainder)</code>. What would the <code>str</code> version return for 415 in base 16, and why is that wrong?</p><div class="answer"><p>The remainders are 15, 9 and 1, so the str version builds &#x27;1&#x27; + &#x27;9&#x27; + &#x27;15&#x27; = &#x27;1915&#x27;. A digit must be a single character; &#x27;15&#x27; takes two places and makes the number unreadable (it looks like four hex digits). DIGITS[15] is the single digit &#x27;F&#x27;, giving &#x27;19F&#x27;.</p></div></li><li><p>Why does each hexadecimal digit correspond to exactly four binary digits? Use that to convert <code>C0</code> to binary without your program.</p><div class="answer"><p>16 is 2 to the 4th power, so the 16 possible hex digits match the 16 patterns of four bits exactly. C is 12, which is 1100, and 0 is 0000, so C0 is 11000000, which is the octet 192.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>convert(digits, from_base, to_base)</code> that converts directly between any two bases using your two functions, and use it to turn the octal permission <code>755</code> into binary. What do the three groups of three bits mean?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

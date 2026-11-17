@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Reading a section code</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 4.1</div>
+  <h1>Reading a section code</h1>
+<h2>Objectives</h2><ul><li>Use the subscript operator <code>s[i]</code> to read one character, and convert it with <code>int</code></li><li>Extract substrings with slices, counting from the left or from the right end</li><li>Test for a substring with the <code>in</code> operator, choosing a target that can&#x27;t match by accident</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>prefix(code)</code> returns the three-letter prefix (<code>COP</code>) and <code>course_number(code)</code> the four digits (<code>1035</code>), using slices.</li><li><strong>R2</strong> <code>level(code)</code> returns the first digit of the course number as an <code>int</code> (<code>COP1035-02</code> gives <code>1</code>).</li><li><strong>R3</strong> <code>section(code)</code> returns the two-digit section for regular and lab codes alike (<code>COP1035-02</code> gives <code>02</code>, <code>COP1035L-01</code> gives <code>01</code>).</li><li><strong>R4</strong> <code>is_lab(code)</code> returns <code>True</code> only for lab sections; <code>LIT2000-01</code> is <strong>not</strong> a lab.</li><li><strong>R5</strong> Every code in the test program is described correctly. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Before changing anything: the starter&#x27;s <code>section</code> returns <code>code[8:10]</code>. What does it return for <code>COP1035-02</code>, and for <code>COP1035L-01</code>? Why does one of them go wrong?</p><div class="answer"><p>It returns &#x27;02&#x27; for COP1035-02 but &#x27;-0&#x27; for COP1035L-01. The L takes position 7, so the hyphen and section digits each move one position right; fixed positions from the left break when the length changes.</p></div></li><li><p>What is <code>len(&quot;COP1035L-01&quot;)</code>, and what is the position of its last character?</p><div class="answer"><p>The length is 11, so the last character is at position 10 (length minus 1), which Python also lets you write as -1.</p></div></li></ol>
+<h2>Solution</h2><div class="file">course_codes.py</div><pre class="code-block"><code><span class="t-sd">"""course_codes.py - pulls apart section codes such as COP1035-02 and COP1035L-01."""</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">prefix</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the three-letter subject prefix, e.g. 'COP'."""</span>
+    <span class="t-k">return</span> <span class="t-n">code</span><span class="t-p">[:</span><span class="t-mi">3</span><span class="t-p">]</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">course_number</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the four-digit course number as a string, e.g. '1035'."""</span>
+    <span class="t-k">return</span> <span class="t-n">code</span><span class="t-p">[</span><span class="t-mi">3</span><span class="t-p">:</span><span class="t-mi">7</span><span class="t-p">]</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">level</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the course level as an int, e.g. 1 for COP1035."""</span>
+    <span class="t-k">return</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">[</span><span class="t-mi">3</span><span class="t-p">])</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">section</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the two-digit section, e.g. '02'."""</span>
+    <span class="t-k">return</span> <span class="t-n">code</span><span class="t-p">[</span><span class="t-o">-</span><span class="t-mi">2</span><span class="t-p">:]</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">is_lab</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return True if the code is a lab section."""</span>
+    <span class="t-k">return</span> <span class="t-s2">"L-"</span> <span class="t-ow">in</span> <span class="t-n">code</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">describe</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Given: builds a one-line label from the functions above."""</span>
+    <span class="t-n">label</span> <span class="t-o">=</span> <span class="t-n">prefix</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">" "</span> <span class="t-o">+</span> <span class="t-n">course_number</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">", section "</span> <span class="t-o">+</span> <span class="t-n">section</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">)</span>
+    <span class="t-k">if</span> <span class="t-n">is_lab</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">):</span>
+        <span class="t-n">label</span> <span class="t-o">+=</span> <span class="t-s2">" (lab)"</span>
+    <span class="t-k">return</span> <span class="t-n">label</span></code></pre>
+<h3>Walkthrough</h3><p>The prefix and number sit at fixed positions from the left, so positive slices are right for them. The section is fixed from the <strong>right</strong> end, so <code>code[-2:]</code> works whether or not an <code>L</code> pushes it along. <code>&quot;L-&quot; in code</code> looks for the two characters that only lab codes have together; <code>&quot;L&quot; in code</code> would also match prefixes such as <code>LIT</code> or <code>MLS</code>. <code>code[7] == &quot;L&quot;</code> is also correct.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">course_codes</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">prefix</span><span class="t-p">,</span> <span class="t-n">course_number</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">,</span> <span class="t-n">section</span><span class="t-p">,</span> <span class="t-n">is_lab</span><span class="t-p">,</span> <span class="t-n">describe</span>
+
+<span class="t-n">codes</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-s2">"COP1035-02"</span><span class="t-p">,</span> <span class="t-s2">"COP1035L-01"</span><span class="t-p">,</span> <span class="t-s2">"LIT2000-01"</span><span class="t-p">,</span> <span class="t-s2">"CGS2100L-11"</span><span class="t-p">]</span>
+<span class="t-k">for</span> <span class="t-n">code</span> <span class="t-ow">in</span> <span class="t-n">codes</span><span class="t-p">:</span>
+    <span class="t-n">parts</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-n">prefix</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">),</span> <span class="t-n">course_number</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">),</span> <span class="t-n">level</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">),</span> <span class="t-n">section</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">)]</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">,</span> <span class="t-s2">"-&gt;"</span><span class="t-p">,</span> <span class="t-n">parts</span><span class="t-p">,</span> <span class="t-n">is_lab</span><span class="t-p">(</span><span class="t-n">code</span><span class="t-p">))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">describe</span><span class="t-p">(</span><span class="t-s2">"COP1035L-01"</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">describe</span><span class="t-p">(</span><span class="t-s2">"LIT2000-01"</span><span class="t-p">))</span></code></pre><h3>Expected output</h3><pre class="output">COP1035-02 -&gt; [&#x27;COP&#x27;, &#x27;1035&#x27;, 1, &#x27;02&#x27;] False
+COP1035L-01 -&gt; [&#x27;COP&#x27;, &#x27;1035&#x27;, 1, &#x27;01&#x27;] True
+LIT2000-01 -&gt; [&#x27;LIT&#x27;, &#x27;2000&#x27;, 2, &#x27;01&#x27;] False
+CGS2100L-11 -&gt; [&#x27;CGS&#x27;, &#x27;2100&#x27;, 2, &#x27;11&#x27;] True
+COP 1035, section 01 (lab)
+LIT 2000, section 01
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>prefix</code> slices the first three characters<div class="small">in <code>prefix</code></div></td><td><div><span class="tag">require</span> <code>\bcode\s*\[\s*0?\s*:\s*3\s*\]</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>course_number</code> slices positions 3 to 6<div class="small">in <code>course_number</code></div></td><td><div><span class="tag">require</span> <code>\bcode\s*\[\s*3\s*:\s*7\s*\]</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>level</code> converts one character to an int<div class="small">in <code>level</code></div></td><td><div><span class="tag">require</span> <code>\bint\s*\(\s*code\s*\[\s*3\s*\]\s*\)</code></div><div><span class="tag">require</span> <code>\bint\s*\(\s*course_number\s*\(\s*code\s*\)\s*\[\s*0\s*\]\s*\)</code></div></td></tr><tr><td>C4</td><td>R3</td><td><code>section</code> counts from the right end<div class="small">in <code>section</code></div></td><td><div><span class="tag">require</span> <code>\bcode\s*\[\s*-\s*2\s*:\s*\]</code></div><div><span class="tag">require</span> <code>\bcode\s*\[\s*len\s*\(\s*code\s*\)\s*-\s*2\s*:\s*(?:len\s*\(\s*code\s*\)\s*)?\]</code></div><div><span class="tag">forbid</span> <code>\bcode\s*\[\s*8\s*:\s*10\s*\]</code></div></td></tr><tr><td>C5</td><td>R4</td><td><code>is_lab</code> searches for a target only lab codes contain<div class="small">in <code>is_lab</code>, strings included</div></td><td><div><span class="tag">require</span> <code>[&quot;&#x27;]L-[&quot;&#x27;]\s+in\s+code\b</code></div><div><span class="tag">require</span> <code>\bcode\s*\[\s*7\s*\]\s*==\s*[&quot;&#x27;]L[&quot;&#x27;]</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>prefix</code> slices the first three characters</dt><dd><p>Take a slice that starts at the beginning and stops before position 3. The second number in a slice is where it stops, and that position is <strong>not</strong> included.</p><div class='small'><strong>Hint:</strong></div><p>Positions 0, 1 and 2 hold the prefix.</p></dd><dt>C2 · <code>course_number</code> slices positions 3 to 6</dt><dd><p>The four digits occupy positions 3, 4, 5 and 6. A slice stops <em>before</em> its second number, so which number must end it?</p></dd><dt>C3 · <code>level</code> converts one character to an int</dt><dd><p>Read the single character where the course number starts with the subscript operator, then pass it to <code>int(...)</code>. That character is the string <code>&#x27;1&#x27;</code>; the dashboard needs the number <code>1</code>.</p></dd><dt>C4 · <code>section</code> counts from the right end</dt><dd><p><code>code[8:10]</code> breaks on lab codes: the <code>L</code> moves the section one position right. The section is always the <strong>last two</strong> characters, so count from the right end: a negative start position does that.</p></dd><dt>C5 · <code>is_lab</code> searches for a target only lab codes contain</dt><dd><p>Use <code>in</code> with a target that only lab codes contain. Searching for just <code>&quot;L&quot;</code> says <code>LIT2000-01</code> is a lab, because <code>L</code> is also in the prefix. What comes right after the <code>L</code> in a lab code?</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Write a code&#x27;s positions on paper first. A slice <code>s[a:b]</code> takes positions <code>a</code> up to, but <strong>not</strong> including, <code>b</code>.</p></li><li><p>For the section, count from the right: <code>-1</code> is the last character, <code>-2</code> the one before it. Negative positions don&#x27;t move when an <code>L</code> appears in the middle.</p></li><li><p><code>&quot;L&quot; in code</code> is too eager: the prefix can contain an L. In a lab code the <code>L</code> is always followed by one particular character.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why is <code>code[-2:]</code> a better choice than <code>code[8:10]</code> for the section, even if every code were a regular section today?</p><div class="answer"><p>The section is defined by where it sits relative to the end of the code, not the start. Counting from the right keeps working when something is added in the middle (a lab L, a longer course number), so the function doesn&#x27;t silently return the wrong text when the format grows.</p></div></li><li><p>Give a code that would fool <code>&quot;L&quot; in code</code>, and explain how searching for <code>&quot;L-&quot;</code> avoids it.</p><div class="answer"><p>LIT2000-01 (or any prefix with an L) contains an L but is not a lab. In a valid code the hyphen comes only after the number, so the two characters L- appear together only when the lab L is present; the longer target can&#x27;t match by accident in the prefix.</p></div></li></ol>
+<h2>Extension</h2><p>Write <code>next_section(code)</code> that returns the code for the following section, e.g. <code>COP1035-02</code> gives <code>COP1035-03</code> and <code>COP1035L-09</code> gives <code>COP1035L-10</code>. Use slices to separate the parts and <code>int</code>/<code>str</code> to do the arithmetic. Try it with <strong>Run</strong>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
