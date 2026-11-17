@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Study-abroad currency card</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L3.2-currency-card</div>
+  <h1>Study-abroad currency card</h1>
+<h2>Objectives</h2><ul><li>Left- and right-justify values in a field with <code>%-&lt;width&gt;</code> and <code>%&lt;width&gt;</code></li><li>Show money with exactly two decimals using <code>%&lt;width&gt;.2f</code></li><li>Format several values at once with a tuple after the <code>%</code> operator</li><li>Line up a table header with its columns by reusing the same field widths</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Print the header with one format string and a tuple: <code>Dollars</code> left-justified in 8, <code>Euros</code> right-justified in 10, <code>After fee</code> right-justified in 12.</li><li><strong>R2</strong> Print each row with one format string and the tuple <code>(dollars, euros, afterFee)</code>: dollars as a left-justified integer in 8, the two euro amounts right-justified in 10 and 12 with two decimals.</li><li><strong>R3</strong> Print the last line as <code>Rate used: 1 USD = 0.9200 EUR</code>, with the rate formatted to exactly four decimals.</li><li><strong>R4</strong> Every test card matches the expected output character for character, including a card too small to have any rows. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter prints each row with <code>print(dollars, euros, afterFee)</code>. Why do the columns drift out of line once the dollar amounts reach three digits?</p><div class="answer"><p>print starts each value right after the previous one plus a single space, so every value begins wherever the previous one ended. When 80 becomes 100 the dollars take one more character and push the rest of the row one column to the right. A field width fixes how many columns each value occupies.</p></div></li><li><p>In the format code <code>%10.2f</code>, what do the 10 and the 2 each control? How many spaces go in front of <code>18.40</code> in that field?</p><div class="answer"><p>10 is the field width, the total number of characters including the decimal point; 2 is the precision, the digits after the point. 18.40 is 5 characters, so 5 spaces are added on its left to right-justify it in 10.</p></div></li></ol>
+<h2>Solution</h2><div class="file">currency_card.py</div><pre class="code-block"><code><span class="t-sd">"""</span>
+<span class="t-sd">Program: currency_card.py</span>
+<span class="t-sd">Author: (your name)</span>
+<span class="t-sd">Print a pocket conversion card for students travelling to Europe.</span>
+
+<span class="t-sd">1. Inputs: today's rate (euros per dollar), largest amount on the card</span>
+<span class="t-sd">2. Output: a table with one row per $20 step:</span>
+<span class="t-sd">   dollars, euros, and euros left after the card's 3% fee,</span>
+<span class="t-sd">   followed by the rate that was used</span>
+<span class="t-sd">"""</span>
+
+<span class="t-n">STEP</span> <span class="t-o">=</span> <span class="t-mi">20</span>         <span class="t-c1"># dollar amounts go up in steps of $20</span>
+<span class="t-n">FEE_RATE</span> <span class="t-o">=</span> <span class="t-mf">0.03</span>   <span class="t-c1"># the bank card's foreign-transaction fee</span>
+
+<span class="t-n">rate</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Euros per dollar: "</span><span class="t-p">))</span>
+<span class="t-n">largest</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Largest amount in dollars: "</span><span class="t-p">))</span>
+
+<span class="t-c1"># Table header: the same widths as the rows below</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"</span><span class="t-si">%-8s%10s%12s</span><span class="t-s2">"</span> <span class="t-o">%</span> <span class="t-p">(</span><span class="t-s2">"Dollars"</span><span class="t-p">,</span> <span class="t-s2">"Euros"</span><span class="t-p">,</span> <span class="t-s2">"After fee"</span><span class="t-p">))</span>
+
+<span class="t-c1"># One row per amount</span>
+<span class="t-k">for</span> <span class="t-n">dollars</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">STEP</span><span class="t-p">,</span> <span class="t-n">largest</span> <span class="t-o">+</span> <span class="t-mi">1</span><span class="t-p">,</span> <span class="t-n">STEP</span><span class="t-p">):</span>
+    <span class="t-n">euros</span> <span class="t-o">=</span> <span class="t-n">dollars</span> <span class="t-o">*</span> <span class="t-n">rate</span>
+    <span class="t-n">afterFee</span> <span class="t-o">=</span> <span class="t-n">euros</span> <span class="t-o">-</span> <span class="t-n">euros</span> <span class="t-o">*</span> <span class="t-n">FEE_RATE</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"</span><span class="t-si">%-8d%10.2f%12.2f</span><span class="t-s2">"</span> <span class="t-o">%</span> <span class="t-p">(</span><span class="t-n">dollars</span><span class="t-p">,</span> <span class="t-n">euros</span><span class="t-p">,</span> <span class="t-n">afterFee</span><span class="t-p">))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Rate used: 1 USD = </span><span class="t-si">%0.4f</span><span class="t-s2"> EUR"</span> <span class="t-o">%</span> <span class="t-n">rate</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p>The header and the rows share the widths 8, 10 and 12, and the same justification, so every heading ends (or starts) exactly where its numbers do. <code>%-8d</code> pads the dollars with spaces on the right; <code>%10.2f</code> pads on the left and counts the decimal point and both decimals in the 10. Formatting only changes how a value is shown: <code>afterFee</code> still holds 17.848 after the row prints 17.85. With a largest amount of 10, <code>range(20, 11, 20)</code> is empty, so the card has a header and the rate line but no rows.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">importlib</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 1: rate 0.92, up to $100"</span><span class="t-p">)</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">currency_card</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 2: rate 0.9135, up to $50"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">currency_card</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 3: rate 0.95, up to $10 (smaller than one step)"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">currency_card</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">0.92
+100
+0.9135
+50
+0.95
+10
+</pre><h3>Expected output</h3><pre class="output">Case 1: rate 0.92, up to $100
+Euros per dollar: Largest amount in dollars: Dollars      Euros   After fee
+20           18.40       17.85
+40           36.80       35.70
+60           55.20       53.54
+80           73.60       71.39
+100          92.00       89.24
+Rate used: 1 USD = 0.9200 EUR
+
+Case 2: rate 0.9135, up to $50
+Euros per dollar: Largest amount in dollars: Dollars      Euros   After fee
+20           18.27       17.72
+40           36.54       35.44
+Rate used: 1 USD = 0.9135 EUR
+
+Case 3: rate 0.95, up to $10 (smaller than one step)
+Euros per dollar: Largest amount in dollars: Dollars      Euros   After fee
+Rate used: 1 USD = 0.9500 EUR
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>The header uses the column widths<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>[\&quot;&#x27;]%-8s%10s%12s[\&quot;&#x27;]\s*%\s*\(</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Rows are formatted with width and precision<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>[\&quot;&#x27;]%-8d%10\.2f%12\.2f[\&quot;&#x27;]\s*%\s*\(\s*dollars\s*,\s*euros\s*,\s*afterFee\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The rate shows four decimals<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>%0?\.4f[^\&quot;&#x27;\n]*[\&quot;&#x27;]\s*%\s*\(?\s*rate\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · The header uses the column widths</dt><dd><p>Print the header with <code>&quot;%-8s%10s%12s&quot; % (...)</code> and the three headings in a tuple. The minus sign left-justifies <code>Dollars</code>; the widths must match the rows exactly or the headings will not sit over their columns.</p></dd><dt>C2 · Rows are formatted with width and precision</dt><dd><p>Replace the row&#x27;s <code>print</code> with one format string, <code>%-8d</code> for the dollars, then <code>%10.2f</code> and <code>%12.2f</code>, followed by <code>% (dollars, euros, afterFee)</code> in that order. Each code in the string is matched to the value in the same position of the tuple.</p></dd><dt>C3 · The rate shows four decimals</dt><dd><p>Format the rate with <code>%0.4f</code> inside the <code>Rate used</code> string and put <code>% rate</code> after it. A field width of 0 means &quot;no padding&quot;: the value takes just the space it needs.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>The number after <code>%</code> is the field width. A minus sign in front of it moves the value to the left edge of the field.</p></li><li><p>Put all the values for one line in a tuple after the <code>%</code> operator, in the same order as their format codes.</p></li><li><p>In <code>%&lt;width&gt;.&lt;precision&gt;f</code>, the width counts the decimal point and the decimals too. The header can reuse the same widths with <code>s</code> codes.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The header uses exactly the same widths as the rows. What would a reader see if the header gave <code>Euros</code> a width of 9 while the rows kept 10?</p><div class="answer"><p>Every heading after Dollars would shift one column to the left of its numbers: Euros would end one character before the euro amounts and After fee would also be off by one. Columns only line up when header and rows reserve the same number of characters for each field.</p></div></li><li><p>The card shows <code>17.85</code>, but <code>afterFee</code> still holds 17.848. If someone added up the printed After fee column, could their total differ from adding the stored values and printing that sum? What should a real receipt do?</p><div class="answer"><p>Yes. Rounding each row and then adding can differ by a cent or more from adding the exact values and rounding once, because each row&#x27;s rounding error accumulates. A receipt should round each line to cents first and then total the rounded amounts, so the printed numbers add up.</p></div></li></ol>
+<h2>Extension</h2><p>Add a fourth column, <code>Fee</code>, showing the euros the bank keeps, right-justified in a field of 8 with two decimals. Widen the header to match and check that every column still lines up for a card up to $200.</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

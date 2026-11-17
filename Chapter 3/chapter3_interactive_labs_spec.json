@@ -1,0 +1,470 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 3: Loops and Selection Statements · Interactive labs",
+ "collection_intro": "Four hands-on labs for sections 3.1–3.4 of *Fundamentals of Python: First Programs*, 3e. Each one runs real Python in your browser: read the code, predict, write, run, and explain. Your work saves as you type.",
+ "theme": "harbor",
+ "background": "pattern",
+ "language": "python",
+ "labs": [
+  {
+   "id": "L3.1-training-plan",
+   "title": "Couch-to-5K training plan",
+   "subtitle": "Count-controlled loops, accumulators and the off-by-one trap",
+   "source": "Ch. 3, section 3.1, Definite Iteration: The for Loop (pp. 53–58)",
+   "minutes": 25,
+   "objectives": [
+    "Write a count-controlled `for` loop whose `range` starts at 1 and includes the upper bound",
+    "Accumulate a running total with augmented assignment (`+=`)",
+    "Skip values with the third (step) argument of `range`",
+    "Find and fix an off-by-one error by reading the program's output"
+   ],
+   "scenario": "The campus wellness center is starting a beginner running program and wants a printed plan for every participant. The coach's rules:\n\n- Week 1's run is whatever the participant can do today, for example **20 minutes**.\n- Every week after that, the run is **3 minutes longer**.\n- The coach checks in on weeks **1, 4, 7, …** (every 3 weeks, starting at week 1).\n- Someone still deciding enters **0 weeks** and should get an empty plan with a total of 0, not an error.\n\nA student worker started `training_plan.py`, but the plan it prints begins at *Week 0* and the run never gets longer. Finish it so that a 4-week plan starting at 20 minutes reads:\n\n```\nWeek 1 - 20 min\nWeek 2 - 23 min\nWeek 3 - 26 min\nWeek 4 - 29 min\nTotal running time: 98 min\nCoach check-ins: 1 4\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Number the weeks from 1 through `weeks` with a two-argument `range`, so a 4-week plan prints Week 1 to Week 4 (no Week 0, no missing last week)."
+    },
+    {
+     "id": "R2",
+     "text": "Inside the loop, add each week's minutes to `totalMinutes` with augmented assignment (`+=`)."
+    },
+    {
+     "id": "R3",
+     "text": "After a week is counted, make the next week's run longer with `minutes += INCREASE` (no literal 3)."
+    },
+    {
+     "id": "R4",
+     "text": "Print the check-in weeks 1, 4, 7, … up to `weeks` on the check-in line with a second `for` loop whose `range` steps by `CHECKIN_EVERY`."
+    },
+    {
+     "id": "R5",
+     "text": "Every test case prints the right plan, including 0 weeks (no week lines and a total of 0).",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "training_plan.py",
+   "starter_code": "\"\"\"\nProgram: training_plan.py\nAuthor: (your name)\nPrint a beginner's running plan. Each week's run is\n3 minutes longer than the week before.\n\n1. Inputs: number of weeks, minutes in week 1\n2. Outputs: one line per week, the total running time,\n   and the weeks when the coach checks in (1, 4, 7, ...)\n\"\"\"\n\nINCREASE = 3        # minutes added each week\nCHECKIN_EVERY = 3   # the coach checks in every 3 weeks, from week 1\n\nweeks = int(input(\"Number of weeks: \"))\nminutes = int(input(\"Minutes in week 1: \"))\n\ntotalMinutes = 0\n\n# One line per week\n# TODO (R1): number the weeks 1 through weeks, not 0 through weeks - 1.\nfor week in range(weeks):\n    print(\"Week\", week, \"-\", minutes, \"min\")\n    # TODO (R2): add this week's minutes to totalMinutes.\n    # TODO (R3): make next week's run INCREASE minutes longer.\n\nprint(\"Total running time:\", totalMinutes, \"min\")\n\n# Coach check-ins\nprint(\"Coach check-ins:\", end=\" \")\n# TODO (R4): print 1, 4, 7, ... (up to weeks) on this line.\nprint()\n",
+   "solution": "\"\"\"\nProgram: training_plan.py\nAuthor: (your name)\nPrint a beginner's running plan. Each week's run is\n3 minutes longer than the week before.\n\n1. Inputs: number of weeks, minutes in week 1\n2. Outputs: one line per week, the total running time,\n   and the weeks when the coach checks in (1, 4, 7, ...)\n\"\"\"\n\nINCREASE = 3        # minutes added each week\nCHECKIN_EVERY = 3   # the coach checks in every 3 weeks, from week 1\n\nweeks = int(input(\"Number of weeks: \"))\nminutes = int(input(\"Minutes in week 1: \"))\n\ntotalMinutes = 0\n\n# One line per week\nfor week in range(1, weeks + 1):\n    print(\"Week\", week, \"-\", minutes, \"min\")\n    totalMinutes += minutes      # count this week first...\n    minutes += INCREASE          # ...then make next week longer\n\nprint(\"Total running time:\", totalMinutes, \"min\")\n\n# Coach check-ins\nprint(\"Coach check-ins:\", end=\" \")\nfor checkin in range(1, weeks + 1, CHECKIN_EVERY):\n    print(checkin, end=\" \")\nprint()\n",
+   "solution_notes": "`range(1, weeks + 1)` reads as \"1 through weeks\": the stop value is never produced, so it has to be one past the last week. The order of the two `+=` lines matters: this week's minutes go into the total *before* `minutes` grows, otherwise every week is counted 3 minutes too long. When `weeks` is 0, `range(1, 1)` is empty, so neither loop body runs and the total stays 0: the empty plan needs no special case. The check-in loop uses a new variable name so it is clear it is not the training week.",
+   "warmup": [
+    {
+     "question": "Trace the starter with 3 weeks and 20 minutes. Which three week lines does it print, and what two things are wrong with them?",
+     "model_answer": "Week 0 - 20 min, Week 1 - 20 min, Week 2 - 20 min. The numbering starts at 0 because range(3) produces 0, 1, 2, and the minutes never grow because nothing in the loop body changes minutes."
+    },
+    {
+     "question": "`totalMinutes = 0` sits before the loop, not inside it. What would the total be after the loop if that line were moved into the loop body?",
+     "model_answer": "The total would be reset to 0 on every pass, so at the end it would hold only the last week's minutes instead of the sum of all weeks. An accumulator is initialized once, before the loop, and updated inside it."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Weeks are counted 1 through `weeks`",
+     "require": "\\bfor\\s+week\\s+in\\s+range\\(\\s*1\\s*,\\s*(?:weeks\\s*\\+\\s*1|1\\s*\\+\\s*weeks)\\s*\\)\\s*:",
+     "forbid": "\\brange\\(\\s*weeks\\s*\\)",
+     "message": "Give the week loop two arguments: start at 1 and stop at `weeks + 1`. `range(weeks)` counts 0 to weeks - 1, and the stop value itself is never produced, so stopping at `weeks` would drop the last week.",
+     "hint": "Write the plan for 1 week on paper: which `range` produces exactly the number 1?"
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "The total grows with `+=`",
+     "require": "\\btotalMinutes\\s*\\+=\\s*minutes\\b",
+     "message": "Inside the loop body, add this week's minutes to the accumulator with `totalMinutes += minutes`. Indent it like the `print` line so it runs on every pass."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Each week grows by `INCREASE`",
+     "require": "\\bminutes\\s*\\+=\\s*INCREASE\\b",
+     "forbid": "\\bminutes\\s*\\+=\\s*3\\b",
+     "message": "Make the run longer with `minutes += INCREASE`, after the total is updated. Use the constant, not 3: if the coach changes the plan, only one line should change."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "Check-ins use a stepped `range`",
+     "require": "\\bfor\\s+\\w+\\s+in\\s+range\\(\\s*1\\s*,\\s*(?:weeks\\s*\\+\\s*1|1\\s*\\+\\s*weeks)\\s*,\\s*CHECKIN_EVERY\\s*\\)\\s*:",
+     "message": "Add a second `for` loop between the two check-in `print` calls. Its `range` needs three arguments: start at week 1, stop one past `weeks`, and step by `CHECKIN_EVERY`. Print each value with `end=\" \"` so they stay on one line."
+    }
+   ],
+   "hints": [
+    "`range(n)` starts at 0. Give `range` a start value as well as a stop value.",
+    "The stop value is never produced, so stop one past the last week you want. For the check-ins, a third argument sets the distance between the numbers.",
+    "Order matters inside the loop body: add this week's minutes to the total first, then make the next week longer."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "import importlib\n\nprint(\"Case 1: 4 weeks, starting at 20 min\")\nimport training_plan\nprint()\nprint(\"Case 2: 1 week, starting at 30 min\")\nimportlib.reload(training_plan)\nprint()\nprint(\"Case 3: 0 weeks (still deciding)\")\nimportlib.reload(training_plan)\nprint()\nprint(\"Case 4: 8 weeks, starting at 15 min\")\nimportlib.reload(training_plan)\n",
+    "stdin": "4\n20\n1\n30\n0\n20\n8\n15\n",
+    "expected_output": "Case 1: 4 weeks, starting at 20 min\nNumber of weeks: Minutes in week 1: Week 1 - 20 min\nWeek 2 - 23 min\nWeek 3 - 26 min\nWeek 4 - 29 min\nTotal running time: 98 min\nCoach check-ins: 1 4 \n\nCase 2: 1 week, starting at 30 min\nNumber of weeks: Minutes in week 1: Week 1 - 30 min\nTotal running time: 30 min\nCoach check-ins: 1 \n\nCase 3: 0 weeks (still deciding)\nNumber of weeks: Minutes in week 1: Total running time: 0 min\nCoach check-ins: \n\nCase 4: 8 weeks, starting at 15 min\nNumber of weeks: Minutes in week 1: Week 1 - 15 min\nWeek 2 - 18 min\nWeek 3 - 21 min\nWeek 4 - 24 min\nWeek 5 - 27 min\nWeek 6 - 30 min\nWeek 7 - 33 min\nWeek 8 - 36 min\nTotal running time: 204 min\nCoach check-ins: 1 4 7 \n",
+    "predict": "Before running: write the four week lines and the total for Case 1 by hand. Then predict Case 3 (0 weeks): why should neither loop print anything?"
+   },
+   "stdin": "4\n20\n",
+   "reflection": [
+    {
+     "question": "The book calls `range(1, 4)` written for \"1 through 4\" an off-by-one error and notes that Python cannot detect it. Which test case here would expose `range(1, weeks)` most clearly, and what would you see?",
+     "model_answer": "Case 2 (1 week): range(1, 1) is empty, so it would print no week lines and a total of 0 for a one-week plan, an obvious contradiction. Off-by-one errors are logic errors, so only output reveals them, and the smallest cases make the missing iteration easiest to see."
+    },
+    {
+     "question": "Why is `range(1, weeks + 1, CHECKIN_EVERY)` better than typing the check-in weeks by hand, for example `print(1, 4, 7)`?",
+     "model_answer": "The loop works for any plan length: a 2-week plan prints only 1, a 20-week plan prints 1 through 19, with no edits. If the coach switches to every 2 weeks, only the constant changes. A typed list would be wrong for every plan length except one."
+    }
+   ],
+   "extension": "Race day comes after the last week. Add a countdown line such as `Weeks to go: 4 3 2 1` that counts down from `weeks` to 1 with a `range` whose step is `-1`. Check it with 1 week and 0 weeks.",
+   "worth_knowing": "A `range` does not store its numbers. In CPython, `range(1, 10**18)` takes about 48 bytes because it keeps only start, stop and step and works out each value when the loop asks for it. Ask `999 in range(0, 10**18, 3)` and Python answers instantly with arithmetic instead of counting."
+  },
+  {
+   "id": "L3.2-currency-card",
+   "title": "Study-abroad currency card",
+   "subtitle": "Field width, justification and precision with the % operator",
+   "source": "Ch. 3, section 3.2, Formatting Text for Output and Case Study 3-1 (pp. 58–64)",
+   "minutes": 25,
+   "objectives": [
+    "Left- and right-justify values in a field with `%-<width>` and `%<width>`",
+    "Show money with exactly two decimals using `%<width>.2f`",
+    "Format several values at once with a tuple after the `%` operator",
+    "Line up a table header with its columns by reusing the same field widths"
+   ],
+   "scenario": "The study-abroad office gives every student a pocket card before a trip to Europe: how many euros a dollar amount buys, and how many are left after the bank card's **3% foreign-transaction fee**. The advisor types today's rate and the largest amount the card should show; rows go up in **$20 steps**.\n\nThe current script computes the right numbers, but the card is unreadable: long tails of decimals, and columns that drift as the amounts grow. The print shop asked for:\n\n- **Dollars** left-justified in a field of **8**;\n- **Euros** right-justified in **10** and **After fee** in **12**, both with exactly **two decimals**;\n- headings with the same widths and justification, so each one sits over its column;\n- the rate on the last line with **four decimals**.\n\nFor a rate of 0.92, the top of the card should read:\n\n```\nDollars      Euros   After fee\n20           18.40       17.85\n```",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Print the header with one format string and a tuple: `Dollars` left-justified in 8, `Euros` right-justified in 10, `After fee` right-justified in 12."
+    },
+    {
+     "id": "R2",
+     "text": "Print each row with one format string and the tuple `(dollars, euros, afterFee)`: dollars as a left-justified integer in 8, the two euro amounts right-justified in 10 and 12 with two decimals."
+    },
+    {
+     "id": "R3",
+     "text": "Print the last line as `Rate used: 1 USD = 0.9200 EUR`, with the rate formatted to exactly four decimals."
+    },
+    {
+     "id": "R4",
+     "text": "Every test card matches the expected output character for character, including a card too small to have any rows.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "currency_card.py",
+   "starter_code": "\"\"\"\nProgram: currency_card.py\nAuthor: (your name)\nPrint a pocket conversion card for students travelling to Europe.\n\n1. Inputs: today's rate (euros per dollar), largest amount on the card\n2. Output: a table with one row per $20 step:\n   dollars, euros, and euros left after the card's 3% fee,\n   followed by the rate that was used\n\"\"\"\n\nSTEP = 20         # dollar amounts go up in steps of $20\nFEE_RATE = 0.03   # the bank card's foreign-transaction fee\n\nrate = float(input(\"Euros per dollar: \"))\nlargest = int(input(\"Largest amount in dollars: \"))\n\n# Table header\n# TODO (R1): give each heading the same width and justification as its column.\nprint(\"Dollars\", \"Euros\", \"After fee\")\n\n# One row per amount\nfor dollars in range(STEP, largest + 1, STEP):\n    euros = dollars * rate\n    afterFee = euros - euros * FEE_RATE\n    # TODO (R2): Dollars left-justified in 8; Euros in 10 and After fee in 12,\n    #            right-justified with exactly two decimals.\n    print(dollars, euros, afterFee)\n\n# TODO (R3): show the rate with exactly four decimals.\nprint(\"Rate used: 1 USD =\", rate, \"EUR\")\n",
+   "solution": "\"\"\"\nProgram: currency_card.py\nAuthor: (your name)\nPrint a pocket conversion card for students travelling to Europe.\n\n1. Inputs: today's rate (euros per dollar), largest amount on the card\n2. Output: a table with one row per $20 step:\n   dollars, euros, and euros left after the card's 3% fee,\n   followed by the rate that was used\n\"\"\"\n\nSTEP = 20         # dollar amounts go up in steps of $20\nFEE_RATE = 0.03   # the bank card's foreign-transaction fee\n\nrate = float(input(\"Euros per dollar: \"))\nlargest = int(input(\"Largest amount in dollars: \"))\n\n# Table header: the same widths as the rows below\nprint(\"%-8s%10s%12s\" % (\"Dollars\", \"Euros\", \"After fee\"))\n\n# One row per amount\nfor dollars in range(STEP, largest + 1, STEP):\n    euros = dollars * rate\n    afterFee = euros - euros * FEE_RATE\n    print(\"%-8d%10.2f%12.2f\" % (dollars, euros, afterFee))\n\nprint(\"Rate used: 1 USD = %0.4f EUR\" % rate)\n",
+   "solution_notes": "The header and the rows share the widths 8, 10 and 12, and the same justification, so every heading ends (or starts) exactly where its numbers do. `%-8d` pads the dollars with spaces on the right; `%10.2f` pads on the left and counts the decimal point and both decimals in the 10. Formatting only changes how a value is shown: `afterFee` still holds 17.848 after the row prints 17.85. With a largest amount of 10, `range(20, 11, 20)` is empty, so the card has a header and the rate line but no rows.",
+   "warmup": [
+    {
+     "question": "The starter prints each row with `print(dollars, euros, afterFee)`. Why do the columns drift out of line once the dollar amounts reach three digits?",
+     "model_answer": "print starts each value right after the previous one plus a single space, so every value begins wherever the previous one ended. When 80 becomes 100 the dollars take one more character and push the rest of the row one column to the right. A field width fixes how many columns each value occupies."
+    },
+    {
+     "question": "In the format code `%10.2f`, what do the 10 and the 2 each control? How many spaces go in front of `18.40` in that field?",
+     "model_answer": "10 is the field width, the total number of characters including the decimal point; 2 is the precision, the digits after the point. 18.40 is 5 characters, so 5 spaces are added on its left to right-justify it in 10."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "The header uses the column widths",
+     "require": "[\\\"']%-8s%10s%12s[\\\"']\\s*%\\s*\\(",
+     "strings": true,
+     "message": "Print the header with `\"%-8s%10s%12s\" % (...)` and the three headings in a tuple. The minus sign left-justifies `Dollars`; the widths must match the rows exactly or the headings will not sit over their columns."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Rows are formatted with width and precision",
+     "require": "[\\\"']%-8d%10\\.2f%12\\.2f[\\\"']\\s*%\\s*\\(\\s*dollars\\s*,\\s*euros\\s*,\\s*afterFee\\s*\\)",
+     "strings": true,
+     "message": "Replace the row's `print` with one format string, `%-8d` for the dollars, then `%10.2f` and `%12.2f`, followed by `% (dollars, euros, afterFee)` in that order. Each code in the string is matched to the value in the same position of the tuple."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The rate shows four decimals",
+     "require": "%0?\\.4f[^\\\"'\\n]*[\\\"']\\s*%\\s*\\(?\\s*rate\\b",
+     "strings": true,
+     "message": "Format the rate with `%0.4f` inside the `Rate used` string and put `% rate` after it. A field width of 0 means \"no padding\": the value takes just the space it needs."
+    }
+   ],
+   "hints": [
+    "The number after `%` is the field width. A minus sign in front of it moves the value to the left edge of the field.",
+    "Put all the values for one line in a tuple after the `%` operator, in the same order as their format codes.",
+    "In `%<width>.<precision>f`, the width counts the decimal point and the decimals too. The header can reuse the same widths with `s` codes."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "import importlib\n\nprint(\"Case 1: rate 0.92, up to $100\")\nimport currency_card\nprint()\nprint(\"Case 2: rate 0.9135, up to $50\")\nimportlib.reload(currency_card)\nprint()\nprint(\"Case 3: rate 0.95, up to $10 (smaller than one step)\")\nimportlib.reload(currency_card)\n",
+    "stdin": "0.92\n100\n0.9135\n50\n0.95\n10\n",
+    "expected_output": "Case 1: rate 0.92, up to $100\nEuros per dollar: Largest amount in dollars: Dollars      Euros   After fee\n20           18.40       17.85\n40           36.80       35.70\n60           55.20       53.54\n80           73.60       71.39\n100          92.00       89.24\nRate used: 1 USD = 0.9200 EUR\n\nCase 2: rate 0.9135, up to $50\nEuros per dollar: Largest amount in dollars: Dollars      Euros   After fee\n20           18.27       17.72\n40           36.54       35.44\nRate used: 1 USD = 0.9135 EUR\n\nCase 3: rate 0.95, up to $10 (smaller than one step)\nEuros per dollar: Largest amount in dollars: Dollars      Euros   After fee\nRate used: 1 USD = 0.9500 EUR\n",
+    "predict": "Before running: how many rows will Case 2 (up to $50) print, and why is there no $50 row? What will Case 3 print?"
+   },
+   "stdin": "0.92\n100\n",
+   "reflection": [
+    {
+     "question": "The header uses exactly the same widths as the rows. What would a reader see if the header gave `Euros` a width of 9 while the rows kept 10?",
+     "model_answer": "Every heading after Dollars would shift one column to the left of its numbers: Euros would end one character before the euro amounts and After fee would also be off by one. Columns only line up when header and rows reserve the same number of characters for each field."
+    },
+    {
+     "question": "The card shows `17.85`, but `afterFee` still holds 17.848. If someone added up the printed After fee column, could their total differ from adding the stored values and printing that sum? What should a real receipt do?",
+     "model_answer": "Yes. Rounding each row and then adding can differ by a cent or more from adding the exact values and rounding once, because each row's rounding error accumulates. A receipt should round each line to cents first and then total the rounded amounts, so the printed numbers add up."
+    }
+   ],
+   "extension": "Add a fourth column, `Fee`, showing the euros the bank keeps, right-justified in a field of 8 with two decimals. Widen the header to match and check that every column still lines up for a card up to $200.",
+   "worth_knowing": "The `%` codes come from the `printf` function of the C language, and Python borrowed them. Python later added `str.format()` and, in version 3.6, f-strings: `f\"{euros:10.2f}\"` uses the same width-dot-precision idea you just practised."
+  },
+  {
+   "id": "L3.3-shipping-quote",
+   "title": "Bookstore shipping quote",
+   "subtitle": "Multiway selection, compound conditions and boundary testing",
+   "source": "Ch. 3, section 3.3, Selection: if and if-else Statements (pp. 64–71)",
+   "minutes": 25,
+   "objectives": [
+    "Trap invalid input with an `if`-`else` and a compound condition built with `or`",
+    "Order the conditions of a multiway `if` so the first true condition is the right one",
+    "Combine two requirements with `and`, choosing `>=` versus `>` deliberately",
+    "Design test data around boundary values, as section 3.3 recommends"
+   ],
+   "scenario": "The campus bookstore now ships orders, and cashiers need a quick quote. The carrier's rules, also in the docstring of `shipping_quote.py`:\n\n- Rates go by weight: **up to 2 lb $5.00**, **up to 10 lb $9.50**, **up to 30 lb $15.00**, **over 30 lb $25.00**.\n- The carrier refuses packages of **0 lb or less** (always a typo) and **over 70 lb**.\n- **Rewards members** ship **free** when the subtotal is **$35.00 or more**.\n\nThe first version went live yesterday, and a customer was charged **$15.00** to ship one paperback. Find out why, fix the pricing, add the weight check and the member rule, then prove it with boundary tests: the weights right on each limit and just past it, and $35.00 against $34.99.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Check the weight first. If it is 0 or less **or** more than `MAX_WEIGHT`, print exactly `Error: weight must be more than 0 and at most 70 lb` and no price; otherwise price the package."
+    },
+    {
+     "id": "R2",
+     "text": "Fix the multiway `if` so each weight lands in its own tier: order the conditions so the first true one is the right one (2 lb pays $5.00, 2.5 lb pays $9.50)."
+    },
+    {
+     "id": "R3",
+     "text": "Make shipping `$0.00` only when the customer is a member (`y`) **and** the subtotal is at least `FREE_SHIPPING_MIN`. Exactly $35.00 qualifies."
+    },
+    {
+     "id": "R4",
+     "text": "All ten boundary tests print the right quote or error.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "shipping_quote.py",
+   "starter_code": "\"\"\"\nProgram: shipping_quote.py\nAuthor: (your name)\nQuote the shipping cost of a campus bookstore order.\n\nRates by package weight (pounds):\n   up to 2 lb ............. $5.00\n   over 2, up to 10 lb .... $9.50\n   over 10, up to 30 lb ... $15.00\n   over 30 lb ............. $25.00\nPackages must weigh more than 0 lb and at most 70 lb.\nRewards members ship free on orders of $35.00 or more.\n\"\"\"\n\nMAX_WEIGHT = 70            # heaviest package the carrier accepts\nFREE_SHIPPING_MIN = 35.00  # members ship free from this subtotal\n\nweight = float(input(\"Package weight (lb): \"))\nsubtotal = float(input(\"Order subtotal ($): \"))\nmember = input(\"Rewards member? (y/n): \")\n\n# TODO (R1): reject weights outside the allowed range before pricing.\n\n# TODO (R2): this chain prices most packages wrong. Fix it.\nif weight <= 30:\n    shipping = 15.00\nelif weight <= 10:\n    shipping = 9.50\nelif weight <= 2:\n    shipping = 5.00\nelse:\n    shipping = 25.00\n\n# TODO (R3): members ship free when the subtotal is at least FREE_SHIPPING_MIN.\n\nprint(\"Shipping: $%0.2f\" % shipping)\n",
+   "solution": "\"\"\"\nProgram: shipping_quote.py\nAuthor: (your name)\nQuote the shipping cost of a campus bookstore order.\n\nRates by package weight (pounds):\n   up to 2 lb ............. $5.00\n   over 2, up to 10 lb .... $9.50\n   over 10, up to 30 lb ... $15.00\n   over 30 lb ............. $25.00\nPackages must weigh more than 0 lb and at most 70 lb.\nRewards members ship free on orders of $35.00 or more.\n\"\"\"\n\nMAX_WEIGHT = 70            # heaviest package the carrier accepts\nFREE_SHIPPING_MIN = 35.00  # members ship free from this subtotal\n\nweight = float(input(\"Package weight (lb): \"))\nsubtotal = float(input(\"Order subtotal ($): \"))\nmember = input(\"Rewards member? (y/n): \")\n\nif weight <= 0 or weight > MAX_WEIGHT:\n    print(\"Error: weight must be more than 0 and at most 70 lb\")\nelse:\n    # Lightest tier first: the first true condition wins\n    if weight <= 2:\n        shipping = 5.00\n    elif weight <= 10:\n        shipping = 9.50\n    elif weight <= 30:\n        shipping = 15.00\n    else:\n        shipping = 25.00\n\n    if member == \"y\" and subtotal >= FREE_SHIPPING_MIN:\n        shipping = 0.00\n\n    print(\"Shipping: $%0.2f\" % shipping)\n",
+   "solution_notes": "A multiway `if` stops at the first true condition, so with `<=` tests the narrowest tier (2 lb) must come first; the descending form (`> 30`, then `> 10`, then `> 2`), like the book's grade converter, is equally correct. Putting all the pricing in the `else` of the weight check means a bad weight can never reach it, and the price line is not printed for an error. The member rule needs both conditions, so `and`; \"at least\" means `>=`, which is exactly what the $35.00 test case checks.",
+   "warmup": [
+    {
+     "question": "Trace the starter's chain for a 1.5 lb package. Which branch runs and what does it charge? Why can the `weight <= 10` and `weight <= 2` branches never run, for any weight?",
+     "model_answer": "weight <= 30 is True for 1.5, so the first branch runs and charges $15.00; the rest of the chain is skipped. Any weight that is at most 10 or at most 2 is also at most 30, so the first condition always catches it first: those branches are unreachable."
+    },
+    {
+     "question": "The rule says members ship free on orders of \"$35.00 or more\". Which comparison operator does that call for, and which single test value would expose the wrong one?",
+     "model_answer": ">= (greater than or equal). A subtotal of exactly 35.00 exposes the mistake: with > it would be charged, with >= it ships free."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Bad weights are trapped with one compound condition",
+     "require": [
+      "\\bif\\s+weight\\s*<=\\s*0\\s+or\\s+weight\\s*>\\s*MAX_WEIGHT\\b",
+      "\\bif\\s+weight\\s*>\\s*MAX_WEIGHT\\s+or\\s+weight\\s*<=\\s*0\\b",
+      "\\bif\\s+weight\\s*>\\s*0\\s+and\\s+weight\\s*<=\\s*MAX_WEIGHT\\b",
+      "\\bif\\s+weight\\s*<=\\s*MAX_WEIGHT\\s+and\\s+weight\\s*>\\s*0\\b",
+      "\\bif\\s+0\\s*<\\s*weight\\s*<=\\s*MAX_WEIGHT\\s*:",
+      "\\bif\\s+not\\s*\\(\\s*0\\s*<\\s*weight\\s*<=\\s*MAX_WEIGHT\\s*\\)"
+     ],
+     "forbid": "\\bweight\\s*[<>]=?\\s*70\\b",
+     "message": "Before the pricing chain, test `weight <= 0 or weight > MAX_WEIGHT` and print the error in that branch; put all the pricing in the `else`. Use `MAX_WEIGHT`, not 70, in the condition.",
+     "hint": "One condition for each way the weight can be wrong; either one is enough to reject it."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Tiers are tested in a working order",
+     "require": [
+      "\\bweight\\s*<=\\s*2\\s*:[\\s\\S]*?\\belif\\s+weight\\s*<=\\s*10\\s*:[\\s\\S]*?\\belif\\s+weight\\s*<=\\s*30\\s*:",
+      "\\bweight\\s*>\\s*30\\s*:[\\s\\S]*?\\belif\\s+weight\\s*>\\s*10\\s*:[\\s\\S]*?\\belif\\s+weight\\s*>\\s*2\\s*:"
+     ],
+     "forbid": "\\bif\\s+weight\\s*<=\\s*30\\s*:[\\s\\S]*?\\belif\\s+weight\\s*<=\\s*10\\s*:",
+     "message": "Reorder the chain so the first true condition is the correct tier: with `<=` tests, start with `weight <= 2`, then `<= 10`, then `<= 30`, and let `else` catch the heaviest packages. (Testing from the top with `>` works too.)"
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Free shipping needs membership and the subtotal",
+     "require": [
+      "\\bmember\\s*==\\s*[\\\"']y[\\\"']\\s+and\\s+subtotal\\s*>=?\\s*FREE_SHIPPING_MIN\\b",
+      "\\bsubtotal\\s*>=?\\s*FREE_SHIPPING_MIN\\s+and\\s+member\\s*==\\s*[\\\"']y[\\\"']"
+     ],
+     "strings": true,
+     "message": "Set `shipping` to 0.00 under one `if` that joins `member == \"y\"` and the subtotal test with `and`: both must be true. Use `FREE_SHIPPING_MIN`, not 35."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "Exactly $35.00 qualifies",
+     "require": "\\bsubtotal\\s*>=\\s*FREE_SHIPPING_MIN\\b",
+     "forbid": "\\bsubtotal\\s*>\\s*FREE_SHIPPING_MIN\\b",
+     "message": "\"$35.00 or more\" includes $35.00 itself, so compare with `>=`. With `>`, a member spending exactly $35.00 would still be charged."
+    }
+   ],
+   "hints": [
+    "A multiway `if` runs only the first branch whose condition is true. Which tier's condition is true for the fewest weights? That one has to be tested first.",
+    "Validate first: if the weight is bad, print the error; put the whole pricing chain and the price line inside the `else` (indented one more level).",
+    "\"At least\" includes the limit itself. Join the membership test and the subtotal test so both must hold."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "import importlib\n\nprint(\"Case 1: 2 lb, $20.00, not a member\")\nimport shipping_quote\nprint()\nprint(\"Case 2: 2.5 lb, $20.00, not a member\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 3: 10 lb, $20.00, not a member\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 4: 30 lb, $20.00, not a member\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 5: 45 lb, $20.00, not a member\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 6: 0 lb (typo)\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 7: 70.5 lb, too heavy\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 8: 12 lb, member, exactly $35.00\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 9: 12 lb, member, $34.99\")\nimportlib.reload(shipping_quote)\nprint()\nprint(\"Case 10: 12 lb, $80.00, not a member\")\nimportlib.reload(shipping_quote)\n",
+    "stdin": "2\n20\nn\n2.5\n20\nn\n10\n20\nn\n30\n20\nn\n45\n20\nn\n0\n20\nn\n70.5\n20\nn\n12\n35\ny\n12\n34.99\ny\n12\n80\nn\n",
+    "expected_output": "Case 1: 2 lb, $20.00, not a member\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $5.00\n\nCase 2: 2.5 lb, $20.00, not a member\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $9.50\n\nCase 3: 10 lb, $20.00, not a member\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $9.50\n\nCase 4: 30 lb, $20.00, not a member\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $15.00\n\nCase 5: 45 lb, $20.00, not a member\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $25.00\n\nCase 6: 0 lb (typo)\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Error: weight must be more than 0 and at most 70 lb\n\nCase 7: 70.5 lb, too heavy\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Error: weight must be more than 0 and at most 70 lb\n\nCase 8: 12 lb, member, exactly $35.00\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $0.00\n\nCase 9: 12 lb, member, $34.99\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $15.00\n\nCase 10: 12 lb, $80.00, not a member\nPackage weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $15.00\n",
+    "predict": "Before running: predict Cases 1, 2 and 8 (2 lb; 2.5 lb; a member spending exactly $35.00). Then name one case the starter would already get right, and explain why it was right by luck."
+   },
+   "stdin": "1.5\n12.99\nn\n",
+   "reflection": [
+    {
+     "question": "The tests use 2, 2.5, 10, 30, 45, 70.5 and 0 lb rather than, say, 5, 20 and 50. Using section 3.3's advice on testing conditions, explain how these values were chosen.",
+     "model_answer": "They sit on or just past each boundary in the conditions: 2 and 2.5 test the edge between the first two tiers, 10 and 30 test the other edges, 0 and 70.5 test the two error limits, and 45 covers the else branch. Values in the middle of a tier would pass even with < instead of <=, so they cannot catch boundary mistakes, while these exercise every branch and every edge."
+    },
+    {
+     "question": "The weight check can reject with `weight <= 0 or weight > MAX_WEIGHT`, or accept with `weight > 0 and weight <= MAX_WEIGHT`. How are the two conditions related, and does it matter which one goes in the `if`?",
+     "model_answer": "One is exactly the negation of the other: not (A and B) equals (not A) or (not B). Either works if the branches are swapped: with the or version the error goes in the if part, with the and version the pricing goes in the if part and the error in the else. Choose the one that reads most naturally for the reader."
+    }
+   ],
+   "extension": "The carrier adds a **$4.00 surcharge** for packages over 50 lb shipped to Alaska (`AK`) or Hawaii (`HI`). Ask for the state code and write one condition that mixes `and` with `or`. Test it with and without parentheses around the `or` part: `and` binds tighter than `or`, so what changes?",
+   "worth_knowing": "George Boole published *The Laws of Thought* in 1854, long before computers. In 1937, Claude Shannon's master's thesis at MIT showed that Boole's algebra describes switching circuits, which is why `and`, `or` and `not` map directly onto the logic gates inside every processor."
+  },
+  {
+   "id": "L3.4-food-drive",
+   "title": "Food-drive intake log",
+   "subtitle": "Sentinel-controlled while loops, break, and guarding a division",
+   "source": "Ch. 3, section 3.4, Conditional Iteration: The while Loop (pp. 71–77)",
+   "minutes": 25,
+   "objectives": [
+    "Stop a `while True` loop with `break` when the user enters a sentinel (the empty string)",
+    "Combine selection and iteration to skip invalid entries without stopping the loop",
+    "Track a running count, total and maximum across an unknown number of inputs",
+    "Prevent a division by zero when the loop body never runs"
+   ],
+   "scenario": "The student government runs a food drive. At the drop-off table, a volunteer weighs each donation and types its weight in pounds; when the shift ends they just press **Enter**. Nobody knows in advance how many donations will arrive, so a `for` loop will not do.\n\n- A weight of **0 or less** is a typo: print `Skipped: weight must be more than 0` and keep going.\n- At the end, print the number of donations, the total weight, the **average**, and the **heaviest** donation.\n- A quiet shift with **no donations** must print `No donations recorded.`\n\nThe starter's loop has no way out yet: the first time a volunteer presses Enter, it crashes. And even with an exit, an empty shift would crash again on the average. Fix both.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Leave the loop with `break` when the input is the empty string, before it is converted with `float()`."
+    },
+    {
+     "id": "R2",
+     "text": "If the weight is 0 or less, print exactly `Skipped: weight must be more than 0` and do not record it."
+    },
+    {
+     "id": "R3",
+     "text": "For a valid weight, add 1 to `count` and the weight to `totalWeight`, both with `+=`."
+    },
+    {
+     "id": "R4",
+     "text": "Keep `heaviest` up to date: when a valid weight is larger than `heaviest`, replace it."
+    },
+    {
+     "id": "R5",
+     "text": "Print the four summary lines only when `count` is greater than 0; otherwise print `No donations recorded.`"
+    },
+    {
+     "id": "R6",
+     "text": "Every test shift prints the right log: a normal shift, an empty shift, typos, and a typo in the middle.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "food_drive.py",
+   "starter_code": "\"\"\"\nProgram: food_drive.py\nAuthor: (your name)\nLog donations at the food-drive table.\n\nA volunteer types the weight of each donation in pounds and\njust presses Enter when the shift ends. Typos such as 0 or a\nnegative weight are skipped with a message. At the end, the\nprogram prints how many donations were logged, their total and\naverage weight, and the heaviest one.\n\"\"\"\n\ncount = 0          # donations recorded\ntotalWeight = 0.0  # pounds recorded\nheaviest = 0.0     # heaviest donation so far\n\nwhile True:\n    data = input(\"Weight (Enter to end): \")\n    # TODO (R1): leave the loop when the volunteer just presses Enter.\n    weight = float(data)\n    # TODO (R2): skip weights of 0 or less with the message\n    #            \"Skipped: weight must be more than 0\".\n    # TODO (R3): count the donation and add it to the total.\n    # TODO (R4): remember the heaviest donation so far.\n\n# TODO (R5): print this summary only when at least one donation was\n#            recorded; otherwise print \"No donations recorded.\"\nprint(\"Donations: %d\" % count)\nprint(\"Total weight: %0.1f lb\" % totalWeight)\nprint(\"Average: %0.2f lb\" % (totalWeight / count))\nprint(\"Heaviest: %0.1f lb\" % heaviest)\n",
+   "solution": "\"\"\"\nProgram: food_drive.py\nAuthor: (your name)\nLog donations at the food-drive table.\n\nA volunteer types the weight of each donation in pounds and\njust presses Enter when the shift ends. Typos such as 0 or a\nnegative weight are skipped with a message. At the end, the\nprogram prints how many donations were logged, their total and\naverage weight, and the heaviest one.\n\"\"\"\n\ncount = 0          # donations recorded\ntotalWeight = 0.0  # pounds recorded\nheaviest = 0.0     # heaviest donation so far\n\nwhile True:\n    data = input(\"Weight (Enter to end): \")\n    if data == \"\":\n        break                      # the shift is over\n    weight = float(data)\n    if weight <= 0:\n        print(\"Skipped: weight must be more than 0\")\n    else:\n        count += 1\n        totalWeight += weight\n        if weight > heaviest:\n            heaviest = weight\n\nif count > 0:\n    print(\"Donations: %d\" % count)\n    print(\"Total weight: %0.1f lb\" % totalWeight)\n    print(\"Average: %0.2f lb\" % (totalWeight / count))\n    print(\"Heaviest: %0.1f lb\" % heaviest)\nelse:\n    print(\"No donations recorded.\")\n",
+   "solution_notes": "The input has to be tested as a string first, because `float(\"\")` raises an error: that is why the `break` comes before the conversion. `while True` guarantees the prompt runs at least once, and the single exit makes the loop easy to read. The `if`-`else` inside the loop keeps typos out of all three running values. After the loop, `count > 0` guards the average: `totalWeight / count` is only evaluated when it is safe. Starting `heaviest` at 0.0 works because every recorded weight is more than 0.",
+   "warmup": [
+    {
+     "question": "In the starter, a volunteer presses Enter at the first prompt. Which line fails, and why?",
+     "model_answer": "weight = float(data) fails with a ValueError, because input returned the empty string and an empty string is not a number. The loop has no exit, so the sentinel value reaches the conversion."
+    },
+    {
+     "question": "Why is the `input` call inside the loop here, rather than once before it as in the book's first summation example?",
+     "model_answer": "With while True the prompt must run at least once and on every pass, so a single input at the top of the body replaces the two input statements (one before the loop, one at the bottom) that a priming-read loop needs. The exit test then happens in the middle of the body."
+    }
+   ],
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "Enter ends the loop before `float()`",
+     "require": [
+      "\\bif\\s+data\\s*==\\s*(?:\\\"\\\"|'')\\s*:\\s*\\n\\s*break\\b[\\s\\S]*?\\bfloat\\(\\s*data\\s*\\)",
+      "\\bif\\s+not\\s+data\\s*:\\s*\\n\\s*break\\b[\\s\\S]*?\\bfloat\\(\\s*data\\s*\\)",
+      "\\bif\\s+len\\(\\s*data\\s*\\)\\s*==\\s*0\\s*:\\s*\\n\\s*break\\b[\\s\\S]*?\\bfloat\\(\\s*data\\s*\\)"
+     ],
+     "strings": true,
+     "message": "Right after the `input` line, test `if data == \"\":` and `break` in its body. The test must come before `float(data)`: the empty string cannot be converted to a number.",
+     "hint": "Pressing Enter without typing gives `input` an empty string."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "Weights of 0 or less are skipped",
+     "require": [
+      "\\bif\\s+weight\\s*<=\\s*0\\s*:",
+      "\\bif\\s+weight\\s*>\\s*0\\s*:"
+     ],
+     "forbid": "\\bweight\\s*(?:<|>=)\\s*0\\b",
+     "message": "Use an `if`-`else` on the weight: `weight <= 0` prints the skip message, the `else` records the donation. A weight of exactly 0 is a typo too, so `< 0` is not enough."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "Count and total grow with `+=`",
+     "require": "^(?=[\\s\\S]*\\bcount\\s*\\+=\\s*1\\b)(?=[\\s\\S]*\\btotalWeight\\s*\\+=\\s*weight\\b)",
+     "message": "In the branch for a valid weight, add `count += 1` and `totalWeight += weight`. Both belong only in that branch, so typos are not counted."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "The heaviest donation is tracked",
+     "require": [
+      "\\bif\\s+weight\\s*>\\s*heaviest\\s*:\\s*\\n\\s*heaviest\\s*=\\s*weight\\b",
+      "\\bif\\s+heaviest\\s*<\\s*weight\\s*:\\s*\\n\\s*heaviest\\s*=\\s*weight\\b",
+      "\\bheaviest\\s*=\\s*max\\(\\s*(?:heaviest\\s*,\\s*weight|weight\\s*,\\s*heaviest)\\s*\\)"
+     ],
+     "message": "Compare each valid weight with `heaviest` and replace `heaviest` when the new weight is larger (a one-way `if`, or `max(heaviest, weight)`)."
+    },
+    {
+     "id": "C5",
+     "requirement": "R5",
+     "title": "The summary is guarded against an empty shift",
+     "require": "^(?=[\\s\\S]*\\bif\\s+count\\s*(?:>\\s*0|!=\\s*0|>=\\s*1)\\s*:)(?=[\\s\\S]*No donations recorded\\.)",
+     "strings": true,
+     "message": "Put the four summary lines in the `if` part of `if count > 0:` and print `No donations recorded.` in the `else`. Without the guard, an empty shift divides by zero when it computes the average."
+    }
+   ],
+   "hints": [
+    "Test the raw string before you convert it. What does `input` return when the volunteer presses Enter without typing?",
+    "Inside the loop, an `if`-`else` chooses between skipping and recording. Only the recording branch touches `count`, `totalWeight` and `heaviest`.",
+    "After the loop, indent the four summary prints under an `if` on `count`; the `else` prints the message for an empty shift."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "import importlib\n\nprint(\"Case 1: three donations, heaviest first\")\nimport food_drive\nprint()\nprint(\"Case 2: an empty shift\")\nimportlib.reload(food_drive)\nprint()\nprint(\"Case 3: two typos, then one donation\")\nimportlib.reload(food_drive)\nprint()\nprint(\"Case 4: five entries with a typo in the middle\")\nimportlib.reload(food_drive)\n",
+    "stdin": "20.2\n3\n12.5\n\n\n-4\n0\n8\n\n6.4\n15\n-1\n2.6\n15.6\n\n",
+    "expected_output": "Case 1: three donations, heaviest first\nWeight (Enter to end): Weight (Enter to end): Weight (Enter to end): Weight (Enter to end): Donations: 3\nTotal weight: 35.7 lb\nAverage: 11.90 lb\nHeaviest: 20.2 lb\n\nCase 2: an empty shift\nWeight (Enter to end): No donations recorded.\n\nCase 3: two typos, then one donation\nWeight (Enter to end): Skipped: weight must be more than 0\nWeight (Enter to end): Skipped: weight must be more than 0\nWeight (Enter to end): Weight (Enter to end): Donations: 1\nTotal weight: 8.0 lb\nAverage: 8.00 lb\nHeaviest: 8.0 lb\n\nCase 4: five entries with a typo in the middle\nWeight (Enter to end): Weight (Enter to end): Weight (Enter to end): Skipped: weight must be more than 0\nWeight (Enter to end): Weight (Enter to end): Weight (Enter to end): Donations: 4\nTotal weight: 39.6 lb\nAverage: 9.90 lb\nHeaviest: 15.6 lb\n",
+    "predict": "Before running: predict the summary for Case 1 (20.2, 3 and 12.5 lb). What should Case 2 (Enter right away) print, and how many times does the loop body run for it?"
+   },
+   "stdin": "20.2\n3\n12.5\n\n",
+   "time_limit_seconds": 10,
+   "reflection": [
+    {
+     "question": "Section 3.4 says to test a loop with data that make it run 0 times, once, and at least 5 times. Which test shifts cover those, and what bug could each one reveal?",
+     "model_answer": "Case 2 runs the body zero times for recording (Enter right away): it reveals a missing guard on the average (division by zero). Case 3 records exactly one donation after two typos: it checks that typos are not counted and that a single value becomes the heaviest. Case 4 runs the loop six times with a typo in the middle: it shows that the loop keeps going after a skip and that the maximum is updated correctly over many passes."
+    },
+    {
+     "question": "`heaviest` starts at 0.0. Why is that safe in this program? What would go wrong if the same code were used to find the coldest temperature in a list of readings, starting from 0.0?",
+     "model_answer": "Every recorded weight is more than 0, so the first valid donation always replaces 0.0. For the coldest temperature (a minimum) starting at 0.0, any day above freezing would never replace it, and the program would report 0.0 even if no reading was 0. A safer start is the first actual value, or a guard on the count."
+    }
+   ],
+   "extension": "Volunteers sometimes type `twelve` instead of `12`, which crashes `float()`. Without `try`/`except` (later in the book), how could you check the string before converting it? Look up the string method `isdigit()` and note which valid weights it would wrongly reject.",
+   "worth_knowing": "No program can inspect every other program and decide whether its loops will ever stop: Alan Turing proved this in 1936 (the halting problem). That is why Python cannot warn you about an infinite `while` loop before it runs, and why the Run button here needs a time limit and a Stop button."
+  }
+ ]
+}

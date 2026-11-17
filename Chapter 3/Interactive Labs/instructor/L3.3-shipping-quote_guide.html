@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Bookstore shipping quote</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab L3.3-shipping-quote</div>
+  <h1>Bookstore shipping quote</h1>
+<h2>Objectives</h2><ul><li>Trap invalid input with an <code>if</code>-<code>else</code> and a compound condition built with <code>or</code></li><li>Order the conditions of a multiway <code>if</code> so the first true condition is the right one</li><li>Combine two requirements with <code>and</code>, choosing <code>&gt;=</code> versus <code>&gt;</code> deliberately</li><li>Design test data around boundary values, as section 3.3 recommends</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Check the weight first. If it is 0 or less <strong>or</strong> more than <code>MAX_WEIGHT</code>, print exactly <code>Error: weight must be more than 0 and at most 70 lb</code> and no price; otherwise price the package.</li><li><strong>R2</strong> Fix the multiway <code>if</code> so each weight lands in its own tier: order the conditions so the first true one is the right one (2 lb pays $5.00, 2.5 lb pays $9.50).</li><li><strong>R3</strong> Make shipping <code>$0.00</code> only when the customer is a member (<code>y</code>) <strong>and</strong> the subtotal is at least <code>FREE_SHIPPING_MIN</code>. Exactly $35.00 qualifies.</li><li><strong>R4</strong> All ten boundary tests print the right quote or error. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter&#x27;s chain for a 1.5 lb package. Which branch runs and what does it charge? Why can the <code>weight &lt;= 10</code> and <code>weight &lt;= 2</code> branches never run, for any weight?</p><div class="answer"><p>weight &lt;= 30 is True for 1.5, so the first branch runs and charges $15.00; the rest of the chain is skipped. Any weight that is at most 10 or at most 2 is also at most 30, so the first condition always catches it first: those branches are unreachable.</p></div></li><li><p>The rule says members ship free on orders of &quot;$35.00 or more&quot;. Which comparison operator does that call for, and which single test value would expose the wrong one?</p><div class="answer"><p>&gt;= (greater than or equal). A subtotal of exactly 35.00 exposes the mistake: with &gt; it would be charged, with &gt;= it ships free.</p></div></li></ol>
+<h2>Solution</h2><div class="file">shipping_quote.py</div><pre class="code-block"><code><span class="t-sd">"""</span>
+<span class="t-sd">Program: shipping_quote.py</span>
+<span class="t-sd">Author: (your name)</span>
+<span class="t-sd">Quote the shipping cost of a campus bookstore order.</span>
+
+<span class="t-sd">Rates by package weight (pounds):</span>
+<span class="t-sd">   up to 2 lb ............. $5.00</span>
+<span class="t-sd">   over 2, up to 10 lb .... $9.50</span>
+<span class="t-sd">   over 10, up to 30 lb ... $15.00</span>
+<span class="t-sd">   over 30 lb ............. $25.00</span>
+<span class="t-sd">Packages must weigh more than 0 lb and at most 70 lb.</span>
+<span class="t-sd">Rewards members ship free on orders of $35.00 or more.</span>
+<span class="t-sd">"""</span>
+
+<span class="t-n">MAX_WEIGHT</span> <span class="t-o">=</span> <span class="t-mi">70</span>            <span class="t-c1"># heaviest package the carrier accepts</span>
+<span class="t-n">FREE_SHIPPING_MIN</span> <span class="t-o">=</span> <span class="t-mf">35.00</span>  <span class="t-c1"># members ship free from this subtotal</span>
+
+<span class="t-n">weight</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Package weight (lb): "</span><span class="t-p">))</span>
+<span class="t-n">subtotal</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Order subtotal ($): "</span><span class="t-p">))</span>
+<span class="t-n">member</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Rewards member? (y/n): "</span><span class="t-p">)</span>
+
+<span class="t-k">if</span> <span class="t-n">weight</span> <span class="t-o">&lt;=</span> <span class="t-mi">0</span> <span class="t-ow">or</span> <span class="t-n">weight</span> <span class="t-o">&gt;</span> <span class="t-n">MAX_WEIGHT</span><span class="t-p">:</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Error: weight must be more than 0 and at most 70 lb"</span><span class="t-p">)</span>
+<span class="t-k">else</span><span class="t-p">:</span>
+    <span class="t-c1"># Lightest tier first: the first true condition wins</span>
+    <span class="t-k">if</span> <span class="t-n">weight</span> <span class="t-o">&lt;=</span> <span class="t-mi">2</span><span class="t-p">:</span>
+        <span class="t-n">shipping</span> <span class="t-o">=</span> <span class="t-mf">5.00</span>
+    <span class="t-k">elif</span> <span class="t-n">weight</span> <span class="t-o">&lt;=</span> <span class="t-mi">10</span><span class="t-p">:</span>
+        <span class="t-n">shipping</span> <span class="t-o">=</span> <span class="t-mf">9.50</span>
+    <span class="t-k">elif</span> <span class="t-n">weight</span> <span class="t-o">&lt;=</span> <span class="t-mi">30</span><span class="t-p">:</span>
+        <span class="t-n">shipping</span> <span class="t-o">=</span> <span class="t-mf">15.00</span>
+    <span class="t-k">else</span><span class="t-p">:</span>
+        <span class="t-n">shipping</span> <span class="t-o">=</span> <span class="t-mf">25.00</span>
+
+    <span class="t-k">if</span> <span class="t-n">member</span> <span class="t-o">==</span> <span class="t-s2">"y"</span> <span class="t-ow">and</span> <span class="t-n">subtotal</span> <span class="t-o">&gt;=</span> <span class="t-n">FREE_SHIPPING_MIN</span><span class="t-p">:</span>
+        <span class="t-n">shipping</span> <span class="t-o">=</span> <span class="t-mf">0.00</span>
+
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Shipping: $</span><span class="t-si">%0.2f</span><span class="t-s2">"</span> <span class="t-o">%</span> <span class="t-n">shipping</span><span class="t-p">)</span></code></pre>
+<h3>Walkthrough</h3><p>A multiway <code>if</code> stops at the first true condition, so with <code>&lt;=</code> tests the narrowest tier (2 lb) must come first; the descending form (<code>&gt; 30</code>, then <code>&gt; 10</code>, then <code>&gt; 2</code>), like the book&#x27;s grade converter, is equally correct. Putting all the pricing in the <code>else</code> of the weight check means a bad weight can never reach it, and the price line is not printed for an error. The member rule needs both conditions, so <code>and</code>; &quot;at least&quot; means <code>&gt;=</code>, which is exactly what the $35.00 test case checks.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">importlib</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 1: 2 lb, $20.00, not a member"</span><span class="t-p">)</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">shipping_quote</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 2: 2.5 lb, $20.00, not a member"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 3: 10 lb, $20.00, not a member"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 4: 30 lb, $20.00, not a member"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 5: 45 lb, $20.00, not a member"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 6: 0 lb (typo)"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 7: 70.5 lb, too heavy"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 8: 12 lb, member, exactly $35.00"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 9: 12 lb, member, $34.99"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Case 10: 12 lb, $80.00, not a member"</span><span class="t-p">)</span>
+<span class="t-n">importlib</span><span class="t-o">.</span><span class="t-n">reload</span><span class="t-p">(</span><span class="t-n">shipping_quote</span><span class="t-p">)</span></code></pre><h3>Program input it receives</h3><pre class="output">2
+20
+n
+2.5
+20
+n
+10
+20
+n
+30
+20
+n
+45
+20
+n
+0
+20
+n
+70.5
+20
+n
+12
+35
+y
+12
+34.99
+y
+12
+80
+n
+</pre><h3>Expected output</h3><pre class="output">Case 1: 2 lb, $20.00, not a member
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $5.00
+
+Case 2: 2.5 lb, $20.00, not a member
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $9.50
+
+Case 3: 10 lb, $20.00, not a member
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $9.50
+
+Case 4: 30 lb, $20.00, not a member
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $15.00
+
+Case 5: 45 lb, $20.00, not a member
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $25.00
+
+Case 6: 0 lb (typo)
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Error: weight must be more than 0 and at most 70 lb
+
+Case 7: 70.5 lb, too heavy
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Error: weight must be more than 0 and at most 70 lb
+
+Case 8: 12 lb, member, exactly $35.00
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $0.00
+
+Case 9: 12 lb, member, $34.99
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $15.00
+
+Case 10: 12 lb, $80.00, not a member
+Package weight (lb): Order subtotal ($): Rewards member? (y/n): Shipping: $15.00
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>Bad weights are trapped with one compound condition<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bif\s+weight\s*&lt;=\s*0\s+or\s+weight\s*&gt;\s*MAX_WEIGHT\b</code></div><div><span class="tag">require</span> <code>\bif\s+weight\s*&gt;\s*MAX_WEIGHT\s+or\s+weight\s*&lt;=\s*0\b</code></div><div><span class="tag">require</span> <code>\bif\s+weight\s*&gt;\s*0\s+and\s+weight\s*&lt;=\s*MAX_WEIGHT\b</code></div><div><span class="tag">require</span> <code>\bif\s+weight\s*&lt;=\s*MAX_WEIGHT\s+and\s+weight\s*&gt;\s*0\b</code></div><div><span class="tag">require</span> <code>\bif\s+0\s*&lt;\s*weight\s*&lt;=\s*MAX_WEIGHT\s*:</code></div><div><span class="tag">require</span> <code>\bif\s+not\s*\(\s*0\s*&lt;\s*weight\s*&lt;=\s*MAX_WEIGHT\s*\)</code></div><div><span class="tag">forbid</span> <code>\bweight\s*[&lt;&gt;]=?\s*70\b</code></div></td></tr><tr><td>C2</td><td>R2</td><td>Tiers are tested in a working order<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bweight\s*&lt;=\s*2\s*:[\s\S]*?\belif\s+weight\s*&lt;=\s*10\s*:[\s\S]*?\belif\s+weight\s*&lt;=\s*30\s*:</code></div><div><span class="tag">require</span> <code>\bweight\s*&gt;\s*30\s*:[\s\S]*?\belif\s+weight\s*&gt;\s*10\s*:[\s\S]*?\belif\s+weight\s*&gt;\s*2\s*:</code></div><div><span class="tag">forbid</span> <code>\bif\s+weight\s*&lt;=\s*30\s*:[\s\S]*?\belif\s+weight\s*&lt;=\s*10\s*:</code></div></td></tr><tr><td>C3</td><td>R3</td><td>Free shipping needs membership and the subtotal<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bmember\s*==\s*[\&quot;&#x27;]y[\&quot;&#x27;]\s+and\s+subtotal\s*&gt;=?\s*FREE_SHIPPING_MIN\b</code></div><div><span class="tag">require</span> <code>\bsubtotal\s*&gt;=?\s*FREE_SHIPPING_MIN\s+and\s+member\s*==\s*[\&quot;&#x27;]y[\&quot;&#x27;]</code></div></td></tr><tr><td>C4</td><td>R3</td><td>Exactly $35.00 qualifies<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bsubtotal\s*&gt;=\s*FREE_SHIPPING_MIN\b</code></div><div><span class="tag">forbid</span> <code>\bsubtotal\s*&gt;\s*FREE_SHIPPING_MIN\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · Bad weights are trapped with one compound condition</dt><dd><p>Before the pricing chain, test <code>weight &lt;= 0 or weight &gt; MAX_WEIGHT</code> and print the error in that branch; put all the pricing in the <code>else</code>. Use <code>MAX_WEIGHT</code>, not 70, in the condition.</p><div class='small'><strong>Hint:</strong></div><p>One condition for each way the weight can be wrong; either one is enough to reject it.</p></dd><dt>C2 · Tiers are tested in a working order</dt><dd><p>Reorder the chain so the first true condition is the correct tier: with <code>&lt;=</code> tests, start with <code>weight &lt;= 2</code>, then <code>&lt;= 10</code>, then <code>&lt;= 30</code>, and let <code>else</code> catch the heaviest packages. (Testing from the top with <code>&gt;</code> works too.)</p></dd><dt>C3 · Free shipping needs membership and the subtotal</dt><dd><p>Set <code>shipping</code> to 0.00 under one <code>if</code> that joins <code>member == &quot;y&quot;</code> and the subtotal test with <code>and</code>: both must be true. Use <code>FREE_SHIPPING_MIN</code>, not 35.</p></dd><dt>C4 · Exactly $35.00 qualifies</dt><dd><p>&quot;$35.00 or more&quot; includes $35.00 itself, so compare with <code>&gt;=</code>. With <code>&gt;</code>, a member spending exactly $35.00 would still be charged.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>A multiway <code>if</code> runs only the first branch whose condition is true. Which tier&#x27;s condition is true for the fewest weights? That one has to be tested first.</p></li><li><p>Validate first: if the weight is bad, print the error; put the whole pricing chain and the price line inside the <code>else</code> (indented one more level).</p></li><li><p>&quot;At least&quot; includes the limit itself. Join the membership test and the subtotal test so both must hold.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The tests use 2, 2.5, 10, 30, 45, 70.5 and 0 lb rather than, say, 5, 20 and 50. Using section 3.3&#x27;s advice on testing conditions, explain how these values were chosen.</p><div class="answer"><p>They sit on or just past each boundary in the conditions: 2 and 2.5 test the edge between the first two tiers, 10 and 30 test the other edges, 0 and 70.5 test the two error limits, and 45 covers the else branch. Values in the middle of a tier would pass even with &lt; instead of &lt;=, so they cannot catch boundary mistakes, while these exercise every branch and every edge.</p></div></li><li><p>The weight check can reject with <code>weight &lt;= 0 or weight &gt; MAX_WEIGHT</code>, or accept with <code>weight &gt; 0 and weight &lt;= MAX_WEIGHT</code>. How are the two conditions related, and does it matter which one goes in the <code>if</code>?</p><div class="answer"><p>One is exactly the negation of the other: not (A and B) equals (not A) or (not B). Either works if the branches are swapped: with the or version the error goes in the if part, with the and version the pricing goes in the if part and the error in the else. Choose the one that reads most naturally for the reader.</p></div></li></ol>
+<h2>Extension</h2><p>The carrier adds a <strong>$4.00 surcharge</strong> for packages over 50 lb shipped to Alaska (<code>AK</code>) or Hawaii (<code>HI</code>). Ask for the state code and write one condition that mixes <code>and</code> with <code>or</code>. Test it with and without parentheses around the <code>or</code> part: <code>and</code> binds tighter than <code>or</code>, so what changes?</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
