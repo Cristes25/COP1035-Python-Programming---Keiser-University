@@ -1,0 +1,922 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 5: Lists and Dictionaries",
+  "collection_intro": "Short, ungraded practice checks for sections 5.1–5.3 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+  "theme": "harbor",
+  "background": "pattern",
+  "checks": [
+    {
+      "id": "5.1a-list-operations",
+      "title": "Lists: operators, replacement and methods",
+      "subtitle": "List literals, slicing and the + operator, replacing elements by position, insert, append, extend and pop, searching with in and index",
+      "source": "Ch. 5, section 5.1 (pp. 115–121)",
+      "intro": "A playlist script adds a whole bonus album as one strange song, and a to-do script crashes looking for a task that is not there. Six questions on how lists are built, changed in place and searched.",
+      "takeaways": [
+        "A list literal stores the *values* its expressions have when it is built. Changing a variable afterwards does not reach into the list.",
+        "`+` and slicing build a **new** list and leave the original alone; `append`, `extend`, `insert` and `pop` change the list itself. `append` adds its argument as one element, while `extend` adds each element of its argument.",
+        "To change an element you assign to its position, `L[i] = ...`, which is why replacing loops run over `range(len(L))`. Test with `in` before calling `index`, because `index` raises `ValueError` when the item is missing."
+      ],
+      "questions": [
+        {
+          "id": "literal-evaluates",
+          "concept": "List literals hold values",
+          "level": "understand",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "x = 2\npair = [x, x + 1]\nx = 10\nprint(pair)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`[2, 3]`",
+              "feedback": "When Python builds the list, it evaluates each element: `x` is 2 and `x + 1` is 3 at that moment, so the list holds the numbers 2 and 3. Rebinding `x` to 10 later changes the variable, not the list.",
+              "correct": true
+            },
+            {
+              "text": "`[10, 11]`",
+              "feedback": "This treats the list as if it remembered the expressions and re-evaluated them when printed. The brackets evaluate their contents once, when the list is built, and store only the results."
+            },
+            {
+              "text": "`[10, 3]`",
+              "feedback": "This keeps a live link for the plain variable but not for the expression. Neither element is linked to `x`: both were evaluated when the list was built, so both are frozen values."
+            },
+            {
+              "text": "`['x', 'x + 1']`",
+              "feedback": "The list does not store the text of the expressions. Like the arguments of `print`, each element is evaluated first and its value goes into the list."
+            }
+          ],
+          "hint": "At the moment `pair` is built, what are the values of `x` and `x + 1`?",
+          "explanation": "The `[]` delimiters work like a function call: each element is evaluated and its value goes into the new list. The list keeps those values, whatever happens to the variables used to compute them.",
+          "ref": "Section 5.1, \"List Literals and Basic Operators\" (pp. 116–117)"
+        },
+        {
+          "id": "append-extend-plus",
+          "concept": "append, extend and the + operator",
+          "level": "apply",
+          "stem": "The playlist should gain two bonus tracks. What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "songs = [\"Intro\", \"Hey\"]\nsongs + [\"Outro\"]\nsongs.append([\"Bonus\", \"Live\"])\nprint(songs)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`['Intro', 'Hey', ['Bonus', 'Live']]`",
+              "feedback": "The `+` line builds a new list and throws it away, so `songs` is unchanged by it. `append` then adds its argument as a **single** element, and here the argument is a whole list, so it becomes a list inside the list.",
+              "correct": true
+            },
+            {
+              "text": "`['Intro', 'Hey', 'Bonus', 'Live']`",
+              "feedback": "This is what `extend` would do: add each element of the argument. `append` adds the argument itself, as one element, even when that argument is a list."
+            },
+            {
+              "text": "`['Intro', 'Hey', 'Outro', ['Bonus', 'Live']]`",
+              "feedback": "This assumes `songs + [\"Outro\"]` changed `songs`. The `+` operator returns a new list; since the line does not assign it to anything, it is discarded."
+            },
+            {
+              "text": "`['Intro', 'Hey', 'Outro', 'Bonus', 'Live']`",
+              "feedback": "Two assumptions here: that `+` changed `songs`, and that `append` spreads the bonus list out. `+` returns a new list, and `append` adds its argument as one element."
+            }
+          ],
+          "hint": "Which of the two lines changes `songs` itself, and how many elements does that line add?",
+          "explanation": "`L + other` returns a new list and leaves `L` alone. `L.append(x)` adds `x` as one new element; `L.extend(aList)` adds each element of `aList`. To add two tracks here, write `songs.extend([\"Bonus\", \"Live\"])`.",
+          "aside": "For lists, `songs += [\"Outro\"]` is **not** shorthand for `songs = songs + [\"Outro\"]`. The `+=` form extends the existing list in place, like `extend`, so any other variable that refers to the same list sees the change; `+` builds a separate new list.",
+          "ref": "Section 5.1, \"List Methods for Inserting and Removing Elements\" (pp. 119–120)"
+        },
+        {
+          "id": "loop-variable-rebind",
+          "concept": "Replacing elements by position",
+          "level": "analyze",
+          "stem": "This loop is meant to double every price in the list. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "prices = [10, 20, 30]\nfor price in prices:\n    price = price * 2\nprint(prices)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`[10, 20, 30]`",
+              "feedback": "Each pass binds `price` to the next number, and `price = price * 2` makes that variable refer to a new number. Nothing assigns to a *position* in the list, so the list is unchanged.",
+              "correct": true
+            },
+            {
+              "text": "`[20, 40, 60]`",
+              "feedback": "This treats `price` as the list's slot itself. The loop variable is a separate name bound to each element's value; reassigning it changes the name, not the element stored in the list."
+            },
+            {
+              "text": "A `TypeError`: a loop variable cannot be assigned to",
+              "feedback": "Python lets you assign to a loop variable; the code runs without an error. The problem is quieter: the assignment has no effect on the list."
+            }
+          ],
+          "hint": "In `price = price * 2`, what is the target of the assignment: a variable, or a position in the list?",
+          "explanation": "To replace an element you must assign to its position, `prices[index] = ...`. That is why the reading's replacing loops run over `range(len(prices))`: the index is needed to reach each position.",
+          "ref": "Section 5.1, \"Replacing an Element in a List\" (pp. 118–119)"
+        },
+        {
+          "id": "insert-pop-trace",
+          "concept": "insert and pop",
+          "level": "apply",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "queue = [5, 8, 13]\nqueue.insert(1, 7)\nfirst = queue.pop(0)\nqueue.insert(10, first)\nprint(queue)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`[7, 8, 13, 5]`",
+              "feedback": "`insert(1, 7)` puts 7 at position 1: `[5, 7, 8, 13]`. `pop(0)` removes and returns 5, leaving `[7, 8, 13]`. Position 10 is past the end, so `insert` adds 5 at the end.",
+              "correct": true
+            },
+            {
+              "text": "`[8, 7, 13, 5]`",
+              "feedback": "This places 7 *after* the element at position 1. `insert` puts the new element *before* the one at that index, so that the new element ends up at the index you gave."
+            },
+            {
+              "text": "`[5, 7, 8, 13, 5]`",
+              "feedback": "This treats `pop(0)` like a subscript that only reads the first element. `pop` removes the element as well as returning it."
+            },
+            {
+              "text": "An `IndexError`: position 10 does not exist",
+              "feedback": "`pop` and the subscript need a valid position, but `insert` does not: when the index is at or past the length, it adds the element at the end."
+            }
+          ],
+          "hint": "Trace the list after each line. What does `insert` do when the index is past the end of the list?",
+          "explanation": "`L.insert(i, x)` shifts elements right so `x` lands at position `i`, or appends `x` when `i` is at or past the end. `L.pop(i)` removes and returns the element at `i`, and `L.pop()` does the same for the last element.",
+          "ref": "Section 5.1, \"List Methods for Inserting and Removing Elements\" (pp. 119–120)"
+        },
+        {
+          "id": "index-missing",
+          "concept": "Searching with index and in",
+          "level": "apply",
+          "stem": "The to-do script looks up a task that was never added. What happens when this runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "tasks = [\"email\", \"grade\", \"plan\"]\ndone = \"call\"\nprint(tasks.index(done))",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "ValueError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `ValueError`: `\"call\"` is not in the list",
+              "feedback": "`index` returns the position of an element that is present. When the element is missing it does not return a signal value; it raises an exception and the script stops.",
+              "correct": true
+            },
+            {
+              "text": "`-1`, the usual signal that nothing was found",
+              "feedback": "That is the string method `find`. Lists have no `find` method, and their `index` method raises an error instead of returning -1."
+            },
+            {
+              "text": "`None`, because there is no position to report",
+              "feedback": "`index` never returns `None`. When the target is absent, it raises an exception, which is why the reading checks with `in` first."
+            },
+            {
+              "text": "`False`, the same answer that `in` would give",
+              "feedback": "`in` answers yes or no; `index` answers *where*. When there is no position to report, `index` raises an exception rather than answering `False`."
+            }
+          ],
+          "hint": "Lists do not have the string method that returns -1. What does the reading say `index` does instead?",
+          "explanation": "`L.index(x)` returns the position of `x` but raises `ValueError` when `x` is absent. The safe pattern tests first: `if done in tasks: print(tasks.index(done))`, with an `else` branch for the missing case.",
+          "aside": "Strings have an `index` method too, and it is just as strict: `\"plan\".index(\"z\")` raises `ValueError`. Only strings offer the forgiving `find`, which returns -1 instead.",
+          "ref": "Section 5.1, \"Searching a List\" (pp. 120–121)"
+        },
+        {
+          "id": "list-from-string",
+          "concept": "The list function and the in operator",
+          "level": "analyze",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "letters = list(\"Hi there\")\nprint(len(letters))\nprint(\"Hi\" in letters)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`8 False`",
+              "feedback": "`list` turns a string into a list of its single characters, the space included, so there are 8 elements. `\"Hi\"` is two characters long, and no single element equals it.",
+              "correct": true
+            },
+            {
+              "text": "`2 True`",
+              "feedback": "This treats `list` like the string method `split`, which would give the words `['Hi', 'there']`. `list` splits a string into characters, not words."
+            },
+            {
+              "text": "`8 True`",
+              "feedback": "For strings, `in` finds substrings, so `\"Hi\" in \"Hi there\"` is `True`. For lists, `in` compares the value with each *element*, and every element here is a single character."
+            },
+            {
+              "text": "`7 False`",
+              "feedback": "The space is a character like any other, so it becomes an element of its own: `'H', 'i', ' ', 't', 'h', 'e', 'r', 'e'`."
+            }
+          ],
+          "hint": "What are the elements of `list(\"Hi there\")`, one by one?",
+          "explanation": "`list(sequence)` builds a list from the items of any iterable; for a string, the items are its characters. On a list, `x in L` is `True` only if some element equals `x`, so a string of two characters cannot match a list of single characters.",
+          "ref": "Section 5.1, \"List Literals and Basic Operators\" (pp. 116–117)"
+        }
+      ]
+    },
+    {
+      "id": "5.1b-aliasing-tuples",
+      "title": "Mutators, aliasing and tuples",
+      "subtitle": "Mutator methods and None, aliasing and side effects, copying a list, == versus is, the median example, tuples",
+      "source": "Ch. 5, section 5.1 (pp. 121–125)",
+      "intro": "A teacher saves the grades with `backup = grades`, adds a curve, and finds the backup curved too. Six questions on what happens when two names share one list, how to copy one, and when a tuple is the better choice.",
+      "takeaways": [
+        "Mutator methods such as `sort`, `append` and `insert` change the list and return `None`. Write `L.sort()` on its own line, never `L = L.sort()`.",
+        "Assignment never copies a list: after `b = a`, both names refer to one object, so a change made through either name shows through both. `list(a)` or `a[:]` makes an independent copy.",
+        "`==` asks whether two lists hold equal elements; `is` asks whether they are the very same object. Use a tuple for a sequence that should never change, and write a one-element tuple with a comma: `(3,)`."
+      ],
+      "questions": [
+        {
+          "id": "sort-returns-none",
+          "concept": "Mutator methods return None",
+          "level": "apply",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "scores = [88, 72, 95]\nscores = scores.sort()\nprint(scores)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`None`",
+              "feedback": "`sort` rearranges the list in place and returns `None`. The assignment then makes `scores` refer to that `None`, so the sorted list is lost.",
+              "correct": true
+            },
+            {
+              "text": "`[72, 88, 95]`",
+              "feedback": "The list does get sorted, but `sort` hands back `None`, not the list. Assigning its result to `scores` replaces the reference to the sorted list."
+            },
+            {
+              "text": "`[95, 88, 72]`",
+              "feedback": "Two slips here: `sort` arranges elements in *ascending* order, and its return value is `None`, which is what the assignment stores in `scores`."
+            }
+          ],
+          "hint": "`sort` is a mutator. What value does a mutator usually return to its caller?",
+          "explanation": "A mutator changes the object's internal state, and its return value is usually `None` (`pop` is the exception). Call it as a statement, `scores.sort()`, then use `scores`.",
+          "aside": "When you do want a sorted *copy*, Python has the built-in function `sorted`: `ordered = sorted(scores)` returns a new sorted list and leaves `scores` exactly as it was.",
+          "ref": "Section 5.1, \"Sorting a List\" and \"Mutator Methods and the Value None\" (p. 121)"
+        },
+        {
+          "id": "alias-vs-copy",
+          "concept": "Aliasing and copying",
+          "level": "apply",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "grades = [70, 85, 90]\nbackup = grades\nsaved = list(grades)\ngrades[0] = 100\nprint(backup[0], saved[0])",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`100 70`",
+              "feedback": "`backup = grades` makes a second name for the same list, so the change shows through `backup`. `list(grades)` builds a new list with the same contents, so `saved` keeps the old 70.",
+              "correct": true
+            },
+            {
+              "text": "`70 70`",
+              "feedback": "This treats `backup = grades` as making a copy. Assignment never copies a list: both names refer to one object, so a change through `grades` is also a change through `backup`."
+            },
+            {
+              "text": "`100 100`",
+              "feedback": "This treats `list(grades)` like plain assignment. Calling `list` builds a brand-new list object and copies the elements into it, so later changes to `grades` don't reach it."
+            },
+            {
+              "text": "`70 100`",
+              "feedback": "This reverses the two lines. `backup` is the alias, which shares the change; `saved` is the copy, which keeps the original value."
+            }
+          ],
+          "hint": "Which line creates a new list object, and which only creates a second name for the existing one?",
+          "explanation": "Assignment makes an alias: two variables, one object. Replacing an element through one alias is a side effect seen by the other. To protect data from side effects, copy it first with `list(a)` or `a[:]`.",
+          "ref": "Section 5.1, \"Aliasing and Side Effects\" (pp. 122–123)"
+        },
+        {
+          "id": "identity-vs-equality",
+          "concept": "Object identity and structural equivalence",
+          "level": "analyze",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "first = [20, 30, 40]\nsecond = first\nthird = first[:]\nprint(first == third)\nprint(first is third)\nprint(first is second)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`True False True`",
+              "feedback": "`third` is a copy, so its elements equal those of `first` (`==` is `True`) but it is a different object (`is` is `False`). `second` is an alias, the very same object as `first`.",
+              "correct": true
+            },
+            {
+              "text": "`False False True`",
+              "feedback": "This treats `==` as a test of identity. `==` compares contents, so two separate lists with the same elements are equal."
+            },
+            {
+              "text": "`True True True`",
+              "feedback": "This treats `is` as a test of contents. `is` is `True` only when both operands refer to the same object, and the slice `first[:]` built a new one."
+            },
+            {
+              "text": "`True False False`",
+              "feedback": "After `second = first`, the two names refer to one object, so `first is second` is `True`. Assignment creates an alias, not a separate list."
+            }
+          ],
+          "hint": "Which of the three names refer to the same object, and which only to equal contents?",
+          "explanation": "Structural equivalence (`==`) means equal contents; object identity (`is`) means one and the same object. Aliases pass both tests; a copy passes `==` but fails `is`.",
+          "ref": "Section 5.1, \"Equality: Object Identity and Structural Equivalence\" (p. 123)"
+        },
+        {
+          "id": "median-trace",
+          "concept": "Using a list to find the median",
+          "level": "apply",
+          "stem": "This is the core of the reading's median script with the numbers filled in. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "numbers = [7, 1, 4, 9]\nnumbers.sort()\nmidpoint = len(numbers) // 2\nif len(numbers) % 2 == 1:\n    print(numbers[midpoint])\nelse:\n    upper = numbers[midpoint]\n    lower = numbers[midpoint - 1]\n    print((upper + lower) / 2)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`5.5`",
+              "feedback": "After sorting, the list is `[1, 4, 7, 9]` and `midpoint` is 2. The length is even, so the script averages positions 2 and 1: `(7 + 4) / 2` is 5.5.",
+              "correct": true
+            },
+            {
+              "text": "`7`",
+              "feedback": "This applies the odd-length rule, taking the single value at the midpoint. With four numbers the length is even, so the `else` branch averages the two middle values."
+            },
+            {
+              "text": "`5.25`",
+              "feedback": "That is the mean, the sum 21 divided by 4. The median is the middle of the *sorted* values, and with an even count it averages only the two middle ones."
+            },
+            {
+              "text": "`2.5`",
+              "feedback": "This uses positions 2 and 1 of the *unsorted* list, 4 and 1. `sort` mutates `numbers` in place, so by the `if` statement the list is already `[1, 4, 7, 9]`."
+            }
+          ],
+          "hint": "Write out `numbers` after the `sort` line, then compute `midpoint`. Is the length odd or even?",
+          "explanation": "The median is the middle of the sorted values: for an odd count, the value at `len // 2`; for an even count, the average of the values at `len // 2` and `len // 2 - 1`. Sorting in place first is what makes those positions meaningful.",
+          "ref": "Section 5.1, \"Example: Using a List to Find the Median of a Set of Numbers\" (pp. 123–124)"
+        },
+        {
+          "id": "tuple-singleton",
+          "concept": "Tuples of one element",
+          "level": "apply",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "sizes = (\"large\")\ncodes = (\"XL\",)\nprint(len(sizes), len(codes))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`5 1`",
+              "feedback": "Without a comma, the parentheses only group an expression, so `sizes` is the string `\"large\"`, of length 5. The trailing comma makes `codes` a tuple of one element.",
+              "correct": true
+            },
+            {
+              "text": "`1 1`",
+              "feedback": "This assumes parentheses make a tuple. `(\"large\")` is just `\"large\"`, so `len` counts its 5 characters."
+            },
+            {
+              "text": "`5 2`",
+              "feedback": "The trailing comma does not add an empty second element; it is what marks `(\"XL\",)` as a tuple holding exactly one item."
+            },
+            {
+              "text": "`1 2`",
+              "feedback": "Both are reversed here. The comma, not the parentheses, makes a tuple: `(\"large\")` is a string, and `(\"XL\",)` is a one-element tuple."
+            }
+          ],
+          "hint": "Compare the reading's `badSingleton = (3)` and `goodSingleton = (3,)`. What does the comma change?",
+          "explanation": "Parentheses also group ordinary expressions, so `(x)` is simply `x`. A one-element tuple needs a comma after the element: `(x,)`.",
+          "aside": "It is the comma, not the parentheses, that makes a tuple: `codes = \"XL\",` with no parentheses at all is also a one-element tuple, and `point = 3, 5` is a tuple of two.",
+          "ref": "Section 5.1, \"Tuples\" (pp. 124–125)"
+        },
+        {
+          "id": "tuple-or-list",
+          "concept": "Choosing a tuple or a list",
+          "level": "evaluate",
+          "stem": "A weather app keeps the seven day names, which never change, and the daily readings, which grow by one each day. Following the reading's advice, which structures should hold them?",
+          "options": [
+            {
+              "text": "A tuple for the day names and a list for the readings",
+              "feedback": "The day names never change, so a tuple fits: it is immutable, and an accidental `days[0] = ...` becomes an error. The readings must grow, so they need a mutable list with `append`.",
+              "correct": true
+            },
+            {
+              "text": "A list for both, since lists can do everything tuples can",
+              "feedback": "It would run, but the reading advises a tuple whenever a sequence's structure will not change. The tuple records that intent and turns an accidental change into an error instead of a silent bug."
+            },
+            {
+              "text": "A tuple for both, so neither can be changed by mistake",
+              "feedback": "A tuple cannot grow: it has no `append`, so each new reading would mean building a whole new tuple. Data that changes belongs in a list."
+            },
+            {
+              "text": "A list for the day names and a tuple for the readings",
+              "feedback": "This reverses the rule. The fixed day names suit the immutable tuple, and the growing readings need a list."
+            }
+          ],
+          "hint": "Which of the two collections will change while the program runs?",
+          "explanation": "Use a tuple for a sequence whose structure will not change, such as fixed names, vowels or punctuation marks, and a list for one you add to, remove from or rearrange. Most list operators and functions also work on tuples.",
+          "ref": "Section 5.1, \"Tuples\" (pp. 124–125)"
+        }
+      ]
+    },
+    {
+      "id": "5.2-simple-functions",
+      "title": "Defining simple functions",
+      "subtitle": "Header and body, parameters and arguments, the return statement and None, Boolean functions, main and __name__",
+      "source": "Ch. 5, section 5.2 (pp. 126–131)",
+      "intro": "A helper that should total a shopping cart keeps handing back `None`, and a search function says a list has no negative numbers when it plainly does. Six questions on how a function receives values, sends one back and starts a program.",
+      "takeaways": [
+        "At a call, each argument is evaluated and its value is given to the parameter in the same position. The parameter is a new variable that exists only inside the function's body.",
+        "`return` sends a value back and ends the function at once, even from inside a loop. A function that never reaches a `return` hands back `None`, and printing a value is not returning it.",
+        "A `def` must have run before the function is *called*, not before its name appears in another body. Ending a script with `if __name__ == \"__main__\": main()` runs the program when it is launched and only loads its functions when it is imported."
+      ],
+      "questions": [
+        {
+          "id": "parameter-receives-value",
+          "concept": "Parameters and arguments",
+          "level": "apply",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def square(x):\n    \"\"\"Returns the square of x.\"\"\"\n    return x * x\n\nx = 3\nprint(square(x + 1), x)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`16 3`",
+              "feedback": "The argument `x + 1` is evaluated first, giving 4, and the parameter `x` receives that value. Inside `square`, `x` is a separate variable, so the outer `x` is still 3.",
+              "correct": true
+            },
+            {
+              "text": "`16 4`",
+              "feedback": "This treats the parameter and the outer variable as one, so giving the parameter 4 would change the outer `x`. A parameter is a new variable that exists only while the function runs."
+            },
+            {
+              "text": "`9 3`",
+              "feedback": "This passes `x` alone. The argument is the whole expression `x + 1`, which Python evaluates to 4 before the call."
+            },
+            {
+              "text": "`10 3`",
+              "feedback": "This squares 3 and then adds 1. The `+ 1` belongs to the argument, so it happens first, and the function squares 4."
+            }
+          ],
+          "hint": "What value does the expression `x + 1` have at the moment of the call?",
+          "explanation": "When a function is called, each argument expression is evaluated and its value is bound to the matching parameter. The parameter behaves like a variable in the body, separate from any variable of the same name outside.",
+          "ref": "Section 5.2, \"The Syntax of Simple Function Definitions\" and \"Parameters and Arguments\" (pp. 126–127)"
+        },
+        {
+          "id": "arguments-by-position",
+          "concept": "Arguments match parameters by position",
+          "level": "analyze",
+          "stem": "What happens when this runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def describe(name, age):\n    text = name + \" is \"\n    return text + str(age)\n\nprint(describe(20, \"Ana\"))",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `TypeError`: `name` gets 20, and `20 + \" is \"` fails",
+              "feedback": "Arguments match parameters by position, so `name` receives 20 and `age` receives `\"Ana\"`. The body then tries to add the number 20 to a string, which Python refuses.",
+              "correct": true
+            },
+            {
+              "text": "`Ana is 20`: each value goes to the parameter it suits",
+              "feedback": "Python does not look at what a value means or what type it has. The first argument always goes to the first parameter, the second to the second."
+            },
+            {
+              "text": "`20 is Ana`: the swapped values are joined as given",
+              "feedback": "The values are swapped, but the line never prints: `name` holds the number 20, and `20 + \" is \"` mixes a number and a string, which raises an error."
+            }
+          ],
+          "hint": "Which parameter does the first argument go to, and what type is it?",
+          "explanation": "The number and positions of the arguments must match the parameters: the first argument binds to the first parameter, and so on. Passing arguments in the wrong order can crash the body, or worse, run with quietly wrong values.",
+          "ref": "Section 5.2, \"Parameters and Arguments\" (p. 127)"
+        },
+        {
+          "id": "print-is-not-return",
+          "concept": "No return statement means None",
+          "level": "apply",
+          "stem": "This helper should give the caller the cart total. What does the **last** line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def cartTotal(prices):\n    total = 0\n    for price in prices:\n        total += price\n    print(\"Subtotal:\", total)\n\namount = cartTotal([5, 10])\nprint(amount)",
+            "verify": {
+              "expect": "output",
+              "output": "Subtotal: 15 None"
+            }
+          },
+          "options": [
+            {
+              "text": "`None`",
+              "feedback": "The function prints its total but never returns it. When a function ends without a `return` statement, Python automatically sends back `None`, and that is what `amount` holds.",
+              "correct": true
+            },
+            {
+              "text": "`15`",
+              "feedback": "The function computes 15 and shows it on the screen, but showing is not returning. Only a `return` statement sends a value back to the caller."
+            },
+            {
+              "text": "`Subtotal: 15`",
+              "feedback": "That text appears on the screen while the function runs, but it is output, not a value handed back. The call's value is what `return` sends, and there is none."
+            },
+            {
+              "text": "An error: `amount` never received a value",
+              "feedback": "The assignment does give `amount` a value. A function with no `return` still returns something: the special value `None`."
+            }
+          ],
+          "hint": "Which statement sends a value back to the caller, and does `cartTotal` contain one?",
+          "explanation": "`print` displays a value; `return` hands it back to the code that called the function. If a function finishes its last statement without a `return`, Python returns `None`. The fix here is `return total`.",
+          "ref": "Section 5.2, \"The return Statement\" (p. 127)"
+        },
+        {
+          "id": "boolean-early-return",
+          "concept": "Boolean functions and exit points",
+          "level": "analyze",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def hasNegative(lyst):\n    \"\"\"Is any number negative?\"\"\"\n    for number in lyst:\n        if number < 0:\n            return True\n        else:\n            return False\n\nprint(hasNegative([3, -1, 5]))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`False`",
+              "feedback": "On the first pass, `number` is 3, which is not negative, so the `else` branch runs `return False`. A `return` ends the function at once, so -1 is never examined.",
+              "correct": true
+            },
+            {
+              "text": "`True`",
+              "feedback": "This assumes the loop checks every element before deciding. Each branch of the `if` contains a `return`, so the function exits during the very first pass."
+            },
+            {
+              "text": "`None`",
+              "feedback": "A function returns `None` only if it ends without reaching a `return`. Here the first pass reaches `return False`."
+            },
+            {
+              "text": "`[False, True, False]`",
+              "feedback": "This treats `return` as collecting one answer per element. `return` sends back a single value and ends the function on the spot."
+            }
+          ],
+          "hint": "Follow only the first pass of the loop. Which statement runs, and what does it do to the function?",
+          "explanation": "Upon reaching `return`, Python evaluates its expression and immediately transfers control back to the caller. A Boolean search can return `True` as soon as it finds a match, but `return False` belongs **after** the loop, once every element has been checked.",
+          "ref": "Section 5.2, \"The return Statement\" and \"Boolean Functions\" (p. 127)"
+        },
+        {
+          "id": "name-main-import",
+          "concept": "main and the __name__ variable",
+          "level": "understand",
+          "stem": "`grader.py` ends as shown. Another script runs `import grader` so it can call `grader.average`. What happens to `main` during that import?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def average(lyst):\n    ...\n\ndef main():\n    ...\n\nif __name__ == \"__main__\":\n    main()",
+            "verify": {
+              "expect": "runs"
+            }
+          },
+          "options": [
+            {
+              "text": "It is defined but not called, since `__name__` is `\"grader\"`",
+              "feedback": "Importing runs the file, including the `if` test. During an import, `__name__` holds the module's name, so the test is false and `main()` is skipped, while both `def` statements still load their functions.",
+              "correct": true
+            },
+            {
+              "text": "It is called, because importing a file runs all of its code",
+              "feedback": "Importing does run the file's top-level code, but that code includes the `if` test. Only when the file is launched directly is `__name__` equal to `\"__main__\"`."
+            },
+            {
+              "text": "It is called, but only if it is defined above `average`",
+              "feedback": "The order of the definitions does not matter, as long as `main` is called after both have been loaded. What decides the call is the `if` test on `__name__`."
+            },
+            {
+              "text": "It is never defined, so `grader.average` is missing too",
+              "feedback": "The `def` statements run during the import, so both functions are defined and `average` is available to the other script. Only the call to `main` is skipped."
+            }
+          ],
+          "hint": "What value does `__name__` hold when a file is imported rather than launched?",
+          "explanation": "When a script is launched from IDLE or a terminal, `__name__` is `\"__main__\"` and `main()` runs. When it is imported, `__name__` is the module's name, so `main` is not called but the file's functions become available to other code.",
+          "aside": "Python programmers read `__name__` aloud as \"dunder name\": *dunder* is short for \"double underscore\". Names wrapped this way, like `__main__`, are reserved for Python's own machinery.",
+          "ref": "Section 5.2, \"Defining a main Function\" (pp. 127–128)"
+        },
+        {
+          "id": "define-before-call",
+          "concept": "Definitions run before calls",
+          "level": "analyze",
+          "stem": "`double` is defined below `main`. What happens when this script runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def main():\n    print(double(4))\n\ndef double(n):\n    return n * 2\n\nmain()",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`8`",
+              "feedback": "Both `def` statements run first and only define the functions. By the time `main()` is called on the last line, `double` exists, so the call inside `main` works.",
+              "correct": true
+            },
+            {
+              "text": "A `NameError`: `double` is defined below `main`",
+              "feedback": "Python does not look up `double` when it defines `main`; it looks it up when `main`'s body actually runs. That happens on the last line, after `double` has been defined."
+            },
+            {
+              "text": "Nothing: `main` only runs inside `if __name__`",
+              "feedback": "`main` is an ordinary function, and the plain call `main()` runs it. The `if __name__` test is a convention for scripts that may be imported, not a requirement."
+            }
+          ],
+          "hint": "When does Python need `double` to exist: when `main` is defined, or when `main` runs?",
+          "explanation": "A `def` statement loads a function without running its body. A name used inside that body is looked up only when the body runs, so functions can be defined in any order as long as they are all defined before the first call.",
+          "ref": "Section 5.2, \"The Syntax of Simple Function Definitions\" and \"Defining a main Function\" (pp. 126–128)"
+        }
+      ]
+    },
+    {
+      "id": "5.3-dictionaries",
+      "title": "Dictionaries",
+      "subtitle": "Dictionary literals, adding and replacing entries, KeyError and get, traversal, lookup tables, counting, valid keys",
+      "source": "Ch. 5, section 5.3 (pp. 132–140)",
+      "intro": "A word counter crashes on the first word it has never seen, and a contacts app quietly replaces a phone number. Six questions on storing values by key instead of by position.",
+      "takeaways": [
+        "`d[key] = value` adds an entry when the key is new and replaces the value when the key exists. Reading `d[key]` for a missing key raises `KeyError`, while `d.get(key, default)` returns the default instead.",
+        "A `for` loop over a dictionary visits its **keys**; reach the values with `d[key]` or loop over `d.items()` with `for (key, value) in ...`.",
+        "Keys must be immutable: strings, numbers or tuples, never lists. A dictionary used as a lookup table or a counter, `d[k] = d.get(k, 0) + 1`, replaces long `if`/`else` chains."
+      ],
+      "questions": [
+        {
+          "id": "add-or-replace",
+          "concept": "Adding keys and replacing values",
+          "level": "apply",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "info = {\"name\": \"Sandy\",\n        \"job\": \"hacker\"}\ninfo[\"job\"] = \"manager\"\ninfo[\"city\"] = \"Miami\"\nprint(len(info), info[\"job\"])",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`3 manager`",
+              "feedback": "`\"job\"` already exists, so its value is replaced. `\"city\"` is new, so a third entry is added. One operation, two effects, decided by whether the key is present.",
+              "correct": true
+            },
+            {
+              "text": "`4 manager`",
+              "feedback": "This counts the `\"job\"` assignment as a new entry. A key appears at most once in a dictionary, so assigning to an existing key replaces its value."
+            },
+            {
+              "text": "`3 hacker`",
+              "feedback": "This keeps the first value for `\"job\"`. Assigning to an existing key does not fail or get ignored; it replaces the old value."
+            },
+            {
+              "text": "A `KeyError`: `\"city\"` is not a key yet",
+              "feedback": "Only *reading* a missing key raises `KeyError`. Assigning to a missing key is how new entries are added."
+            }
+          ],
+          "hint": "For each assignment, is the key already in the dictionary or not?",
+          "explanation": "The subscript assignment `d[key] = value` does double duty: when the key is absent, the entry is inserted; when it exists, its value is replaced. That is why a dictionary never holds two entries with the same key.",
+          "ref": "Section 5.3, \"Adding Keys and Replacing Values\" (pp. 132–133)"
+        },
+        {
+          "id": "get-default",
+          "concept": "Accessing values with get",
+          "level": "analyze",
+          "stem": "What does this print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "stock = {\"apples\": 12, \"pears\": 0}\nprint(stock.get(\"pears\", 5))\nprint(stock.get(\"plums\", 5))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`0 5`",
+              "feedback": "`\"pears\"` is a key, so `get` returns its value, 0, even though 0 looks like *nothing*. `\"plums\"` is not a key, so `get` returns the default, 5.",
+              "correct": true
+            },
+            {
+              "text": "`5 5`",
+              "feedback": "This treats a stored 0 as missing. `get` returns the default only when the key is absent; `\"pears\"` is present, with the value 0."
+            },
+            {
+              "text": "`0 None`",
+              "feedback": "This ignores the second argument. `None` is what you get when the key is missing and no default is given; here the default is 5."
+            },
+            {
+              "text": "A `KeyError`: `\"plums\"` is not in `stock`",
+              "feedback": "The subscript `stock[\"plums\"]` would raise `KeyError`. Avoiding that error is the purpose of `get`: for a missing key it returns the default."
+            }
+          ],
+          "hint": "`get` checks one thing before deciding what to return. Is that thing the key or the value?",
+          "explanation": "`d.get(key, default)` returns the value stored at `key` if the key exists, whatever that value is, and returns `default` otherwise. It is the safe alternative to `d[key]`, which raises `KeyError` for a missing key.",
+          "ref": "Section 5.3, \"Accessing Values\" (p. 133)"
+        },
+        {
+          "id": "loop-visits-keys",
+          "concept": "Traversing a dictionary",
+          "level": "analyze",
+          "stem": "This loop should add up the prices. What happens when it runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "prices = {\"pen\": 2, \"book\": 15,\n          \"bag\": 30}\ntotal = 0\nfor item in prices:\n    total += item\nprint(total)",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `TypeError`: each `item` is a key, a string",
+              "feedback": "A `for` loop over a dictionary binds the loop variable to each **key**. On the first pass, `total += item` tries `0 + \"pen\"`, adding a string to a number, which Python refuses.",
+              "correct": true
+            },
+            {
+              "text": "`47`, the sum of the three prices in the dictionary",
+              "feedback": "This assumes the loop visits the values. It visits the keys; the fix is `total += prices[item]`, or a loop over `prices.values()`."
+            },
+            {
+              "text": "`3`, since the loop adds one for each entry",
+              "feedback": "The loop does run three times, but the code adds `item` itself, not 1, and `item` is a key such as `\"pen\"`."
+            }
+          ],
+          "hint": "In `for item in prices:`, what does `item` refer to on each pass?",
+          "explanation": "Looping over a dictionary visits its keys, and `d[key]` reaches each value. To get both at once, loop over `d.items()` with a tuple of variables: `for (key, value) in prices.items():`.",
+          "aside": "Since Python 3.7, a dictionary is guaranteed to keep its keys in the order they were first inserted, so a loop visits them in that order. Older versions made no such promise, which is why the reading warns not to rely on it.",
+          "ref": "Section 5.3, \"Traversing a Dictionary\" (pp. 133–134)"
+        },
+        {
+          "id": "lookup-table",
+          "concept": "A dictionary as a lookup table",
+          "level": "apply",
+          "stem": "This is a compact version of the reading's `convert` function, with a shortened table. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "table = {'0': '0000', '1': '0001',\n         '5': '0101', 'A': '1010',\n         'F': '1111'}\n\ndef convert(number, table):\n    binary = \"\"\n    for digit in number:\n        binary += table[digit]\n    return binary\n\nprint(convert(\"A5\", table))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`10100101`",
+              "feedback": "The loop visits `'A'` then `'5'`, looks each one up, and joins the four-bit groups in that order: `1010` followed by `0101`.",
+              "correct": true
+            },
+            {
+              "text": "`01011010`",
+              "feedback": "This joins the groups in reverse, as if the digits were processed right to left. The loop visits the string from left to right and adds each group at the end."
+            },
+            {
+              "text": "`165`",
+              "feedback": "165 is the decimal value of hex `A5`. `convert` never does arithmetic: it builds a string of bits by looking up each digit."
+            },
+            {
+              "text": "A `KeyError`: `\"A5\"` is not a key in `table`",
+              "feedback": "The function never looks up the whole string. It looks up one digit at a time, and both `'A'` and `'5'` are keys."
+            }
+          ],
+          "hint": "In what order does the loop visit the digits, and where does each group of bits go?",
+          "explanation": "A lookup table replaces a long `if`/`else` chain: each hexadecimal digit maps straight to its four bits with one subscript. Because the table is passed in as an argument, the same function converts octal to binary when given an octal table.",
+          "ref": "Section 5.3, \"Example: The Hexadecimal System Revisited\" (pp. 134–135)"
+        },
+        {
+          "id": "counting-with-get",
+          "concept": "Counting occurrences in a dictionary",
+          "level": "analyze",
+          "stem": "This counts how often each word appears, as in the reading's mode example. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "words = [\"to\", \"be\", \"or\", \"not\",\n         \"to\", \"be\", \"to\"]\ntally = {}\nfor w in words:\n    tally[w] = tally.get(w, 0) + 1\nprint(tally[\"to\"], len(tally))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`3 4`",
+              "feedback": "The first time a word appears, `get` returns the default 0, so its count becomes 1; each later time adds 1. `\"to\"` appears 3 times, and there are 4 distinct words, so 4 keys.",
+              "correct": true
+            },
+            {
+              "text": "`3 7`",
+              "feedback": "`len` of a dictionary counts its entries, one per distinct key, not the 7 words that went into it. Repeated words update an existing entry."
+            },
+            {
+              "text": "`1 4`",
+              "feedback": "This assumes `get` always returns the default 0. It returns 0 only when the word is not yet a key; after that it returns the count stored so far."
+            },
+            {
+              "text": "`2 4`",
+              "feedback": "This counts the first sighting as 0. On the first `\"to\"`, `get` returns 0 and the line stores `0 + 1`, so the count starts at 1."
+            }
+          ],
+          "hint": "Trace `tally[\"to\"]` each time `\"to\"` comes up. What does `get` return the first time?",
+          "explanation": "`d[k] = d.get(k, 0) + 1` is the standard counting idiom: a new key starts at 1 and an existing key goes up by 1. The mode is then the key whose count equals `max(d.values())`.",
+          "aside": "Python's standard library has this built in: after `from collections import Counter`, `Counter(words).most_common(1)` returns `[('to', 3)]`, the mode and its count.",
+          "ref": "Section 5.3, \"Example: Finding the Mode of a List of Values\" (pp. 135–136)"
+        },
+        {
+          "id": "immutable-keys",
+          "concept": "Which values can be keys",
+          "level": "understand",
+          "stem": "A seating chart maps each (row, seat) position to a student. This line fails. Why, and what fixes it?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "seats = {}\nseats[[3, 5]] = \"Ana\"",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError",
+                "unhashable"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A list can change, so it can't be a key; use the tuple `(3, 5)`",
+              "feedback": "Keys must be immutable, and a list is mutable, so Python raises `TypeError: unhashable type: 'list'`. A tuple holds the same two numbers and cannot change, so `seats[(3, 5)] = \"Ana\"` works.",
+              "correct": true
+            },
+            {
+              "text": "Keys must be strings; use the string `\"3,5\"` instead",
+              "feedback": "Keys are normally strings or integers, but any immutable type is allowed, including tuples. A string would work, but you would have to split it apart to get the row back."
+            },
+            {
+              "text": "The key is new, so the entry must first be made with `get`",
+              "feedback": "Assigning to a new key is exactly how entries are added. The problem is the type of the key, not whether it already exists."
+            },
+            {
+              "text": "A key holds one value, so use one dictionary per number",
+              "feedback": "The key here is a single object, a list, and a single object may contain several values. What rules it out is that a list can be changed."
+            }
+          ],
+          "hint": "What does the reading say about the types a key may have? Is a list one of them?",
+          "explanation": "Dictionary keys can be any immutable type (strings, integers, tuples), while values can be anything. When a key needs several parts, such as a row and a seat, a tuple is the natural choice.",
+          "ref": "Section 5.3, \"Dictionary Literals\" (p. 132)"
+        }
+      ]
+    }
+  ]
+}
