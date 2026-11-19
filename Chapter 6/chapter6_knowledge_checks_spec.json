@@ -1,0 +1,876 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 6: Design with Functions",
+ "collection_intro": "Short, ungraded practice checks for sections 6.1–6.3 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "6.1-functions-as-abstraction",
+   "title": "Functions as abstraction mechanisms",
+   "subtitle": "How a call runs, eliminating redundancy, hiding complexity, general methods with problem instances, and division of labor",
+   "source": "Ch. 6, section 6.1 (pp. 145–148)",
+   "intro": "A script with the same summation loop pasted in five places has a bug, and now it has five bugs. Six questions on what a function call really does and why designers lean on functions even when nothing repeats.",
+   "takeaways": [
+    "At a call, the arguments are evaluated and their *values* are copied into the parameters, so reassigning a parameter inside the body never changes the caller's variables. A function waits for every function it calls to return before it continues.",
+    "A function is an abstraction: one name that stands for many steps. It removes redundancy (one place to fix), hides complexity even when used once, and turns an algorithm into a general method whose arguments supply the problem instance.",
+    "Good division of labor gives each function one coherent job: compute and return results, and leave input and output to the code that coordinates."
+   ],
+   "questions": [
+    {
+     "id": "call-chain-order",
+     "concept": "Chains of function calls",
+     "level": "apply",
+     "stem": "Like the doctor program, `main` calls `reply`, which calls `changePerson`. What does this print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def changePerson(s):\n    print(\"changePerson\")\n    return s.upper()\n\ndef reply(s):\n    print(\"reply\")\n    return changePerson(s) + \"?\"\n\ndef main():\n    print(\"main\")\n    print(reply(\"hi\"))\n\nmain()",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`main reply changePerson HI?`",
+       "feedback": "`main` prints first, then calls `reply` and waits. `reply` prints, then calls `changePerson` and waits. Only when `changePerson` returns `\"HI\"` can `reply` add `\"?\"` and return, and only then does `main`'s `print` have a value to show.",
+       "correct": true
+      },
+      {
+       "text": "`changePerson reply main HI?`",
+       "feedback": "This reads the chain from the innermost function outward. But each function's own `print` runs as soon as that function starts, and `main` starts first."
+      },
+      {
+       "text": "`main reply HI? changePerson`",
+       "feedback": "This has `reply` finishing before `changePerson` runs. `reply` cannot build its result until the call to `changePerson` inside it has returned, so `changePerson` prints before `HI?` appears."
+      },
+      {
+       "text": "`main changePerson reply HI?`",
+       "feedback": "This assumes `reply` must hear back from `changePerson` before its own `print` runs. But `reply` prints as its first statement, before it ever reaches the call to `changePerson`."
+      }
+     ],
+     "hint": "When `reply` reaches `changePerson(s) + \"?\"`, what has to happen before the `+` can be done?",
+     "explanation": "A function can call another function, which may call a third. Each caller pauses at the call and resumes only when the callee returns its value, so results flow back up the chain in reverse order of the calls.",
+     "ref": "Section 6.1, review point 2 (p. 145)"
+    },
+    {
+     "id": "parameters-are-copies",
+     "concept": "Arguments are evaluated and copied into parameters",
+     "level": "apply",
+     "stem": "The body of `summation` changes its parameter `lower`. What does the last line print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def summation(lower, upper):\n    result = 0\n    while lower <= upper:\n        result += lower\n        lower += 1\n    return result\n\nstart = 1\ntotal = summation(start, 4)\nprint(start, total)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`1 10`",
+       "feedback": "The value of `start`, 1, is copied into the parameter `lower`. The loop advances `lower` to 5, but that is the function's own storage; `start` still holds 1. The sum 1 + 2 + 3 + 4 is 10.",
+       "correct": true
+      },
+      {
+       "text": "`5 10`",
+       "feedback": "This assumes `lower` is another name for `start`, so advancing `lower` advances `start`. The parameter receives a copy of the value, so the caller's variable is untouched."
+      },
+      {
+       "text": "`4 10`",
+       "feedback": "This mixes two ideas: that `start` follows `lower`, and that the loop stops at `upper`. Neither holds: `start` is not changed by the call at all."
+      },
+      {
+       "text": "`1 6`",
+       "feedback": "This stops the loop one step early, as if the test were `lower < upper`. With `<=`, the value 4 is still added, giving 10."
+      }
+     ],
+     "hint": "When `summation(start, 4)` runs, what exactly does the parameter `lower` receive from `start`?",
+     "explanation": "When a function is called, its argument expressions are evaluated first and their values are placed in temporary storage named by the parameters. The parameters then act as the function's own variables, so changing them inside the body does not reach the caller's variables.",
+     "ref": "Section 6.1, review point 4 (p. 146); \"Functions Eliminate Redundancy\" (p. 146)",
+     "aside": "Python has this algorithm built in: `sum(range(lower, upper + 1))`. And `summation(50, 100)` is 3825 because a range's sum is its count times its average: 51 numbers averaging 75."
+    },
+    {
+     "id": "redundancy-maintenance",
+     "concept": "Functions eliminate redundancy",
+     "level": "understand",
+     "stem": "A program contains the same summation loop, copied, in five places. A bug is found in the loop. If the loop were a single `summation` function called in those five places instead, what would change about fixing it?",
+     "options": [
+      {
+       "text": "The fix goes in the one definition, and the five calls need no edits",
+       "feedback": "With one definition, the algorithm lives in exactly one place. Repairing or improving it there repairs every call, because each call runs that same code.",
+       "correct": true
+      },
+      {
+       "text": "The fix still goes in five places, but each copy is a shorter call",
+       "feedback": "The calls do not contain the loop; they only name it. There is nothing to fix at the call sites, because none of them holds a copy of the algorithm."
+      },
+      {
+       "text": "The bug could not happen, because Python checks a function's loop",
+       "feedback": "Python does not check the logic of a function's code. A buggy function is just as buggy; the gain is that the bug lives in one place."
+      },
+      {
+       "text": "The program would run faster, since a function's loop runs only once",
+       "feedback": "Each call runs the loop again; functions do not cache their work. The book's argument is about maintenance, not speed."
+      }
+     ],
+     "hint": "Where does the loop's code live once it is a function, and what do the five call sites contain?",
+     "explanation": "Redundant code must be typed correctly every time and revised everywhere it appears. A single function definition, possibly kept in a library module and imported, means debugging and improving happen in one place without touching the callers.",
+     "ref": "Section 6.1, \"Functions Eliminate Redundancy\" (pp. 146–147)"
+    },
+    {
+     "id": "hide-complexity",
+     "concept": "Functions hide complexity",
+     "level": "evaluate",
+     "stem": "A summation is computed in exactly one place, inside an already busy loop, and no other program needs it. A teammate says: \"No repetition, so a function is pointless here.\" Which reply best reflects the reading?",
+     "options": [
+      {
+       "text": "A named call hides the loop's variables, so the busy code stays readable",
+       "feedback": "Even used once, `summation(a, b)` expresses the idea without forcing a reader through three interacting variables and loop logic in an already complex context. That is complexity hiding, separate from removing redundancy.",
+       "correct": true
+      },
+      {
+       "text": "Agreed: a function pays off only when the same code appears twice",
+       "feedback": "That counts only one benefit. The reading's point is that a function also hides detail, which matters whenever the surrounding code is even slightly complex."
+      },
+      {
+       "text": "Disagree: Python requires every `while` loop to sit inside a function",
+       "feedback": "Python has no such rule; loops run fine at the top level of a script. The case for a function here is about the reader's mind, not the language."
+      },
+      {
+       "text": "Disagree: putting the loop in a function makes it run more efficiently",
+       "feedback": "A call adds a little work rather than removing any. The reason to write the function is that people can only juggle a few things at once."
+      }
+     ],
+     "hint": "Besides avoiding repetition, what else does a function do for the person reading the surrounding code?",
+     "explanation": "An abstraction lets you view many things as one thing. A function call names a process without exposing the code that carries it out, which keeps the code around it within what a programmer can hold in mind.",
+     "ref": "Section 6.1, \"Functions as Abstraction Mechanisms\" and \"Functions Hide Complexity\" (pp. 146–147)",
+     "aside": "The book's \"three things comfortably, and at most seven\" echoes George Miller's 1956 paper \"The Magical Number Seven, Plus or Minus Two.\" Later research, notably Nelson Cowan's, puts working memory nearer four chunks."
+    },
+    {
+     "id": "problem-instances",
+     "concept": "General methods and problem instances",
+     "level": "understand",
+     "stem": "In the call `summation(50, 100)`, which part is the **problem instance** that the algorithm solves?",
+     "options": [
+      {
+       "text": "The bounds 50 and 100, sent in as the arguments",
+       "feedback": "An algorithm solves a whole class of problems; one member of that class is a problem instance. For summation, an instance is a pair of bounds, and the arguments are how each call supplies one.",
+       "correct": true
+      },
+      {
+       "text": "The `while` loop inside the body of `summation`",
+       "feedback": "The loop is the general method itself, the part that stays the same for every instance. The instance is what varies from call to call."
+      },
+      {
+       "text": "The value 3825 that the call returns",
+       "feedback": "3825 is the solution to this instance, not the instance. The instance is the input that the algorithm is asked to solve."
+      },
+      {
+       "text": "The parameter names `lower` and `upper` in the header",
+       "feedback": "The parameters are placeholders waiting for an instance. They take a different instance's values every time the function is called."
+      }
+     ],
+     "hint": "Which part of this call would be different if you wanted the sum of 1 through 4 instead?",
+     "explanation": "A well-designed function captures an algorithm as a general method, and its arguments let callers vary the problem instance systematically. Adding a parameter, such as a step size, widens the class of problems the same function can solve.",
+     "ref": "Section 6.1, \"Functions Support General Methods with Systematic Variations\" (p. 147)"
+    },
+    {
+     "id": "division-of-labor",
+     "concept": "Functions support the division of labor",
+     "level": "analyze",
+     "stem": "This function asks for a name, computes an average and prints a report. Which redesign best follows the division of labor described in the reading?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def average(scores):\n    name = input(\"Student name: \")\n    total = sum(scores)\n    print(name, \"average:\", total / len(scores))",
+      "verify": {
+       "expect": "compiles"
+      }
+     },
+     "options": [
+      {
+       "text": "Make `average` only compute and return the mean; the caller asks and prints",
+       "feedback": "Then `average` does one coherent job with its data and hands back a result. The coordinating code (such as `main`) handles the user, and `average` can be reused anywhere a mean is needed.",
+       "correct": true
+      },
+      {
+       "text": "Keep it as it is, since one call handling the whole job is simplest",
+       "feedback": "One call doing everything is convenient once, but it ties the calculation to the keyboard and screen. No other part of a program could get an average without also prompting and printing."
+      },
+      {
+       "text": "Add a `getName` helper, and have `average` call it before printing",
+       "feedback": "Moving the prompt into a helper still leaves `average` coordinating input and output. The calculation remains locked inside a function that talks to the user."
+      },
+      {
+       "text": "Move `scores` to the module level so `average` needs no arguments",
+       "feedback": "Taking the data away from the parameter makes the function less general, and it still mixes input, processing and output in one place."
+      }
+     ],
+     "hint": "What single job does the name `average` promise, and which lines do some other job?",
+     "explanation": "In a well-organized program each function performs a single coherent task: it uses certain data, computes certain results and returns them to whoever asked. Coordinating other functions, including handling the user, is itself a task best given to its own function.",
+     "ref": "Section 6.1, \"Functions Support the Division of Labor\" (p. 148)"
+    }
+   ]
+  },
+  {
+   "id": "6.2-top-down-design",
+   "title": "Problem solving with top-down design",
+   "subtitle": "Problem decomposition and stepwise refinement, structure charts, data pools versus arguments, responsibility-driven design, and the sentence recognizer",
+   "source": "Ch. 6, section 6.2 (pp. 148–156)",
+   "intro": "You have a grammar checker to write and no idea where to begin. Six questions on starting from the top, letting the problem's structure shape the functions, and testing from the bottom.",
+   "takeaways": [
+    "Top-down design starts with `main`'s global view and decomposes the problem into subproblems, giving each to a function and refining until every function is simple. The structure of the problem, such as grammar rules, is often the best map for the structure of the program.",
+    "Functions get data from arguments or from a common pool at the module level. A pool is the better choice when passing data would force functions to accept arguments they only forward.",
+    "Give each function one responsibility (`main` talks to the user, `reply` decides), so a change lands in one place. Then test bottom up: verify each function only after the functions it calls are known to work."
+   ],
+   "questions": [
+    {
+     "id": "top-down-process",
+     "concept": "Top-down design and stepwise refinement",
+     "level": "understand",
+     "stem": "Which description matches **top-down design** as the reading presents it?",
+     "options": [
+      {
+       "text": "Start from the whole problem, split it into subproblems for functions, refine further",
+       "feedback": "That is problem decomposition followed by stepwise refinement: the design starts at `main` and fills in lower-level functions until each one is simple enough to write directly.",
+       "correct": true
+      },
+      {
+       "text": "Perfect the lowest-level helper functions first, then combine all of them into `main`",
+       "feedback": "This describes building bottom up. The reading uses a bottom-up order for *testing* the recognizer, but the design itself began with the top-level problem."
+      },
+      {
+       "text": "Write the whole program inside `main`, then cut it into functions of equal size",
+       "feedback": "Splitting finished code by length does not follow the problem's structure. In top-down design, functions come from subproblems, before their code exists."
+      },
+      {
+       "text": "Write all the code first, then draw a structure chart to document how it works",
+       "feedback": "A structure chart can document a program, but in top-down design the decomposition it shows comes first and guides the code."
+      }
+     ],
+     "hint": "Where does the designer's attention start, and in which direction does it move?",
+     "explanation": "Top-down design begins with a global view of the problem and breaks it into smaller, more manageable subproblems, each solved by a function. A subproblem may decompose again, so the solution fills out level by level; that gradual filling-in is stepwise refinement.",
+     "ref": "Section 6.2, \"Problem Solving with Top-Down Design\" (p. 148)"
+    },
+    {
+     "id": "structure-chart",
+     "concept": "Reading a structure chart",
+     "level": "analyze",
+     "stem": "In the text analyzer's structure chart (Figure 6-1), the line between `main` and `countSentences` carries `string` with an arrow down to `countSentences`, and `int` with an arrow back up to `main`. What does this show?",
+     "options": [
+      {
+       "text": "`main` passes `countSentences` a string, and it returns an int to `main`",
+       "feedback": "Boxes are functions, lines show who depends on whom, and the labeled arrows show data flow: the argument travels down to the helper and the result travels back up.",
+       "correct": true
+      },
+      {
+       "text": "`countSentences` calls `main` with a string, and `main` returns an int",
+       "feedback": "This reverses the dependency. `main` is at the top because it is where the design begins and it relies on the functions below it."
+      },
+      {
+       "text": "`countSentences` keeps a string and an int in a pool shared with `main`",
+       "feedback": "A data pool is drawn as its own labeled box, as in the sentence generator's chart. Here the labels are on the line, so they describe an argument and a return value."
+      },
+      {
+       "text": "`countSentences` turns a string into an int, as `int(\"12\")` would",
+       "feedback": "The labels give the data types going in and coming out, not a type conversion. The function counts sentences in a text and returns that count."
+      }
+     ],
+     "hint": "In a structure chart, what does a box stand for, and what does a label on an arrow stand for?",
+     "explanation": "A structure chart shows the relationships among a program's functions and the data passing between them. Reading down the chart traces the decomposition; reading the arrows tells you each function's arguments and return values.",
+     "ref": "Section 6.2, \"The Design of the Text Analysis Program\" and Figure 6-1 (pp. 148–149)",
+     "aside": "Structure charts come from *structured design*, the method Larry Constantine and Edward Yourdon developed in the 1970s. Constantine also coined the terms *coupling* and *cohesion*, still the standard vocabulary for judging how well a program is divided."
+    },
+    {
+     "id": "data-pool",
+     "concept": "Data pools versus arguments",
+     "level": "evaluate",
+     "stem": "In the sentence generator, functions read `articles`, `nouns`, `verbs` and `prepositions` from a pool defined at the top of the module, rather than having `main` pass them as arguments. Why does the reading favor the pool here?",
+     "options": [
+      {
+       "text": "Some functions would have to take data they only pass along",
+       "feedback": "`prepositionalPhrase` uses only `prepositions`, but to call `nounPhrase` it would also need `articles` and `nouns` passed in just to pass them on. The pool avoids that, which simplifies the design and makes it easier to maintain.",
+       "correct": true
+      },
+      {
+       "text": "Python functions can receive strings and numbers but not tuples or lists",
+       "feedback": "Functions can receive any value, including lists and tuples; the recognizer passes a list of words to every function. The issue is design, not a language limit."
+      },
+      {
+       "text": "A pool lets each function edit the vocabulary while the program runs",
+       "feedback": "The functions only read the pool. In fact, section 6.3 shows that assigning to a module variable inside a function makes a new temporary variable instead."
+      },
+      {
+       "text": "Looking data up in a module pool is faster than reading a parameter",
+       "feedback": "The reading gives no speed argument, and parameter access is not slower in practice. The pool is chosen because it keeps the function headers simple."
+      }
+     ],
+     "hint": "Which data does `prepositionalPhrase` need itself, and which would it only be carrying for another function?",
+     "explanation": "Cooperating functions get data in two ways: arguments passed by the caller, or a common pool at module level. Arguments make each dependency explicit; a pool is simpler when many functions need the same fixed data, or when arguments would just be relayed down the chain.",
+     "ref": "Section 6.2, \"The Design of the Sentence Generator Program\" and Figure 6-2 (pp. 149–150)"
+    },
+    {
+     "id": "responsibility-driven",
+     "concept": "Responsibility-driven design",
+     "level": "apply",
+     "stem": "You want the doctor program to gain a third way to reply: repeating one of the patient's earlier sentences. Following the program's design, where should the changes go?",
+     "options": [
+      {
+       "text": "A new choice in `reply`, plus a new function that carries it out",
+       "feedback": "`reply` owns the job of choosing a strategy, and each strategy is carried out by a helper such as `changePerson`. Adding a strategy means adding one option to the choice and one function to do it.",
+       "correct": true
+      },
+      {
+       "text": "Inside `main`, right next to the loop that reads the patient's input",
+       "feedback": "`main`'s responsibility is user interaction. Putting reply logic there spreads the \"doctor logic\" across two functions and makes both harder to change."
+      },
+      {
+       "text": "Into `changePerson`, so that one function handles both kinds of reply",
+       "feedback": "`changePerson` has one job, swapping pronouns. Loading a second strategy into it mixes the choice of a task with carrying out a task."
+      },
+      {
+       "text": "Into the data pool at the top of the module, beside `hedges`",
+       "feedback": "The pool holds data, such as a history list the new strategy could read. The logic that decides and builds a reply belongs in functions."
+      }
+     ],
+     "hint": "Which function is responsible for *choosing* how to reply, and which functions are responsible for *doing* each kind of reply?",
+     "explanation": "Assigning roles and responsibilities to different parts of a program is responsibility-driven design. Separating the logic of choosing a task from the code that performs it means a new option, or a change in how likely an option is, touches only the place responsible for it.",
+     "ref": "Section 6.2, \"The Design of the Doctor Program\" (pp. 150–151)"
+    },
+    {
+     "id": "recognizer-pop",
+     "concept": "The recognizer consumes the word list",
+     "level": "apply",
+     "stem": "This is `nounPhrase` from the grammar checker in Case Study 6-1. What does the last line print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "articles = (\"A\", \"THE\")\nnouns = (\"BOY\", \"GIRL\", \"BAT\", \"BALL\")\n\ndef nounPhrase(words):\n    if len(words) < 2:\n        return False\n    else:\n        article = words.pop(0)\n        noun = words.pop(0)\n        return article in articles and noun in nouns\n\nwords = \"THE BOY HIT A BALL\".split()\nprint(nounPhrase(words), words)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`True ['HIT', 'A', 'BALL']`",
+       "feedback": "Each `pop(0)` removes and returns the first word, so the function takes `THE` and then `BOY`, both of which are in their tuples. The list it was given is now two words shorter, ready for `verbPhrase`.",
+       "correct": true
+      },
+      {
+       "text": "`True ['THE', 'BOY', 'HIT', 'A', 'BALL']`",
+       "feedback": "This treats `pop` as if it only read the word. `pop` changes the list itself, and because the parameter refers to the same list as the caller's `words`, the caller sees it shrink."
+      },
+      {
+       "text": "`True ['THE', 'BOY', 'HIT']`",
+       "feedback": "This is what `pop()` with no argument would do: remove from the end. `pop(0)` removes from the front, which is where the noun phrase starts."
+      },
+      {
+       "text": "`False ['HIT', 'A', 'BALL']`",
+       "feedback": "The words were removed correctly, but `THE` is in `articles` and `BOY` is in `nouns`, so both membership tests are `True`."
+      }
+     ],
+     "hint": "Which end of the list does `pop(0)` remove from, and does it change the caller's list?",
+     "explanation": "Each recognizer function examines words from the front of the list and removes them, so the list shrinks as recognition moves from phrase to phrase. Because a list is passed by reference to the same object, every function in the chain sees the words that are still left.",
+     "ref": "Case Study 6-1, Design and Implementation (pp. 152–155)",
+     "aside": "One function per grammar rule, each consuming the input from the front, is a classic technique called a *recursive descent parser*. GCC's C and C++ compilers use hand-written parsers of this kind."
+    },
+    {
+     "id": "bottom-up-testing",
+     "concept": "Bottom-up testing",
+     "level": "evaluate",
+     "stem": "The recognizer was designed top down, yet it is tested in the order `nounPhrase`, `prepositionalPhrase`, `verbPhrase`, `sentence`, `main`. What is the reason for this order?",
+     "options": [
+      {
+       "text": "Each function is tested after the ones it calls, isolating new failures",
+       "feedback": "`prepositionalPhrase` calls `nounPhrase`, and so on up the chain. If the lower functions are already verified, an error found at the next level must be in the function being tested, which narrows the search.",
+       "correct": true
+      },
+      {
+       "text": "`nounPhrase` is near the top of the file, and tests follow the file's order",
+       "feedback": "In the file, `sentence` comes before `nounPhrase`. The order comes from which functions depend on which, not from where they are written."
+      },
+      {
+       "text": "Testing `main` first is impossible, because the shell cannot supply input",
+       "feedback": "`main` can be run from the shell and typed into, as the sample session shows. It is tested last because it depends on everything below it."
+      },
+      {
+       "text": "Lower-level functions contain the most bugs, so they deserve the first look",
+       "feedback": "Bugs can be anywhere. The reason is not where bugs are likely, but that a failure is easier to locate once everything beneath a function is known to be correct."
+      }
+     ],
+     "hint": "When `verbPhrase` gives a wrong answer, which functions could be to blame?",
+     "explanation": "Bottom-up testing checks the most basic functions first with cases that cover every situation they can meet, then moves up one level at a time. Each test then exercises only one unverified function, which narrows the search space for errors.",
+     "ref": "Case Study 6-1, Testing (pp. 155–156)"
+    }
+   ]
+  },
+  {
+   "id": "6.3a-scope-and-lifetime",
+   "title": "Namespace: scope and lifetime",
+   "subtitle": "Module variables, parameters and temporary variables, scope, assigning inside a function, and how long variables exist",
+   "source": "Ch. 6, section 6.3 (pp. 156–158)",
+   "intro": "A function sets `total = 0` and the rest of the program never notices. Six questions on where each name lives, who can see it and how long it lasts.",
+   "takeaways": [
+    "A module variable is introduced at the top level and is visible in the whole module, including inside every function body, as long as it has a value by the time the code using it runs. Parameters and temporary variables are visible only inside their own function's body.",
+    "Assigning to a name anywhere inside a function makes that name a temporary variable for the whole body. It hides any module variable with the same name and never changes it.",
+    "Scope is about the program's text; lifetime is about its run. Module variables live as long as the program, while parameters and temporary variables are created fresh for each call and vanish when it returns."
+   ],
+   "questions": [
+    {
+     "id": "name-categories",
+     "concept": "Module variables, parameters and temporary variables",
+     "level": "understand",
+     "stem": "In this code from the doctor program, which names are **temporary variables**?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "replacements = {\"I\": \"you\", \"me\": \"you\", \"my\": \"your\"}\n\ndef changePerson(sentence):\n    words = sentence.split()\n    replyWords = []\n    for word in words:\n        replyWords.append(replacements.get(word, word))\n    return \" \".join(replyWords)",
+      "verify": {
+       "expect": "runs"
+      }
+     },
+     "options": [
+      {
+       "text": "`words`, `replyWords` and `word`",
+       "feedback": "These three are introduced inside the body of `changePerson` (two by assignment, one by the `for` loop) and serve as its working storage during a call.",
+       "correct": true
+      },
+      {
+       "text": "`sentence`, `words` and `replyWords`",
+       "feedback": "`sentence` is introduced in the function header, which makes it a parameter. It gets its value from the call, not from an assignment in the body."
+      },
+      {
+       "text": "`replacements` and `changePerson`",
+       "feedback": "Both are introduced at the top level of the module, so they are module variables. A function's name is a module variable too."
+      },
+      {
+       "text": "`split`, `join` and `append`",
+       "feedback": "These are method names, defined by the `str` and `list` types and reached through an object and a dot. They are not variables this module introduces."
+      }
+     ],
+     "hint": "Look at *where* each name is first introduced: the top level, the function header, or the function body.",
+     "explanation": "A program's namespace has module variables (introduced at the top level), parameters (introduced in a function header, valued when the function is called), temporary variables (introduced in a function's body) and method names (defined by a type). Where a name is introduced decides its scope and lifetime.",
+     "ref": "Section 6.3, \"Module Variables, Parameters, and Temporary Variables\" (pp. 156–157)",
+     "aside": "You can list a module's names yourself: after `import doctor`, `dir(doctor)` shows `replacements`, `changePerson` and the rest, alongside entries such as `__name__` that Python adds to every module."
+    },
+    {
+     "id": "shadowing",
+     "concept": "Assignment inside a function creates a temporary variable",
+     "level": "apply",
+     "stem": "What does the last line print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "count = 0\n\ndef tally(items):\n    count = len(items)\n    return count\n\nn = tally([\"a\", \"b\", \"c\"])\nprint(n, count)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`3 0`",
+       "feedback": "The assignment inside `tally` creates a temporary variable named `count`, which holds 3 and is returned. The module variable `count` is a different variable and still holds 0.",
+       "correct": true
+      },
+      {
+       "text": "`3 3`",
+       "feedback": "This assumes the assignment inside the function reaches the module variable. Python creates a new temporary variable with the same name instead, so the module's `count` is unchanged."
+      },
+      {
+       "text": "`0 0`",
+       "feedback": "This assumes the function returns the module's `count`. Inside `tally`, once `count` is assigned, the name means the temporary variable, which holds 3."
+      },
+      {
+       "text": "An `UnboundLocalError` from the line `count = len(items)`",
+       "feedback": "That error comes from *reading* a temporary variable before assigning it. Here the body assigns `count` first, so the line runs fine."
+      }
+     ],
+     "hint": "When a function assigns to a name, which variable does that assignment create or change?",
+     "explanation": "A function can read a module variable, but under normal circumstances it cannot assign a new value to one. An assignment inside a function creates a temporary variable of the same name, which hides the module variable within that function and disappears when the call ends.",
+     "ref": "Section 6.3, \"Scope\" (p. 157)"
+    },
+    {
+     "id": "unbound-local",
+     "concept": "Reading a name before it is assigned in the body",
+     "level": "analyze",
+     "stem": "A student wants `addPoints` to update a running score. What happens when this runs?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "total = 0\n\ndef addPoints(points):\n    total = total + points\n    return total\n\nprint(addPoints(5))",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "UnboundLocalError"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "An `UnboundLocalError`: assigning makes `total` temporary, so it is read too early",
+       "feedback": "Because `total` is assigned in the body, Python treats it as a temporary variable everywhere in that body. The right side then reads that temporary `total` before anything is stored in it.",
+       "correct": true
+      },
+      {
+       "text": "It prints `5`: the right side reads the module's 0, and the left side makes a new `total`",
+       "feedback": "This reads the line in two halves, but Python decides each name's meaning for the whole function body. Inside `addPoints`, `total` refers only to the temporary variable."
+      },
+      {
+       "text": "It prints `5`, and afterwards the module variable `total` also holds 5",
+       "feedback": "Even when an assignment inside a function works, it cannot change the module variable; it creates a temporary one. And here it does not work at all."
+      },
+      {
+       "text": "A `NameError`: a function body can never see variables from the module",
+       "feedback": "Functions can read module variables; that is how the doctor program's functions use `replacements`. The problem is the assignment to `total` in this body."
+      }
+     ],
+     "hint": "Inside this body, `total` is assigned. What does that make `total` for every line of the body, including the right side of that same line?",
+     "explanation": "Python decides a name's scope from the whole function text: assigning to it anywhere in the body makes it temporary throughout. Reading it before the assignment raises `UnboundLocalError`. The cleaner design is to pass the old total in and return the new one: `total = addPoints(total, 5)`.",
+     "ref": "Section 6.3, \"Scope\" (p. 157)",
+     "aside": "The \"way to allow a function to modify a module variable\" that the book postpones is the `global` statement: `global total` at the start of the body. Most style guides discourage it, because any function could then change shared data out of sight."
+    },
+    {
+     "id": "module-scope-later",
+     "concept": "The scope of a module variable",
+     "level": "understand",
+     "stem": "`greet` uses `prefix`, but `prefix` is introduced **below** the definition of `greet`. What happens?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def greet():\n    return prefix + \"Ana\"\n\nprefix = \"Hi, \"\nprint(greet())",
+      "verify": {
+       "expect": "output",
+       "output": "Hi, Ana"
+      }
+     },
+     "options": [
+      {
+       "text": "It prints `Hi, Ana`",
+       "feedback": "A module variable's scope includes the bodies of all function definitions in the module, even those written earlier. `greet`'s body runs only when called, and by then `prefix` has a value.",
+       "correct": true
+      },
+      {
+       "text": "A `NameError`, because `prefix` is introduced after `greet`",
+       "feedback": "Defining `greet` does not run its body; it only stores the function. The body looks up `prefix` when `greet()` is called, after the assignment."
+      },
+      {
+       "text": "It prints `Ana`, since `prefix` was empty when `greet` was defined",
+       "feedback": "Python does not take a snapshot of module variables when it defines a function. The body reads `prefix`'s value at the time of the call."
+      },
+      {
+       "text": "A `NameError`, because `prefix` is not a parameter of `greet`",
+       "feedback": "Functions may use module variables without receiving them as parameters; that is exactly how a common data pool works."
+      }
+     ],
+     "hint": "When does Python actually run the line `return prefix + \"Ana\"`: at the `def`, or at the call?",
+     "explanation": "The scope of a module variable is the module text below its introduction plus the bodies of every function definition, including earlier ones. That is why `reply` can call `changePerson` even if `reply` is defined first, provided the program is not started until both exist.",
+     "ref": "Section 6.3, \"Scope\" (p. 157)"
+    },
+    {
+     "id": "two-xs",
+     "concept": "Lifetime: two variables with one name",
+     "level": "analyze",
+     "stem": "This is the book's script. While `f` is running, how many variables named `x` have storage, and what do they hold?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "x = 5\ndef f():\n    x = 10   # Attempt to reset x\nf()\nprint(x)",
+      "verify": {
+       "expect": "output",
+       "output": "5"
+      }
+     },
+     "options": [
+      {
+       "text": "Two: the module's `x` holds 5 and `f`'s temporary `x` holds 10",
+       "feedback": "The module variable exists before the call and survives it. During the call, the temporary `x` gets its own storage, so the two values stay distinct; afterwards only the module's 5 remains.",
+       "correct": true
+      },
+      {
+       "text": "One: the assignment overwrites the module `x`'s storage with 10",
+       "feedback": "If that were true, the script would print 10. It prints 5, because the assignment created separate storage for a temporary variable."
+      },
+      {
+       "text": "Two, but they share one storage location, so both hold 10 during the call",
+       "feedback": "Two variables with separate lifetimes need separate storage. Sharing a location would mean the module's `x` changed, which it does not."
+      },
+      {
+       "text": "One: the temporary `x` does not exist until `f` has returned",
+       "feedback": "It is the other way round. Temporary variables come into existence during the call and are reclaimed when the call ends."
+      }
+     ],
+     "hint": "When does the module's `x` come into existence, when does `f`'s `x`, and when does each one go away?",
+     "explanation": "A variable's lifetime is the period during execution when it has memory storage. Module variables live as long as the program; parameters and temporary variables are created when a call binds them and are reclaimed when that call ends.",
+     "ref": "Section 6.3, \"Scope\" and \"Lifetime\" (pp. 157–158)"
+    },
+    {
+     "id": "fresh-each-call",
+     "concept": "Temporary variables are recreated on each call",
+     "level": "apply",
+     "stem": "What does the last line print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def counter():\n    calls = 0\n    calls += 1\n    return calls\n\ncounter()\ncounter()\nprint(counter())",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`1`",
+       "feedback": "Each call creates a fresh temporary `calls`, sets it to 0, adds 1 and returns 1. When the call ends, that `calls` is gone, so the next call starts from scratch.",
+       "correct": true
+      },
+      {
+       "text": "`3`",
+       "feedback": "This expects `calls` to remember its value between calls. Temporary variables exist only for the lifetime of one call, so nothing carries over."
+      },
+      {
+       "text": "`0`",
+       "feedback": "The body adds 1 before returning, so each call returns 1, not the starting value."
+      },
+      {
+       "text": "`2`",
+       "feedback": "This counts only the two earlier calls. Even if `calls` kept its value, the third call would add one more; but it does not keep its value at all."
+      }
+     ],
+     "hint": "When the first call to `counter` returns, what happens to its variable `calls`?",
+     "explanation": "Parameters and temporary variables come into existence when a function is called and go out of existence when it returns. To keep information from one call to the next, a function must return it to the caller, or it must live somewhere with a longer lifetime.",
+     "ref": "Section 6.3, \"Lifetime\" (pp. 157–158)",
+     "aside": "Each call gets its own *frame*, a block of storage for its parameters and temporary variables. That is why calls can even nest inside themselves, a technique called recursion, without trampling each other's variables."
+    }
+   ]
+  },
+  {
+   "id": "6.3b-default-arguments",
+   "title": "Default and keyword arguments",
+   "subtitle": "Required and default arguments, supplying values by position or by keyword, designing optional arguments, and the fail-safe inputInt function",
+   "source": "Ch. 6, section 6.3 (pp. 158–160)",
+   "intro": "Three-quarters of the calls to a conversion function pass the same base, and every caller is tired of typing it. Six questions on making arguments optional without making calls confusing.",
+   "takeaways": [
+    "In a header, required parameters come first, then default parameters written `name = value`. A call must supply every required argument; any default argument it leaves out takes its default value.",
+    "Defaults can be overridden by position (in header order) or by keyword (`name = value`, in any order). A keyword lets you skip earlier defaults and set a later one.",
+    "Give a parameter a default when most callers want the same value: the function stays general, and the common call stays short."
+   ],
+   "questions": [
+    {
+     "id": "keyword-skips",
+     "concept": "Overriding a later default by keyword",
+     "level": "apply",
+     "stem": "What does this call print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def example(required, option1 = 2, option2 = 3):\n    print(required, option1, option2)\n\nexample(1, option2 = 20)",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`1 2 20`",
+       "feedback": "`1` goes to `required` by position. The keyword names `option2`, so 20 goes there, and `option1`, which the call leaves out, keeps its default of 2.",
+       "correct": true
+      },
+      {
+       "text": "`1 20 3`",
+       "feedback": "This fills the next parameter in header order, which is what a plain value would do. Writing `option2 = 20` sends the value to the parameter it names."
+      },
+      {
+       "text": "`1 20 20`",
+       "feedback": "The call supplies one value besides `required`. A keyword argument goes to exactly one parameter, the one it names."
+      },
+      {
+       "text": "A `TypeError`, because `option1` must be given before `option2`",
+       "feedback": "Order matters only for values given by position. With a keyword you can skip earlier defaults and set a later one."
+      }
+     ],
+     "hint": "Which parameter does the name in `option2 = 20` point to, and what happens to a default argument the call leaves out?",
+     "explanation": "Default arguments can be supplied by position, in header order, or by keyword, in any order. Any default argument that is not supplied takes its default value.",
+     "ref": "Section 6.3, \"Using Keywords for Default and Optional Arguments\" (p. 159)"
+    },
+    {
+     "id": "header-order",
+     "concept": "Required arguments come first",
+     "level": "analyze",
+     "stem": "Python refuses to run this file and reports a `SyntaxError` on the header. Why?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def area(width = 1, height):\n    return width * height",
+      "verify": {
+       "expect": "compile_error",
+       "error_contains": [
+        "SyntaxError"
+       ]
+      }
+     },
+     "options": [
+      {
+       "text": "A required parameter comes after a default one; required ones must be listed first",
+       "feedback": "In a header, the required arguments come first, followed by the defaults. Otherwise a call such as `area(5)` could not tell whether 5 was meant for `width` or for `height`.",
+       "correct": true
+      },
+      {
+       "text": "Default values may appear in a call such as `area(width = 1)`, but not in a header",
+       "feedback": "Defaults are written in the header; that is where `repToInt(repString, base = 2)` gets its default. The problem is the order of the parameters."
+      },
+      {
+       "text": "The header is fine; the error appears only when `area` is called without `height`",
+       "feedback": "A `SyntaxError` is reported when Python reads the file, before any call happens. The header itself breaks the rule."
+      },
+      {
+       "text": "A default value must be written without spaces, as `width=1`, not `width = 1`",
+       "feedback": "Spacing around `=` is a matter of style; the book itself writes `base = 2`. The problem is where the default sits in the list."
+      }
+     ],
+     "hint": "In the book's syntax for a header, which kind of parameter is listed first?",
+     "explanation": "A header lists the required arguments first, then the default (keyword) arguments. Callers supply the required ones in their header positions, and every default that follows can be left out.",
+     "ref": "Section 6.3, \"Using Keywords for Default and Optional Arguments\" (p. 158)"
+    },
+    {
+     "id": "reptoint-default",
+     "concept": "A default value and an override",
+     "level": "apply",
+     "stem": "`repToInt` now has a default base of 2. What does the last line print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def repToInt(repString, base = 2):\n    decimal = 0\n    exponent = len(repString) - 1\n    for digit in repString:\n        decimal = decimal + int(digit) * base ** exponent\n        exponent -= 1\n    return decimal\n\nprint(repToInt(\"101\"), repToInt(\"101\", 10))",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`5 101`",
+       "feedback": "The first call leaves out `base`, so it is 2 and \"101\" means 4 + 0 + 1 = 5. The second call supplies 10, overriding the default, so \"101\" means one hundred one.",
+       "correct": true
+      },
+      {
+       "text": "`101 5`",
+       "feedback": "This swaps the roles: it treats the call without a base as decimal. The header's default says a missing base is 2."
+      },
+      {
+       "text": "`5 5`",
+       "feedback": "This ignores the 10 in the second call. A value supplied for a default argument overrides the default."
+      },
+      {
+       "text": "`101 101`",
+       "feedback": "This treats the default as having no effect. When `base` is left out it still has a value, 2, so the first call converts from binary."
+      }
+     ],
+     "hint": "In each call, what value does `base` end up with?",
+     "explanation": "When a function is called without a default argument, its default value is assigned automatically; when the caller supplies a value, it overrides the default. A good default matches what most callers want, so the common call stays short.",
+     "ref": "Section 6.3, \"Using Keywords for Default and Optional Arguments\" (pp. 158–159)",
+     "aside": "Python's built-in `int` works the same way: `int(\"101\", 2)` is 5, and the base defaults to 10, so `int(\"101\")` is 101. It also accepts base 16, so `int(\"ff\", 16)` is 255."
+    },
+    {
+     "id": "missing-required",
+     "concept": "Required arguments must be supplied",
+     "level": "apply",
+     "stem": "Given this definition, which call raises an **error**?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def example(required, option1 = 2, option2 = 3):\n    print(required, option1, option2)",
+      "verify": {
+       "expect": "compiles"
+      }
+     },
+     "options": [
+      {
+       "text": "`example(option1 = 5)`",
+       "feedback": "Defaults cover only the default arguments. `required` has no default, so a call must always supply it, and Python raises a `TypeError` for the missing argument.",
+       "correct": true
+      },
+      {
+       "text": "`example(1, option2 = 5, option1 = 4)`",
+       "feedback": "Keyword arguments may come in any order. This call is valid and prints `1 4 5`."
+      },
+      {
+       "text": "`example(1, 5)`",
+       "feedback": "The second value goes by position to `option1`, and `option2` keeps its default. This call is valid and prints `1 5 3`."
+      },
+      {
+       "text": "`example(1)`",
+       "feedback": "Leaving out every default argument is the simplest valid call; it prints `1 2 3`."
+      }
+     ],
+     "hint": "Which parameter has no default value to fall back on?",
+     "explanation": "Required arguments are the ones essential to every caller, so a call must supply each of them in its header position. Default arguments are optional: leave them out, give them by position, or give them by keyword.",
+     "ref": "Section 6.3, \"Using Keywords for Default and Optional Arguments\" (p. 159)"
+    },
+    {
+     "id": "design-default",
+     "concept": "Designing an optional argument",
+     "level": "evaluate",
+     "stem": "`formatPrice(amount, symbol)` is called hundreds of times, and in about 90% of calls the symbol is `\"$\"`. A few callers need `\"€\"`. Which change is best?",
+     "options": [
+      {
+       "text": "`def formatPrice(amount, symbol = \"$\"):`, so most calls just pass the amount",
+       "feedback": "The common call shrinks to `formatPrice(19.99)`, the euro callers keep passing their symbol, and every existing call still works. The function stays as general as before.",
+       "correct": true
+      },
+      {
+       "text": "`def formatPrice(symbol = \"$\", amount):`, so the symbol is listed first",
+       "feedback": "A required parameter cannot follow a default one, so Python rejects this header. Required arguments must come first."
+      },
+      {
+       "text": "Remove `symbol` and write `\"$\"` inside the body, since it is the usual case",
+       "feedback": "This makes the usual call short but breaks the callers who need euros. The function stops being a general method."
+      },
+      {
+       "text": "Make `symbol` a module variable that callers reassign before each call",
+       "feedback": "Callers would have to remember to set and reset shared data, and a forgotten reset prints the wrong currency somewhere else. An argument keeps each call self-contained."
+      }
+     ],
+     "hint": "Which change keeps the function general while making the most common call shorter?",
+     "explanation": "Extra arguments increase a function's generality but annoy callers in the common case. Giving them default values makes them optional: the function handles every case, and the essential use stays simple.",
+     "ref": "Section 6.3, \"Using Keywords for Default and Optional Arguments\" (p. 158)",
+     "aside": "A default value is evaluated once, when the `def` runs, not at each call. So `def add(item, items = [])` gives every call the *same* list, and it keeps growing. The usual fix is `items = None`, then creating a new list in the body."
+    },
+    {
+     "id": "inputint-loop",
+     "concept": "Fail-safe input with a loop and return",
+     "level": "apply",
+     "stem": "The user types `twenty`, then `-5`, then `42`. How many error messages appear, and what is the last thing printed?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def inputInt(prompt):\n    while True:\n        theString = input(prompt)\n        if theString.isdigit():\n            return int(theString)\n        else:\n            print(\"Error: digits only\")\n\nage = inputInt(\"Age: \")\nprint(age + 1)",
+      "verify": {
+       "expect": "output",
+       "stdin": "twenty\n-5\n42\n",
+       "output": "Age: Error: digits only Age: Error: digits only Age: 43"
+      }
+     },
+     "options": [
+      {
+       "text": "Two error messages, then `43`",
+       "feedback": "`twenty` and `-5` both fail `isdigit`, because `-` is not a digit. `42` passes, and `return int(theString)` exits both the loop and the function with the integer 42.",
+       "correct": true
+      },
+      {
+       "text": "One error message, then `-4`",
+       "feedback": "This assumes `isdigit` accepts negative numbers. It returns `True` only when every character is a digit, and the minus sign is not."
+      },
+      {
+       "text": "Two error messages, then a `TypeError` from `age + 1`",
+       "feedback": "This assumes the function hands back the string `\"42\"`. It returns `int(theString)`, so `age` is the integer 42."
+      },
+      {
+       "text": "Three error messages, because `while True` never stops",
+       "feedback": "A `return` ends the function immediately, which also ends the loop inside it. `while True` only repeats until a `return` is reached."
+      }
+     ],
+     "hint": "Is the minus sign a digit? And what does `return` do to a loop that is still running?",
+     "explanation": "A fail-safe input function loops until it gets acceptable input, prints an error for each bad attempt, and returns the converted value. A `return` inside a loop exits both the loop and the function at once.",
+     "ref": "Section 6.3, Fail-Safe Programming (p. 160)"
+    }
+   ]
+  }
+ ]
+}
