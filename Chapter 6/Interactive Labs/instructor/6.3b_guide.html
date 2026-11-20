@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Sensible defaults: progress bars for the study tracker</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 6.3b</div>
+  <h1>Sensible defaults: progress bars for the study tracker</h1>
+<h2>Objectives</h2><ul><li>Write a function header with required arguments first, followed by default arguments</li><li>Call a function using its defaults, overriding a default by position, and overriding one by keyword</li><li>Choose defaults so the most common call is also the simplest</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> The header is <code>progress_bar(done, total, width=20, fill=&quot;#&quot;)</code>: the two required arguments first, then the two default arguments.</li><li><strong>R2</strong> When <code>done</code> is greater than <code>total</code>, the bar is full and shows <code>100%</code>. It never draws more than <code>width</code> characters.</li><li><strong>R3</strong> The dashboard call passes only the two required arguments.</li><li><strong>R4</strong> The phone call overrides only the width (10). The printable call overrides only the fill (<code>&quot;=&quot;</code>) by <strong>keyword</strong>, leaving the width at its default. No call passes a default value explicitly.</li><li><strong>R5</strong> The test program&#x27;s bars match, including calls by position, by keyword and with keywords in a different order. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace the starter&#x27;s <code>progress_bar(3, 4, 8, &quot;#&quot;)</code> by hand: what are <code>filled</code> and <code>percent</code>, and what string does it return?</p><div class="answer"><p>filled = 3 * 8 // 4 = 6 and percent = 3 * 100 // 4 = 75, so it returns [######--] 75% (six # and two -).</p></div></li><li><p>A teammate suggests the header <code>def progress_bar(width=20, fill=&quot;#&quot;, done, total):</code> so the options come first. What does Python do with it, and why does the rule make sense?</p><div class="answer"><p>Python refuses it with a SyntaxError (a parameter without a default follows one with a default). Arguments are matched by position, so if defaults came first, Python couldn&#x27;t tell whether progress_bar(5, 10) meant width and fill or done and total. Required arguments must come first.</p></div></li></ol>
+<h2>Solution</h2><div class="file">progress.py</div><pre class="code-block"><code><span class="t-sd">"""progress.py - text progress bars for the course study tracker."""</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">progress_bar</span><span class="t-p">(</span><span class="t-n">done</span><span class="t-p">,</span> <span class="t-n">total</span><span class="t-p">,</span> <span class="t-n">width</span><span class="t-o">=</span><span class="t-mi">20</span><span class="t-p">,</span> <span class="t-n">fill</span><span class="t-o">=</span><span class="t-s2">"#"</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return a bar such as [##########----------] 50% for done out of total.</span>
+<span class="t-sd">    width is the number of characters inside the brackets; fill draws the done part."""</span>
+    <span class="t-n">done</span> <span class="t-o">=</span> <span class="t-nb">min</span><span class="t-p">(</span><span class="t-n">done</span><span class="t-p">,</span> <span class="t-n">total</span><span class="t-p">)</span>
+    <span class="t-n">filled</span> <span class="t-o">=</span> <span class="t-n">done</span> <span class="t-o">*</span> <span class="t-n">width</span> <span class="t-o">//</span> <span class="t-n">total</span>
+    <span class="t-n">percent</span> <span class="t-o">=</span> <span class="t-n">done</span> <span class="t-o">*</span> <span class="t-mi">100</span> <span class="t-o">//</span> <span class="t-n">total</span>
+    <span class="t-k">return</span> <span class="t-s2">"["</span> <span class="t-o">+</span> <span class="t-n">fill</span> <span class="t-o">*</span> <span class="t-n">filled</span> <span class="t-o">+</span> <span class="t-s2">"-"</span> <span class="t-o">*</span> <span class="t-p">(</span><span class="t-n">width</span> <span class="t-o">-</span> <span class="t-n">filled</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">"] "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">percent</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">"%"</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Ask for the progress and print it for three screens."""</span>
+    <span class="t-n">done</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Lessons finished? "</span><span class="t-p">))</span>
+    <span class="t-n">total</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Lessons in the course? "</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Dashboard:"</span><span class="t-p">,</span> <span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-n">done</span><span class="t-p">,</span> <span class="t-n">total</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Phone:    "</span><span class="t-p">,</span> <span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-n">done</span><span class="t-p">,</span> <span class="t-n">total</span><span class="t-p">,</span> <span class="t-n">width</span><span class="t-o">=</span><span class="t-mi">10</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Printable:"</span><span class="t-p">,</span> <span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-n">done</span><span class="t-p">,</span> <span class="t-n">total</span><span class="t-p">,</span> <span class="t-n">fill</span><span class="t-o">=</span><span class="t-s2">"="</span><span class="t-p">))</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p>Default arguments are assignments in the header: <code>width=20, fill=&quot;#&quot;</code>. They must follow the required arguments <code>done</code> and <code>total</code>; putting a default before a required argument is a <code>SyntaxError</code>. A call that omits them gets the defaults; a call that supplies them overrides them. The phone call may pass the width by position (<code>progress_bar(done, total, 10)</code>) or by keyword (<code>width=10</code>). The printable call has to use a keyword: to give a value for <code>fill</code> by position you would also have to repeat the width, 20, and repeating a default defeats the purpose. Keywords may come in any order (<code>fill=&quot;.&quot;, width=8</code>). <code>done = min(done, total)</code> caps the progress; an <code>if done &gt; total:</code> statement works just as well. Assigning to the parameter <code>done</code> only changes the function&#x27;s own copy: the caller&#x27;s variable is untouched.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">progress</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">progress_bar</span><span class="t-p">,</span> <span class="t-n">main</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">,</span> <span class="t-n">fill</span><span class="t-o">=</span><span class="t-s2">"*"</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">,</span> <span class="t-n">fill</span><span class="t-o">=</span><span class="t-s2">"."</span><span class="t-p">,</span> <span class="t-n">width</span><span class="t-o">=</span><span class="t-mi">8</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-mi">7</span><span class="t-p">,</span> <span class="t-mi">7</span><span class="t-p">,</span> <span class="t-n">width</span><span class="t-o">=</span><span class="t-mi">5</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">progress_bar</span><span class="t-p">(</span><span class="t-mi">12</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+
+<span class="t-n">main</span><span class="t-p">()</span></code></pre><h3>Program input it receives</h3><pre class="output">9
+12
+</pre><h3>Expected output</h3><pre class="output">[##########----------] 50%
+[#####-----] 50%
+[***************-----] 75%
+[..------] 25%
+[#####] 100%
+[--------------------] 0%
+[####] 100%
+
+Lessons finished? Lessons in the course? Dashboard: [###############-----] 75%
+Phone:     [#######---] 75%
+Printable: [===============-----] 75%
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>width</code> defaults to 20 and <code>fill</code> to <code>&quot;#&quot;</code>, after the required arguments<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bdef\s+progress_bar\s*\(\s*\w+\s*,\s*\w+\s*,\s*width\s*=\s*20\s*,\s*fill\s*=\s*(?:\&quot;#\&quot;|&#x27;#&#x27;)\s*\)\s*:</code></div></td></tr><tr><td>C2</td><td>R2</td><td><code>progress_bar</code> caps <code>done</code> at <code>total</code><div class="small">in <code>progress_bar</code></div></td><td><div><span class="tag">require</span> <code>\bmin\s*\(</code></div><div><span class="tag">require</span> <code>\bif\b[^\n]*(?:&gt;|&lt;)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>The dashboard uses both defaults<div class="small">in <code>main</code></div></td><td><div><span class="tag">require</span> <code>\bprogress_bar\s*\(\s*\w+\s*,\s*\w+\s*\)</code></div></td></tr><tr><td>C4</td><td>R4</td><td>The phone call changes only the width<div class="small">in <code>main</code></div></td><td><div><span class="tag">require</span> <code>\bprogress_bar\s*\(\s*\w+\s*,\s*\w+\s*,\s*(?:width\s*=\s*)?10\s*\)</code></div></td></tr><tr><td>C5</td><td>R4</td><td>The printable call sets only <code>fill</code>, by keyword<div class="small">in <code>main</code>, strings included</div></td><td><div><span class="tag">require</span> <code>\bprogress_bar\s*\(\s*\w+\s*,\s*\w+\s*,\s*fill\s*=\s*(?:\&quot;=\&quot;|&#x27;=&#x27;)\s*\)</code></div></td></tr><tr><td>C6</td><td>R4</td><td>No call repeats a default value<div class="small">in <code>main</code>, strings included</div></td><td><div><span class="tag">forbid</span> <code>,\s*(?:width\s*=\s*)?20\b</code></div><div><span class="tag">forbid</span> <code>,\s*(?:fill\s*=\s*)?(?:\&quot;#\&quot;|&#x27;#&#x27;)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>width</code> defaults to 20 and <code>fill</code> to <code>&quot;#&quot;</code>, after the required arguments</dt><dd><p>Change the header to <code>def progress_bar(done, total, width=20, fill=&quot;#&quot;):</code>. Required arguments come first; each default argument is written as an assignment.</p></dd><dt>C2 · <code>progress_bar</code> caps <code>done</code> at <code>total</code></dt><dd><p>Before computing <code>filled</code>, limit <code>done</code> so it is never more than <code>total</code>, with <code>min</code> or an <code>if</code> statement. 12 of 10 should draw a full bar and 100%, not 24 characters in a 20-character bar.</p></dd><dt>C3 · The dashboard uses both defaults</dt><dd><p>Call <code>progress_bar(done, total)</code> for the dashboard. With defaults in the header, the most common call is also the shortest.</p></dd><dt>C4 · The phone call changes only the width</dt><dd><p>For the phone, pass just the width after the two required arguments, either by position (<code>10</code>) or by keyword (<code>width=10</code>). The fill keeps its default.</p></dd><dt>C5 · The printable call sets only <code>fill</code>, by keyword</dt><dd><p>To change the fill without restating the width, name it: <code>fill=&quot;=&quot;</code>. By position, the third argument always goes to <code>width</code>.</p></dd><dt>C6 · No call repeats a default value</dt><dd><p>Remove the explicit <code>20</code> and <code>&quot;#&quot;</code> from the calls. If the defaults change later, a call that repeats the old values won&#x27;t follow.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Look at <code>def example(required, option1 = 2, option2 = 3)</code> in the reading: the required names come first, then each optional one is written as <code>name = value</code>.</p></li><li><p>Before <code>filled</code> is computed, make sure <code>done</code> can&#x27;t be bigger than <code>total</code>. Python&#x27;s built-in <code>min</code> returns the smaller of its arguments.</p></li><li><p>By position, values fill the parameters left to right, so the third value is always <code>width</code>. To skip the width and set only the fill, use the syntax <code>&lt;key&gt; = &lt;value&gt;</code> in the call.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Why must the printable call use the keyword <code>fill=</code>, while the phone call may pass <code>10</code> by position?</p><div class="answer"><p>Positional values fill the parameters left to right, so a third value always goes to width. The phone changes width, the third parameter, so position works. The printable page changes only fill, the fourth; by position I would have to pass the width too, repeating the default 20. A keyword skips straight to fill.</p></div></li><li><p>Inside your function, <code>done = min(done, total)</code> assigns to the parameter. Does this change the <code>done</code> variable in <code>main</code>? Explain using what the reading says about parameters.</p><div class="answer"><p>No. When the function is called, the argument&#x27;s value is copied into the parameter, which is a variable of the function with the function body as its scope. Assigning to it changes only that copy, which disappears when the call ends; main&#x27;s done still holds 12.</p></div></li><li><p>Python&#x27;s <code>range</code> has defaults too. Using the reading, explain what <code>range(5)</code> assumes, and how that compares with choosing 20 and <code>&quot;#&quot;</code> here.</p><div class="answer"><p>range(5) assumes a lower bound of 0 and a step of 1, because those are what most loops need. Our defaults follow the same idea: 20 and # are what most screens want, so the common call stays short, and the rare cases (phone, printable) override only what differs.</p></div></li></ol>
+<h2>Extension</h2><p>Add a third default argument <code>show_percent=True</code>, and make the phone widget call it with <code>show_percent=False</code> so it shows only the bar. Then write <code>rep_to_int(rep, base=2)</code> from the reading and test it with and without the base.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Top-down design: the smart-light command checker</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 6.2</div>
+  <h1>Top-down design: the smart-light command checker</h1>
+<h2>Objectives</h2><ul><li>Turn each rule of a design into one function, following a structure chart</li><li>Keep user interaction in <code>main</code> and the decision logic in the functions it calls</li><li>Test a top-down design bottom up, lowest-level functions first</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Define <code>action(words)</code>: if fewer than 2 words remain it returns <code>False</code>; otherwise it removes the first two words and returns <code>True</code> only if they are a word from <code>VERBS</code> followed by a word from <code>SWITCHES</code>.</li><li><strong>R2</strong> Define <code>place(words)</code>: if no words remain it returns <code>False</code>; otherwise it removes the preposition and returns <code>True</code> only if it is in <code>PREPOSITIONS</code> <strong>and</strong> the words after it form an article and a room. Reuse <code>article_noun</code> for that second part.</li><li><strong>R3</strong> <code>command(words)</code> returns <code>True</code> only for an action, a device and a place, in that order, with <strong>no words left over</strong> (&quot;... in the lounge now&quot; is rejected).</li><li><strong>R4</strong> <code>main</code> handles only the conversation: it reads the text, calls <code>command</code> and prints the reply. It no longer inspects the words itself.</li><li><strong>R5</strong> None of the grammar functions print anything or ask for input; they answer <code>True</code> or <code>False</code>.</li><li><strong>R6</strong> The bottom-up test program&#x27;s results match, from <code>action</code> up to <code>main</code>. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Trace <code>article_noun([&quot;THE&quot;, &quot;FAN&quot;, &quot;IN&quot;], DEVICES)</code> by hand. What does it return, and what is left in the list afterwards? Why does it matter that the function removes the words it examines?</p><div class="answer"><p>It pops THE and FAN, returns True because THE is an article and FAN is a device, and leaves [&#x27;IN&#x27;] in the list. Removing the words matters because the next function in the chain (place) must start with the words after the device, not re-read the beginning.</p></div></li><li><p>Run the starter with the program input. <code>main</code> currently decides on its own whether a command is valid. Name one command it accepts that it should reject, and say what it is checking instead of the grammar.</p><div class="answer"><p>It accepts &quot;turn banana&quot; (and &quot;turn on the heater in the garage&quot;), because it only checks that there are at least two words and the first is TURN. It ignores the device, the place and the vocabulary, and it rejects valid commands that start with SWITCH.</p></div></li></ol>
+<h2>Solution</h2><div class="file">lights.py</div><pre class="code-block"><code><span class="t-sd">"""lights.py - checks spoken commands for the residence hall's smart-light assistant.</span>
+
+<span class="t-sd">Grammar of a valid command (one function per rule):</span>
+<span class="t-sd">    command = action device place</span>
+<span class="t-sd">    action  = verb switch            TURN ON, SWITCH OFF, ...</span>
+<span class="t-sd">    device  = article device-noun    THE LAMP, A FAN, ...</span>
+<span class="t-sd">    place   = preposition area       IN THE KITCHEN, AT THE DESK, ...</span>
+<span class="t-sd">    area    = article room-noun</span>
+<span class="t-sd">"""</span>
+
+<span class="t-c1"># Data pool: the vocabulary every function looks up.</span>
+<span class="t-n">VERBS</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-s2">"TURN"</span><span class="t-p">,</span> <span class="t-s2">"SWITCH"</span><span class="t-p">)</span>
+<span class="t-n">SWITCHES</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-s2">"ON"</span><span class="t-p">,</span> <span class="t-s2">"OFF"</span><span class="t-p">)</span>
+<span class="t-n">ARTICLES</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-s2">"THE"</span><span class="t-p">,</span> <span class="t-s2">"A"</span><span class="t-p">)</span>
+<span class="t-n">DEVICES</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-s2">"LAMP"</span><span class="t-p">,</span> <span class="t-s2">"FAN"</span><span class="t-p">,</span> <span class="t-s2">"HEATER"</span><span class="t-p">,</span> <span class="t-s2">"SPEAKER"</span><span class="t-p">)</span>
+<span class="t-n">PREPOSITIONS</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-s2">"IN"</span><span class="t-p">,</span> <span class="t-s2">"AT"</span><span class="t-p">)</span>
+<span class="t-n">ROOMS</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-s2">"KITCHEN"</span><span class="t-p">,</span> <span class="t-s2">"LOUNGE"</span><span class="t-p">,</span> <span class="t-s2">"BEDROOM"</span><span class="t-p">,</span> <span class="t-s2">"DESK"</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">article_noun</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">,</span> <span class="t-n">nouns</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Given. Return True if the first two words are an article followed by</span>
+<span class="t-sd">    a word in nouns, or False otherwise. Removes the words it examines."""</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">)</span> <span class="t-o">&lt;</span> <span class="t-mi">2</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-kc">False</span>
+    <span class="t-n">article</span> <span class="t-o">=</span> <span class="t-n">words</span><span class="t-o">.</span><span class="t-n">pop</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+    <span class="t-n">noun</span> <span class="t-o">=</span> <span class="t-n">words</span><span class="t-o">.</span><span class="t-n">pop</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+    <span class="t-k">return</span> <span class="t-n">article</span> <span class="t-ow">in</span> <span class="t-n">ARTICLES</span> <span class="t-ow">and</span> <span class="t-n">noun</span> <span class="t-ow">in</span> <span class="t-n">nouns</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">device</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Given. device = article device-noun"""</span>
+    <span class="t-k">return</span> <span class="t-n">article_noun</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">,</span> <span class="t-n">DEVICES</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">action</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""action = verb switch. Return True if the first two words are a verb</span>
+<span class="t-sd">    followed by ON or OFF. Removes the words it examines."""</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">)</span> <span class="t-o">&lt;</span> <span class="t-mi">2</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-kc">False</span>
+    <span class="t-n">verb</span> <span class="t-o">=</span> <span class="t-n">words</span><span class="t-o">.</span><span class="t-n">pop</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+    <span class="t-n">switch</span> <span class="t-o">=</span> <span class="t-n">words</span><span class="t-o">.</span><span class="t-n">pop</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+    <span class="t-k">return</span> <span class="t-n">verb</span> <span class="t-ow">in</span> <span class="t-n">VERBS</span> <span class="t-ow">and</span> <span class="t-n">switch</span> <span class="t-ow">in</span> <span class="t-n">SWITCHES</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">place</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""place = preposition area. Return True if the words start with a</span>
+<span class="t-sd">    preposition followed by an article and a room. Removes the words it examines."""</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-kc">False</span>
+    <span class="t-n">preposition</span> <span class="t-o">=</span> <span class="t-n">words</span><span class="t-o">.</span><span class="t-n">pop</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+    <span class="t-k">return</span> <span class="t-n">preposition</span> <span class="t-ow">in</span> <span class="t-n">PREPOSITIONS</span> <span class="t-ow">and</span> <span class="t-n">article_noun</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">,</span> <span class="t-n">ROOMS</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">command</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return True if words form one complete, valid command."""</span>
+    <span class="t-k">return</span> <span class="t-n">action</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">)</span> <span class="t-ow">and</span> <span class="t-n">device</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">)</span> <span class="t-ow">and</span> <span class="t-n">place</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">)</span> <span class="t-ow">and</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">0</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Take commands until the user presses return."""</span>
+    <span class="t-k">while</span> <span class="t-kc">True</span><span class="t-p">:</span>
+        <span class="t-n">text</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Command (press return to quit): "</span><span class="t-p">)</span>
+        <span class="t-k">if</span> <span class="t-n">text</span> <span class="t-o">==</span> <span class="t-s2">""</span><span class="t-p">:</span>
+            <span class="t-k">return</span>
+        <span class="t-n">words</span> <span class="t-o">=</span> <span class="t-n">text</span><span class="t-o">.</span><span class="t-n">upper</span><span class="t-p">()</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()</span>
+        <span class="t-k">if</span> <span class="t-n">command</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">):</span>
+            <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Done."</span><span class="t-p">)</span>
+        <span class="t-k">else</span><span class="t-p">:</span>
+            <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Sorry, I don't understand that command."</span><span class="t-p">)</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p>Each grammar rule becomes one function that receives the remaining words and returns a Boolean, exactly like <code>nounPhrase</code> and <code>verbPhrase</code> in Case Study 6-1. <code>pop(0)</code> both reads and removes a word, so each function hands the rest of the list to the next one; that is why <code>command</code> can simply chain the calls with <code>and</code>. Short-circuit evaluation stops at the first <code>False</code>, so a bad action never gets as far as <code>device</code>. The length guards (<code>&lt; 2</code>, <code>== 0</code>) protect <code>pop(0)</code> from an <code>IndexError</code> on short input. <code>place</code> reuses <code>article_noun(words, ROOMS)</code>: the same general method with a different vocabulary, so the article check lives in one place. <code>len(words) == 0</code> at the end of <code>command</code> rejects trailing words (the book&#x27;s recognizer doesn&#x27;t check this; <code>not words</code> is also fine). <code>main</code> now has one responsibility, the interaction, while the grammar functions own the decision: responsibility-driven design. A new room or device is a one-word change to the data pool.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">lights</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">action</span><span class="t-p">,</span> <span class="t-n">place</span><span class="t-p">,</span> <span class="t-n">command</span><span class="t-p">,</span> <span class="t-n">main</span>
+
+<span class="t-c1"># Bottom-up: the lowest-level functions first.</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"--- action ---"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">action</span><span class="t-p">(</span><span class="t-s2">"TURN ON"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-n">rest</span> <span class="t-o">=</span> <span class="t-s2">"SWITCH OFF THE FAN"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">action</span><span class="t-p">(</span><span class="t-n">rest</span><span class="t-p">),</span> <span class="t-n">rest</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">action</span><span class="t-p">([</span><span class="t-s2">"TURN"</span><span class="t-p">]))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">action</span><span class="t-p">(</span><span class="t-s2">"TURN UP"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"--- place ---"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">place</span><span class="t-p">(</span><span class="t-s2">"IN THE KITCHEN"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">place</span><span class="t-p">(</span><span class="t-s2">"AT A DESK"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">place</span><span class="t-p">(</span><span class="t-s2">"ON THE KITCHEN"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">place</span><span class="t-p">(</span><span class="t-s2">"IN THE GARAGE"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">place</span><span class="t-p">([]))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"--- command ---"</span><span class="t-p">)</span>
+<span class="t-n">words</span> <span class="t-o">=</span> <span class="t-s2">"TURN ON THE LAMP IN THE LOUNGE"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">command</span><span class="t-p">(</span><span class="t-n">words</span><span class="t-p">),</span> <span class="t-n">words</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">command</span><span class="t-p">(</span><span class="t-s2">"SWITCH OFF A HEATER AT THE DESK"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">command</span><span class="t-p">(</span><span class="t-s2">"TURN ON THE LAMP"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">command</span><span class="t-p">(</span><span class="t-s2">"TURN ON THE LAMP IN THE LOUNGE NOW"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">command</span><span class="t-p">(</span><span class="t-s2">"THE LAMP TURN ON IN THE LOUNGE"</span><span class="t-o">.</span><span class="t-n">split</span><span class="t-p">()))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"--- main ---"</span><span class="t-p">)</span>
+<span class="t-n">main</span><span class="t-p">()</span></code></pre><h3>Program input it receives</h3><pre class="output">turn off the fan in the bedroom
+turn banana
+
+</pre><h3>Expected output</h3><pre class="output">--- action ---
+True
+True [&#x27;THE&#x27;, &#x27;FAN&#x27;]
+False
+False
+--- place ---
+True
+True
+False
+False
+False
+--- command ---
+True []
+True
+False
+False
+False
+--- main ---
+Command (press return to quit): Done.
+Command (press return to quit): Sorry, I don&#x27;t understand that command.
+Command (press return to quit): </pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>action</code> is defined with one parameter<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bdef\s+action\s*\(\s*\w+\s*\)\s*:</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>action</code> guards against short input<div class="small">in <code>action</code></div></td><td><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*&lt;\s*2</code></div><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*&lt;=\s*1</code></div><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*&gt;=\s*2</code></div><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*&gt;\s*1</code></div></td></tr><tr><td>C3</td><td>R1</td><td><code>action</code> removes two words and checks both vocabularies<div class="small">in <code>action</code></div></td><td><div><span class="tag">require</span> <code>^(?=(?:[\s\S]*?\.pop\s*\(\s*0\s*\)){2})(?=[\s\S]*\bin\s+VERBS\b)(?=[\s\S]*\bin\s+SWITCHES\b)</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>place</code> is defined with one parameter<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bdef\s+place\s*\(\s*\w+\s*\)\s*:</code></div></td></tr><tr><td>C5</td><td>R2</td><td><code>place</code> guards against an empty list<div class="small">in <code>place</code></div></td><td><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*==\s*0</code></div><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*&lt;\s*1</code></div><div><span class="tag">require</span> <code>\bnot\s+\w+\s*:</code></div><div><span class="tag">require</span> <code>\blen\s*\(\s*\w+\s*\)\s*&lt;\s*3</code></div></td></tr><tr><td>C6</td><td>R2</td><td><code>place</code> checks the preposition and passes the rest to <code>article_noun</code><div class="small">in <code>place</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\.pop\s*\(\s*0\s*\))(?=[\s\S]*\bin\s+PREPOSITIONS\b)(?=[\s\S]*\barticle_noun\s*\(\s*\w+\s*,\s*ROOMS\s*\))</code></div><div><span class="tag">forbid</span> <code>\bin\s+ARTICLES\b</code></div></td></tr><tr><td>C7</td><td>R3</td><td><code>command</code> adds the place and rejects leftover words<div class="small">in <code>command</code>, flags m</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bplace\s*\()(?=[\s\S]*(?:\blen\s*\(\s*\w+\s*\)\s*==\s*0|\bnot\s+\w+\s*$|\bnot\s+\w+\s*\)|==\s*\[\s*\]))</code></div></td></tr><tr><td>C8</td><td>R4</td><td><code>main</code> asks <code>command</code> instead of judging the words itself<div class="small">in <code>main</code></div></td><td><div><span class="tag">require</span> <code>\bcommand\s*\(</code></div><div><span class="tag">forbid</span> <code>\bwords\s*\[</code></div><div><span class="tag">forbid</span> <code>\blen\s*\(</code></div></td></tr><tr><td>C9</td><td>R5</td><td><code>action</code> doesn&#x27;t print or ask for input<div class="small">in <code>action</code></div></td><td><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div><div><span class="tag">forbid</span> <code>\binput\s*\(</code></div></td></tr><tr><td>C10</td><td>R5</td><td><code>place</code> doesn&#x27;t print or ask for input<div class="small">in <code>place</code></div></td><td><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div><div><span class="tag">forbid</span> <code>\binput\s*\(</code></div></td></tr><tr><td>C11</td><td>R5</td><td><code>command</code> doesn&#x27;t print or ask for input<div class="small">in <code>command</code></div></td><td><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div><div><span class="tag">forbid</span> <code>\binput\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>action</code> is defined with one parameter</dt><dd><p>Add the header <code>def action(words):</code> where the TODO (R1) comment is. Each grammar function receives the list of words that are left.</p></dd><dt>C2 · <code>action</code> guards against short input</dt><dd><p>Before taking two words, check the length: if fewer than 2 words remain, return <code>False</code>. Without the guard, <code>action([&quot;TURN&quot;])</code> crashes with an <code>IndexError</code> instead of answering.</p></dd><dt>C3 · <code>action</code> removes two words and checks both vocabularies</dt><dd><p>Take the verb and the switch with <code>words.pop(0)</code> (twice), then return whether the verb is <code>in VERBS</code> and the switch is <code>in SWITCHES</code>. Popping matters: <code>device</code> must receive the words after the action.</p></dd><dt>C4 · <code>place</code> is defined with one parameter</dt><dd><p>Add the header <code>def place(words):</code> where the TODO (R2) comment is.</p></dd><dt>C5 · <code>place</code> guards against an empty list</dt><dd><p>If no words remain, return <code>False</code> before popping. &quot;TURN ON THE LAMP&quot; reaches <code>place</code> with an empty list.</p></dd><dt>C6 · <code>place</code> checks the preposition and passes the rest to <code>article_noun</code></dt><dd><p>Pop the preposition, then return whether it is <code>in PREPOSITIONS</code> and <code>article_noun(words, ROOMS)</code>. Let <code>article_noun</code> check the article: when in doubt, pass the task to the function that already knows how.</p></dd><dt>C7 · <code>command</code> adds the place and rejects leftover words</dt><dd><p>Chain <code>place(words)</code> after <code>device(words)</code> with <code>and</code>, then add one more condition: the list must be empty at the end (<code>len(words) == 0</code>). Otherwise &quot;turn on the lamp in the lounge now&quot; passes.</p></dd><dt>C8 · <code>main</code> asks <code>command</code> instead of judging the words itself</dt><dd><p>Replace the <code>if len(words) &gt;= 2 and words[0] == ...</code> test with <code>if command(words):</code>. <code>main</code> owns the conversation; the grammar functions own the decision.</p></dd><dt>C9 · <code>action</code> doesn&#x27;t print or ask for input</dt><dd><p>Return <code>True</code> or <code>False</code> and let <code>main</code> decide what to say. A function that prints can&#x27;t be reused quietly, for example by a test program or a future app screen.</p></dd><dt>C10 · <code>place</code> doesn&#x27;t print or ask for input</dt><dd><p>Return <code>True</code> or <code>False</code> and let <code>main</code> decide what to say. A function that prints can&#x27;t be reused quietly, for example by a test program or a future app screen.</p></dd><dt>C11 · <code>command</code> doesn&#x27;t print or ask for input</dt><dd><p>Return <code>True</code> or <code>False</code> and let <code>main</code> decide what to say. A function that prints can&#x27;t be reused quietly, for example by a test program or a future app screen.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p><code>article_noun</code> is your model for <code>action</code>: guard the length, pop two words, return one Boolean expression that checks both.</p></li><li><p><code>place</code> is shorter than it looks: one guard, one <code>pop(0)</code>, and a <code>return</code> that combines <code>preposition in PREPOSITIONS</code> with a call to the given <code>article_noun</code>, passing the list of rooms.</p></li><li><p>After <code>action</code>, <code>device</code> and <code>place</code> have each popped their words, what should be left in <code>words</code> for a perfect command? Add that as the last condition in <code>command</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Your test program checks <code>action</code> and <code>place</code> before <code>command</code>, and <code>command</code> before <code>main</code>. Why is this bottom-up order a better way to find bugs than running <code>main</code> and typing commands?</p><div class="answer"><p>Each function is tested only after the functions it depends on are known to work, so when a test fails the bug is in the function just tested. Running main first, a wrong answer could come from any of five functions and I would have to guess which one.</p></div></li><li><p>Using the structure chart, describe the job of <code>main</code> and the job of <code>command</code> in one sentence each. What would break if <code>main</code> went back to checking words itself?</p><div class="answer"><p>main handles the conversation: it reads the text, prepares the words and prints the reply. command decides whether the words are a valid command by delegating each part to action, device and place. If main checked words itself, the grammar would live in two places, they would disagree, and changing the rules would mean editing main too.</p></div></li><li><p>The hall adds a new room, <code>HALLWAY</code>, and a new verb, <code>PUT</code>. Which lines of your program change, and why so few?</p><div class="answer"><p>Only the data pool: add HALLWAY to ROOMS and PUT to VERBS. The functions look words up in the pool instead of containing them, so the vocabulary can grow without touching the logic.</p></div></li></ol>
+<h2>Extension</h2><p>Extend the grammar so the place is optional: <code>TURN OFF THE FAN</code> alone is valid and means &#x27;everywhere&#x27;. Change only <code>command</code>, and add two lines to the test program that prove both forms work.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

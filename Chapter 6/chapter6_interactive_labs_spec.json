@@ -1,0 +1,719 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 6 labs: Design with Functions",
+ "collection_intro": "Four hands-on labs for sections 6.1 to 6.3 of *Fundamentals of Python: First Programs*. Each one runs in your browser: read the given code, predict, write, run the test program and explain your choices. Your work saves as you type.",
+ "theme": "harbor",
+ "language": "python",
+ "labs": [
+  {
+   "id": "6.1",
+   "title": "One algorithm, one place: the food bank hours report",
+   "subtitle": "Functions as abstraction: eliminate redundancy, hide complexity, vary the problem instance",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 6.1, Functions as Abstraction Mechanisms, pp. 145-148",
+   "minutes": 30,
+   "objectives": [
+    "Replace repeated code with one function that captures a general method",
+    "Use parameters to supply different problem instances to the same algorithm",
+    "Build a second function on top of the first instead of copying its loop"
+   ],
+   "scenario": "The Riverside Food Bank keeps a list of how many volunteer hours were worked each day of a two-week schedule. Every Monday the coordinator runs `volunteer_hours.py` to get the week totals for the board.\n\nThe script works the way many first scripts do: the same summing loop is **copied three times**, once per range of days. Last month someone edited one copy and not the others, and the numbers on the board stopped adding up. Nobody noticed for three weeks.\n\nYour job is to put the algorithm in **one** place, `total_hours`, and make every report a call to it. The board also wants an average per day and a report for any range of days the coordinator types in.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Define `total_hours(hours, first_day, last_day)` with a docstring. It **returns** the sum of the hours from `first_day` through `last_day`, inclusive (day 1 is `hours[0]`), and returns `0` when `first_day` is after `last_day`. It works on whatever list is passed in, not only `HOURS`."
+    },
+    {
+     "id": "R2",
+     "text": "`total_hours` only computes: it does not print and does not ask for input."
+    },
+    {
+     "id": "R3",
+     "text": "Define `average_per_day(hours, first_day, last_day)`. It returns the average hours per day over the range, rounded to 1 decimal place, by **calling** `total_hours`. It contains no loop of its own."
+    },
+    {
+     "id": "R4",
+     "text": "In `main`, the three copied loops are gone: week 1, week 2 and the whole period come from calls to `total_hours`, and the average line calls `average_per_day` for days 1 to 14."
+    },
+    {
+     "id": "R5",
+     "text": "`main` prints the total and the average for the range the coordinator types in, using the two functions."
+    },
+    {
+     "id": "R6",
+     "text": "The test program's results match, including a one-day range, an empty range and a list other than `HOURS`.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "volunteer_hours.py",
+   "stdin": "3\n9\n",
+   "starter_code": "\"\"\"volunteer_hours.py - hours report for the Riverside Food Bank's two-week schedule.\"\"\"\n\n# Hours volunteered on each day of the period. Day 1 is HOURS[0].\nHOURS = [3, 5, 0, 4, 6, 2, 8, 4, 4, 5, 0, 7, 3, 6]\n\n\n# TODO (R1, R2): define total_hours(hours, first_day, last_day) here, with a\n#                docstring. It returns the hours from first_day through last_day.\n\n\n# TODO (R3): define average_per_day(hours, first_day, last_day) here.\n\n\ndef main():\n    \"\"\"Print the coordinator's report.\"\"\"\n    # TODO (R4): three copies of the same algorithm. Replace them with calls.\n    # Week 1: days 1 through 7\n    total = 0\n    day = 1\n    while day <= 7:\n        total += HOURS[day - 1]\n        day += 1\n    week1 = total\n\n    # Week 2: days 8 through 14\n    total = 0\n    day = 8\n    while day < 14:\n        total += HOURS[day - 1]\n        day += 1\n    week2 = total\n\n    # Whole period: days 1 through 14\n    total = 0\n    day = 1\n    while day <= 14:\n        total += HOURS[day - 1]\n        day += 1\n    period = total\n\n    print(\"Week 1:\", week1, \"hours\")\n    print(\"Week 2:\", week2, \"hours\")\n    print(\"Two weeks:\", period, \"hours\")\n    print(\"Average per day:\", 0.0)   # TODO (R4)\n    print()\n\n    first = int(input(\"First day of the custom range? \"))\n    last = int(input(\"Last day of the custom range? \"))\n    # TODO (R5): use the functions for the custom range.\n    print(\"Days\", first, \"to\", last, \"total:\", 0, \"hours, average:\", 0.0)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"volunteer_hours.py - hours report for the Riverside Food Bank's two-week schedule.\"\"\"\n\n# Hours volunteered on each day of the period. Day 1 is HOURS[0].\nHOURS = [3, 5, 0, 4, 6, 2, 8, 4, 4, 5, 0, 7, 3, 6]\n\n\ndef total_hours(hours, first_day, last_day):\n    \"\"\"Return the total of hours from first_day through last_day.\n    Days are numbered from 1, so day 1 is hours[0].\"\"\"\n    total = 0\n    day = first_day\n    while day <= last_day:\n        total += hours[day - 1]\n        day += 1\n    return total\n\n\ndef average_per_day(hours, first_day, last_day):\n    \"\"\"Return the average hours per day from first_day through last_day,\n    rounded to 1 decimal place.\"\"\"\n    days = last_day - first_day + 1\n    return round(total_hours(hours, first_day, last_day) / days, 1)\n\n\ndef main():\n    \"\"\"Print the coordinator's report.\"\"\"\n    week1 = total_hours(HOURS, 1, 7)\n    week2 = total_hours(HOURS, 8, 14)\n    period = total_hours(HOURS, 1, 14)\n\n    print(\"Week 1:\", week1, \"hours\")\n    print(\"Week 2:\", week2, \"hours\")\n    print(\"Two weeks:\", period, \"hours\")\n    print(\"Average per day:\", average_per_day(HOURS, 1, 14))\n    print()\n\n    first = int(input(\"First day of the custom range? \"))\n    last = int(input(\"Last day of the custom range? \"))\n    print(\"Days\", first, \"to\", last, \"total:\", total_hours(HOURS, first, last),\n          \"hours, average:\", average_per_day(HOURS, first, last))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "The three loops in the starter are one algorithm with three problem instances: (1, 7), (8, 14) and (1, 14). A function captures the algorithm once; its parameters receive the instance on each call. The second copy used `day < 14`, so week 2 lost day 14: exactly the kind of error redundancy invites, because each copy must be right on its own. With one definition, the bug can only live in one place, and fixing it fixes every report. `total_hours` must use its parameter `hours`, not the module variable `HOURS`, or it would ignore the list it is given (the evening-shift test). `sum(hours[first_day - 1:last_day])` is an equally correct body. `average_per_day` reuses `total_hours`, which is division of labor: one function sums, the other divides, and `main` only coordinates and prints.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`total_hours` is defined with three parameters",
+     "require": "\\bdef\\s+total_hours\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*\\w+\\s*\\)\\s*:",
+     "message": "Write the header `def total_hours(hours, first_day, last_day):`. The three parameters are the problem instance: which list, and which range of days."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`total_hours` has a docstring",
+     "strings": true,
+     "require": "\\bdef\\s+total_hours\\s*\\([^)]*\\)\\s*:\\s*\\n\\s+(?:\\\"\\\"\\\"|''')\\s*\\S",
+     "message": "Make the first line of the body a docstring in triple quotes, like `summation` in the reading. Say what it returns and that day 1 is the first item."
+    },
+    {
+     "id": "C3",
+     "requirement": "R1",
+     "title": "`total_hours` uses the list it is given",
+     "within": "total_hours",
+     "require": "\\bhours\\b|\\b\\w+\\s*\\[",
+     "forbid": "\\bHOURS\\b",
+     "message": "Inside the function, use the parameter (`hours`), not the module variable `HOURS`. Otherwise `total_hours(evening_shift, 1, 3)` would quietly add up the wrong list: the function would solve one problem instance, not a class of problems."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "`total_hours` returns the total and prints nothing",
+     "within": "total_hours",
+     "require": "\\breturn\\b[^\\n]*\\w",
+     "forbid": [
+      "\\bprint\\s*\\(",
+      "\\binput\\s*\\("
+     ],
+     "message": "End with a `return` statement that hands the total back. Leave printing and input to `main`: a function that prints can't be reused by `average_per_day`."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "`average_per_day` calls `total_hours` and has no loop",
+     "within": "average_per_day",
+     "require": "^(?=[\\s\\S]*\\btotal_hours\\s*\\()(?=[\\s\\S]*\\breturn\\b)",
+     "forbid": [
+      "\\bwhile\\b",
+      "\\bfor\\b",
+      "\\bprint\\s*\\("
+     ],
+     "message": "Define `average_per_day` so it gets the total by calling `total_hours(...)` with its own three parameters, divides by the number of days, rounds to 1 decimal and returns the result. Writing a fourth summing loop here would bring the redundancy back."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "The average is rounded to 1 decimal",
+     "within": "average_per_day",
+     "require": "\\bround\\s*\\([\\s\\S]*,\\s*1\\s*\\)",
+     "message": "Use `round(value, 1)` on the average so 4.142857... becomes 4.1."
+    },
+    {
+     "id": "C7",
+     "requirement": "R4",
+     "title": "`main` gets the three totals from `total_hours`",
+     "within": "main",
+     "require": "^(?:[\\s\\S]*?\\btotal_hours\\s*\\(){3}",
+     "forbid": [
+      "\\bwhile\\b",
+      "\\bfor\\b"
+     ],
+     "message": "Replace each copied loop in `main` with one call: `total_hours(HOURS, 1, 7)` style, a different pair of days each time. `main` should contain no loop at all."
+    },
+    {
+     "id": "C8",
+     "requirement": "R5",
+     "title": "`main` uses both functions for the averages and the custom range",
+     "within": "main",
+     "require": "^(?:[\\s\\S]*?\\baverage_per_day\\s*\\(){2}",
+     "message": "Call `average_per_day` twice in `main`: once for days 1 to 14 and once for the coordinator's `first` and `last`. Also replace the placeholder total in the last line with a call to `total_hours`."
+    }
+   ],
+   "hints": [
+    "Compare the three loops line by line. What is identical, and what changes? The parts that change become the parameters; everything else becomes the body of `total_hours`.",
+    "Look at `summation(lower, upper)` in the reading: it walks a counter from the lower bound up to the upper bound. Your version walks `day` from `first_day` to `last_day` and adds `hours[day - 1]`, because day 1 is at index 0.",
+    "The number of days in a range is `last_day - first_day + 1`. `average_per_day` divides the value `total_hours` returns by that count, then rounds."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from volunteer_hours import HOURS, total_hours, average_per_day, main\n\nprint(\"Week 1:\", total_hours(HOURS, 1, 7))\nprint(\"Week 2:\", total_hours(HOURS, 8, 14))\nprint(\"Day 14 only:\", total_hours(HOURS, 14, 14))\nprint(\"Empty range:\", total_hours(HOURS, 5, 4))\n\nevening_shift = [2, 2, 3]\nprint(\"Another list:\", total_hours(evening_shift, 1, 3))\nprint(\"Average, week 2:\", average_per_day(HOURS, 8, 14))\nprint()\n\nmain()\n",
+    "stdin": "3\n9\n",
+    "predict": "Before running: the starter printed a week 2 total that was too small. What should week 2 be, and what will `total_hours(HOURS, 5, 4)` return?",
+    "expected_output": "Week 1: 28\nWeek 2: 29\nDay 14 only: 6\nEmpty range: 0\nAnother list: 7\nAverage, week 2: 4.1\n\nWeek 1: 28 hours\nWeek 2: 29 hours\nTwo weeks: 57 hours\nAverage per day: 4.1\n\nFirst day of the custom range? Last day of the custom range? Days 3 to 9 total: 28 hours, average: 4.0\n"
+   },
+   "warmup": [
+    {
+     "question": "Press **Run** on the starter (it uses the program input 3 and 9). Week 1 plus week 2 should equal the two-week total. Does it? Find the line that causes the difference.",
+     "model_answer": "It doesn't: week 1 is 28, week 2 is 23 and the two-week total is 57, so 6 hours are missing. The week 2 loop uses day < 14 instead of day <= 14, so it never adds day 14 (6 hours). The other two copies use <=, so only one copy is wrong."
+    },
+    {
+     "question": "The coordinator now wants days marked `0` to be counted as 'closed' and skipped. In the starter, how many places would you have to edit? How many after your refactor?",
+     "model_answer": "In the starter, three places, one per copied loop, and I would have to get all three right. After the refactor, only one: the body of total_hours. Every report calls it, so the change reaches all of them."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The reading says a function should provide 'a general method with systematic variations'. In your `total_hours`, what is the general method and what are the variations?",
+     "model_answer": "The general method is the summing algorithm: start at 0, walk the days in a range and add each day's hours. The variations are the problem instances supplied as arguments: which list of hours and which first and last day. One definition solves week 1, week 2, the whole period, a single day and any list."
+    },
+    {
+     "question": "Why must `total_hours` use its parameter `hours` and not the module variable `HOURS`, even though `main` always passes `HOURS`?",
+     "model_answer": "If it used HOURS, the hours parameter would be ignored and the function would only work on one list. The test with the evening shift list would return the food bank's hours instead. Using the parameter keeps the function general, so another program can import it and pass its own data."
+    },
+    {
+     "question": "`main` now reads like a summary of the report. Which complexity does each call hide from someone reading `main`?",
+     "model_answer": "Each call hides the loop, the counter, the running total and the index arithmetic (day - 1). A reader of main sees 'total of week 1' or 'average of days 1 to 14' without having to track three variables per report, so main can be understood in a few seconds."
+    }
+   ],
+   "extension": "Add an optional fourth parameter `step` to `total_hours` so the coordinator can total every other day (the reading suggests the same for `summation`). Then write `best_week(hours)` that returns 1 or 2, whichever week had more hours, using only calls to `total_hours`.",
+   "worth_knowing": "You have already used an abstraction like this without seeing its loop: Python's built-in `sum`. `sum(HOURS[7:14])` returns week 2 in one call. In CPython, `sum` is written in C, but from your side it is just a name, arguments and a result, exactly what `total_hours` now offers the coordinator.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "6.2",
+   "title": "Top-down design: the smart-light command checker",
+   "subtitle": "Problem decomposition, a structure chart, responsibility-driven design and bottom-up testing",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 6.2, Problem Solving with Top-Down Design and Case Study 6-1, pp. 148-156",
+   "minutes": 35,
+   "objectives": [
+    "Turn each rule of a design into one function, following a structure chart",
+    "Keep user interaction in `main` and the decision logic in the functions it calls",
+    "Test a top-down design bottom up, lowest-level functions first"
+   ],
+   "scenario": "The residence hall is piloting a voice assistant for the shared lights and appliances. The speech-to-text part works; before anything is sent to the hub, each command must be checked against a small grammar, so a misheard \"turn on the heater in the garage\" doesn't switch on something nobody asked for.\n\nThe design was done top-down, like the recognizer in Case Study 6-1. Here is its structure chart (every arrow carries a list of words down and a `bool` back up):\n\n```\n                    main\n                     |\n                  command\n         /           |           \\\n     action        device        place\n                     |             |\n                article_noun  article_noun\n\n   data pool: VERBS  SWITCHES  ARTICLES\n              DEVICES  PREPOSITIONS  ROOMS\n```\n\n`article_noun` and `device` are finished. `action` and `place` are missing, `command` doesn't check the whole command yet, and `main` has started judging commands **itself**, which accepts nonsense like \"turn banana\".",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "Define `action(words)`: if fewer than 2 words remain it returns `False`; otherwise it removes the first two words and returns `True` only if they are a word from `VERBS` followed by a word from `SWITCHES`."
+    },
+    {
+     "id": "R2",
+     "text": "Define `place(words)`: if no words remain it returns `False`; otherwise it removes the preposition and returns `True` only if it is in `PREPOSITIONS` **and** the words after it form an article and a room. Reuse `article_noun` for that second part."
+    },
+    {
+     "id": "R3",
+     "text": "`command(words)` returns `True` only for an action, a device and a place, in that order, with **no words left over** (\"... in the lounge now\" is rejected)."
+    },
+    {
+     "id": "R4",
+     "text": "`main` handles only the conversation: it reads the text, calls `command` and prints the reply. It no longer inspects the words itself."
+    },
+    {
+     "id": "R5",
+     "text": "None of the grammar functions print anything or ask for input; they answer `True` or `False`."
+    },
+    {
+     "id": "R6",
+     "text": "The bottom-up test program's results match, from `action` up to `main`.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "lights.py",
+   "stdin": "turn off the fan in the bedroom\nturn banana\n\n",
+   "starter_code": "\"\"\"lights.py - checks spoken commands for the residence hall's smart-light assistant.\n\nGrammar of a valid command (one function per rule):\n    command = action device place\n    action  = verb switch            TURN ON, SWITCH OFF, ...\n    device  = article device-noun    THE LAMP, A FAN, ...\n    place   = preposition area       IN THE KITCHEN, AT THE DESK, ...\n    area    = article room-noun\n\"\"\"\n\n# Data pool: the vocabulary every function looks up.\nVERBS = (\"TURN\", \"SWITCH\")\nSWITCHES = (\"ON\", \"OFF\")\nARTICLES = (\"THE\", \"A\")\nDEVICES = (\"LAMP\", \"FAN\", \"HEATER\", \"SPEAKER\")\nPREPOSITIONS = (\"IN\", \"AT\")\nROOMS = (\"KITCHEN\", \"LOUNGE\", \"BEDROOM\", \"DESK\")\n\n\ndef article_noun(words, nouns):\n    \"\"\"Given. Return True if the first two words are an article followed by\n    a word in nouns, or False otherwise. Removes the words it examines.\"\"\"\n    if len(words) < 2:\n        return False\n    article = words.pop(0)\n    noun = words.pop(0)\n    return article in ARTICLES and noun in nouns\n\n\ndef device(words):\n    \"\"\"Given. device = article device-noun\"\"\"\n    return article_noun(words, DEVICES)\n\n\n# TODO (R1): define action(words). action = verb switch\n\n\n# TODO (R2): define place(words). place = preposition area\n\n\ndef command(words):\n    \"\"\"Return True if words form one complete, valid command.\"\"\"\n    # TODO (R3): a command also needs a place, and nothing left over.\n    return action(words) and device(words)\n\n\ndef main():\n    \"\"\"Take commands until the user presses return.\"\"\"\n    while True:\n        text = input(\"Command (press return to quit): \")\n        if text == \"\":\n            return\n        words = text.upper().split()\n        # TODO (R4): main is doing the grammar's job, and doing it badly.\n        if len(words) >= 2 and words[0] == \"TURN\":\n            print(\"Done.\")\n        else:\n            print(\"Sorry, I don't understand that command.\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"lights.py - checks spoken commands for the residence hall's smart-light assistant.\n\nGrammar of a valid command (one function per rule):\n    command = action device place\n    action  = verb switch            TURN ON, SWITCH OFF, ...\n    device  = article device-noun    THE LAMP, A FAN, ...\n    place   = preposition area       IN THE KITCHEN, AT THE DESK, ...\n    area    = article room-noun\n\"\"\"\n\n# Data pool: the vocabulary every function looks up.\nVERBS = (\"TURN\", \"SWITCH\")\nSWITCHES = (\"ON\", \"OFF\")\nARTICLES = (\"THE\", \"A\")\nDEVICES = (\"LAMP\", \"FAN\", \"HEATER\", \"SPEAKER\")\nPREPOSITIONS = (\"IN\", \"AT\")\nROOMS = (\"KITCHEN\", \"LOUNGE\", \"BEDROOM\", \"DESK\")\n\n\ndef article_noun(words, nouns):\n    \"\"\"Given. Return True if the first two words are an article followed by\n    a word in nouns, or False otherwise. Removes the words it examines.\"\"\"\n    if len(words) < 2:\n        return False\n    article = words.pop(0)\n    noun = words.pop(0)\n    return article in ARTICLES and noun in nouns\n\n\ndef device(words):\n    \"\"\"Given. device = article device-noun\"\"\"\n    return article_noun(words, DEVICES)\n\n\ndef action(words):\n    \"\"\"action = verb switch. Return True if the first two words are a verb\n    followed by ON or OFF. Removes the words it examines.\"\"\"\n    if len(words) < 2:\n        return False\n    verb = words.pop(0)\n    switch = words.pop(0)\n    return verb in VERBS and switch in SWITCHES\n\n\ndef place(words):\n    \"\"\"place = preposition area. Return True if the words start with a\n    preposition followed by an article and a room. Removes the words it examines.\"\"\"\n    if len(words) == 0:\n        return False\n    preposition = words.pop(0)\n    return preposition in PREPOSITIONS and article_noun(words, ROOMS)\n\n\ndef command(words):\n    \"\"\"Return True if words form one complete, valid command.\"\"\"\n    return action(words) and device(words) and place(words) and len(words) == 0\n\n\ndef main():\n    \"\"\"Take commands until the user presses return.\"\"\"\n    while True:\n        text = input(\"Command (press return to quit): \")\n        if text == \"\":\n            return\n        words = text.upper().split()\n        if command(words):\n            print(\"Done.\")\n        else:\n            print(\"Sorry, I don't understand that command.\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "Each grammar rule becomes one function that receives the remaining words and returns a Boolean, exactly like `nounPhrase` and `verbPhrase` in Case Study 6-1. `pop(0)` both reads and removes a word, so each function hands the rest of the list to the next one; that is why `command` can simply chain the calls with `and`. Short-circuit evaluation stops at the first `False`, so a bad action never gets as far as `device`. The length guards (`< 2`, `== 0`) protect `pop(0)` from an `IndexError` on short input. `place` reuses `article_noun(words, ROOMS)`: the same general method with a different vocabulary, so the article check lives in one place. `len(words) == 0` at the end of `command` rejects trailing words (the book's recognizer doesn't check this; `not words` is also fine). `main` now has one responsibility, the interaction, while the grammar functions own the decision: responsibility-driven design. A new room or device is a one-word change to the data pool.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`action` is defined with one parameter",
+     "require": "\\bdef\\s+action\\s*\\(\\s*\\w+\\s*\\)\\s*:",
+     "message": "Add the header `def action(words):` where the TODO (R1) comment is. Each grammar function receives the list of words that are left."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`action` guards against short input",
+     "within": "action",
+     "require": [
+      "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*<\\s*2",
+      "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*<=\\s*1",
+      "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*>=\\s*2",
+      "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*>\\s*1"
+     ],
+     "message": "Before taking two words, check the length: if fewer than 2 words remain, return `False`. Without the guard, `action([\"TURN\"])` crashes with an `IndexError` instead of answering."
+    },
+    {
+     "id": "C3",
+     "requirement": "R1",
+     "title": "`action` removes two words and checks both vocabularies",
+     "within": "action",
+     "require": "^(?=(?:[\\s\\S]*?\\.pop\\s*\\(\\s*0\\s*\\)){2})(?=[\\s\\S]*\\bin\\s+VERBS\\b)(?=[\\s\\S]*\\bin\\s+SWITCHES\\b)",
+     "message": "Take the verb and the switch with `words.pop(0)` (twice), then return whether the verb is `in VERBS` and the switch is `in SWITCHES`. Popping matters: `device` must receive the words after the action."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "`place` is defined with one parameter",
+     "require": "\\bdef\\s+place\\s*\\(\\s*\\w+\\s*\\)\\s*:",
+     "message": "Add the header `def place(words):` where the TODO (R2) comment is."
+    },
+    {
+     "id": "C5",
+     "requirement": "R2",
+     "title": "`place` guards against an empty list",
+     "within": "place",
+     "require": [
+      "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*==\\s*0",
+      "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*<\\s*1",
+      "\\bnot\\s+\\w+\\s*:",
+      "\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*<\\s*3"
+     ],
+     "message": "If no words remain, return `False` before popping. \"TURN ON THE LAMP\" reaches `place` with an empty list."
+    },
+    {
+     "id": "C6",
+     "requirement": "R2",
+     "title": "`place` checks the preposition and passes the rest to `article_noun`",
+     "within": "place",
+     "require": "^(?=[\\s\\S]*\\.pop\\s*\\(\\s*0\\s*\\))(?=[\\s\\S]*\\bin\\s+PREPOSITIONS\\b)(?=[\\s\\S]*\\barticle_noun\\s*\\(\\s*\\w+\\s*,\\s*ROOMS\\s*\\))",
+     "forbid": "\\bin\\s+ARTICLES\\b",
+     "message": "Pop the preposition, then return whether it is `in PREPOSITIONS` and `article_noun(words, ROOMS)`. Let `article_noun` check the article: when in doubt, pass the task to the function that already knows how."
+    },
+    {
+     "id": "C7",
+     "requirement": "R3",
+     "title": "`command` adds the place and rejects leftover words",
+     "within": "command",
+     "require": "^(?=[\\s\\S]*\\bplace\\s*\\()(?=[\\s\\S]*(?:\\blen\\s*\\(\\s*\\w+\\s*\\)\\s*==\\s*0|\\bnot\\s+\\w+\\s*$|\\bnot\\s+\\w+\\s*\\)|==\\s*\\[\\s*\\]))",
+     "flags": "m",
+     "message": "Chain `place(words)` after `device(words)` with `and`, then add one more condition: the list must be empty at the end (`len(words) == 0`). Otherwise \"turn on the lamp in the lounge now\" passes."
+    },
+    {
+     "id": "C8",
+     "requirement": "R4",
+     "title": "`main` asks `command` instead of judging the words itself",
+     "within": "main",
+     "require": "\\bcommand\\s*\\(",
+     "forbid": [
+      "\\bwords\\s*\\[",
+      "\\blen\\s*\\("
+     ],
+     "message": "Replace the `if len(words) >= 2 and words[0] == ...` test with `if command(words):`. `main` owns the conversation; the grammar functions own the decision."
+    },
+    {
+     "id": "C9",
+     "requirement": "R5",
+     "title": "`action` doesn't print or ask for input",
+     "within": "action",
+     "forbid": [
+      "\\bprint\\s*\\(",
+      "\\binput\\s*\\("
+     ],
+     "message": "Return `True` or `False` and let `main` decide what to say. A function that prints can't be reused quietly, for example by a test program or a future app screen."
+    },
+    {
+     "id": "C10",
+     "requirement": "R5",
+     "title": "`place` doesn't print or ask for input",
+     "within": "place",
+     "forbid": [
+      "\\bprint\\s*\\(",
+      "\\binput\\s*\\("
+     ],
+     "message": "Return `True` or `False` and let `main` decide what to say. A function that prints can't be reused quietly, for example by a test program or a future app screen."
+    },
+    {
+     "id": "C11",
+     "requirement": "R5",
+     "title": "`command` doesn't print or ask for input",
+     "within": "command",
+     "starter_passes": true,
+     "forbid": [
+      "\\bprint\\s*\\(",
+      "\\binput\\s*\\("
+     ],
+     "message": "Return `True` or `False` and let `main` decide what to say. A function that prints can't be reused quietly, for example by a test program or a future app screen."
+    }
+   ],
+   "hints": [
+    "`article_noun` is your model for `action`: guard the length, pop two words, return one Boolean expression that checks both.",
+    "`place` is shorter than it looks: one guard, one `pop(0)`, and a `return` that combines `preposition in PREPOSITIONS` with a call to the given `article_noun`, passing the list of rooms.",
+    "After `action`, `device` and `place` have each popped their words, what should be left in `words` for a perfect command? Add that as the last condition in `command`."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from lights import action, place, command, main\n\n# Bottom-up: the lowest-level functions first.\nprint(\"--- action ---\")\nprint(action(\"TURN ON\".split()))\nrest = \"SWITCH OFF THE FAN\".split()\nprint(action(rest), rest)\nprint(action([\"TURN\"]))\nprint(action(\"TURN UP\".split()))\n\nprint(\"--- place ---\")\nprint(place(\"IN THE KITCHEN\".split()))\nprint(place(\"AT A DESK\".split()))\nprint(place(\"ON THE KITCHEN\".split()))\nprint(place(\"IN THE GARAGE\".split()))\nprint(place([]))\n\nprint(\"--- command ---\")\nwords = \"TURN ON THE LAMP IN THE LOUNGE\".split()\nprint(command(words), words)\nprint(command(\"SWITCH OFF A HEATER AT THE DESK\".split()))\nprint(command(\"TURN ON THE LAMP\".split()))\nprint(command(\"TURN ON THE LAMP IN THE LOUNGE NOW\".split()))\nprint(command(\"THE LAMP TURN ON IN THE LOUNGE\".split()))\n\nprint(\"--- main ---\")\nmain()\n",
+    "stdin": "turn off the fan in the bedroom\nturn banana\n\n",
+    "predict": "Look at the line `print(command(words), words)`. Before running: what will it print for `words` after the call, and why?",
+    "expected_output": "--- action ---\nTrue\nTrue ['THE', 'FAN']\nFalse\nFalse\n--- place ---\nTrue\nTrue\nFalse\nFalse\nFalse\n--- command ---\nTrue []\nTrue\nFalse\nFalse\nFalse\n--- main ---\nCommand (press return to quit): Done.\nCommand (press return to quit): Sorry, I don't understand that command.\nCommand (press return to quit): "
+   },
+   "warmup": [
+    {
+     "question": "Trace `article_noun([\"THE\", \"FAN\", \"IN\"], DEVICES)` by hand. What does it return, and what is left in the list afterwards? Why does it matter that the function removes the words it examines?",
+     "model_answer": "It pops THE and FAN, returns True because THE is an article and FAN is a device, and leaves ['IN'] in the list. Removing the words matters because the next function in the chain (place) must start with the words after the device, not re-read the beginning."
+    },
+    {
+     "question": "Run the starter with the program input. `main` currently decides on its own whether a command is valid. Name one command it accepts that it should reject, and say what it is checking instead of the grammar.",
+     "model_answer": "It accepts \"turn banana\" (and \"turn on the heater in the garage\"), because it only checks that there are at least two words and the first is TURN. It ignores the device, the place and the vocabulary, and it rejects valid commands that start with SWITCH."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your test program checks `action` and `place` before `command`, and `command` before `main`. Why is this bottom-up order a better way to find bugs than running `main` and typing commands?",
+     "model_answer": "Each function is tested only after the functions it depends on are known to work, so when a test fails the bug is in the function just tested. Running main first, a wrong answer could come from any of five functions and I would have to guess which one."
+    },
+    {
+     "question": "Using the structure chart, describe the job of `main` and the job of `command` in one sentence each. What would break if `main` went back to checking words itself?",
+     "model_answer": "main handles the conversation: it reads the text, prepares the words and prints the reply. command decides whether the words are a valid command by delegating each part to action, device and place. If main checked words itself, the grammar would live in two places, they would disagree, and changing the rules would mean editing main too."
+    },
+    {
+     "question": "The hall adds a new room, `HALLWAY`, and a new verb, `PUT`. Which lines of your program change, and why so few?",
+     "model_answer": "Only the data pool: add HALLWAY to ROOMS and PUT to VERBS. The functions look words up in the pool instead of containing them, so the vocabulary can grow without touching the logic."
+    }
+   ],
+   "extension": "Extend the grammar so the place is optional: `TURN OFF THE FAN` alone is valid and means 'everywhere'. Change only `command`, and add two lines to the test program that prove both forms work.",
+   "worth_knowing": "Your checker is a tiny recursive-descent parser: one function per grammar rule, each consuming the words it recognizes. Python reads your own code the same way in spirit: since version 3.9, CPython's parser is generated from a grammar file, `Grammar/python.gram`, with one rule for `if` statements, one for function definitions, and so on.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "6.3a",
+   "title": "Whose variable is it? The coffee cart stamp card",
+   "subtitle": "Module variables, parameters and temporary variables; scope and lifetime",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 6.3, Managing a Program's Namespace: Module Variables, Parameters, and Temporary Variables; Scope; Lifetime, pp. 156-158",
+   "minutes": 30,
+   "objectives": [
+    "Classify each name in a program as a module variable, a parameter or a temporary variable",
+    "Explain why assigning to a name inside a function creates a temporary variable instead of changing the module variable",
+    "Pass data in through parameters and back out through return values instead of changing a module variable"
+   ],
+   "scenario": "The Campus Grind coffee cart gives one stamp per cup and a free drink for every 10 stamps. A student worker wrote `loyalty.py` to total a customer's card at the end of the month.\n\nThe plan was simple: keep the count in a module variable `stamps` and let `add_stamps` increase it on every visit. Press **Run** and the program crashes on the very first visit.\n\nThe fix is not a trick to force the function to change `stamps`. The reading recommends a better design: each function **receives** what it needs as parameters and **returns** its result, and `main` keeps the running count in its own variable. `FREE_DRINK_AT` stays a module variable: functions may read it, and nobody changes it.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`add_stamps(count, cups)` receives the current count as a parameter and **returns** the new count. It changes no module variable."
+    },
+    {
+     "id": "R2",
+     "text": "`free_drinks(count)` returns how many free drinks the stamps are worth (23 stamps earn 2), reading the module variable `FREE_DRINK_AT` instead of writing `10`."
+    },
+    {
+     "id": "R3",
+     "text": "`stamps_left(count)` returns the stamps that remain after the free drinks are redeemed (23 stamps leave 3), also using `FREE_DRINK_AT`."
+    },
+    {
+     "id": "R4",
+     "text": "The module variable `stamps` is gone. `main` starts its own temporary variable `stamps` at 0 and updates it with the value `add_stamps` returns."
+    },
+    {
+     "id": "R5",
+     "text": "No `global` statements: data moves through parameters and return values only."
+    },
+    {
+     "id": "R6",
+     "text": "The test program's results match: the module has no `stamps` variable, and two separate cards don't interfere.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "loyalty.py",
+   "stdin": "3\n4\n6\n5\n",
+   "starter_code": "\"\"\"loyalty.py - stamp card for the Campus Grind coffee cart.\nEvery cup earns one stamp; every 10 stamps earn a free drink.\"\"\"\n\nFREE_DRINK_AT = 10   # module variable used as a constant: functions may read it\nstamps = 0           # TODO (R4): functions try to change this module variable\n\n\ndef add_stamps(cups):\n    \"\"\"Add one stamp per cup to the card.\"\"\"\n    # TODO (R1): this does not update the module variable. Run it and see why.\n    stamps = stamps + cups\n\n\ndef free_drinks(count):\n    \"\"\"Return how many free drinks count stamps are worth.\"\"\"\n    # TODO (R2)\n    return 0\n\n\ndef stamps_left(count):\n    \"\"\"Return the stamps left on the card after the free drinks are redeemed.\"\"\"\n    # TODO (R3)\n    return count\n\n\ndef main():\n    \"\"\"Record a month of visits and print the card.\"\"\"\n    visits = int(input(\"How many visits this month? \"))\n    for visit in range(1, visits + 1):\n        cups = int(input(\"Cups on visit \" + str(visit) + \"? \"))\n        add_stamps(cups)\n    print()\n    print(\"Stamps earned:\", stamps)\n    print(\"Free drinks:\", free_drinks(stamps))\n    print(\"Stamps left on the card:\", stamps_left(stamps))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"loyalty.py - stamp card for the Campus Grind coffee cart.\nEvery cup earns one stamp; every 10 stamps earn a free drink.\"\"\"\n\nFREE_DRINK_AT = 10   # module variable used as a constant: functions may read it\n\n\ndef add_stamps(count, cups):\n    \"\"\"Return the number of stamps on a card that had count stamps\n    after a visit where cups were bought.\"\"\"\n    return count + cups\n\n\ndef free_drinks(count):\n    \"\"\"Return how many free drinks count stamps are worth.\"\"\"\n    return count // FREE_DRINK_AT\n\n\ndef stamps_left(count):\n    \"\"\"Return the stamps left on the card after the free drinks are redeemed.\"\"\"\n    return count % FREE_DRINK_AT\n\n\ndef main():\n    \"\"\"Record a month of visits and print the card.\"\"\"\n    stamps = 0\n    visits = int(input(\"How many visits this month? \"))\n    for visit in range(1, visits + 1):\n        cups = int(input(\"Cups on visit \" + str(visit) + \"? \"))\n        stamps = add_stamps(stamps, cups)\n    print()\n    print(\"Stamps earned:\", stamps)\n    print(\"Free drinks:\", free_drinks(stamps))\n    print(\"Stamps left on the card:\", stamps_left(stamps))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "Inside `add_stamps`, the assignment `stamps = ...` makes `stamps` a temporary variable of the function, as the reading's `x = 10` example shows. Python decides this for the whole body when it compiles the function, so the right-hand side `stamps + cups` tries to read the temporary before it has a value: `UnboundLocalError`. Even without the crash, the module variable would not change. The redesign passes the count in as the parameter `count` and returns the new total; `main` stores it with `stamps = add_stamps(stamps, cups)`. Now `stamps` is a temporary variable of `main` (scope: the body of `main`; lifetime: one call of `main`), and `count` and `cups` live only for one call of `add_stamps`. Reading a module variable from a function is fine, which is why `free_drinks` and `stamps_left` use `FREE_DRINK_AT`: if the cart changes the offer to 8, one line changes. `count // FREE_DRINK_AT` gives the free drinks and `count % FREE_DRINK_AT` the remainder. Because the functions keep no hidden state, the test program can total two cards side by side.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`add_stamps` takes the count and the cups",
+     "require": "\\bdef\\s+add_stamps\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)\\s*:",
+     "message": "Give `add_stamps` two parameters: the stamps already on the card first, then the cups bought: `def add_stamps(count, cups):`. The count arrives through a parameter instead of being read from a module variable."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`add_stamps` returns the new count",
+     "within": "add_stamps",
+     "require": "\\breturn\\b[^\\n]*\\+",
+     "forbid": [
+      "\\bprint\\s*\\(",
+      "\\bstamps\\s*="
+     ],
+     "message": "Return the sum of the two parameters. Don't assign to `stamps` inside the function: that creates a temporary variable that disappears when the call ends, and the caller never sees the new value."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "`free_drinks` divides by `FREE_DRINK_AT`",
+     "within": "free_drinks",
+     "require": "\\breturn\\b[^\\n]*//\\s*FREE_DRINK_AT\\b",
+     "forbid": "\\b10\\b",
+     "message": "Return `count // FREE_DRINK_AT`. Integer division counts whole free drinks, and reading the module variable instead of writing 10 means the offer can change in one place."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "`stamps_left` uses the remainder",
+     "within": "stamps_left",
+     "require": "\\breturn\\b[^\\n]*%\\s*FREE_DRINK_AT\\b",
+     "forbid": "\\b10\\b",
+     "message": "Return `count % FREE_DRINK_AT`: the stamps that don't make up a full free drink stay on the card."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "The module variable `stamps` is removed",
+     "forbid": "^stamps\\s*=",
+     "flags": "m",
+     "message": "Delete the line `stamps = 0` at the top of the file. The count belongs to one run of `main`, not to the whole module."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "`main` keeps the count and stores what `add_stamps` returns",
+     "within": "main",
+     "require": "^(?=[\\s\\S]*\\bstamps\\s*=\\s*0\\b)(?=[\\s\\S]*\\bstamps\\s*=\\s*add_stamps\\s*\\(\\s*stamps\\s*,)",
+     "message": "Start `main` with `stamps = 0`, and inside the loop write `stamps = add_stamps(stamps, cups)`. The current count goes in as an argument, and the returned value replaces it."
+    },
+    {
+     "id": "C7",
+     "requirement": "R5",
+     "title": "No `global` statements",
+     "forbid": "\\bglobal\\b",
+     "starter_passes": true,
+     "message": "Remove the `global` statement. It lets a function change a module variable, but then any function might change it, which is what the reading warns against. Pass the value in and return the result instead."
+    }
+   ],
+   "hints": [
+    "Make a list of every name in the starter and label it: module variable, parameter or temporary variable. Which label does `stamps` have inside `add_stamps`, given the reading's `x = 10` example?",
+    "The function can't change the caller's count, but it can **return** a new one. Its job becomes: given the old count and the cups, what is the new count? Look at how `main` would have to call it then.",
+    "Free drinks and leftover stamps are the quotient and the remainder of dividing by `FREE_DRINK_AT`: the `//` and `%` operators from Chapter 2."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "import loyalty\nfrom loyalty import add_stamps, free_drinks, stamps_left, main\n\nprint(\"Module variable 'stamps' exists:\", \"stamps\" in dir(loyalty))\n\ncard = add_stamps(0, 4)\ncard = add_stamps(card, 3)\nprint(\"After two visits:\", card)\nprint(\"Another card:\", add_stamps(18, 5))\n\nprint(\"23 stamps:\", free_drinks(23), \"free,\", stamps_left(23), \"left\")\nprint(\"10 stamps:\", free_drinks(10), \"free,\", stamps_left(10), \"left\")\nprint(\" 9 stamps:\", free_drinks(9), \"free,\", stamps_left(9), \"left\")\nprint()\n\nmain()\n",
+    "stdin": "3\n4\n6\n5\n",
+    "predict": "The test program starts with `\"stamps\" in dir(loyalty)`. `dir` lists a module's module variables. Before running: will it print `True` or `False` with your version, and what would the starter have printed?",
+    "expected_output": "Module variable 'stamps' exists: False\nAfter two visits: 7\nAnother card: 23\n23 stamps: 2 free, 3 left\n10 stamps: 1 free, 0 left\n 9 stamps: 0 free, 9 left\n\nHow many visits this month? Cups on visit 1? Cups on visit 2? Cups on visit 3? \nStamps earned: 15\nFree drinks: 1\nStamps left on the card: 5\n"
+   },
+   "warmup": [
+    {
+     "question": "Press **Run** on the starter. What error does Python report, and on which line? Using the reading's example `x = 5` / `def f(): x = 10`, explain why `stamps` inside `add_stamps` is not the module variable.",
+     "model_answer": "UnboundLocalError on the line stamps = stamps + cups: Python says it cannot access the local variable stamps before it has a value. Because the function assigns to stamps, stamps is a temporary variable of add_stamps, like the x inside f in the reading. The right-hand side tries to read that temporary before it has been given a value, so the module variable is never even looked at."
+    },
+    {
+     "question": "Classify each of these names from the starter as a module variable, a parameter or a temporary variable: `FREE_DRINK_AT`, `add_stamps`, `cups`, `count`, `visits`, `visit`.",
+     "model_answer": "FREE_DRINK_AT and add_stamps are module variables (a function name is a module variable too). cups is a parameter of add_stamps (and a temporary variable in main), count is a parameter of free_drinks and stamps_left, and visits and visit are temporary variables of main."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Give the scope and the lifetime of the parameter `count` in `add_stamps`, and of the variable `stamps` in your `main`.",
+     "model_answer": "count: its scope is the body of add_stamps, and it exists only while one call of add_stamps runs; each call gets a fresh one. stamps in main: its scope is the body of main below where it is introduced, and it lives for the whole call of main, which is why it can carry the running total across all the visits."
+    },
+    {
+     "question": "`free_drinks` reads the module variable `FREE_DRINK_AT`, yet `add_stamps` was not allowed to change `stamps`. Why is reading a module variable acceptable while changing it from a function is risky?",
+     "model_answer": "Reading a value that nobody changes is predictable: every function sees the same 10. If any function can change a module variable, its value depends on which functions ran before, so a bug in one function shows up somewhere else and the functions can't be reused or tested separately. In the test program, two cards would have shared one count."
+    },
+    {
+     "question": "The test program totals two different cards (`card` and `add_stamps(18, 5)`). Why would that be impossible with the starter's design, even if the crash were fixed?",
+     "model_answer": "The starter keeps one count in a single module variable, so every call would add to the same total and the second card would start where the first left off. With parameters and return values, each caller keeps its own count and the function just computes."
+    }
+   ],
+   "extension": "Add a function `redeem(count)` that returns a tuple: the free drinks and the stamps left, computed by calling your two functions. Use it in `main` with `drinks, left = redeem(stamps)`. Why is it better to call `free_drinks` and `stamps_left` than to repeat the `//` and `%`?",
+   "worth_knowing": "Python decides which names in a function are temporary variables when it compiles the `def`, not line by line: one assignment anywhere in the body makes the name temporary for the whole body. That's why the starter failed at once with `UnboundLocalError`, which is a kind of `NameError`, instead of quietly reading the module variable first.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "6.3b",
+   "title": "Sensible defaults: progress bars for the study tracker",
+   "subtitle": "Required, default and keyword arguments",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 6.3, Using Keywords for Default and Optional Arguments, pp. 158-159",
+   "minutes": 25,
+   "objectives": [
+    "Write a function header with required arguments first, followed by default arguments",
+    "Call a function using its defaults, overriding a default by position, and overriding one by keyword",
+    "Choose defaults so the most common call is also the simplest"
+   ],
+   "scenario": "The course's study tracker shows each student a text progress bar like `[##########----------] 50%`. It appears on three screens: the dashboard (the standard bar), a phone widget (narrower) and a printable page (drawn with `=` because `#` prints too dark).\n\nRight now every caller must pass all four arguments, even though almost every bar is 20 characters wide and drawn with `#`. That is the situation the reading describes for `repToInt` and `base`: an argument most callers find an annoyance.\n\nMake `width` and `fill` optional with sensible defaults, and simplify the three calls. One more bug report: a student who finished a bonus lesson (12 of 10) got a bar longer than its brackets.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "The header is `progress_bar(done, total, width=20, fill=\"#\")`: the two required arguments first, then the two default arguments."
+    },
+    {
+     "id": "R2",
+     "text": "When `done` is greater than `total`, the bar is full and shows `100%`. It never draws more than `width` characters."
+    },
+    {
+     "id": "R3",
+     "text": "The dashboard call passes only the two required arguments."
+    },
+    {
+     "id": "R4",
+     "text": "The phone call overrides only the width (10). The printable call overrides only the fill (`\"=\"`) by **keyword**, leaving the width at its default. No call passes a default value explicitly."
+    },
+    {
+     "id": "R5",
+     "text": "The test program's bars match, including calls by position, by keyword and with keywords in a different order.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "progress.py",
+   "stdin": "9\n12\n",
+   "starter_code": "\"\"\"progress.py - text progress bars for the course study tracker.\"\"\"\n\n\n# TODO (R1): give width and fill default values.\ndef progress_bar(done, total, width, fill):\n    \"\"\"Return a bar such as [##########----------] 50% for done out of total.\"\"\"\n    # TODO (R2): more than total lessons done should show a full bar, not break it.\n    filled = done * width // total\n    percent = done * 100 // total\n    return \"[\" + fill * filled + \"-\" * (width - filled) + \"] \" + str(percent) + \"%\"\n\n\ndef main():\n    \"\"\"Ask for the progress and print it for three screens.\"\"\"\n    done = int(input(\"Lessons finished? \"))\n    total = int(input(\"Lessons in the course? \"))\n    # TODO (R3): the dashboard uses the standard bar.\n    print(\"Dashboard:\", progress_bar(done, total, 20, \"#\"))\n    # TODO (R4): the phone widget changes only the width, to 10.\n    print(\"Phone:    \", progress_bar(done, total, 10, \"#\"))\n    # TODO (R4): the printable page changes only the fill, to \"=\".\n    print(\"Printable:\", progress_bar(done, total, 20, \"=\"))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"progress.py - text progress bars for the course study tracker.\"\"\"\n\n\ndef progress_bar(done, total, width=20, fill=\"#\"):\n    \"\"\"Return a bar such as [##########----------] 50% for done out of total.\n    width is the number of characters inside the brackets; fill draws the done part.\"\"\"\n    done = min(done, total)\n    filled = done * width // total\n    percent = done * 100 // total\n    return \"[\" + fill * filled + \"-\" * (width - filled) + \"] \" + str(percent) + \"%\"\n\n\ndef main():\n    \"\"\"Ask for the progress and print it for three screens.\"\"\"\n    done = int(input(\"Lessons finished? \"))\n    total = int(input(\"Lessons in the course? \"))\n    print(\"Dashboard:\", progress_bar(done, total))\n    print(\"Phone:    \", progress_bar(done, total, width=10))\n    print(\"Printable:\", progress_bar(done, total, fill=\"=\"))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "Default arguments are assignments in the header: `width=20, fill=\"#\"`. They must follow the required arguments `done` and `total`; putting a default before a required argument is a `SyntaxError`. A call that omits them gets the defaults; a call that supplies them overrides them. The phone call may pass the width by position (`progress_bar(done, total, 10)`) or by keyword (`width=10`). The printable call has to use a keyword: to give a value for `fill` by position you would also have to repeat the width, 20, and repeating a default defeats the purpose. Keywords may come in any order (`fill=\".\", width=8`). `done = min(done, total)` caps the progress; an `if done > total:` statement works just as well. Assigning to the parameter `done` only changes the function's own copy: the caller's variable is untouched.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`width` defaults to 20 and `fill` to `\"#\"`, after the required arguments",
+     "strings": true,
+     "require": "\\bdef\\s+progress_bar\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*width\\s*=\\s*20\\s*,\\s*fill\\s*=\\s*(?:\\\"#\\\"|'#')\\s*\\)\\s*:",
+     "message": "Change the header to `def progress_bar(done, total, width=20, fill=\"#\"):`. Required arguments come first; each default argument is written as an assignment."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "`progress_bar` caps `done` at `total`",
+     "within": "progress_bar",
+     "require": [
+      "\\bmin\\s*\\(",
+      "\\bif\\b[^\\n]*(?:>|<)"
+     ],
+     "message": "Before computing `filled`, limit `done` so it is never more than `total`, with `min` or an `if` statement. 12 of 10 should draw a full bar and 100%, not 24 characters in a 20-character bar."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "The dashboard uses both defaults",
+     "within": "main",
+     "require": "\\bprogress_bar\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*\\)",
+     "message": "Call `progress_bar(done, total)` for the dashboard. With defaults in the header, the most common call is also the shortest."
+    },
+    {
+     "id": "C4",
+     "requirement": "R4",
+     "title": "The phone call changes only the width",
+     "within": "main",
+     "require": "\\bprogress_bar\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*(?:width\\s*=\\s*)?10\\s*\\)",
+     "message": "For the phone, pass just the width after the two required arguments, either by position (`10`) or by keyword (`width=10`). The fill keeps its default."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "The printable call sets only `fill`, by keyword",
+     "within": "main",
+     "strings": true,
+     "require": "\\bprogress_bar\\s*\\(\\s*\\w+\\s*,\\s*\\w+\\s*,\\s*fill\\s*=\\s*(?:\\\"=\\\"|'=')\\s*\\)",
+     "message": "To change the fill without restating the width, name it: `fill=\"=\"`. By position, the third argument always goes to `width`."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "No call repeats a default value",
+     "within": "main",
+     "strings": true,
+     "forbid": [
+      ",\\s*(?:width\\s*=\\s*)?20\\b",
+      ",\\s*(?:fill\\s*=\\s*)?(?:\\\"#\\\"|'#')"
+     ],
+     "message": "Remove the explicit `20` and `\"#\"` from the calls. If the defaults change later, a call that repeats the old values won't follow."
+    }
+   ],
+   "hints": [
+    "Look at `def example(required, option1 = 2, option2 = 3)` in the reading: the required names come first, then each optional one is written as `name = value`.",
+    "Before `filled` is computed, make sure `done` can't be bigger than `total`. Python's built-in `min` returns the smaller of its arguments.",
+    "By position, values fill the parameters left to right, so the third value is always `width`. To skip the width and set only the fill, use the syntax `<key> = <value>` in the call."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from progress import progress_bar, main\n\nprint(progress_bar(5, 10))\nprint(progress_bar(5, 10, 10))\nprint(progress_bar(3, 4, fill=\"*\"))\nprint(progress_bar(1, 4, fill=\".\", width=8))\nprint(progress_bar(7, 7, width=5))\nprint(progress_bar(0, 8))\nprint(progress_bar(12, 10, 4))\nprint()\n\nmain()\n",
+    "stdin": "9\n12\n",
+    "predict": "Before running: what will `progress_bar(1, 4, fill=\".\", width=8)` and `progress_bar(12, 10, 4)` print? Work out `filled` and the percent for each.",
+    "expected_output": "[##########----------] 50%\n[#####-----] 50%\n[***************-----] 75%\n[..------] 25%\n[#####] 100%\n[--------------------] 0%\n[####] 100%\n\nLessons finished? Lessons in the course? Dashboard: [###############-----] 75%\nPhone:     [#######---] 75%\nPrintable: [===============-----] 75%\n"
+   },
+   "warmup": [
+    {
+     "question": "Trace the starter's `progress_bar(3, 4, 8, \"#\")` by hand: what are `filled` and `percent`, and what string does it return?",
+     "model_answer": "filled = 3 * 8 // 4 = 6 and percent = 3 * 100 // 4 = 75, so it returns [######--] 75% (six # and two -)."
+    },
+    {
+     "question": "A teammate suggests the header `def progress_bar(width=20, fill=\"#\", done, total):` so the options come first. What does Python do with it, and why does the rule make sense?",
+     "model_answer": "Python refuses it with a SyntaxError (a parameter without a default follows one with a default). Arguments are matched by position, so if defaults came first, Python couldn't tell whether progress_bar(5, 10) meant width and fill or done and total. Required arguments must come first."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Why must the printable call use the keyword `fill=`, while the phone call may pass `10` by position?",
+     "model_answer": "Positional values fill the parameters left to right, so a third value always goes to width. The phone changes width, the third parameter, so position works. The printable page changes only fill, the fourth; by position I would have to pass the width too, repeating the default 20. A keyword skips straight to fill."
+    },
+    {
+     "question": "Inside your function, `done = min(done, total)` assigns to the parameter. Does this change the `done` variable in `main`? Explain using what the reading says about parameters.",
+     "model_answer": "No. When the function is called, the argument's value is copied into the parameter, which is a variable of the function with the function body as its scope. Assigning to it changes only that copy, which disappears when the call ends; main's done still holds 12."
+    },
+    {
+     "question": "Python's `range` has defaults too. Using the reading, explain what `range(5)` assumes, and how that compares with choosing 20 and `\"#\"` here.",
+     "model_answer": "range(5) assumes a lower bound of 0 and a step of 1, because those are what most loops need. Our defaults follow the same idea: 20 and # are what most screens want, so the common call stays short, and the rare cases (phone, printable) override only what differs."
+    }
+   ],
+   "extension": "Add a third default argument `show_percent=True`, and make the phone widget call it with `show_percent=False` so it shows only the bar. Then write `rep_to_int(rep, base=2)` from the reading and test it with and without the base.",
+   "worth_knowing": "Python evaluates a default value once, when the `def` statement runs, not on every call. For `20` and `\"#\"` that's harmless, but a default such as `items=[]` creates one list shared by every call, so values pile up between calls. The usual fix: `items=None`, then create the list inside the function.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Whose variable is it? The coffee cart stamp card</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 6.3a</div>
+  <h1>Whose variable is it? The coffee cart stamp card</h1>
+<h2>Objectives</h2><ul><li>Classify each name in a program as a module variable, a parameter or a temporary variable</li><li>Explain why assigning to a name inside a function creates a temporary variable instead of changing the module variable</li><li>Pass data in through parameters and back out through return values instead of changing a module variable</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>add_stamps(count, cups)</code> receives the current count as a parameter and <strong>returns</strong> the new count. It changes no module variable.</li><li><strong>R2</strong> <code>free_drinks(count)</code> returns how many free drinks the stamps are worth (23 stamps earn 2), reading the module variable <code>FREE_DRINK_AT</code> instead of writing <code>10</code>.</li><li><strong>R3</strong> <code>stamps_left(count)</code> returns the stamps that remain after the free drinks are redeemed (23 stamps leave 3), also using <code>FREE_DRINK_AT</code>.</li><li><strong>R4</strong> The module variable <code>stamps</code> is gone. <code>main</code> starts its own temporary variable <code>stamps</code> at 0 and updates it with the value <code>add_stamps</code> returns.</li><li><strong>R5</strong> No <code>global</code> statements: data moves through parameters and return values only.</li><li><strong>R6</strong> The test program&#x27;s results match: the module has no <code>stamps</code> variable, and two separate cards don&#x27;t interfere. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Press <strong>Run</strong> on the starter. What error does Python report, and on which line? Using the reading&#x27;s example <code>x = 5</code> / <code>def f(): x = 10</code>, explain why <code>stamps</code> inside <code>add_stamps</code> is not the module variable.</p><div class="answer"><p>UnboundLocalError on the line stamps = stamps + cups: Python says it cannot access the local variable stamps before it has a value. Because the function assigns to stamps, stamps is a temporary variable of add_stamps, like the x inside f in the reading. The right-hand side tries to read that temporary before it has been given a value, so the module variable is never even looked at.</p></div></li><li><p>Classify each of these names from the starter as a module variable, a parameter or a temporary variable: <code>FREE_DRINK_AT</code>, <code>add_stamps</code>, <code>cups</code>, <code>count</code>, <code>visits</code>, <code>visit</code>.</p><div class="answer"><p>FREE_DRINK_AT and add_stamps are module variables (a function name is a module variable too). cups is a parameter of add_stamps (and a temporary variable in main), count is a parameter of free_drinks and stamps_left, and visits and visit are temporary variables of main.</p></div></li></ol>
+<h2>Solution</h2><div class="file">loyalty.py</div><pre class="code-block"><code><span class="t-sd">"""loyalty.py - stamp card for the Campus Grind coffee cart.</span>
+<span class="t-sd">Every cup earns one stamp; every 10 stamps earn a free drink."""</span>
+
+<span class="t-n">FREE_DRINK_AT</span> <span class="t-o">=</span> <span class="t-mi">10</span>   <span class="t-c1"># module variable used as a constant: functions may read it</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">add_stamps</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-p">,</span> <span class="t-n">cups</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the number of stamps on a card that had count stamps</span>
+<span class="t-sd">    after a visit where cups were bought."""</span>
+    <span class="t-k">return</span> <span class="t-n">count</span> <span class="t-o">+</span> <span class="t-n">cups</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">free_drinks</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return how many free drinks count stamps are worth."""</span>
+    <span class="t-k">return</span> <span class="t-n">count</span> <span class="t-o">//</span> <span class="t-n">FREE_DRINK_AT</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">stamps_left</span><span class="t-p">(</span><span class="t-n">count</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the stamps left on the card after the free drinks are redeemed."""</span>
+    <span class="t-k">return</span> <span class="t-n">count</span> <span class="t-o">%</span> <span class="t-n">FREE_DRINK_AT</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Record a month of visits and print the card."""</span>
+    <span class="t-n">stamps</span> <span class="t-o">=</span> <span class="t-mi">0</span>
+    <span class="t-n">visits</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"How many visits this month? "</span><span class="t-p">))</span>
+    <span class="t-k">for</span> <span class="t-n">visit</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span> <span class="t-n">visits</span> <span class="t-o">+</span> <span class="t-mi">1</span><span class="t-p">):</span>
+        <span class="t-n">cups</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Cups on visit "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">visit</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">"? "</span><span class="t-p">))</span>
+        <span class="t-n">stamps</span> <span class="t-o">=</span> <span class="t-n">add_stamps</span><span class="t-p">(</span><span class="t-n">stamps</span><span class="t-p">,</span> <span class="t-n">cups</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">()</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Stamps earned:"</span><span class="t-p">,</span> <span class="t-n">stamps</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Free drinks:"</span><span class="t-p">,</span> <span class="t-n">free_drinks</span><span class="t-p">(</span><span class="t-n">stamps</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Stamps left on the card:"</span><span class="t-p">,</span> <span class="t-n">stamps_left</span><span class="t-p">(</span><span class="t-n">stamps</span><span class="t-p">))</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p>Inside <code>add_stamps</code>, the assignment <code>stamps = ...</code> makes <code>stamps</code> a temporary variable of the function, as the reading&#x27;s <code>x = 10</code> example shows. Python decides this for the whole body when it compiles the function, so the right-hand side <code>stamps + cups</code> tries to read the temporary before it has a value: <code>UnboundLocalError</code>. Even without the crash, the module variable would not change. The redesign passes the count in as the parameter <code>count</code> and returns the new total; <code>main</code> stores it with <code>stamps = add_stamps(stamps, cups)</code>. Now <code>stamps</code> is a temporary variable of <code>main</code> (scope: the body of <code>main</code>; lifetime: one call of <code>main</code>), and <code>count</code> and <code>cups</code> live only for one call of <code>add_stamps</code>. Reading a module variable from a function is fine, which is why <code>free_drinks</code> and <code>stamps_left</code> use <code>FREE_DRINK_AT</code>: if the cart changes the offer to 8, one line changes. <code>count // FREE_DRINK_AT</code> gives the free drinks and <code>count % FREE_DRINK_AT</code> the remainder. Because the functions keep no hidden state, the test program can total two cards side by side.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">loyalty</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">loyalty</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">add_stamps</span><span class="t-p">,</span> <span class="t-n">free_drinks</span><span class="t-p">,</span> <span class="t-n">stamps_left</span><span class="t-p">,</span> <span class="t-n">main</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Module variable 'stamps' exists:"</span><span class="t-p">,</span> <span class="t-s2">"stamps"</span> <span class="t-ow">in</span> <span class="t-nb">dir</span><span class="t-p">(</span><span class="t-n">loyalty</span><span class="t-p">))</span>
+
+<span class="t-n">card</span> <span class="t-o">=</span> <span class="t-n">add_stamps</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">)</span>
+<span class="t-n">card</span> <span class="t-o">=</span> <span class="t-n">add_stamps</span><span class="t-p">(</span><span class="t-n">card</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"After two visits:"</span><span class="t-p">,</span> <span class="t-n">card</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Another card:"</span><span class="t-p">,</span> <span class="t-n">add_stamps</span><span class="t-p">(</span><span class="t-mi">18</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">))</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"23 stamps:"</span><span class="t-p">,</span> <span class="t-n">free_drinks</span><span class="t-p">(</span><span class="t-mi">23</span><span class="t-p">),</span> <span class="t-s2">"free,"</span><span class="t-p">,</span> <span class="t-n">stamps_left</span><span class="t-p">(</span><span class="t-mi">23</span><span class="t-p">),</span> <span class="t-s2">"left"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"10 stamps:"</span><span class="t-p">,</span> <span class="t-n">free_drinks</span><span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">),</span> <span class="t-s2">"free,"</span><span class="t-p">,</span> <span class="t-n">stamps_left</span><span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">),</span> <span class="t-s2">"left"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">" 9 stamps:"</span><span class="t-p">,</span> <span class="t-n">free_drinks</span><span class="t-p">(</span><span class="t-mi">9</span><span class="t-p">),</span> <span class="t-s2">"free,"</span><span class="t-p">,</span> <span class="t-n">stamps_left</span><span class="t-p">(</span><span class="t-mi">9</span><span class="t-p">),</span> <span class="t-s2">"left"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+
+<span class="t-n">main</span><span class="t-p">()</span></code></pre><h3>Program input it receives</h3><pre class="output">3
+4
+6
+5
+</pre><h3>Expected output</h3><pre class="output">Module variable &#x27;stamps&#x27; exists: False
+After two visits: 7
+Another card: 23
+23 stamps: 2 free, 3 left
+10 stamps: 1 free, 0 left
+ 9 stamps: 0 free, 9 left
+
+How many visits this month? Cups on visit 1? Cups on visit 2? Cups on visit 3? 
+Stamps earned: 15
+Free drinks: 1
+Stamps left on the card: 5
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>add_stamps</code> takes the count and the cups<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bdef\s+add_stamps\s*\(\s*\w+\s*,\s*\w+\s*\)\s*:</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>add_stamps</code> returns the new count<div class="small">in <code>add_stamps</code></div></td><td><div><span class="tag">require</span> <code>\breturn\b[^\n]*\+</code></div><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div><div><span class="tag">forbid</span> <code>\bstamps\s*=</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>free_drinks</code> divides by <code>FREE_DRINK_AT</code><div class="small">in <code>free_drinks</code></div></td><td><div><span class="tag">require</span> <code>\breturn\b[^\n]*//\s*FREE_DRINK_AT\b</code></div><div><span class="tag">forbid</span> <code>\b10\b</code></div></td></tr><tr><td>C4</td><td>R3</td><td><code>stamps_left</code> uses the remainder<div class="small">in <code>stamps_left</code></div></td><td><div><span class="tag">require</span> <code>\breturn\b[^\n]*%\s*FREE_DRINK_AT\b</code></div><div><span class="tag">forbid</span> <code>\b10\b</code></div></td></tr><tr><td>C5</td><td>R4</td><td>The module variable <code>stamps</code> is removed<div class="small">whole file, flags m</div></td><td><div><span class="tag">forbid</span> <code>^stamps\s*=</code></div></td></tr><tr><td>C6</td><td>R4</td><td><code>main</code> keeps the count and stores what <code>add_stamps</code> returns<div class="small">in <code>main</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bstamps\s*=\s*0\b)(?=[\s\S]*\bstamps\s*=\s*add_stamps\s*\(\s*stamps\s*,)</code></div></td></tr><tr><td>C7</td><td>R5</td><td>No <code>global</code> statements<div class="small">whole file</div></td><td><div><span class="tag">forbid</span> <code>\bglobal\b</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>add_stamps</code> takes the count and the cups</dt><dd><p>Give <code>add_stamps</code> two parameters: the stamps already on the card first, then the cups bought: <code>def add_stamps(count, cups):</code>. The count arrives through a parameter instead of being read from a module variable.</p></dd><dt>C2 · <code>add_stamps</code> returns the new count</dt><dd><p>Return the sum of the two parameters. Don&#x27;t assign to <code>stamps</code> inside the function: that creates a temporary variable that disappears when the call ends, and the caller never sees the new value.</p></dd><dt>C3 · <code>free_drinks</code> divides by <code>FREE_DRINK_AT</code></dt><dd><p>Return <code>count // FREE_DRINK_AT</code>. Integer division counts whole free drinks, and reading the module variable instead of writing 10 means the offer can change in one place.</p></dd><dt>C4 · <code>stamps_left</code> uses the remainder</dt><dd><p>Return <code>count % FREE_DRINK_AT</code>: the stamps that don&#x27;t make up a full free drink stay on the card.</p></dd><dt>C5 · The module variable <code>stamps</code> is removed</dt><dd><p>Delete the line <code>stamps = 0</code> at the top of the file. The count belongs to one run of <code>main</code>, not to the whole module.</p></dd><dt>C6 · <code>main</code> keeps the count and stores what <code>add_stamps</code> returns</dt><dd><p>Start <code>main</code> with <code>stamps = 0</code>, and inside the loop write <code>stamps = add_stamps(stamps, cups)</code>. The current count goes in as an argument, and the returned value replaces it.</p></dd><dt>C7 · No <code>global</code> statements</dt><dd><p>Remove the <code>global</code> statement. It lets a function change a module variable, but then any function might change it, which is what the reading warns against. Pass the value in and return the result instead.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Make a list of every name in the starter and label it: module variable, parameter or temporary variable. Which label does <code>stamps</code> have inside <code>add_stamps</code>, given the reading&#x27;s <code>x = 10</code> example?</p></li><li><p>The function can&#x27;t change the caller&#x27;s count, but it can <strong>return</strong> a new one. Its job becomes: given the old count and the cups, what is the new count? Look at how <code>main</code> would have to call it then.</p></li><li><p>Free drinks and leftover stamps are the quotient and the remainder of dividing by <code>FREE_DRINK_AT</code>: the <code>//</code> and <code>%</code> operators from Chapter 2.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Give the scope and the lifetime of the parameter <code>count</code> in <code>add_stamps</code>, and of the variable <code>stamps</code> in your <code>main</code>.</p><div class="answer"><p>count: its scope is the body of add_stamps, and it exists only while one call of add_stamps runs; each call gets a fresh one. stamps in main: its scope is the body of main below where it is introduced, and it lives for the whole call of main, which is why it can carry the running total across all the visits.</p></div></li><li><p><code>free_drinks</code> reads the module variable <code>FREE_DRINK_AT</code>, yet <code>add_stamps</code> was not allowed to change <code>stamps</code>. Why is reading a module variable acceptable while changing it from a function is risky?</p><div class="answer"><p>Reading a value that nobody changes is predictable: every function sees the same 10. If any function can change a module variable, its value depends on which functions ran before, so a bug in one function shows up somewhere else and the functions can&#x27;t be reused or tested separately. In the test program, two cards would have shared one count.</p></div></li><li><p>The test program totals two different cards (<code>card</code> and <code>add_stamps(18, 5)</code>). Why would that be impossible with the starter&#x27;s design, even if the crash were fixed?</p><div class="answer"><p>The starter keeps one count in a single module variable, so every call would add to the same total and the second card would start where the first left off. With parameters and return values, each caller keeps its own count and the function just computes.</p></div></li></ol>
+<h2>Extension</h2><p>Add a function <code>redeem(count)</code> that returns a tuple: the free drinks and the stamps left, computed by calling your two functions. Use it in <code>main</code> with <code>drinks, left = redeem(stamps)</code>. Why is it better to call <code>free_drinks</code> and <code>stamps_left</code> than to repeat the <code>//</code> and <code>%</code>?</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

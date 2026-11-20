@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · One algorithm, one place: the food bank hours report</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 6.1</div>
+  <h1>One algorithm, one place: the food bank hours report</h1>
+<h2>Objectives</h2><ul><li>Replace repeated code with one function that captures a general method</li><li>Use parameters to supply different problem instances to the same algorithm</li><li>Build a second function on top of the first instead of copying its loop</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> Define <code>total_hours(hours, first_day, last_day)</code> with a docstring. It <strong>returns</strong> the sum of the hours from <code>first_day</code> through <code>last_day</code>, inclusive (day 1 is <code>hours[0]</code>), and returns <code>0</code> when <code>first_day</code> is after <code>last_day</code>. It works on whatever list is passed in, not only <code>HOURS</code>.</li><li><strong>R2</strong> <code>total_hours</code> only computes: it does not print and does not ask for input.</li><li><strong>R3</strong> Define <code>average_per_day(hours, first_day, last_day)</code>. It returns the average hours per day over the range, rounded to 1 decimal place, by <strong>calling</strong> <code>total_hours</code>. It contains no loop of its own.</li><li><strong>R4</strong> In <code>main</code>, the three copied loops are gone: week 1, week 2 and the whole period come from calls to <code>total_hours</code>, and the average line calls <code>average_per_day</code> for days 1 to 14.</li><li><strong>R5</strong> <code>main</code> prints the total and the average for the range the coordinator types in, using the two functions.</li><li><strong>R6</strong> The test program&#x27;s results match, including a one-day range, an empty range and a list other than <code>HOURS</code>. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Press <strong>Run</strong> on the starter (it uses the program input 3 and 9). Week 1 plus week 2 should equal the two-week total. Does it? Find the line that causes the difference.</p><div class="answer"><p>It doesn&#x27;t: week 1 is 28, week 2 is 23 and the two-week total is 57, so 6 hours are missing. The week 2 loop uses day &lt; 14 instead of day &lt;= 14, so it never adds day 14 (6 hours). The other two copies use &lt;=, so only one copy is wrong.</p></div></li><li><p>The coordinator now wants days marked <code>0</code> to be counted as &#x27;closed&#x27; and skipped. In the starter, how many places would you have to edit? How many after your refactor?</p><div class="answer"><p>In the starter, three places, one per copied loop, and I would have to get all three right. After the refactor, only one: the body of total_hours. Every report calls it, so the change reaches all of them.</p></div></li></ol>
+<h2>Solution</h2><div class="file">volunteer_hours.py</div><pre class="code-block"><code><span class="t-sd">"""volunteer_hours.py - hours report for the Riverside Food Bank's two-week schedule."""</span>
+
+<span class="t-c1"># Hours volunteered on each day of the period. Day 1 is HOURS[0].</span>
+<span class="t-n">HOURS</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-mi">3</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">,</span> <span class="t-mi">6</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">7</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">,</span> <span class="t-mi">6</span><span class="t-p">]</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">total_hours</span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-p">,</span> <span class="t-n">first_day</span><span class="t-p">,</span> <span class="t-n">last_day</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the total of hours from first_day through last_day.</span>
+<span class="t-sd">    Days are numbered from 1, so day 1 is hours[0]."""</span>
+    <span class="t-n">total</span> <span class="t-o">=</span> <span class="t-mi">0</span>
+    <span class="t-n">day</span> <span class="t-o">=</span> <span class="t-n">first_day</span>
+    <span class="t-k">while</span> <span class="t-n">day</span> <span class="t-o">&lt;=</span> <span class="t-n">last_day</span><span class="t-p">:</span>
+        <span class="t-n">total</span> <span class="t-o">+=</span> <span class="t-n">hours</span><span class="t-p">[</span><span class="t-n">day</span> <span class="t-o">-</span> <span class="t-mi">1</span><span class="t-p">]</span>
+        <span class="t-n">day</span> <span class="t-o">+=</span> <span class="t-mi">1</span>
+    <span class="t-k">return</span> <span class="t-n">total</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">average_per_day</span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-p">,</span> <span class="t-n">first_day</span><span class="t-p">,</span> <span class="t-n">last_day</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the average hours per day from first_day through last_day,</span>
+<span class="t-sd">    rounded to 1 decimal place."""</span>
+    <span class="t-n">days</span> <span class="t-o">=</span> <span class="t-n">last_day</span> <span class="t-o">-</span> <span class="t-n">first_day</span> <span class="t-o">+</span> <span class="t-mi">1</span>
+    <span class="t-k">return</span> <span class="t-nb">round</span><span class="t-p">(</span><span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">hours</span><span class="t-p">,</span> <span class="t-n">first_day</span><span class="t-p">,</span> <span class="t-n">last_day</span><span class="t-p">)</span> <span class="t-o">/</span> <span class="t-n">days</span><span class="t-p">,</span> <span class="t-mi">1</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Print the coordinator's report."""</span>
+    <span class="t-n">week1</span> <span class="t-o">=</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">7</span><span class="t-p">)</span>
+    <span class="t-n">week2</span> <span class="t-o">=</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">,</span> <span class="t-mi">14</span><span class="t-p">)</span>
+    <span class="t-n">period</span> <span class="t-o">=</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">14</span><span class="t-p">)</span>
+
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Week 1:"</span><span class="t-p">,</span> <span class="t-n">week1</span><span class="t-p">,</span> <span class="t-s2">"hours"</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Week 2:"</span><span class="t-p">,</span> <span class="t-n">week2</span><span class="t-p">,</span> <span class="t-s2">"hours"</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Two weeks:"</span><span class="t-p">,</span> <span class="t-n">period</span><span class="t-p">,</span> <span class="t-s2">"hours"</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Average per day:"</span><span class="t-p">,</span> <span class="t-n">average_per_day</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">14</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">()</span>
+
+    <span class="t-n">first</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"First day of the custom range? "</span><span class="t-p">))</span>
+    <span class="t-n">last</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Last day of the custom range? "</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Days"</span><span class="t-p">,</span> <span class="t-n">first</span><span class="t-p">,</span> <span class="t-s2">"to"</span><span class="t-p">,</span> <span class="t-n">last</span><span class="t-p">,</span> <span class="t-s2">"total:"</span><span class="t-p">,</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-n">first</span><span class="t-p">,</span> <span class="t-n">last</span><span class="t-p">),</span>
+          <span class="t-s2">"hours, average:"</span><span class="t-p">,</span> <span class="t-n">average_per_day</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-n">first</span><span class="t-p">,</span> <span class="t-n">last</span><span class="t-p">))</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p>The three loops in the starter are one algorithm with three problem instances: (1, 7), (8, 14) and (1, 14). A function captures the algorithm once; its parameters receive the instance on each call. The second copy used <code>day &lt; 14</code>, so week 2 lost day 14: exactly the kind of error redundancy invites, because each copy must be right on its own. With one definition, the bug can only live in one place, and fixing it fixes every report. <code>total_hours</code> must use its parameter <code>hours</code>, not the module variable <code>HOURS</code>, or it would ignore the list it is given (the evening-shift test). <code>sum(hours[first_day - 1:last_day])</code> is an equally correct body. <code>average_per_day</code> reuses <code>total_hours</code>, which is division of labor: one function sums, the other divides, and <code>main</code> only coordinates and prints.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">volunteer_hours</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-n">total_hours</span><span class="t-p">,</span> <span class="t-n">average_per_day</span><span class="t-p">,</span> <span class="t-n">main</span>
+
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Week 1:"</span><span class="t-p">,</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">7</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Week 2:"</span><span class="t-p">,</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">,</span> <span class="t-mi">14</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Day 14 only:"</span><span class="t-p">,</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">14</span><span class="t-p">,</span> <span class="t-mi">14</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Empty range:"</span><span class="t-p">,</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">))</span>
+
+<span class="t-n">evening_shift</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-mi">2</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">]</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Another list:"</span><span class="t-p">,</span> <span class="t-n">total_hours</span><span class="t-p">(</span><span class="t-n">evening_shift</span><span class="t-p">,</span> <span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Average, week 2:"</span><span class="t-p">,</span> <span class="t-n">average_per_day</span><span class="t-p">(</span><span class="t-n">HOURS</span><span class="t-p">,</span> <span class="t-mi">8</span><span class="t-p">,</span> <span class="t-mi">14</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">()</span>
+
+<span class="t-n">main</span><span class="t-p">()</span></code></pre><h3>Program input it receives</h3><pre class="output">3
+9
+</pre><h3>Expected output</h3><pre class="output">Week 1: 28
+Week 2: 29
+Day 14 only: 6
+Empty range: 0
+Another list: 7
+Average, week 2: 4.1
+
+Week 1: 28 hours
+Week 2: 29 hours
+Two weeks: 57 hours
+Average per day: 4.1
+
+First day of the custom range? Last day of the custom range? Days 3 to 9 total: 28 hours, average: 4.0
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>total_hours</code> is defined with three parameters<div class="small">whole file</div></td><td><div><span class="tag">require</span> <code>\bdef\s+total_hours\s*\(\s*\w+\s*,\s*\w+\s*,\s*\w+\s*\)\s*:</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>total_hours</code> has a docstring<div class="small">whole file, strings included</div></td><td><div><span class="tag">require</span> <code>\bdef\s+total_hours\s*\([^)]*\)\s*:\s*\n\s+(?:\&quot;\&quot;\&quot;|&#x27;&#x27;&#x27;)\s*\S</code></div></td></tr><tr><td>C3</td><td>R1</td><td><code>total_hours</code> uses the list it is given<div class="small">in <code>total_hours</code></div></td><td><div><span class="tag">require</span> <code>\bhours\b|\b\w+\s*\[</code></div><div><span class="tag">forbid</span> <code>\bHOURS\b</code></div></td></tr><tr><td>C4</td><td>R2</td><td><code>total_hours</code> returns the total and prints nothing<div class="small">in <code>total_hours</code></div></td><td><div><span class="tag">require</span> <code>\breturn\b[^\n]*\w</code></div><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div><div><span class="tag">forbid</span> <code>\binput\s*\(</code></div></td></tr><tr><td>C5</td><td>R3</td><td><code>average_per_day</code> calls <code>total_hours</code> and has no loop<div class="small">in <code>average_per_day</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\btotal_hours\s*\()(?=[\s\S]*\breturn\b)</code></div><div><span class="tag">forbid</span> <code>\bwhile\b</code></div><div><span class="tag">forbid</span> <code>\bfor\b</code></div><div><span class="tag">forbid</span> <code>\bprint\s*\(</code></div></td></tr><tr><td>C6</td><td>R3</td><td>The average is rounded to 1 decimal<div class="small">in <code>average_per_day</code></div></td><td><div><span class="tag">require</span> <code>\bround\s*\([\s\S]*,\s*1\s*\)</code></div></td></tr><tr><td>C7</td><td>R4</td><td><code>main</code> gets the three totals from <code>total_hours</code><div class="small">in <code>main</code></div></td><td><div><span class="tag">require</span> <code>^(?:[\s\S]*?\btotal_hours\s*\(){3}</code></div><div><span class="tag">forbid</span> <code>\bwhile\b</code></div><div><span class="tag">forbid</span> <code>\bfor\b</code></div></td></tr><tr><td>C8</td><td>R5</td><td><code>main</code> uses both functions for the averages and the custom range<div class="small">in <code>main</code></div></td><td><div><span class="tag">require</span> <code>^(?:[\s\S]*?\baverage_per_day\s*\(){2}</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>total_hours</code> is defined with three parameters</dt><dd><p>Write the header <code>def total_hours(hours, first_day, last_day):</code>. The three parameters are the problem instance: which list, and which range of days.</p></dd><dt>C2 · <code>total_hours</code> has a docstring</dt><dd><p>Make the first line of the body a docstring in triple quotes, like <code>summation</code> in the reading. Say what it returns and that day 1 is the first item.</p></dd><dt>C3 · <code>total_hours</code> uses the list it is given</dt><dd><p>Inside the function, use the parameter (<code>hours</code>), not the module variable <code>HOURS</code>. Otherwise <code>total_hours(evening_shift, 1, 3)</code> would quietly add up the wrong list: the function would solve one problem instance, not a class of problems.</p></dd><dt>C4 · <code>total_hours</code> returns the total and prints nothing</dt><dd><p>End with a <code>return</code> statement that hands the total back. Leave printing and input to <code>main</code>: a function that prints can&#x27;t be reused by <code>average_per_day</code>.</p></dd><dt>C5 · <code>average_per_day</code> calls <code>total_hours</code> and has no loop</dt><dd><p>Define <code>average_per_day</code> so it gets the total by calling <code>total_hours(...)</code> with its own three parameters, divides by the number of days, rounds to 1 decimal and returns the result. Writing a fourth summing loop here would bring the redundancy back.</p></dd><dt>C6 · The average is rounded to 1 decimal</dt><dd><p>Use <code>round(value, 1)</code> on the average so 4.142857... becomes 4.1.</p></dd><dt>C7 · <code>main</code> gets the three totals from <code>total_hours</code></dt><dd><p>Replace each copied loop in <code>main</code> with one call: <code>total_hours(HOURS, 1, 7)</code> style, a different pair of days each time. <code>main</code> should contain no loop at all.</p></dd><dt>C8 · <code>main</code> uses both functions for the averages and the custom range</dt><dd><p>Call <code>average_per_day</code> twice in <code>main</code>: once for days 1 to 14 and once for the coordinator&#x27;s <code>first</code> and <code>last</code>. Also replace the placeholder total in the last line with a call to <code>total_hours</code>.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Compare the three loops line by line. What is identical, and what changes? The parts that change become the parameters; everything else becomes the body of <code>total_hours</code>.</p></li><li><p>Look at <code>summation(lower, upper)</code> in the reading: it walks a counter from the lower bound up to the upper bound. Your version walks <code>day</code> from <code>first_day</code> to <code>last_day</code> and adds <code>hours[day - 1]</code>, because day 1 is at index 0.</p></li><li><p>The number of days in a range is <code>last_day - first_day + 1</code>. <code>average_per_day</code> divides the value <code>total_hours</code> returns by that count, then rounds.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>The reading says a function should provide &#x27;a general method with systematic variations&#x27;. In your <code>total_hours</code>, what is the general method and what are the variations?</p><div class="answer"><p>The general method is the summing algorithm: start at 0, walk the days in a range and add each day&#x27;s hours. The variations are the problem instances supplied as arguments: which list of hours and which first and last day. One definition solves week 1, week 2, the whole period, a single day and any list.</p></div></li><li><p>Why must <code>total_hours</code> use its parameter <code>hours</code> and not the module variable <code>HOURS</code>, even though <code>main</code> always passes <code>HOURS</code>?</p><div class="answer"><p>If it used HOURS, the hours parameter would be ignored and the function would only work on one list. The test with the evening shift list would return the food bank&#x27;s hours instead. Using the parameter keeps the function general, so another program can import it and pass its own data.</p></div></li><li><p><code>main</code> now reads like a summary of the report. Which complexity does each call hide from someone reading <code>main</code>?</p><div class="answer"><p>Each call hides the loop, the counter, the running total and the index arithmetic (day - 1). A reader of main sees &#x27;total of week 1&#x27; or &#x27;average of days 1 to 14&#x27; without having to track three variables per report, so main can be understood in a few seconds.</p></div></li></ol>
+<h2>Extension</h2><p>Add an optional fourth parameter <code>step</code> to <code>total_hours</code> so the coordinator can total every other day (the reading suggests the same for <code>summation</code>). Then write <code>best_week(hours)</code> that returns 1 or 2, whichever week had more hours, using only calls to <code>total_hours</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>
