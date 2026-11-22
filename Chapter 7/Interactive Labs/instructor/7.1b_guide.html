@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Recursive structure: the shared-drive storage report</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 7.1b</div>
+  <h1>Recursive structure: the shared-drive storage report</h1>
+<h2>Objectives</h2><ul><li>Recognise a recursive structure: a folder contains files and other folders, which contain files and other folders</li><li>Write recursive functions that loop over a folder&#x27;s items and call themselves on each subfolder, as countFiles and countBytes do in Case Study 7-1</li><li>Build and return a list from recursive calls, passing down extra information (the path) as an argument</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>count_files</code> counts each file once and, for each subfolder, adds the result of a recursive call on that subfolder.</li><li><strong>R2</strong> <code>total_kb</code> adds each file&#x27;s size and, for each subfolder, the result of a recursive call. It contains no nested loop.</li><li><strong>R3</strong> <code>find_files</code> searches subfolders with a recursive call that passes the longer path (<code>path + name + &quot;/&quot;</code>), adds that call&#x27;s list to its own, and returns full paths such as <code>media/events/fair.jpg</code>.</li><li><strong>R4</strong> All three functions work on an empty folder and on folders nested deeper than the club&#x27;s drive. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Run the starter (or reason it out). What do <code>count_files(DRIVE)</code> and <code>total_kb(DRIVE)</code> return, and which files does each one miss or miscount?</p><div class="answer"><p>count_files returns 4: it counts the top-level names, so the folders minutes and media count as one file each and nothing inside them is counted. total_kb returns 402 (48 + 22 + 19 + 310 + 3): it sees minutes and logo.png one level down but misses everything in media/events.</p></div></li><li><p>The finished <code>count_files(DRIVE)</code> calls itself for <code>minutes</code>, <code>media</code> and <code>events</code>. What is the largest number of <code>count_files</code> stack frames on the call stack at the same time, and when does that happen?</p><div class="answer"><p>Three: while counting media/events, the frames for DRIVE, media and events are all on the stack. The events call returns 3 and is removed, then the media call finishes and returns, and the top call carries on.</p></div></li></ol>
+<h2>Solution</h2><div class="file">drive_report.py</div><pre class="code-block"><code><span class="t-sd">"""drive_report.py - storage report for the robotics club's shared drive.</span>
+
+<span class="t-sd">A folder is a dictionary. Each key is a name; each value is either a file</span>
+<span class="t-sd">size in KB (an int) or another folder (a dictionary).</span>
+<span class="t-sd">"""</span>
+
+<span class="t-n">DRIVE</span> <span class="t-o">=</span> <span class="t-p">{</span>
+    <span class="t-s2">"budget.xlsx"</span><span class="t-p">:</span> <span class="t-mi">48</span><span class="t-p">,</span>
+    <span class="t-s2">"minutes"</span><span class="t-p">:</span> <span class="t-p">{</span><span class="t-s2">"jan.docx"</span><span class="t-p">:</span> <span class="t-mi">22</span><span class="t-p">,</span> <span class="t-s2">"feb.docx"</span><span class="t-p">:</span> <span class="t-mi">19</span><span class="t-p">},</span>
+    <span class="t-s2">"media"</span><span class="t-p">:</span> <span class="t-p">{</span>
+        <span class="t-s2">"logo.png"</span><span class="t-p">:</span> <span class="t-mi">310</span><span class="t-p">,</span>
+        <span class="t-s2">"events"</span><span class="t-p">:</span> <span class="t-p">{</span><span class="t-s2">"fair.jpg"</span><span class="t-p">:</span> <span class="t-mi">2400</span><span class="t-p">,</span> <span class="t-s2">"gala.jpg"</span><span class="t-p">:</span> <span class="t-mi">3100</span><span class="t-p">,</span> <span class="t-s2">"fair_map.pdf"</span><span class="t-p">:</span> <span class="t-mi">640</span><span class="t-p">},</span>
+    <span class="t-p">},</span>
+    <span class="t-s2">"readme.txt"</span><span class="t-p">:</span> <span class="t-mi">3</span><span class="t-p">,</span>
+<span class="t-p">}</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">is_folder</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return True if item is a folder (a dictionary), False if it is a file size."""</span>
+    <span class="t-k">return</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">,</span> <span class="t-nb">dict</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">count_files</span><span class="t-p">(</span><span class="t-n">folder</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the number of files in folder and all its subfolders."""</span>
+    <span class="t-n">count</span> <span class="t-o">=</span> <span class="t-mi">0</span>
+    <span class="t-k">for</span> <span class="t-n">name</span> <span class="t-ow">in</span> <span class="t-n">folder</span><span class="t-p">:</span>
+        <span class="t-k">if</span> <span class="t-n">is_folder</span><span class="t-p">(</span><span class="t-n">folder</span><span class="t-p">[</span><span class="t-n">name</span><span class="t-p">]):</span>
+            <span class="t-n">count</span> <span class="t-o">+=</span> <span class="t-n">count_files</span><span class="t-p">(</span><span class="t-n">folder</span><span class="t-p">[</span><span class="t-n">name</span><span class="t-p">])</span>
+        <span class="t-k">else</span><span class="t-p">:</span>
+            <span class="t-n">count</span> <span class="t-o">+=</span> <span class="t-mi">1</span>
+    <span class="t-k">return</span> <span class="t-n">count</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">total_kb</span><span class="t-p">(</span><span class="t-n">folder</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the total size in KB of folder and all its subfolders."""</span>
+    <span class="t-n">total</span> <span class="t-o">=</span> <span class="t-mi">0</span>
+    <span class="t-k">for</span> <span class="t-n">name</span> <span class="t-ow">in</span> <span class="t-n">folder</span><span class="t-p">:</span>
+        <span class="t-n">item</span> <span class="t-o">=</span> <span class="t-n">folder</span><span class="t-p">[</span><span class="t-n">name</span><span class="t-p">]</span>
+        <span class="t-k">if</span> <span class="t-n">is_folder</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">):</span>
+            <span class="t-n">total</span> <span class="t-o">+=</span> <span class="t-n">total_kb</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">)</span>
+        <span class="t-k">else</span><span class="t-p">:</span>
+            <span class="t-n">total</span> <span class="t-o">+=</span> <span class="t-n">item</span>
+    <span class="t-k">return</span> <span class="t-n">total</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">find_files</span><span class="t-p">(</span><span class="t-n">target</span><span class="t-p">,</span> <span class="t-n">folder</span><span class="t-p">,</span> <span class="t-n">path</span><span class="t-o">=</span><span class="t-s2">""</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Return the paths of the files whose names contain target, in folder</span>
+<span class="t-sd">    and all its subfolders. path is the folder's own path, such as "media/"."""</span>
+    <span class="t-n">files</span> <span class="t-o">=</span> <span class="t-p">[]</span>
+    <span class="t-k">for</span> <span class="t-n">name</span> <span class="t-ow">in</span> <span class="t-n">folder</span><span class="t-p">:</span>
+        <span class="t-n">item</span> <span class="t-o">=</span> <span class="t-n">folder</span><span class="t-p">[</span><span class="t-n">name</span><span class="t-p">]</span>
+        <span class="t-k">if</span> <span class="t-n">is_folder</span><span class="t-p">(</span><span class="t-n">item</span><span class="t-p">):</span>
+            <span class="t-n">files</span><span class="t-o">.</span><span class="t-n">extend</span><span class="t-p">(</span><span class="t-n">find_files</span><span class="t-p">(</span><span class="t-n">target</span><span class="t-p">,</span> <span class="t-n">item</span><span class="t-p">,</span> <span class="t-n">path</span> <span class="t-o">+</span> <span class="t-n">name</span> <span class="t-o">+</span> <span class="t-s2">"/"</span><span class="t-p">))</span>
+        <span class="t-k">elif</span> <span class="t-n">target</span> <span class="t-ow">in</span> <span class="t-n">name</span><span class="t-p">:</span>
+            <span class="t-n">files</span><span class="t-o">.</span><span class="t-n">append</span><span class="t-p">(</span><span class="t-n">path</span> <span class="t-o">+</span> <span class="t-n">name</span><span class="t-p">)</span>
+    <span class="t-k">return</span> <span class="t-n">files</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Print the drive's file count, total size and the files matching a search."""</span>
+    <span class="t-n">target</span> <span class="t-o">=</span> <span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Search for? "</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Files:"</span><span class="t-p">,</span> <span class="t-n">count_files</span><span class="t-p">(</span><span class="t-n">DRIVE</span><span class="t-p">))</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Total:"</span><span class="t-p">,</span> <span class="t-n">total_kb</span><span class="t-p">(</span><span class="t-n">DRIVE</span><span class="t-p">),</span> <span class="t-s2">"KB"</span><span class="t-p">)</span>
+    <span class="t-n">matches</span> <span class="t-o">=</span> <span class="t-n">find_files</span><span class="t-p">(</span><span class="t-n">target</span><span class="t-p">,</span> <span class="t-n">DRIVE</span><span class="t-p">)</span>
+    <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">matches</span><span class="t-p">:</span>
+        <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"No matches"</span><span class="t-p">)</span>
+    <span class="t-k">for</span> <span class="t-n">path</span> <span class="t-ow">in</span> <span class="t-n">matches</span><span class="t-p">:</span>
+        <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">path</span><span class="t-p">)</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p>Each function has the shape of <code>countFiles</code> and <code>countBytes</code> in the case study: loop over the folder&#x27;s items; a file is handled directly, and a subfolder is handed to a recursive call whose result is added in. There is no explicit <code>if</code> for the base case: a folder with no subfolders makes no recursive call, so the recursion ends there, and an empty folder returns 0 or []. Because each call goes one level deeper into a finite drive, the recursion always ends. In <code>find_files</code>, the default argument <code>path=&quot;&quot;</code> lets callers start at the top without a path, and each recursive call passes the path to the subfolder. <code>files.extend(...)</code> and <code>files += ...</code> are both correct; <code>files.append(...)</code> with a recursive call would put a list inside the list. The nested-loop version can only reach as many levels as it has loops; recursion reaches any depth with one function.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">drive_report</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">count_files</span><span class="t-p">,</span> <span class="t-n">total_kb</span><span class="t-p">,</span> <span class="t-n">find_files</span><span class="t-p">,</span> <span class="t-n">main</span>
+
+<span class="t-n">tiny</span> <span class="t-o">=</span> <span class="t-p">{</span><span class="t-s2">"a.txt"</span><span class="t-p">:</span> <span class="t-mi">1</span><span class="t-p">,</span> <span class="t-s2">"empty"</span><span class="t-p">:</span> <span class="t-p">{},</span> <span class="t-s2">"x"</span><span class="t-p">:</span> <span class="t-p">{</span><span class="t-s2">"y"</span><span class="t-p">:</span> <span class="t-p">{</span><span class="t-s2">"z"</span><span class="t-p">:</span> <span class="t-p">{</span><span class="t-s2">"deep.txt"</span><span class="t-p">:</span> <span class="t-mi">5</span><span class="t-p">,</span> <span class="t-s2">"b.txt"</span><span class="t-p">:</span> <span class="t-mi">2</span><span class="t-p">}}}}</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">count_files</span><span class="t-p">(</span><span class="t-n">tiny</span><span class="t-p">),</span> <span class="t-n">total_kb</span><span class="t-p">(</span><span class="t-n">tiny</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">find_files</span><span class="t-p">(</span><span class="t-s2">".txt"</span><span class="t-p">,</span> <span class="t-n">tiny</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">find_files</span><span class="t-p">(</span><span class="t-s2">"deep"</span><span class="t-p">,</span> <span class="t-n">tiny</span><span class="t-p">,</span> <span class="t-s2">"home/"</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">count_files</span><span class="t-p">({}),</span> <span class="t-n">total_kb</span><span class="t-p">({}),</span> <span class="t-n">find_files</span><span class="t-p">(</span><span class="t-s2">"a"</span><span class="t-p">,</span> <span class="t-p">{}))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"--"</span><span class="t-p">)</span>
+
+<span class="t-n">main</span><span class="t-p">()</span></code></pre><h3>Program input it receives</h3><pre class="output">fair
+</pre><h3>Expected output</h3><pre class="output">3 8
+[&#x27;a.txt&#x27;, &#x27;x/y/z/deep.txt&#x27;, &#x27;x/y/z/b.txt&#x27;]
+[&#x27;home/x/y/z/deep.txt&#x27;]
+0 0 []
+--
+Search for? Files: 8
+Total: 6542 KB
+media/events/fair.jpg
+media/events/fair_map.pdf
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>count_files</code> calls itself on subfolders<div class="small">in <code>count_files</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\bis_folder\s*\()(?=[\s\S]*(?:[-+=(,]|\breturn)\s*count_files\s*\()</code></div></td></tr><tr><td>C2</td><td>R2</td><td><code>total_kb</code> calls itself on subfolders<div class="small">in <code>total_kb</code></div></td><td><div><span class="tag">require</span> <code>(?:[-+=(,]|\breturn)\s*total_kb\s*\(</code></div></td></tr><tr><td>C3</td><td>R2</td><td><code>total_kb</code> has no nested loop<div class="small">in <code>total_kb</code></div></td><td><div><span class="tag">forbid</span> <code>\bfor\b[\s\S]*\bfor\b</code></div></td></tr><tr><td>C4</td><td>R3</td><td><code>find_files</code> calls itself and keeps the matches it returns<div class="small">in <code>find_files</code></div></td><td><div><span class="tag">require</span> <code>\.extend\s*\(\s*find_files\s*\(</code></div><div><span class="tag">require</span> <code>\+=\s*find_files\s*\(</code></div><div><span class="tag">require</span> <code>=\s*\w+\s*\+\s*find_files\s*\(</code></div></td></tr><tr><td>C5</td><td>R3</td><td><code>find_files</code> passes the longer path down and returns full paths<div class="small">in <code>find_files</code>, strings included</div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*find_files\s*\([^)]*(?:\bpath\s*\+|\{\s*path\s*\}))(?=[\s\S]*\.append\s*\(\s*(?:path\s*\+|f?[\&quot;&#x27;][^\&quot;&#x27;]*\{\s*path\s*\}))</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>count_files</code> calls itself on subfolders</dt><dd><p>Inside the loop, use <code>is_folder</code> to tell files from folders. For a file add 1; for a folder add <code>count_files(...)</code> of that folder, which counts everything inside it, however deep.</p></dd><dt>C2 · <code>total_kb</code> calls itself on subfolders</dt><dd><p>When an item is a folder, add <code>total_kb(item)</code> to the total. The recursive call adds up that folder and every folder inside it.</p></dd><dt>C3 · <code>total_kb</code> has no nested loop</dt><dd><p>Remove the inner <code>for</code> loop. Each nested loop reaches one more level and no further; one recursive call replaces it and reaches every level.</p></dd><dt>C4 · <code>find_files</code> calls itself and keeps the matches it returns</dt><dd><p>For a subfolder, call <code>find_files</code> on it and add the list it returns to <code>files</code> with <code>files.extend(...)</code> (as <code>findFiles</code> does in the case study). <code>append</code> would put a whole list inside your list.</p></dd><dt>C5 · <code>find_files</code> passes the longer path down and returns full paths</dt><dd><p>Pass <code>path + name + &quot;/&quot;</code> as the third argument of the recursive call, and append <code>path + name</code> for a match. Each call then knows where it is in the drive.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Look at <code>countFiles</code> in Case Study 7-1: for each element, a file adds 1 to the count, and a directory adds whatever the recursive call returns for that directory.</p></li><li><p>In <code>total_kb</code>, the inner loop is trying to do the job <code>total_kb</code> itself already does, for a single folder. What if you just asked <code>total_kb</code> for that subfolder&#x27;s total?</p></li><li><p>In <code>find_files</code>, the recursive call returns a list. Your own list needs its items, not the list as one item, so join them with <code>extend</code>. The subfolder&#x27;s path is your path, its name and a slash.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>None of your functions has an <code>if</code> that says &quot;stop&quot;. Where is the base case, and why can&#x27;t these functions recurse forever on the club&#x27;s drive?</p><div class="answer"><p>The base case is a folder with no subfolders: the loop handles only files and makes no recursive call, so that call simply returns. Each recursive call goes one level deeper into a drive that has a finite depth, so eventually every call reaches folders without subfolders.</p></div></li><li><p>Explain why recursion fits this problem better than loops, using what happened to the teammate&#x27;s nested-loop <code>total_kb</code>.</p><div class="answer"><p>The drive has a recursive structure: a folder holds folders, which hold folders. Each nested loop reaches one more level, so the teammate&#x27;s version stopped at media and missed media/events. One recursive function handles a folder the same way at every level, so it works for any depth, including folders added later.</p></div></li><li><p>Why does <code>find_files</code> take <code>path</code> as an argument with a default, instead of building the path some other way?</p><div class="answer"><p>Each call only sees its own folder, not where it sits in the drive, so the caller has to pass that information down: the recursive call gets path + name + &quot;/&quot;. The default &quot;&quot; means the first call, at the top of the drive, doesn&#x27;t need to pass a path.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>largest_file(folder, path=&quot;&quot;)</code> that returns the path and size of the biggest file anywhere in the drive, as a tuple. Then print a tree of the drive with each level indented four spaces further, using a <code>margin</code> argument as the reading does when it traces <code>summation</code>.</p>
+<h2>Rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Code meets every requirement (all structure checks pass)</td><td>6</td><td>Check results in the lab report</td></tr><tr><td>Test program output matches</td><td>2</td><td>Output section of the report</td></tr><tr><td>Warm-up and reflection answers explain the why, in the student&#x27;s own words</td><td>2</td><td>Answers in the report</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

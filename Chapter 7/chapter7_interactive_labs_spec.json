@@ -1,0 +1,600 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 7 labs: Design with Recursion",
+ "collection_intro": "Four hands-on labs for sections 7.1 and 7.2 of *Fundamentals of Python: First Programs*. Each one runs in your browser: read the given code, predict, write, run the test program and explain your choices. Your work saves as you type.",
+ "theme": "harbor",
+ "language": "python",
+ "labs": [
+  {
+   "id": "7.1a",
+   "title": "Base case and recursive step: the pyramid workout planner",
+   "subtitle": "From a loop to a recursive function",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 7.1, Defining a Recursive Function, Recursive Algorithms and Infinite Recursion, pp. 165-170",
+   "minutes": 30,
+   "objectives": [
+    "Convert a while loop into a recursive function by replacing the loop with a selection statement and the update with a recursive call",
+    "Write a recursive function that returns a value, with a base case that ends the recursion",
+    "Make sure every recursive step moves the argument toward the base case, so the recursion can't run forever"
+   ],
+   "scenario": "The campus gym's app plans **pyramid sets**: the first set has a few reps, and each set after it adds 2, until the peak. A plan from 6 to 10 is three sets (6, 8, 10) and 24 reps in total.\n\nA student developer started a recursive version after reading that \"a recursive function is a function that calls itself\". `show_sets` is still a loop, and `total_reps` crashes the app every time it runs: try **Run** and read the last line of the error.\n\nFinish both functions recursively. Watch one case the developer missed: trainers often start on an even number and pick an odd peak (4 up to 11). The sets are then 4, 6, 8, 10, and the reps never land exactly on the peak.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`show_sets` contains no loop. It prints the current set inside an `if`, then calls itself for the next set (`reps + 2`)."
+    },
+    {
+     "id": "R2",
+     "text": "`total_reps` has a base case: when there are no sets left (`reps` is past `peak`), it returns `0`."
+    },
+    {
+     "id": "R3",
+     "text": "The recursive call in `total_reps` passes `reps + 2`, so each call moves toward the base case."
+    },
+    {
+     "id": "R4",
+     "text": "The base case uses an inequality, not `==`, so a peak the reps never land on exactly (4 up to 11) still ends the recursion, and a start above the peak returns 0."
+    },
+    {
+     "id": "R5",
+     "text": "The test program's plans and totals match.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "pyramid.py",
+   "stdin": "5\n13\n",
+   "starter_code": "\"\"\"pyramid.py - plan a pyramid workout: each set climbs by 2 reps up to a peak.\"\"\"\n\n\ndef show_sets(reps, peak):\n    \"\"\"Print one line per set, from reps up to peak, climbing by 2.\"\"\"\n    # TODO (R1): replace the loop with a selection statement and a recursive call.\n    while reps <= peak:\n        print(\"Set:\", reps, \"reps\")\n        reps = reps + 2\n\n\ndef total_reps(reps, peak):\n    \"\"\"Return the total number of reps in the sets from reps up to peak.\"\"\"\n    # TODO (R2): add the base case: when there are no sets left, the total is 0.\n    # TODO (R3): the recursive call must move toward the base case.\n    return reps + total_reps(reps, peak)\n\n\ndef main():\n    \"\"\"Ask for the first set and the peak, then print the plan.\"\"\"\n    start = int(input(\"First set reps? \"))\n    peak = int(input(\"Peak reps? \"))\n    show_sets(start, peak)\n    print(\"Total:\", total_reps(start, peak), \"reps\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"pyramid.py - plan a pyramid workout: each set climbs by 2 reps up to a peak.\"\"\"\n\n\ndef show_sets(reps, peak):\n    \"\"\"Print one line per set, from reps up to peak, climbing by 2.\"\"\"\n    if reps <= peak:\n        print(\"Set:\", reps, \"reps\")\n        show_sets(reps + 2, peak)\n\n\ndef total_reps(reps, peak):\n    \"\"\"Return the total number of reps in the sets from reps up to peak.\"\"\"\n    if reps > peak:\n        return 0\n    else:\n        return reps + total_reps(reps + 2, peak)\n\n\ndef main():\n    \"\"\"Ask for the first set and the peak, then print the plan.\"\"\"\n    start = int(input(\"First set reps? \"))\n    peak = int(input(\"Peak reps? \"))\n    show_sets(start, peak)\n    print(\"Total:\", total_reps(start, peak), \"reps\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "This is the same conversion the reading makes for `displayRange`: the loop's condition becomes the `if`, and the assignment `reps = reps + 2` becomes the argument of the recursive call. In `total_reps`, the base case (`reps > peak`, return 0) is what stops the recursion; the recursive step adds the current set to the total of the sets after it, exactly like the reading's `summation`. The starter's call `total_reps(reps, peak)` never changes its argument, so every call makes the same call again until Python stops it with `RecursionError`. A base case of `reps == peak` works for 6 to 10 but not for 4 to 11: 10 + 2 is 12, which skips 11, and the recursion runs on forever. Equivalent correct forms: `if reps <= peak: return reps + total_reps(reps + 2, peak)` followed by `return 0`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`show_sets` uses no loop",
+     "within": "show_sets",
+     "forbid": [
+      "\\bwhile\\b",
+      "\\bfor\\b"
+     ],
+     "message": "Remove the `while` loop from `show_sets`. In a recursive version, the `if` decides whether there is another set to print, and the recursive call does the repeating."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`show_sets` calls itself with the next set",
+     "within": "show_sets",
+     "require": "\\bif\\b[\\s\\S]*\\bshow_sets\\s*\\(\\s*\\w+\\s*\\+\\s*2\\s*,\\s*\\w+\\s*\\)",
+     "message": "Inside an `if reps <= peak:` block, print the set, then call `show_sets` again with `reps + 2` and the same `peak`. The `+ 2` moves from the old assignment into the argument."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "`total_reps` returns 0 in a base case",
+     "within": "total_reps",
+     "require": "^(?=[\\s\\S]*\\bif\\b)(?=[\\s\\S]*\\breturn\\s+0\\b)",
+     "message": "Add a selection statement to `total_reps` that returns `0` when there are no sets left. Without a base case, nothing ever stops the calls."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "The recursive call moves toward the base case",
+     "within": "total_reps",
+     "require": "\\btotal_reps\\s*\\(\\s*\\w+\\s*\\+\\s*2\\s*,\\s*\\w+\\s*\\)",
+     "forbid": "\\breturn\\b[^\\n]*\\btotal_reps\\s*\\(\\s*reps\\s*,",
+     "message": "Call `total_reps` with `reps + 2`, not `reps`. If the argument never changes, each call repeats the previous one until Python runs out of stack frames."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "The base case uses an inequality, not `==`",
+     "within": "total_reps",
+     "require": "\\bif\\s+\\(?\\s*\\w+\\s*(?:<=?|>=?)\\s*\\w+",
+     "forbid": "==",
+     "message": "Test the base case with `>` (or `<=` for the recursive case). With `==`, a plan from 4 to 11 goes 4, 6, 8, 10, 12, ... and never equals 11, so the recursion never stops."
+    }
+   ],
+   "hints": [
+    "Compare the two `displayRange` functions in the reading: the `while` became an `if`, and `lower = lower + 1` disappeared because the new value is passed straight into the recursive call.",
+    "For `total_reps`, follow the reading's `summation`: one branch returns 0 when the range is empty; the other returns the current value plus a recursive call on the rest of the range.",
+    "Ask what the last call looks like for 4 up to 11: `reps` is 12. Your base case has to recognise 12 as \"no sets left\", and `12 == 11` is False."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from pyramid import show_sets, total_reps, main\n\nshow_sets(6, 10)\nprint(total_reps(6, 10))\nprint(total_reps(4, 11))\nprint(total_reps(10, 10))\nprint(total_reps(12, 10))\nshow_sets(9, 8)\nprint(\"--\")\n\nmain()\n",
+    "stdin": "5\n13\n",
+    "predict": "Before running: what do `total_reps(4, 11)` and `total_reps(12, 10)` return? List the calls each one makes, ending with the base case.",
+    "expected_output": "Set: 6 reps\nSet: 8 reps\nSet: 10 reps\n24\n28\n10\n0\n--\nFirst set reps? Peak reps? Set: 5 reps\nSet: 7 reps\nSet: 9 reps\nSet: 11 reps\nSet: 13 reps\nTotal: 45 reps\n"
+   },
+   "warmup": [
+    {
+     "question": "The starter's `total_reps(6, 10)` returns `reps + total_reps(reps, peak)`. Without running it, describe the calls it makes and explain how Python finally stops it.",
+     "model_answer": "It calls total_reps(6, 10), which calls total_reps(6, 10) again, and so on: the argument never changes and there is no base case. Each call adds a stack frame, so after about 1000 calls Python halts with RecursionError: maximum recursion depth exceeded."
+    },
+    {
+     "question": "Trace the starter's loop version of `show_sets(5, 9)`: which lines does it print, and what value of `reps` makes the loop stop?",
+     "model_answer": "It prints Set: 5 reps, Set: 7 reps and Set: 9 reps. Then reps becomes 11, 11 <= 9 is False, and the loop stops."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Your base case uses `>` (or `<=`) instead of `==`. Explain, using the 4-to-11 plan, why `==` would turn a working function into infinite recursion.",
+     "model_answer": "The reps go 4, 6, 8, 10, 12. With == the base case asks whether reps equals 11, which never happens because the step of 2 jumps over it, so the calls continue past 12, 14, ... until RecursionError. With > peak, 12 is past the peak, so the recursion stops there."
+    },
+    {
+     "question": "How many calls of `total_reps` does `total_reps(6, 10)` make, counting the first, and what does the call stack hold while the deepest call runs?",
+     "model_answer": "Four calls: (6, 10), (8, 10), (10, 10) and (12, 10). While the last one runs, the stack holds four stack frames, one per call, each with its own reps and peak and a return address; each frame waits for the call above it to return before adding its reps."
+    },
+    {
+     "question": "The reading says a loop solves the same problem with a constant amount of memory. When would you still choose the recursive version, and when the loop?",
+     "model_answer": "Recursion fits when the problem has a recursive structure and stays small, because the code follows the definition directly (a total is this set plus the total of the rest). For thousands of steps a loop is better: it uses a few variables instead of one stack frame per call and can't hit the recursion limit."
+    }
+   ],
+   "extension": "Write a recursive `countdown_sets(reps, low)` for the second half of the pyramid, printing 10, 8, 6 down to `low`. Then combine both into `pyramid(low, peak)` that prints the climb and the descent without repeating the peak.",
+   "worth_knowing": "CPython stops at about 1000 nested calls (see `sys.getrecursionlimit()`), and it deliberately doesn't optimise tail calls: Guido van Rossum kept full tracebacks so every recursive call shows up when something goes wrong. Some languages, such as Scheme, require tail-call optimisation, so a tail-recursive function there runs in constant memory.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "7.1b",
+   "title": "Recursive structure: the shared-drive storage report",
+   "subtitle": "Folders inside folders, any depth",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 7.1, Case Study 7-1: Gathering Information from a File System (countFiles, countBytes, findFiles), and The Costs and Benefits of Recursion, pp. 170-179",
+   "minutes": 35,
+   "objectives": [
+    "Recognise a recursive structure: a folder contains files and other folders, which contain files and other folders",
+    "Write recursive functions that loop over a folder's items and call themselves on each subfolder, as countFiles and countBytes do in Case Study 7-1",
+    "Build and return a list from recursive calls, passing down extra information (the path) as an argument"
+   ],
+   "scenario": "The robotics club's shared drive is almost full, and the treasurer wants a quick report: how many files there are, how many KB they use, and where a file with a given name is.\n\nThe drive is stored as nested dictionaries, the same shape as the file system in Case Study 7-1: each value is either a file size in KB or another folder. `is_folder` is given.\n\nA teammate's version only works for the top folder. Their `total_kb` adds a nested loop to look one level down, so it misses everything in `media/events`, which holds the biggest photos. Another nested loop wouldn't fix it: next week someone will add `media/events/2026`. Make all three functions work at **any** depth.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`count_files` counts each file once and, for each subfolder, adds the result of a recursive call on that subfolder."
+    },
+    {
+     "id": "R2",
+     "text": "`total_kb` adds each file's size and, for each subfolder, the result of a recursive call. It contains no nested loop."
+    },
+    {
+     "id": "R3",
+     "text": "`find_files` searches subfolders with a recursive call that passes the longer path (`path + name + \"/\"`), adds that call's list to its own, and returns full paths such as `media/events/fair.jpg`."
+    },
+    {
+     "id": "R4",
+     "text": "All three functions work on an empty folder and on folders nested deeper than the club's drive.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "drive_report.py",
+   "stdin": "fair\n",
+   "starter_code": "\"\"\"drive_report.py - storage report for the robotics club's shared drive.\n\nA folder is a dictionary. Each key is a name; each value is either a file\nsize in KB (an int) or another folder (a dictionary).\n\"\"\"\n\nDRIVE = {\n    \"budget.xlsx\": 48,\n    \"minutes\": {\"jan.docx\": 22, \"feb.docx\": 19},\n    \"media\": {\n        \"logo.png\": 310,\n        \"events\": {\"fair.jpg\": 2400, \"gala.jpg\": 3100, \"fair_map.pdf\": 640},\n    },\n    \"readme.txt\": 3,\n}\n\n\ndef is_folder(item):\n    \"\"\"Return True if item is a folder (a dictionary), False if it is a file size.\"\"\"\n    return isinstance(item, dict)\n\n\ndef count_files(folder):\n    \"\"\"Return the number of files in folder and all its subfolders.\"\"\"\n    count = 0\n    for name in folder:\n        # TODO (R1): a subfolder holds files too; count them with a recursive call.\n        count += 1\n    return count\n\n\ndef total_kb(folder):\n    \"\"\"Return the total size in KB of folder and all its subfolders.\"\"\"\n    total = 0\n    for name in folder:\n        item = folder[name]\n        if is_folder(item):\n            # TODO (R2): this looks only one level down, so media/events is missed.\n            for inner in item:\n                if not is_folder(item[inner]):\n                    total += item[inner]\n        else:\n            total += item\n    return total\n\n\ndef find_files(target, folder, path=\"\"):\n    \"\"\"Return the paths of the files whose names contain target, in folder\n    and all its subfolders. path is the folder's own path, such as \"media/\".\"\"\"\n    files = []\n    for name in folder:\n        # TODO (R3): search subfolders too, and return full paths.\n        if target in name:\n            files.append(name)\n    return files\n\n\ndef main():\n    \"\"\"Print the drive's file count, total size and the files matching a search.\"\"\"\n    target = input(\"Search for? \")\n    print(\"Files:\", count_files(DRIVE))\n    print(\"Total:\", total_kb(DRIVE), \"KB\")\n    matches = find_files(target, DRIVE)\n    if not matches:\n        print(\"No matches\")\n    for path in matches:\n        print(path)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"drive_report.py - storage report for the robotics club's shared drive.\n\nA folder is a dictionary. Each key is a name; each value is either a file\nsize in KB (an int) or another folder (a dictionary).\n\"\"\"\n\nDRIVE = {\n    \"budget.xlsx\": 48,\n    \"minutes\": {\"jan.docx\": 22, \"feb.docx\": 19},\n    \"media\": {\n        \"logo.png\": 310,\n        \"events\": {\"fair.jpg\": 2400, \"gala.jpg\": 3100, \"fair_map.pdf\": 640},\n    },\n    \"readme.txt\": 3,\n}\n\n\ndef is_folder(item):\n    \"\"\"Return True if item is a folder (a dictionary), False if it is a file size.\"\"\"\n    return isinstance(item, dict)\n\n\ndef count_files(folder):\n    \"\"\"Return the number of files in folder and all its subfolders.\"\"\"\n    count = 0\n    for name in folder:\n        if is_folder(folder[name]):\n            count += count_files(folder[name])\n        else:\n            count += 1\n    return count\n\n\ndef total_kb(folder):\n    \"\"\"Return the total size in KB of folder and all its subfolders.\"\"\"\n    total = 0\n    for name in folder:\n        item = folder[name]\n        if is_folder(item):\n            total += total_kb(item)\n        else:\n            total += item\n    return total\n\n\ndef find_files(target, folder, path=\"\"):\n    \"\"\"Return the paths of the files whose names contain target, in folder\n    and all its subfolders. path is the folder's own path, such as \"media/\".\"\"\"\n    files = []\n    for name in folder:\n        item = folder[name]\n        if is_folder(item):\n            files.extend(find_files(target, item, path + name + \"/\"))\n        elif target in name:\n            files.append(path + name)\n    return files\n\n\ndef main():\n    \"\"\"Print the drive's file count, total size and the files matching a search.\"\"\"\n    target = input(\"Search for? \")\n    print(\"Files:\", count_files(DRIVE))\n    print(\"Total:\", total_kb(DRIVE), \"KB\")\n    matches = find_files(target, DRIVE)\n    if not matches:\n        print(\"No matches\")\n    for path in matches:\n        print(path)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "Each function has the shape of `countFiles` and `countBytes` in the case study: loop over the folder's items; a file is handled directly, and a subfolder is handed to a recursive call whose result is added in. There is no explicit `if` for the base case: a folder with no subfolders makes no recursive call, so the recursion ends there, and an empty folder returns 0 or []. Because each call goes one level deeper into a finite drive, the recursion always ends. In `find_files`, the default argument `path=\"\"` lets callers start at the top without a path, and each recursive call passes the path to the subfolder. `files.extend(...)` and `files += ...` are both correct; `files.append(...)` with a recursive call would put a list inside the list. The nested-loop version can only reach as many levels as it has loops; recursion reaches any depth with one function.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`count_files` calls itself on subfolders",
+     "within": "count_files",
+     "require": "^(?=[\\s\\S]*\\bis_folder\\s*\\()(?=[\\s\\S]*(?:[-+=(,]|\\breturn)\\s*count_files\\s*\\()",
+     "message": "Inside the loop, use `is_folder` to tell files from folders. For a file add 1; for a folder add `count_files(...)` of that folder, which counts everything inside it, however deep."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "`total_kb` calls itself on subfolders",
+     "within": "total_kb",
+     "require": "(?:[-+=(,]|\\breturn)\\s*total_kb\\s*\\(",
+     "message": "When an item is a folder, add `total_kb(item)` to the total. The recursive call adds up that folder and every folder inside it."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "`total_kb` has no nested loop",
+     "within": "total_kb",
+     "forbid": "\\bfor\\b[\\s\\S]*\\bfor\\b",
+     "message": "Remove the inner `for` loop. Each nested loop reaches one more level and no further; one recursive call replaces it and reaches every level."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "`find_files` calls itself and keeps the matches it returns",
+     "within": "find_files",
+     "require": [
+      "\\.extend\\s*\\(\\s*find_files\\s*\\(",
+      "\\+=\\s*find_files\\s*\\(",
+      "=\\s*\\w+\\s*\\+\\s*find_files\\s*\\("
+     ],
+     "message": "For a subfolder, call `find_files` on it and add the list it returns to `files` with `files.extend(...)` (as `findFiles` does in the case study). `append` would put a whole list inside your list."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "`find_files` passes the longer path down and returns full paths",
+     "within": "find_files",
+     "strings": true,
+     "require": "^(?=[\\s\\S]*find_files\\s*\\([^)]*(?:\\bpath\\s*\\+|\\{\\s*path\\s*\\}))(?=[\\s\\S]*\\.append\\s*\\(\\s*(?:path\\s*\\+|f?[\\\"'][^\\\"']*\\{\\s*path\\s*\\}))",
+     "message": "Pass `path + name + \"/\"` as the third argument of the recursive call, and append `path + name` for a match. Each call then knows where it is in the drive."
+    }
+   ],
+   "hints": [
+    "Look at `countFiles` in Case Study 7-1: for each element, a file adds 1 to the count, and a directory adds whatever the recursive call returns for that directory.",
+    "In `total_kb`, the inner loop is trying to do the job `total_kb` itself already does, for a single folder. What if you just asked `total_kb` for that subfolder's total?",
+    "In `find_files`, the recursive call returns a list. Your own list needs its items, not the list as one item, so join them with `extend`. The subfolder's path is your path, its name and a slash."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from drive_report import count_files, total_kb, find_files, main\n\ntiny = {\"a.txt\": 1, \"empty\": {}, \"x\": {\"y\": {\"z\": {\"deep.txt\": 5, \"b.txt\": 2}}}}\nprint(count_files(tiny), total_kb(tiny))\nprint(find_files(\".txt\", tiny))\nprint(find_files(\"deep\", tiny, \"home/\"))\nprint(count_files({}), total_kb({}), find_files(\"a\", {}))\nprint(\"--\")\n\nmain()\n",
+    "stdin": "fair\n",
+    "predict": "Before running: what does `find_files(\"deep\", tiny, \"home/\")` return? Write the chain of calls it makes and the path each call receives.",
+    "expected_output": "3 8\n['a.txt', 'x/y/z/deep.txt', 'x/y/z/b.txt']\n['home/x/y/z/deep.txt']\n0 0 []\n--\nSearch for? Files: 8\nTotal: 6542 KB\nmedia/events/fair.jpg\nmedia/events/fair_map.pdf\n"
+   },
+   "warmup": [
+    {
+     "question": "Run the starter (or reason it out). What do `count_files(DRIVE)` and `total_kb(DRIVE)` return, and which files does each one miss or miscount?",
+     "model_answer": "count_files returns 4: it counts the top-level names, so the folders minutes and media count as one file each and nothing inside them is counted. total_kb returns 402 (48 + 22 + 19 + 310 + 3): it sees minutes and logo.png one level down but misses everything in media/events."
+    },
+    {
+     "question": "The finished `count_files(DRIVE)` calls itself for `minutes`, `media` and `events`. What is the largest number of `count_files` stack frames on the call stack at the same time, and when does that happen?",
+     "model_answer": "Three: while counting media/events, the frames for DRIVE, media and events are all on the stack. The events call returns 3 and is removed, then the media call finishes and returns, and the top call carries on."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "None of your functions has an `if` that says \"stop\". Where is the base case, and why can't these functions recurse forever on the club's drive?",
+     "model_answer": "The base case is a folder with no subfolders: the loop handles only files and makes no recursive call, so that call simply returns. Each recursive call goes one level deeper into a drive that has a finite depth, so eventually every call reaches folders without subfolders."
+    },
+    {
+     "question": "Explain why recursion fits this problem better than loops, using what happened to the teammate's nested-loop `total_kb`.",
+     "model_answer": "The drive has a recursive structure: a folder holds folders, which hold folders. Each nested loop reaches one more level, so the teammate's version stopped at media and missed media/events. One recursive function handles a folder the same way at every level, so it works for any depth, including folders added later."
+    },
+    {
+     "question": "Why does `find_files` take `path` as an argument with a default, instead of building the path some other way?",
+     "model_answer": "Each call only sees its own folder, not where it sits in the drive, so the caller has to pass that information down: the recursive call gets path + name + \"/\". The default \"\" means the first call, at the top of the drive, doesn't need to pass a path."
+    }
+   ],
+   "extension": "Add `largest_file(folder, path=\"\")` that returns the path and size of the biggest file anywhere in the drive, as a tuple. Then print a tree of the drive with each level indented four spaces further, using a `margin` argument as the reading does when it traces `summation`.",
+   "worth_knowing": "Real file systems can contain links that point back up to a parent folder, so a recursive walk could go round in circles forever. That is why Python's `os.walk` doesn't follow symbolic links unless you pass `followlinks=True`, and why tools such as `find` keep track of folders they have already visited.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "7.2a",
+   "title": "Functions as data: the step-counter weekly report",
+   "subtitle": "Mapping and filtering",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 7.2, Functions as First-Class Data Objects, Mapping, Filtering and Fail-Safe Programming, pp. 179-181 and 183-184",
+   "minutes": 30,
+   "objectives": [
+    "Pass a function as an argument to `map` and `filter`, without calling it",
+    "Write a predicate that returns a Boolean, and use it with `filter` to keep only the values that pass",
+    "Replace a loop that builds a list with a mapping, passing the map object straight to `join` as the reading does in `changePerson`"
+   ],
+   "scenario": "A fitness watch exports a week of steps as one line of text: `8200, 10450, -1, 12010, 6300, -1, 9900`. The watch writes `-1` on a day it wasn't worn. The student wellness app turns that line into a short report: days worn, the distance of each day in km, and how many days met the 8,000-step goal.\n\nThe report has three problems. It counts the two `-1` days as worn. `goal_days` misses a day of exactly 8,000 steps. And every function is the same loop-and-append pattern written out again, which is the redundancy the reading's higher-order functions remove.\n\nRewrite the report with `map` and `filter`. The interesting decision is the predicate: what exactly counts as a worn day?",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`parse_steps` converts the pieces of the line with `map(int, ...)` and returns a list. It has no loop."
+    },
+    {
+     "id": "R2",
+     "text": "`worn` is a predicate: it returns `True` or `False`, and only `-1` counts as not worn (a day with 0 steps was worn). `worn_days` returns the list that `filter` with `worn` produces."
+    },
+    {
+     "id": "R3",
+     "text": "`km_report` maps a helper function (nested in `km_report`, or a lambda) onto `days` and passes the map object directly to `join`. It has no loop and doesn't build a list first."
+    },
+    {
+     "id": "R4",
+     "text": "`goal_days` counts the days with **at least** `GOAL` steps using `filter` and a predicate, with no loop."
+    },
+    {
+     "id": "R5",
+     "text": "The test program's results match, including an empty week.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "steps.py",
+   "stdin": "8200, 10450, -1, 12010, 6300, -1, 9900\n",
+   "starter_code": "\"\"\"steps.py - weekly report from a fitness watch export.\"\"\"\n\nKM_PER_STEP = 0.0008\nGOAL = 8000\n\n\ndef parse_steps(line):\n    \"\"\"Convert a line such as \"8200, 10450, -1\" into a list of ints.\"\"\"\n    # TODO (R1): replace the loop with map.\n    steps = []\n    for text in line.split(\",\"):\n        steps.append(int(text))\n    return steps\n\n\ndef worn(steps):\n    \"\"\"Predicate: True if the watch was worn that day. The watch writes -1\n    for a day it wasn't worn; 0 is a real (very lazy) day.\"\"\"\n    # TODO (R2): a predicate must return True or False.\n    return steps\n\n\ndef worn_days(days):\n    \"\"\"Return a list of the step counts for the days the watch was worn.\"\"\"\n    # TODO (R2): keep only the worn days, with filter and worn.\n    return days\n\n\ndef km_report(days):\n    \"\"\"Return a line such as \"6.6 km | 8.4 km\" for the given step counts.\"\"\"\n    # TODO (R3): map a helper function onto days and pass the result to join.\n    parts = []\n    for steps in days:\n        parts.append(\"%.1f km\" % (steps * KM_PER_STEP))\n    return \" | \".join(parts)\n\n\ndef goal_days(days):\n    \"\"\"Return how many days reached at least GOAL steps.\"\"\"\n    # TODO (R4): count with filter and a predicate instead of a loop.\n    count = 0\n    for steps in days:\n        if steps > GOAL:\n            count += 1\n    return count\n\n\ndef main():\n    \"\"\"Read one week of steps and print the report.\"\"\"\n    line = input(\"This week's steps? \")\n    days = worn_days(parse_steps(line))\n    print(\"Days worn:\", len(days))\n    print(\"Distance:\", km_report(days))\n    print(\"Goal met on\", goal_days(days), \"days\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"steps.py - weekly report from a fitness watch export.\"\"\"\n\nKM_PER_STEP = 0.0008\nGOAL = 8000\n\n\ndef parse_steps(line):\n    \"\"\"Convert a line such as \"8200, 10450, -1\" into a list of ints.\"\"\"\n    return list(map(int, line.split(\",\")))\n\n\ndef worn(steps):\n    \"\"\"Predicate: True if the watch was worn that day. The watch writes -1\n    for a day it wasn't worn; 0 is a real (very lazy) day.\"\"\"\n    return steps >= 0\n\n\ndef worn_days(days):\n    \"\"\"Return a list of the step counts for the days the watch was worn.\"\"\"\n    return list(filter(worn, days))\n\n\ndef km_report(days):\n    \"\"\"Return a line such as \"6.6 km | 8.4 km\" for the given step counts.\"\"\"\n    def to_km(steps):\n        return \"%.1f km\" % (steps * KM_PER_STEP)\n    return \" | \".join(map(to_km, days))\n\n\ndef met_goal(steps):\n    \"\"\"Predicate: True if the day reached at least GOAL steps.\"\"\"\n    return steps >= GOAL\n\n\ndef goal_days(days):\n    \"\"\"Return how many days reached at least GOAL steps.\"\"\"\n    return len(list(filter(met_goal, days)))\n\n\ndef main():\n    \"\"\"Read one week of steps and print the report.\"\"\"\n    line = input(\"This week's steps? \")\n    days = worn_days(parse_steps(line))\n    print(\"Days worn:\", len(days))\n    print(\"Distance:\", km_report(days))\n    print(\"Goal met on\", goal_days(days), \"days\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "`map(int, line.split(\",\"))` applies `int` to each piece; `int` ignores the spaces around the digits, so `\" 10450\"` is fine. Note `int`, not `int()`: the function itself is the argument. `map` and `filter` return map and filter objects, so `parse_steps` and `worn_days` wrap them in `list` because their callers need a list (`len` doesn't work on a filter object). `km_report` doesn't: `join` accepts the map object directly, just as in the reading's `changePerson`. The starter's `worn` returned `steps` itself: `filter` then treats -1 as true (any nonzero number is truthy) and 0 as false, the opposite of what we want, which is why the reading insists that the function given to `filter` be a predicate. `steps >= 0` and `steps != -1` are both correct; `steps > 0` drops real 0-step days. In `goal_days`, `>=` fixes the exactly-8000 bug. A lambda (section 7.2's next topic) is also accepted in `km_report` and `goal_days`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`parse_steps` maps `int` onto the pieces",
+     "within": "parse_steps",
+     "require": "\\bmap\\s*\\(\\s*int\\s*,",
+     "message": "Use `map(int, line.split(\",\"))` and wrap it in `list(...)`. Pass `int` itself, without parentheses: `map` calls it once for each piece."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`parse_steps` has no loop",
+     "within": "parse_steps",
+     "forbid": "\\bfor\\b",
+     "message": "Remove the `for` loop and the `append`. The mapping does both jobs in one line."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "`worn` returns a Boolean comparison",
+     "within": "worn",
+     "require": "\\breturn\\s+[^\\n]*(?:>=|<=|!=|==|>|<)",
+     "forbid": "\\breturn\\s+[^\\n]*>\\s*0\\b",
+     "message": "Return a comparison, so `worn` gives `True` or `False`: `steps >= 0` or `steps != -1`. Only -1 means the watch wasn't worn; `steps > 0` would also drop a real day of 0 steps."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "`worn_days` filters with `worn`",
+     "within": "worn_days",
+     "require": "\\bfilter\\s*\\(\\s*worn\\s*,\\s*\\w+\\s*\\)",
+     "message": "Return `list(filter(worn, days))`. `filter` applies the predicate to each value and keeps the ones for which it returns True."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "`km_report` passes a mapping straight to `join`",
+     "within": "km_report",
+     "require": "\\.join\\s*\\(\\s*map\\s*\\(\\s*(?:\\w+|lambda\\b[^)]*)\\s*,\\s*days\\s*\\)",
+     "forbid": [
+      "\\bfor\\b",
+      "\\bappend\\s*\\("
+     ],
+     "message": "Define a small helper inside `km_report` (such as `to_km(steps)`) that formats one day, then return `\" | \".join(map(to_km, days))`. `join` accepts the map object directly, so there is no loop and no list to build."
+    },
+    {
+     "id": "C6",
+     "requirement": "R4",
+     "title": "`goal_days` counts with `filter`, no loop",
+     "within": "goal_days",
+     "require": "\\blen\\s*\\(\\s*list\\s*\\(\\s*filter\\s*\\(",
+     "forbid": "\\bfor\\b",
+     "message": "Write a predicate that checks `steps >= GOAL`, then return `len(list(filter(<predicate>, days)))`. A filter object has no length, so turn it into a list first."
+    }
+   ],
+   "hints": [
+    "In the reading, `list(map(int, words))` turns a list of strings into a list of ints. Your strings come from `line.split(\",\")`.",
+    "Try the starter's `worn` in your head on -1 and on 0. `filter` keeps a value when the function's result is true, and every number except 0 counts as true.",
+    "The reading's second `changePerson` is the model for `km_report`: a nested function that handles one item, then `join` around a `map` of it."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from steps import parse_steps, worn, worn_days, km_report, goal_days, main\n\nprint(parse_steps(\"12, -1,7000\"))\nprint(worn(-1), worn(0), worn(5300))\nprint(worn_days([-1, 9100, -1, 0, 8000]))\nprint(km_report([10000, 5300]))\nprint(repr(km_report([])))\nprint(goal_days([7999, 8000, 12000]), goal_days([]))\nprint(\"--\")\n\nmain()\n",
+    "stdin": "8200, 10450, -1, 12010, 6300, -1, 9900\n",
+    "predict": "Before running: what do `worn_days([-1, 9100, -1, 0, 8000])` and `goal_days([7999, 8000, 12000])` return with your predicates?",
+    "expected_output": "[12, -1, 7000]\nFalse True True\n[9100, 0, 8000]\n8.0 km | 4.2 km\n''\n2 0\n--\nThis week's steps? Days worn: 5\nDistance: 6.6 km | 8.4 km | 9.6 km | 5.0 km | 7.9 km\nGoal met on 4 days\n"
+   },
+   "warmup": [
+    {
+     "question": "The starter's `worn` returns `steps` itself. If `worn_days` used `filter(worn, [-1, 9100, 0])`, which values would it keep, and why?",
+     "model_answer": "It would keep -1 and 9100 and drop 0. filter keeps a value when the function returns something true, and every number except 0 counts as true, so the not-worn -1 day stays in and a real 0-step day disappears: the opposite of what we want."
+    },
+    {
+     "question": "What is the difference between `map(int, pieces)` and `map(int(), pieces)`? Which one does the reading use, and what goes wrong with the other?",
+     "model_answer": "map(int, pieces) passes the function itself, and map calls it on each piece; that is what the reading does. int() calls the function right away with no argument and returns 0, so map receives the number 0 instead of a function and fails because 0 is not callable."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The reading says a higher-order function separates transforming each value from accumulating the results. Point to where that separation is in your `km_report`.",
+     "model_answer": "The nested helper to_km transforms one day's steps into a string such as 8.4 km; it knows nothing about lists. map applies it to every day and join accumulates the results into one line. The starter mixed both jobs in one loop with append."
+    },
+    {
+     "question": "Why do `parse_steps` and `worn_days` wrap their result in `list(...)`, while `km_report` passes the map object straight to `join`?",
+     "model_answer": "map and filter return map and filter objects, not lists. main needs a real list from worn_days because it calls len on it and passes it on more than once, and a map object can be used only once. join only needs to go through the values once, so the map object is enough."
+    },
+    {
+     "question": "You chose `steps >= 0` (or `steps != -1`) for `worn`, not `steps > 0`. Explain the difference for the report and why it matters.",
+     "model_answer": "-1 is the watch's code for not worn, but 0 is a real measurement: the student wore the watch and didn't walk. steps > 0 would drop that day, making Days worn too low and hiding an inactive day from the report. The predicate must match what the data means."
+    }
+   ],
+   "extension": "Add `best_day(days)` that returns the largest step count, using `max`. Then change `main` so the report also lists the steps of the days below the goal, using `filter` and a lambda.",
+   "worth_knowing": "In Python 3, `map` and `filter` are lazy: they compute each value only when something asks for it, and they can be used only once. Call `list()` twice on the same map object and the second call gives `[]`. That laziness is why a map over a huge file can start producing results right away without loading everything into memory.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  },
+  {
+   "id": "7.2b",
+   "title": "Reducing, lambda and a jump table: the club treasurer's tool",
+   "subtitle": "Functions on the fly, functions in a dictionary",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 7.2, Reducing, Using lambda to Create Anonymous Functions, Creating Jump Tables and Fail-Safe Programming, pp. 181-184",
+   "minutes": 35,
+   "objectives": [
+    "Use `functools.reduce` with a lambda and an initial value, so the reducing also works on an empty list",
+    "Create a predicate on the fly with `lambda` and use it with `filter`",
+    "Replace a multiway selection statement with a jump table: a dictionary of functions keyed by command"
+   ],
+   "scenario": "The robotics club's treasurer tracks expenses with a small menu-driven tool: `1` shows the total, `2` lists the big expenses ($50 or more, which need a receipt), `3` adds an expense.\n\nAt the start of each term the ledger is empty, and command `1` crashes with `TypeError: reduce() of empty iterable with no initial value`, the exact error in the reading's Fail-Safe Programming box. The club also wants to add commands for the next term (export, undo, a budget), and the `if`/`elif` chain in `run_command` grows with each one.\n\nFix the crash, write `show_big` with `filter` and a lambda, and turn the command processor into a jump table, so that adding a command is one new entry in a dictionary.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`show_total` uses `reduce` with a lambda and the initial value `0`, so an empty ledger prints `Total: $0.00`."
+    },
+    {
+     "id": "R2",
+     "text": "`show_big` builds its list with `filter` and a lambda, with no loop. An expense of exactly $50 counts as big."
+    },
+    {
+     "id": "R3",
+     "text": "`JUMP_TABLE` is a dictionary that maps `\"1\"`, `\"2\"` and `\"3\"` to the functions `show_total`, `show_big` and `add_expense` themselves, without calling them."
+    },
+    {
+     "id": "R4",
+     "text": "`run_command` has no `if`/`elif` chain: it looks the command up in `JUMP_TABLE` and calls the function it finds. An unknown command calls `unknown_command`."
+    },
+    {
+     "id": "R5",
+     "text": "The test program's results match, including an empty ledger and an unknown command.",
+     "verified_by_output": true
+    }
+   ],
+   "file_name": "ledger.py",
+   "stdin": "3\n9.75\n1\nx\nq\n",
+   "starter_code": "\"\"\"ledger.py - the robotics club treasurer's expense tool.\"\"\"\n\nfrom functools import reduce\n\nBIG = 50\nexpenses = [42.50, 18.25, 120.00]\n\n\ndef show_total():\n    \"\"\"Print the sum of all expenses.\"\"\"\n    # TODO (R1): an empty ledger crashes here. Give reduce a starting value.\n    print(\"Total: $%.2f\" % reduce(lambda x, y: x + y, expenses))\n\n\ndef show_big():\n    \"\"\"Print the expenses of at least BIG dollars, or none.\"\"\"\n    # TODO (R2): use filter with a lambda instead of the loop.\n    big = []\n    for amount in expenses:\n        if amount >= BIG:\n            big.append(amount)\n    if big:\n        print(\"Big:\", \", \".join(map(lambda a: \"$%.2f\" % a, big)))\n    else:\n        print(\"Big: none\")\n\n\ndef add_expense():\n    \"\"\"Ask for an amount and add it to the ledger.\"\"\"\n    amount = float(input(\"Amount? \"))\n    expenses.append(amount)\n    print(\"Added $%.2f\" % amount)\n\n\ndef unknown_command():\n    \"\"\"Tell the user the command doesn't exist.\"\"\"\n    print(\"Unknown command\")\n\n\n# TODO (R3): map the command \"1\" to show_total, \"2\" to show_big and \"3\" to add_expense.\nJUMP_TABLE = {}\n\n\ndef run_command(command):\n    \"\"\"Carry out one menu command.\"\"\"\n    # TODO (R4): replace the selection statement with a lookup in JUMP_TABLE.\n    if command == \"1\":\n        show_total()\n    elif command == \"2\":\n        show_big()\n    elif command == \"3\":\n        add_expense()\n    else:\n        unknown_command()\n\n\ndef main():\n    \"\"\"Read commands until the user enters q.\"\"\"\n    while True:\n        command = input(\"Command (1 total, 2 big, 3 add, q quit)? \")\n        if command == \"q\":\n            break\n        run_command(command)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution": "\"\"\"ledger.py - the robotics club treasurer's expense tool.\"\"\"\n\nfrom functools import reduce\n\nBIG = 50\nexpenses = [42.50, 18.25, 120.00]\n\n\ndef show_total():\n    \"\"\"Print the sum of all expenses.\"\"\"\n    print(\"Total: $%.2f\" % reduce(lambda x, y: x + y, expenses, 0))\n\n\ndef show_big():\n    \"\"\"Print the expenses of at least BIG dollars, or none.\"\"\"\n    big = list(filter(lambda a: a >= BIG, expenses))\n    if big:\n        print(\"Big:\", \", \".join(map(lambda a: \"$%.2f\" % a, big)))\n    else:\n        print(\"Big: none\")\n\n\ndef add_expense():\n    \"\"\"Ask for an amount and add it to the ledger.\"\"\"\n    amount = float(input(\"Amount? \"))\n    expenses.append(amount)\n    print(\"Added $%.2f\" % amount)\n\n\ndef unknown_command():\n    \"\"\"Tell the user the command doesn't exist.\"\"\"\n    print(\"Unknown command\")\n\n\nJUMP_TABLE = {\"1\": show_total, \"2\": show_big, \"3\": add_expense}\n\n\ndef run_command(command):\n    \"\"\"Carry out one menu command.\"\"\"\n    JUMP_TABLE.get(command, unknown_command)()\n\n\ndef main():\n    \"\"\"Read commands until the user enters q.\"\"\"\n    while True:\n        command = input(\"Command (1 total, 2 big, 3 add, q quit)? \")\n        if command == \"q\":\n            break\n        run_command(command)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+   "solution_notes": "`reduce(lambda x, y: x + y, expenses, 0)` places 0 before the items, so the sum of an empty ledger is 0 instead of a TypeError; with items, it computes ((0 + 42.5) + 18.25) + ... `sum(expenses)` would do the same job, but this lab practises reducing. The lambda in `show_big` is a predicate built on the fly: `lambda a: a >= BIG`. In the jump table the values are `show_total`, not `show_total()`: with parentheses, Python would call each function while building the dictionary (printing the total at start-up) and store its return value, None. `JUMP_TABLE.get(command, unknown_command)()` looks up the function, falling back to `unknown_command` for an unknown key, then calls it with `()`. An `if command in JUMP_TABLE:` test followed by `JUMP_TABLE[command]()` is also correct. The table is defined after the functions, because their names must exist when the dictionary is built.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`reduce` gets the initial value 0",
+     "within": "show_total",
+     "require": "\\breduce\\s*\\(\\s*lambda\\s+\\w+\\s*,\\s*\\w+\\s*:[^,]+,\\s*\\w+\\s*,\\s*0(?:\\.0*)?\\s*\\)",
+     "message": "Add a third argument to `reduce`: `reduce(lambda x, y: x + y, expenses, 0)`. The initial value is placed before the items and is the result when the list is empty."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "`show_big` filters with a lambda",
+     "within": "show_big",
+     "require": "\\bfilter\\s*\\(\\s*lambda\\s+\\w+\\s*:\\s*[^,]*>=",
+     "forbid": [
+      "\\bfor\\b",
+      "\\.append\\s*\\("
+     ],
+     "message": "Replace the loop with `list(filter(lambda a: a >= BIG, expenses))`. The lambda is the predicate, written on the spot because nothing else needs it; `>=` makes $50 count as big."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "`JUMP_TABLE` maps each command to its function",
+     "strings": true,
+     "require": [
+      "^(?=[\\s\\S]*[\\\"']1[\\\"']\\s*:[ \\t]*show_total\\b)(?=[\\s\\S]*[\\\"']2[\\\"']\\s*:[ \\t]*show_big\\b)(?=[\\s\\S]*[\\\"']3[\\\"']\\s*:[ \\t]*add_expense\\b)",
+      "^(?=[\\s\\S]*JUMP_TABLE\\s*\\[\\s*[\\\"']1[\\\"']\\s*\\]\\s*=\\s*show_total\\b)(?=[\\s\\S]*JUMP_TABLE\\s*\\[\\s*[\\\"']2[\\\"']\\s*\\]\\s*=\\s*show_big\\b)(?=[\\s\\S]*JUMP_TABLE\\s*\\[\\s*[\\\"']3[\\\"']\\s*\\]\\s*=\\s*add_expense\\b)"
+     ],
+     "message": "Fill the dictionary: `JUMP_TABLE = {\"1\": show_total, \"2\": show_big, \"3\": add_expense}`. The keys are the strings `input` returns; the values are the functions."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "The table stores functions, it doesn't call them",
+     "starter_passes": true,
+     "forbid": [
+      "[\\\"']\\d[\\\"']\\s*:[ \\t]*\\w+\\s*\\(\\s*\\)",
+      "JUMP_TABLE\\s*\\[[^\\]]*\\]\\s*=\\s*\\w+\\s*\\(\\s*\\)"
+     ],
+     "strings": true,
+     "message": "Remove the parentheses after the function names in `JUMP_TABLE`. `show_total()` runs the function right away and stores its return value (None); `show_total` stores the function, to be called later."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "`run_command` looks the command up instead of testing it",
+     "within": "run_command",
+     "require": [
+      "JUMP_TABLE\\s*\\.get\\s*\\(\\s*\\w+\\s*,\\s*unknown_command\\s*\\)\\s*\\(\\s*\\)",
+      "^(?=[\\s\\S]*\\bin\\s+JUMP_TABLE\\b)(?=[\\s\\S]*JUMP_TABLE\\s*\\[\\s*\\w+\\s*\\]\\s*\\(\\s*\\))"
+     ],
+     "forbid": [
+      "\\belif\\b",
+      "==\\s*[\\\"']"
+     ],
+     "strings": true,
+     "message": "Replace the `if`/`elif` chain with one lookup: `JUMP_TABLE.get(command, unknown_command)()`. `get` returns the function for the command, or `unknown_command` if there is none, and the final `()` calls it."
+    }
+   ],
+   "hints": [
+    "Read the `help(reduce)` text in the reading's Fail-Safe Programming box: `reduce(function, iterable[, initial])`. What does it say about the initial value and empty iterables?",
+    "A lambda for `filter` is a whole predicate in one expression: `lambda <name>: <a comparison>`. Compare against `BIG`, and decide between `>` and `>=` for an expense of exactly $50.",
+    "In the jump table, the value for \"1\" should be the function itself, the same way `f = abs` makes an alias in the reading. In `run_command`, a dictionary's `get` takes a second argument used when the key is missing."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from ledger import expenses, run_command, JUMP_TABLE, main\n\nprint(sorted(JUMP_TABLE))\nexpenses.clear()\nrun_command(\"1\")\nrun_command(\"2\")\nrun_command(\"9\")\nexpenses.extend([42.5, 18.25, 120.0, 50.0])\nrun_command(\"1\")\nrun_command(\"2\")\nprint(\"--\")\n\nmain()\n",
+    "stdin": "3\n9.75\n1\nx\nq\n",
+    "predict": "Before running: what do the first three `run_command` calls print on the empty ledger, and what does `run_command(\"2\")` print once $50.00 is in the ledger?",
+    "expected_output": "['1', '2', '3']\nTotal: $0.00\nBig: none\nUnknown command\nTotal: $230.75\nBig: $120.00, $50.00\n--\nCommand (1 total, 2 big, 3 add, q quit)? Amount? Added $9.75\nCommand (1 total, 2 big, 3 add, q quit)? Total: $240.50\nCommand (1 total, 2 big, 3 add, q quit)? Unknown command\nCommand (1 total, 2 big, 3 add, q quit)? "
+   },
+   "warmup": [
+    {
+     "question": "The starter's `show_total` calls `reduce(lambda x, y: x + y, expenses)`. Using the reading's three examples, what happens with three expenses, with one, and with none?",
+     "model_answer": "With three, it adds them left to right and prints the sum. With one, reduce returns that single item. With none, it raises TypeError: reduce() of empty iterable with no initial value, because there are no values to start from."
+    },
+    {
+     "question": "A teammate writes `JUMP_TABLE = {\"1\": show_total(), \"2\": show_big()}`. What happens when this line runs, and what does `JUMP_TABLE[\"1\"]` hold afterwards?",
+     "model_answer": "The parentheses call both functions immediately, while the dictionary is being built, so the total and the big expenses print at start-up. Each function returns None, so JUMP_TABLE[\"1\"] holds None, and JUMP_TABLE[\"1\"]() fails with TypeError: 'NoneType' object is not callable."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "The reading says that with a jump table, maintaining the command processor \"becomes a matter of data management\". Explain what changes when the club adds a command `4` for export.",
+     "model_answer": "With the if/elif chain I would edit run_command and add another branch, risking a typo in the logic. With the jump table I write an export function and add one entry, \"4\": export, to the dictionary (and the menu). run_command doesn't change at all."
+    },
+    {
+     "question": "Why is a lambda a good fit for `filter` in `show_big` and for the sum in `show_total`, and what can't a lambda contain?",
+     "model_answer": "Both functions are tiny and used only in that one place, so naming them with def would add a function nobody else calls. A lambda defines it on the spot. A lambda holds a single expression on one line, so it can't contain a statement such as if/else or a loop."
+    },
+    {
+     "question": "What does the initial value `0` change in `reduce(lambda x, y: x + y, expenses, 0)`, both for an empty ledger and for a full one?",
+     "model_answer": "For an empty ledger, reduce returns the initial value 0 instead of raising TypeError. For a full one, 0 is placed before the items, so it computes ((0 + 42.5) + 18.25) + ...; adding 0 doesn't change the sum, so the result is the same as before."
+    }
+   ],
+   "extension": "Add command `4` that prints the average expense, using `reduce` for the sum and handling an empty ledger. Notice that `run_command` needs no change. Then make the menu text in `main` come from a second dictionary, so a new command is added in one place.",
+   "worth_knowing": "`reduce` was a built-in in Python 2. Python 3 moved it into `functools` because Guido van Rossum found that most `reduce` calls were clearer as a loop or a built-in such as `sum`, `max` or `\"\".join`. Python 3.10 later added the `match` statement, but a dictionary of functions is still the usual way to dispatch commands.",
+   "rubric": [
+    {
+     "criterion": "Code meets every requirement (all structure checks pass)",
+     "points": 6,
+     "evidence": "Check results in the lab report"
+    },
+    {
+     "criterion": "Test program output matches",
+     "points": 2,
+     "evidence": "Output section of the report"
+    },
+    {
+     "criterion": "Warm-up and reflection answers explain the why, in the student's own words",
+     "points": 2,
+     "evidence": "Answers in the report"
+    }
+   ]
+  }
+ ]
+}
