@@ -1,0 +1,928 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 7: Design with Recursion",
+  "collection_intro": "Short, ungraded practice checks for sections 7.1–7.2 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+  "theme": "harbor",
+  "background": "pattern",
+  "checks": [
+    {
+      "id": "7.1a-recursive-functions",
+      "title": "Recursive functions: base case and recursive step",
+      "subtitle": "Turning a loop into recursion, tracing calls on the way down and back up, recursive definitions, and returning values",
+      "source": "Ch. 7, section 7.1 (pp. 165–168)",
+      "intro": "A function that calls itself sounds like a trick until you watch it count, add and reverse a word without a single loop. Six questions, most of them traces.",
+      "takeaways": [
+        "A recursive function needs a base case that stops the process and a recursive step that changes the argument so that the base case is eventually reached. The two are alternatives in a selection statement.",
+        "Each recursive call runs to completion before the line after it runs. Work placed before the call happens on the way down; work placed after it happens in reverse order, as the calls return.",
+        "When a recursive function builds a value, every path, the base case and each recursive step, must return a value to its caller."
+      ],
+      "questions": [
+        {
+          "id": "what-stops-it",
+          "concept": "Base case and recursive step",
+          "level": "understand",
+          "stem": "This recursive `displayRange` prints `1`, `2` and `3` when called as `displayRange(1, 3)`. What keeps it from calling itself forever?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def displayRange(lower, upper):\n    \"\"\"Outputs the numbers from lower through upper.\"\"\"\n    if lower <= upper:\n        print(lower)\n        displayRange(lower + 1, upper)",
+            "verify": {
+              "expect": "runs"
+            }
+          },
+          "options": [
+            {
+              "text": "The `if` test on `lower <= upper`, and passing `lower + 1` so it eventually fails",
+              "feedback": "The selection statement checks the base case on every call, and each recursive step passes a larger `lower`. After `3`, the call `displayRange(4, 3)` finds the test false and simply ends.",
+              "correct": true
+            },
+            {
+              "text": "The `print(lower)` line, because each call ends as soon as it has output its one number",
+              "feedback": "Printing does not end a call: the next line, the recursive call, still runs. A call ends only when it reaches the end of its body or a `return`, which here depends on the `if` test."
+            },
+            {
+              "text": "Passing `upper` unchanged, so each call can see the bound and knows to stop at it",
+              "feedback": "`upper` staying fixed matters, but on its own it stops nothing. Something has to change between calls, and something has to compare it against `upper`: that is `lower + 1` and the `if` test."
+            },
+            {
+              "text": "Python itself, which stops a function once it has called itself `upper` times",
+              "feedback": "Python has no rule tied to your arguments. It does have a depth limit for runaway recursion, but this function never gets near it: its own `if` test stops it after four calls."
+            }
+          ],
+          "hint": "Which line examines a condition, and what changes between one call and the next so that condition can come out differently?",
+          "explanation": "A recursive function must contain a selection statement that tests for a base case, and its recursive step must modify the argument so the base case is eventually reached. In `displayRange`, the loop is replaced by an `if`, and the assignment `lower = lower + 1` is replaced by a call that passes `lower + 1`.",
+          "ref": "Section 7.1, \"Defining a Recursive Function\" (p. 166)"
+        },
+        {
+          "id": "loop-to-recursion",
+          "concept": "Converting a loop to a recursive function",
+          "level": "understand",
+          "stem": "When the book converts this loop version of `displayRange` to a recursive function, what replaces the assignment `lower = lower + 1`?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def displayRange(lower, upper):\n    \"\"\"Outputs the numbers from lower through upper.\"\"\"\n    while lower <= upper:\n        print(lower)\n        lower = lower + 1",
+            "verify": {
+              "expect": "runs"
+            }
+          },
+          "options": [
+            {
+              "text": "A recursive call that passes `lower + 1` as the new first argument",
+              "feedback": "Instead of changing `lower` in place and looping back, the function calls itself with the next value. The new call gets its own `lower`, one larger than the caller's.",
+              "correct": true
+            },
+            {
+              "text": "An `if` statement that tests `lower <= upper` before printing",
+              "feedback": "The `if` statement does appear, but it replaces the `while` loop's test, not the assignment. Something still has to move on to the next number."
+            },
+            {
+              "text": "A `return lower + 1` statement that hands the next value back",
+              "feedback": "Returning the next value would end the call without printing the rest of the range. The next value has to go *forward* into a new call, not back to the caller."
+            },
+            {
+              "text": "A module variable that each call adds 1 to before it calls itself",
+              "feedback": "That would work against the design: recursion carries the changing value in the argument, so each call has its own copy. No variable outside the function is needed."
+            }
+          ],
+          "hint": "In the recursive version, how does the next call find out which number to print?",
+          "explanation": "Converting a loop to recursion swaps two pieces: the loop becomes a selection statement that checks the same condition, and the update to the loop variable becomes a recursive call that passes the updated value as an argument. The same algorithmic process runs; only its form changes.",
+          "ref": "Section 7.1, \"Defining a Recursive Function\" (p. 166)"
+        },
+        {
+          "id": "summation-unwind",
+          "concept": "Tracing a recursive function",
+          "level": "apply",
+          "stem": "This is the recursive `summation`, with a `print` added just before each call returns. What does the last line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def summation(lower, upper):\n    if lower > upper:\n        return 0\n    else:\n        result = lower + summation(lower + 1, upper)\n        print(result, end=\" \")\n        return result\n\nsummation(2, 4)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`4 7 9`",
+              "feedback": "The calls go down to `summation(5, 4)`, which returns `0` without printing. Then they unwind: the call with `lower` 4 prints `4`, the one with 3 prints `3 + 4 = 7`, and the first call prints `2 + 7 = 9`.",
+              "correct": true
+            },
+            {
+              "text": "`9 7 4`",
+              "feedback": "This prints the results in the order the calls *start*. But no call can print until the call inside it has returned, so the deepest call prints first."
+            },
+            {
+              "text": "`2 5 9`",
+              "feedback": "This is a loop's running total, adding from the front. The recursive version adds from the back: each call waits for the sum of the numbers *after* its own `lower`."
+            },
+            {
+              "text": "`0 4 7 9`",
+              "feedback": "The base case returns `0`, but it returns before reaching any `print`. Only the recursive step prints, so `0` never appears."
+            }
+          ],
+          "hint": "Which call is the first one able to reach its `print` line?",
+          "explanation": "In a recursive step, everything after the recursive call waits until that call returns. So values computed after the call appear in reverse order of the calls: the deepest call finishes first, and the results grow as the recursion unwinds, exactly as the book's indented trace shows.",
+          "ref": "Section 7.1, \"Tracing a Recursive Function\" (pp. 167–168)",
+          "aside": "The book's trace indents each call by four more spaces, a habit worth stealing. Python's debuggers show the same picture as a *call stack*: in IDLE's debugger or VS Code you can click any paused call and see its own `lower` and `upper`."
+        },
+        {
+          "id": "fib-call-order",
+          "concept": "Recursive definitions and the order of calls",
+          "level": "analyze",
+          "stem": "This is the book's `fib`, with a `print` added at the start of each call. What does the last line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def fib(n):\n    print(n, end=\" \")\n    if n < 3:\n        return 1\n    else:\n        return fib(n - 1) + fib(n - 2)\n\nfib(5)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`5 4 3 2 1 2 3 2 1`",
+              "feedback": "`fib(n - 1)` is evaluated first and must finish completely, with all of its own calls, before `fib(n - 2)` starts. So `fib(5)` explores the whole `fib(4)` branch, then starts over with `fib(3)`.",
+              "correct": true
+            },
+            {
+              "text": "`5 4 3 2 1`",
+              "feedback": "This assumes one call per number, as a loop would make. But each recursive step makes *two* calls, so smaller values such as `3` and `2` are computed more than once."
+            },
+            {
+              "text": "`5 4 3 3 2 2 2 1 1`",
+              "feedback": "This visits the calls level by level, all the calls for one depth before the next. Python does not do that: it finishes one call and everything beneath it before moving to the next."
+            },
+            {
+              "text": "`5 3 1 2 4 2 3 1 2`",
+              "feedback": "This evaluates `fib(n - 2)` first. Python evaluates the operands of `+` from left to right, so `fib(n - 1)` always runs first."
+            }
+          ],
+          "hint": "In `fib(n - 1) + fib(n - 2)`, can the second call begin before the first one has completely finished?",
+          "explanation": "A recursive definition translates directly into a recursive function: each base case and each recursive case becomes a branch that returns a value. With two recursive calls per step, Python finishes the left call entirely before starting the right one, and the same smaller values are recomputed many times.",
+          "ref": "Section 7.1, \"Using Recursive Definitions to Construct Recursive Functions\" (p. 168)",
+          "aside": "That recomputation explodes. `fib(n)` makes `2 × fib(n) − 1` calls in total, so `fib(30)` alone makes 1,664,079 calls to get 832,040. Storing results already computed, called *memoization*, brings that down to one call per value of `n`."
+        },
+        {
+          "id": "print-after-call",
+          "concept": "Work before and after the recursive call",
+          "level": "analyze",
+          "stem": "This is Exercise 7-1, question 6. What does the last line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def example(aString, index):\n    if index < len(aString):\n        example(aString, index + 1)\n        print(aString[index], end=\"\")\n\nexample(\"hello\", 0)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`olleh`",
+              "feedback": "Each call first goes deeper and only prints its own character after the deeper call returns. The call for index 4 is the first to print, so the characters come out last to first.",
+              "correct": true
+            },
+            {
+              "text": "`hello`",
+              "feedback": "That would happen if the `print` came *before* the recursive call. Here it comes after, so each call's printing waits for every deeper call to finish."
+            },
+            {
+              "text": "`o`",
+              "feedback": "This assumes only the deepest call prints. Every call with an index from 0 to 4 reaches its `print` line; they just reach it in reverse order."
+            },
+            {
+              "text": "An `IndexError` from `aString[5]`",
+              "feedback": "The call with index 5 fails the `if` test and does nothing, so it never indexes the string. The base case protects the out-of-range index."
+            }
+          ],
+          "hint": "Each call does two things in a fixed order. Which one has to wait?",
+          "explanation": "Where you place work relative to the recursive call decides when it happens. Work before the call happens as the recursion goes down, in the order of the calls; work after the call happens as the recursion unwinds, in reverse order. That one line move turns a printer into a reverser.",
+          "ref": "Section 7.1, Exercise 7-1, question 6 (p. 172)"
+        },
+        {
+          "id": "missing-return",
+          "concept": "Every branch must return a value",
+          "level": "evaluate",
+          "stem": "A student translates the factorial definition, *fact(n) = 1 when n = 1, n × fact(n − 1) otherwise*. What happens when the last line runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def fact(n):\n    if n == 1:\n        return 1\n    else:\n        n * fact(n - 1)\n\nprint(fact(3))",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `TypeError`: `fact(2)` returns `None`, which `fact(3)` multiplies",
+              "feedback": "`fact(1)` returns `1`, and `fact(2)` computes `2 * 1`, but without `return` that result is discarded and the call returns `None`. Then `fact(3)` tries `3 * None`, which Python refuses.",
+              "correct": true
+            },
+            {
+              "text": "It prints `6`, since the multiplication still happens on every call",
+              "feedback": "The multiplications are evaluated, but a value that isn't returned goes nowhere. The caller only ever receives what the callee returns."
+            },
+            {
+              "text": "It prints `None`, since only the outermost call is missing a value",
+              "feedback": "Every recursive-step call is missing its `return`, not just the first. The trouble starts one level down, when `fact(3)` tries to use the `None` that `fact(2)` hands back."
+            },
+            {
+              "text": "A `RecursionError`, because the base case `n == 1` is never reached",
+              "feedback": "The base case is reached: `fact(3)` calls `fact(2)`, which calls `fact(1)`, which returns `1`. The problem is what happens on the way back up."
+            }
+          ],
+          "hint": "What does a Python function return when it reaches the end of its body without a `return` statement?",
+          "explanation": "A recursive function that builds a value must return a value from the base case *and* from every recursive step. If a step computes a result without returning it, its caller receives `None`, and the error usually surfaces one level up, where that `None` is used.",
+          "ref": "Section 7.1, \"Using Recursive Definitions to Construct Recursive Functions\" (p. 168); Exercise 7-1, question 2 (p. 171)"
+        }
+      ]
+    },
+    {
+      "id": "7.1b-recursion-costs-and-structure",
+      "title": "Infinite recursion, the call stack and recursive structure",
+      "subtitle": "RecursionError, stack frames, when a loop is cheaper, indirect recursion in grammars, and recursion over a file system",
+      "source": "Ch. 7, section 7.1 and Case Study 7-1 (pp. 168–179)",
+      "intro": "A countdown that works from 6 crashes from 5, and a sum that works to 100 fails at 5,000. Six questions on what recursion costs, how it fails and where it fits naturally.",
+      "takeaways": [
+        "Infinite recursion comes from a missing base case or from a recursive step that never reaches it. Unlike an infinite loop, it halts: Python raises `RecursionError` when the call stack is full.",
+        "Every active call occupies its own stack frame holding its arguments and return address, so deep recursion costs memory and time that a loop with two or three variables does not.",
+        "Recursion fits best when the problem or the data is itself recursive: a directory contains files (base cases) and directories (recursive steps), and a noun phrase can contain another noun phrase."
+      ],
+      "questions": [
+        {
+          "id": "run-forever",
+          "concept": "Infinite recursion",
+          "level": "understand",
+          "stem": "This is the book's `runForever` session. What happens when `runForever(1)` is called?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def runForever(n):\n    if n > 0:\n        runForever(n)\n    else:\n        runForever(n - 1)\n\nrunForever(1)",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "RecursionError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "It halts with a `RecursionError` after about 1,000 nested calls",
+              "feedback": "`n` is passed along unchanged, so every call makes the same call again. Each one adds a stack frame until Python's limit is hit, and the program stops with `maximum recursion depth exceeded`.",
+              "correct": true
+            },
+            {
+              "text": "It runs forever, like a `while True` loop, until you press Ctrl+C",
+              "feedback": "That is how an infinite *loop* behaves, because a loop reuses the same variables. Each recursive call needs new memory, and that memory runs out."
+            },
+            {
+              "text": "It calls `runForever(0)` next, then stops at the `else` branch",
+              "feedback": "Nothing makes `n` smaller in the first branch: `runForever(n)` passes `1` again. The `else` branch is never reached, and it would recurse forever too."
+            },
+            {
+              "text": "It returns `None` at once, since the function has no `return`",
+              "feedback": "A missing `return` only matters when a call finishes. These calls never finish: each one is waiting on the call it just made."
+            }
+          ],
+          "hint": "Compare the argument each call receives with the argument it passes on.",
+          "explanation": "Infinite recursion happens when the base case is missing or the recursive step never moves toward it. Because every call needs a stack frame, the Python virtual machine eventually runs out of room and halts with a `RecursionError`. That error message is the signature of a recursion that never reaches its base case.",
+          "ref": "Section 7.1, \"Infinite Recursion\" (p. 170)",
+          "aside": "Python's default limit is 1,000 frames, which is why the book's traceback says the line was \"repeated 989 more times\". `sys.getrecursionlimit()` shows it and `sys.setrecursionlimit()` changes it, but raising it too far can crash the interpreter itself instead of giving a clean error."
+        },
+        {
+          "id": "step-skips-base",
+          "concept": "A step that never reaches the base case",
+          "level": "analyze",
+          "stem": "`countdown(6)` prints `6 4 2 Liftoff`, but `countdown(5)` ends in a `RecursionError`. What is the cause?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def countdown(n):\n    if n == 0:\n        print(\"Liftoff\")\n    else:\n        print(n)\n        countdown(n - 2)\n\ncountdown(5)",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "RecursionError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "Subtracting 2 jumps from 1 to −1, so odd values skip right over the base case",
+              "feedback": "From 5 the calls go 3, 1, −1, −3 and on downward. The test `n == 0` is never true for any of them, so nothing stops the recursion.",
+              "correct": true
+            },
+            {
+              "text": "The base case has to come after the recursive step in the function body",
+              "feedback": "The order of the branches is fine: the `if` is checked first on every call. The problem is that the argument never satisfies it."
+            },
+            {
+              "text": "A recursive call can't appear inside an `else`, only after the `if` statement",
+              "feedback": "Recursive calls are ordinary calls and can go in any branch; the book's own `summation` recurses in its `else`."
+            },
+            {
+              "text": "Calling `print(n)` before the recursive call keeps the stack from emptying",
+              "feedback": "Printing before or after the call only changes the order of the output. It has nothing to do with whether the base case is reached."
+            }
+          ],
+          "hint": "Write out the values of `n` that the calls receive, starting from 5.",
+          "explanation": "The book names two design errors behind infinite recursion: no base case, or a step that reduces the problem in a way that never reaches it. A safer base case tests a range, such as `n <= 0`, so that every path down eventually lands in it.",
+          "ref": "Section 7.1, \"Infinite Recursion\" (p. 170)"
+        },
+        {
+          "id": "stack-frames",
+          "concept": "The call stack and stack frames",
+          "level": "understand",
+          "stem": "At the deepest point of `displayRange(1, 3)`, how many `displayRange` stack frames are on the call stack?",
+          "options": [
+            {
+              "text": "Four, one for each call with `lower` from 1 up to 4",
+              "feedback": "There are calls with `lower` equal to 1, 2 and 3, which print, plus the call with `lower` 4, which finds the test false. All four are active at once, as Figure 7-1 shows.",
+              "correct": true
+            },
+            {
+              "text": "Three, one for each number the function prints",
+              "feedback": "The call that prints nothing still happens: `displayRange(4, 3)` must be called to discover that the range is finished, and it gets a frame too."
+            },
+            {
+              "text": "One, because each new call replaces the previous frame",
+              "feedback": "A caller's frame stays on the stack while it waits for the call it made, so the frames pile up. A frame is removed only when its call returns."
+            },
+            {
+              "text": "Two, one for `lower` and one for `upper`",
+              "feedback": "Frames belong to calls, not to variables. Each frame holds that call's own `lower` and `upper`, plus its return address."
+            }
+          ],
+          "hint": "Count the calls that have started but not yet returned when the base case is reached, including that last call.",
+          "explanation": "For every function call, recursive or not, the Python virtual machine places a stack frame on the call stack with the call's arguments, its return address and room for its return value. A frame is removed when its call returns, so the stack is deepest when the base case is reached.",
+          "ref": "Section 7.1, \"The Costs and Benefits of Recursion\" and Figure 7-1 (pp. 170–171)"
+        },
+        {
+          "id": "deep-summation",
+          "concept": "The costs of recursion",
+          "level": "evaluate",
+          "stem": "Your recursive `summation(1, 100)` works, but `summation(1, 5000)` raises `RecursionError`. Which explanation and fix match the book?",
+          "options": [
+            {
+              "text": "Each call adds a stack frame; a loop uses fixed memory, so use one",
+              "feedback": "5,000 nested calls need 5,000 frames at once, which is past Python's limit. A loop solves the same problem with two or three variables, however large the range.",
+              "correct": true
+            },
+            {
+              "text": "The sum gets too big for a Python `int`, so convert the total to a float",
+              "feedback": "Python integers grow as large as needed; the sum of 1 to 5,000 is only 12,502,500. The failure is about the depth of the calls, not the size of the result."
+            },
+            {
+              "text": "It recomputes the same sums many times, so save each one in a list",
+              "feedback": "That is `fib`'s problem, because `fib` makes two calls per step. `summation` makes one call per step and never repeats work; it simply goes too deep."
+            },
+            {
+              "text": "The base case is wrong for big ranges; it should test `lower == upper`",
+              "feedback": "The base case is correct for every range: the function works for 100. Changing the test would not reduce the number of nested calls."
+            }
+          ],
+          "hint": "What does each pending call hold on to while it waits for the call it made?",
+          "explanation": "Recursion is often more natural than a loop, but each call costs memory and processing time for its stack frame. When a problem needs thousands of nested calls, that overhead becomes a real cost, and an iterative version that uses a fixed amount of memory is the better design.",
+          "ref": "Section 7.1, \"The Costs and Benefits of Recursion\" (pp. 170–171)"
+        },
+        {
+          "id": "indirect-recursion",
+          "concept": "Indirect recursion in sentence structure",
+          "level": "understand",
+          "stem": "In the revised sentence generator, `nounPhrase` and `prepositionalPhrase` call each other. What kind of recursion is this, and what stops it?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def nounPhrase():\n    phrase = random.choice(articles) + \" \" + random.choice(nouns)\n    prob = random.randint(1, 4)    # 25% probability\n    if prob == 1:\n        return phrase + \" \" + prepositionalPhrase()\n    else:\n        return phrase\n\ndef prepositionalPhrase():\n    return random.choice(prepositions) + \" \" + nounPhrase()",
+            "verify": {
+              "expect": "runs",
+              "program": "import random\narticles = (\"a\", \"the\")\nnouns = (\"ball\", \"bench\", \"bat\")\nprepositions = (\"on\", \"under\", \"with\")\n\ndef nounPhrase():\n    phrase = random.choice(articles) + \" \" + random.choice(nouns)\n    prob = random.randint(1, 4)    # 25% probability\n    if prob == 1:\n        return phrase + \" \" + prepositionalPhrase()\n    else:\n        return phrase\n\ndef prepositionalPhrase():\n    return random.choice(prepositions) + \" \" + nounPhrase()\n\nrandom.seed(7)\nfor _ in range(20):\n    nounPhrase()"
+            }
+          },
+          "options": [
+            {
+              "text": "Indirect recursion; `nounPhrase` usually returns without calling the other",
+              "feedback": "Neither function calls itself, but each calls the other, which is *indirect* recursion. About 75% of the time `nounPhrase` takes the `else` branch, and that is the base case that ends the chain.",
+              "correct": true
+            },
+            {
+              "text": "Direct recursion; `prepositionalPhrase` calls itself until the nouns run out",
+              "feedback": "`prepositionalPhrase` never calls itself; it calls `nounPhrase`. And `random.choice` never runs out: it can pick the same noun again and again."
+            },
+            {
+              "text": "Indirect recursion; each preposition can be used once, so the phrase must end",
+              "feedback": "`random.choice` does not remove what it picks, so the prepositions are never used up. Only the probability test can end the chain."
+            },
+            {
+              "text": "Infinite recursion; it stops only when Python's recursion limit is reached",
+              "feedback": "It would be infinite if `nounPhrase` always added a prepositional phrase. The 75% chance of returning a plain phrase makes long chains rare and endless ones impossible in practice."
+            }
+          ],
+          "hint": "Which of the two functions has a branch that returns without making any call?",
+          "explanation": "When function A calls function B, which calls A again, the recursion is indirect. It still needs a base case: here `nounPhrase` has the option of not generating a prepositional phrase. Recursive grammar rules such as these let a program generate phrases of any length.",
+          "ref": "Section 7.1, \"Recursion in Sentence Structure\" (pp. 168–169)",
+          "aside": "Linguists use exactly this property to argue that a language has infinitely many sentences: a rule that lets a phrase contain another phrase of the same kind, as in *the ball on the bench by the door near the tree*, has no longest sentence."
+        },
+        {
+          "id": "file-system-cases",
+          "concept": "Recursion over a recursive structure",
+          "level": "analyze",
+          "stem": "In Case Study 7-1, `countFiles` returns the number of files in a directory and all its subdirectories. Which statement describes its recursive design?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def countFiles(path):\n    count = 0\n    lyst = os.listdir(path)\n    for element in lyst:\n        if os.path.isfile(element):\n            count += 1\n        else:\n            os.chdir(element)\n            count += countFiles(os.getcwd())\n            os.chdir(\"..\")\n    return count",
+            "verify": {
+              "expect": "runs",
+              "program": "import os\n\ndef countFiles(path):\n    count = 0\n    lyst = os.listdir(path)\n    for element in lyst:\n        if os.path.isfile(element):\n            count += 1\n        else:\n            os.chdir(element)\n            count += countFiles(os.getcwd())\n            os.chdir(\"..\")\n    return count"
+            }
+          },
+          "options": [
+            {
+              "text": "Each file is counted directly; each subdirectory gets a recursive call",
+              "feedback": "A file needs no further work, so it adds 1. A subdirectory is a smaller version of the same problem, so the function moves into it, counts it recursively, adds that total and moves back up.",
+              "correct": true
+            },
+            {
+              "text": "The root directory is the base case, and each file triggers a recursive call",
+              "feedback": "Files are where the work *stops*, not where it continues. Calling the function on a file would make no sense, because a file contains nothing to list."
+            },
+            {
+              "text": "The `for` loop is the base case, and the final `return count` is the step",
+              "feedback": "The loop and the return just visit the contents and report the total. The base and recursive cases are the two branches of the `if` inside the loop."
+            },
+            {
+              "text": "Only an empty directory is a base case; files and folders both recurse",
+              "feedback": "An empty directory does end the recursion, since its loop has nothing to visit. But files never recurse: they are counted on the spot."
+            }
+          ],
+          "hint": "Which kind of element is a smaller instance of the whole problem, and which kind can be handled immediately?",
+          "explanation": "The trick with recursive design is spotting which elements of a structure are base cases and which are recursive steps. A file system is tree-like: every directory can contain files, handled directly, and other directories, handled by the same function. The algorithm follows the shape of the data.",
+          "ref": "Case Study 7-1, Design (p. 175) and Implementation (pp. 176–179)"
+        }
+      ]
+    },
+    {
+      "id": "7.2a-functions-map-filter",
+      "title": "Functions as data: map and filter",
+      "subtitle": "First-class functions, passing a function as an argument, mapping, predicates and filtering, and what each one requires",
+      "source": "Ch. 7, section 7.2 (pp. 179–181, 183–184)",
+      "intro": "A loop that converts every item and another that keeps some of them can each shrink to one line, once you can hand a function to another function. Six questions, mostly code.",
+      "takeaways": [
+        "Functions are first-class data: a function's name evaluates to the function itself, which can be stored in a variable or a list, passed as an argument and called later. Adding parentheses calls it immediately.",
+        "`map(f, items)` applies a one-argument function to every item and returns a new map object of the results; the original sequence is not changed, and `f` must accept the type of value in the sequence.",
+        "`filter(pred, items)` applies a predicate to every item and keeps only the items for which it returns `True`. A mapping transforms every item; a filtering selects some items unchanged."
+      ],
+      "questions": [
+        {
+          "id": "functions-in-a-list",
+          "concept": "Functions as first-class data objects",
+          "level": "apply",
+          "stem": "What does the last line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "import math\n\nfuncs = [abs, math.sqrt]\nf = funcs[0]\nprint(f(-9) + funcs[1](16))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`13.0`",
+              "feedback": "`f` refers to `abs`, so `f(-9)` is `9`. `funcs[1]` is `math.sqrt`, and `math.sqrt(16)` is the float `4.0`. An int plus a float is a float: `13.0`.",
+              "correct": true
+            },
+            {
+              "text": "`13`",
+              "feedback": "The arithmetic is right, but `math.sqrt` always returns a float, even for a perfect square. Adding an int to a float gives a float."
+            },
+            {
+              "text": "`-5.0`",
+              "feedback": "This treats `f(-9)` as `-9`, as if `f` were a stored value rather than the `abs` function. `f` is an alias for `abs`, so calling it applies `abs`."
+            },
+            {
+              "text": "A `TypeError`, since a list cannot hold functions",
+              "feedback": "Functions are first-class data in Python: like numbers or strings, they can be stored in lists, assigned to variables and fetched by index."
+            }
+          ],
+          "hint": "What is `funcs[0]`: a number, or something you can call? And what type does `math.sqrt` return?",
+          "explanation": "In Python, functions are first-class data objects. They can be assigned to variables, stored in lists and dictionaries, passed as arguments and returned from functions. Writing a function's name without parentheses gives you the function; writing parentheses after any expression that evaluates to a function calls it.",
+          "ref": "Section 7.2, \"Functions as First-Class Data Objects\" (pp. 179–180)"
+        },
+        {
+          "id": "pass-not-call",
+          "concept": "Passing a function versus calling it",
+          "level": "analyze",
+          "stem": "A student wants the absolute values of `nums` and writes the line below. What happens?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "nums = [3, -7, 0, -2]\nprint(list(map(abs(), nums)))",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `TypeError`: `abs()` is called at once with no argument, before `map` runs",
+              "feedback": "Arguments are evaluated before the call they belong to. `abs()` is evaluated first, and `abs` needs exactly one argument, so Python stops before `map` ever runs.",
+              "correct": true
+            },
+            {
+              "text": "It prints `[3, 7, 0, 2]`: `map` calls `abs()` once on each of the numbers",
+              "feedback": "`map` needs the function itself, `abs`. With parentheses, Python calls `abs` right there, on nothing, and would hand `map` the result instead of the function."
+            },
+            {
+              "text": "It prints `[]`, because `abs()` has no number to work on and returns nothing",
+              "feedback": "Calling a function with a missing required argument is an error, not an empty result. Python never quietly returns nothing for it."
+            },
+            {
+              "text": "A `SyntaxError`, because arguments to `map` may not contain parentheses",
+              "feedback": "The line is valid syntax; `map(int(x), nums)` would parse too. The problem appears only when the line runs and `abs()` is actually called."
+            }
+          ],
+          "hint": "In `map(abs(), nums)`, which call does Python carry out first?",
+          "explanation": "Passing a function as an argument is no different from passing any other value: the argument is evaluated, producing the function itself, and the parameter is bound to it. Use the bare name (`abs`) to pass a function; parentheses (`abs()`) call it on the spot and pass its result.",
+          "ref": "Section 7.2, \"Functions as First-Class Data Objects\" (p. 180)"
+        },
+        {
+          "id": "map-new-object",
+          "concept": "Mapping returns a new object",
+          "level": "apply",
+          "stem": "Following the book's session, what do the last two lines print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "words = [\"231\", \"20\", \"-45\"]\nresult = map(int, words)\nprint(words)\nprint(list(result))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`['231', '20', '-45'] [231, 20, -45]`",
+              "feedback": "`map` builds a new map object and leaves `words` alone, so the strings are unchanged. Converting `result` with `list` shows the integers `int` produced from each string.",
+              "correct": true
+            },
+            {
+              "text": "`[231, 20, -45] [231, 20, -45]`",
+              "feedback": "This assumes `map` changes the list in place. It doesn't: as the book notes, you must assign the result back to `words` if you want the variable to change."
+            },
+            {
+              "text": "`['231', '20', '-45'] ['231', '20', '-45']`",
+              "feedback": "This assumes `map` only stores the function for later and `list` copies the original items. `list(result)` runs `int` on each item, producing numbers."
+            },
+            {
+              "text": "`['231', '20', '-45']` and then a `TypeError`",
+              "feedback": "A map object can be passed to `list`, which is exactly how the book displays the results. Printing it directly would show `<map object at ...>` instead."
+            }
+          ],
+          "hint": "Does `map` change the list it is given, or build something new?",
+          "explanation": "A mapping applies a function to each value in a sequence and returns a new map object of the results; the original sequence is unchanged. Use `list` to view the results, or pass the map object straight to another function, such as `join` or another `map`.",
+          "ref": "Section 7.2, \"Mapping\" (p. 180)",
+          "aside": "A map object is a one-pass *iterator*: it produces each result only when asked and then forgets it. Call `list(result)` a second time and you get `[]`. If you need the results more than once, convert them to a list and keep the list."
+        },
+        {
+          "id": "loop-as-map",
+          "concept": "Replacing a loop with a mapping",
+          "level": "apply",
+          "stem": "Which line builds the same `squares` list as this loop?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def square(n):\n    return n * n\n\nsquares = []\nfor n in nums:\n    squares.append(square(n))",
+            "verify": {
+              "expect": "output",
+              "output": "True",
+              "program": "nums = [4, -1, 0, 3]\n\ndef square(n):\n    return n * n\n\nsquares = []\nfor n in nums:\n    squares.append(square(n))\n\nprint(squares == list(map(square, nums)))"
+            }
+          },
+          "options": [
+            {
+              "text": "`squares = list(map(square, nums))`",
+              "feedback": "`map` takes the function first and the sequence second, applies `square` to each number, and `list` collects the results in order.",
+              "correct": true
+            },
+            {
+              "text": "`squares = list(map(square(n), nums))`",
+              "feedback": "`square(n)` calls the function right away, on whatever `n` happens to be, and passes a number to `map`. `map` needs the function itself."
+            },
+            {
+              "text": "`squares = list(map(nums, square))`",
+              "feedback": "The arguments are in the wrong order. `map` expects the function first and the sequence second, so this tries to call the list."
+            },
+            {
+              "text": "`squares = list(filter(square, nums))`",
+              "feedback": "`filter` keeps or drops the original numbers; it never collects the squares. Here it would keep every nonzero number, unsquared."
+            }
+          ],
+          "hint": "Which higher-order function transforms every item, and in what order does it take its two arguments?",
+          "explanation": "A loop that applies the same function to every item and collects the results is the mapping pattern, and `map(function, sequence)` captures it in one line. Eliminating the loop also eliminates the chance of getting the accumulation wrong in each place you need it.",
+          "ref": "Section 7.2, \"Mapping\" (pp. 180–181)"
+        },
+        {
+          "id": "filter-predicate",
+          "concept": "Predicates and filtering",
+          "level": "apply",
+          "stem": "What does the last line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def high(score):\n    return score > 80\n\nscores = [95, 72, 88, 80]\nprint(list(filter(high, scores)))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`[95, 88]`",
+              "feedback": "`high` is a predicate: it returns `True` or `False`. `filter` keeps each score for which it returns `True`, in order, and drops the rest; `80 > 80` is `False`.",
+              "correct": true
+            },
+            {
+              "text": "`[True, False, True, False]`",
+              "feedback": "This is what `map(high, scores)` would give: the predicate's result for every item. `filter` uses those results to decide which *original items* to keep."
+            },
+            {
+              "text": "`[95, 88, 80]`",
+              "feedback": "This treats the test as `score >= 80`. With `>`, a score of exactly 80 does not pass."
+            },
+            {
+              "text": "`[72, 80]`",
+              "feedback": "This keeps the items that *fail* the test. Like a coffee filter, `filter` lets through what passes and leaves the rest behind."
+            }
+          ],
+          "hint": "For each score, does `high` return `True` or `False`, and which ones does `filter` keep?",
+          "explanation": "A predicate is a function that returns a Boolean value. A filtering applies a predicate to each value and keeps only the values for which it returns `True`. The kept values are the originals, unchanged; filtering selects, mapping transforms.",
+          "ref": "Section 7.2, \"Filtering\" (p. 181)",
+          "aside": "Python's `filter` is more forgiving than the book's rule: it keeps any item for which the function's result is *truthy*. So `filter(abs, [0, 3, -2])` quietly keeps `[3, -2]`, because `abs(0)` is `0`. That is exactly why passing a real predicate makes code easier to trust."
+        },
+        {
+          "id": "map-wrong-type",
+          "concept": "What map requires of its function argument",
+          "level": "evaluate",
+          "stem": "Numbers read from a file arrive as strings. What happens when this line runs?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "print(list(map(abs, [\"3\", \"-4\"])))",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `TypeError`, since `abs` expects a number and each item is a string",
+              "feedback": "`map` passes each item to `abs` exactly as it is. `abs(\"3\")` is an error, so the strings must be converted first, for example `map(abs, map(int, data))`.",
+              "correct": true
+            },
+            {
+              "text": "It prints `[3, 4]`: `map` converts each string before applying `abs`",
+              "feedback": "`map` does no conversions of its own; it simply calls the function on each item. Converting is a separate mapping, with `int` as the function."
+            },
+            {
+              "text": "It prints `['3', '-4']`: items `abs` can't handle are passed through",
+              "feedback": "There is no pass-through for errors. The first item `abs` cannot handle stops the program with an exception."
+            },
+            {
+              "text": "It prints `[]`, since `map` drops any item that causes an error",
+              "feedback": "`map` never drops items; dropping is what `filter` does, and only based on a predicate's `True` or `False`, not on errors."
+            }
+          ],
+          "hint": "Does `map` change the items before handing them to the function?",
+          "explanation": "When you use `map`, the function argument must take one argument of the same type as the items in the sequence. The book's fail-safe advice: `abs` maps onto a list of integers but not onto a list of strings. Chaining mappings, first `int` then `abs`, fixes the types step by step.",
+          "ref": "Section 7.2, Fail-Safe Programming (pp. 183–184)"
+        }
+      ]
+    },
+    {
+      "id": "7.2b-reduce-lambda-jump-tables",
+      "title": "Reducing, lambda and jump tables",
+      "subtitle": "How reduce accumulates, empty lists and the initial value, what a lambda may contain, and dictionaries of functions",
+      "source": "Ch. 7, section 7.2 (pp. 181–184)",
+      "intro": "A menu with twenty commands needs twenty `elif` branches, or one dictionary and a single line. Six questions on collapsing a list to one value and storing functions in data.",
+      "takeaways": [
+        "`reduce(f, items)` applies a two-argument function from left to right, feeding each result into the next step. Without an initial value it fails on an empty list; with one, such as `1` for a product, it returns that value.",
+        "A `lambda` is an anonymous function made of parameters and a single expression whose value is returned. It cannot contain statements such as `return` or a selection statement.",
+        "A jump table is a dictionary whose values are functions, stored by name without parentheses. Looking up a command and adding `()` calls the matching function, so adding a command means adding an entry."
+      ],
+      "questions": [
+        {
+          "id": "reduce-left-to-right",
+          "concept": "How reduce accumulates",
+          "level": "apply",
+          "stem": "What does the last line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "from functools import reduce\n\ndef subtract(x, y):\n    return x - y\n\nprint(reduce(subtract, [10, 3, 2]))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`5`",
+              "feedback": "`reduce` starts with the first two items, `10 - 3 = 7`, and then combines that result with the next item, `7 - 2 = 5`. It works from left to right, carrying the running result.",
+              "correct": true
+            },
+            {
+              "text": "`9`",
+              "feedback": "This groups from the right, `10 - (3 - 2)`. `reduce` always feeds the accumulated result in as the *first* argument, so it computes `(10 - 3) - 2`."
+            },
+            {
+              "text": "`-15`",
+              "feedback": "This starts from `0`, as a running total in a loop might. Without an initial value, `reduce` starts from the first item itself."
+            },
+            {
+              "text": "`15`",
+              "feedback": "This adds the items, as if `reduce` always summed. `reduce` uses whatever function it is given, here subtraction."
+            }
+          ],
+          "hint": "Which two values does `reduce` combine first, and what happens to that result?",
+          "explanation": "A reducing repeatedly applies a two-argument function to accumulate a single value: the first item is combined with the second, that result with the third, and so on. For an operation like subtraction, where order matters, `reduce` computes `((a - b) - c)`.",
+          "ref": "Section 7.2, \"Reducing\" (p. 181); Fail-Safe Programming (p. 184)"
+        },
+        {
+          "id": "reduce-empty",
+          "concept": "reduce with an empty list and an initial value",
+          "level": "evaluate",
+          "stem": "`multiply` is `def multiply(x, y): return x * y`. A `product(data)` function must work for every list of numbers, **including** an empty one. Which call should it return?",
+          "options": [
+            {
+              "text": "`reduce(multiply, data, 1)`",
+              "feedback": "The initial value `1` is placed before the items, so it doesn't change any product, and it is returned when `data` is empty. That matches the math: the product of no numbers is 1.",
+              "correct": true
+            },
+            {
+              "text": "`reduce(multiply, data)`",
+              "feedback": "This works for one or more items, but on `[]` it raises `TypeError: reduce() of empty iterable with no initial value`, exactly as the book's third attempt shows."
+            },
+            {
+              "text": "`reduce(multiply, data, 0)`",
+              "feedback": "An initial value of `0` fixes the empty case but ruins every other one: `0` times anything is `0`, so every product would be `0`."
+            },
+            {
+              "text": "`reduce(multiply, data, None)`",
+              "feedback": "`None` is returned for an empty list, but for any other list the first step is `None * x`, which raises a `TypeError`."
+            }
+          ],
+          "hint": "The initial value is combined with every product. Which number leaves a product unchanged?",
+          "explanation": "With just its two required arguments, `reduce` cannot work with an empty list. Its optional third argument is an initial value placed before the items, which also serves as the result for an empty list. Choose the operation's neutral value: `0` for a sum, `1` for a product, `\"\"` for joining strings.",
+          "ref": "Section 7.2, Fail-Safe Programming (p. 184)"
+        },
+        {
+          "id": "lambda-syntax",
+          "concept": "What a lambda can contain",
+          "level": "understand",
+          "stem": "Which of these is a valid `lambda`?",
+          "options": [
+            {
+              "text": "`lambda x, y: x * y + 1`",
+              "feedback": "Parameters, a colon, then a single expression. When the lambda is applied, the expression is evaluated and its value is returned automatically.",
+              "correct": true
+            },
+            {
+              "text": "`lambda x, y: return x * y`",
+              "feedback": "`return` is a statement, and a lambda's body must be an expression. The `return` is built in: the expression's value is what comes back."
+            },
+            {
+              "text": "`lambda x, y: if x > y: x`",
+              "feedback": "A selection statement is not an expression, so it cannot appear in a lambda. The book calls this restriction \"sad\" but firm."
+            },
+            {
+              "text": "`lambda(x, y): x * y`",
+              "feedback": "This borrows the syntax of a `def` header. A lambda lists its parameters directly after the keyword, with no parentheses around them."
+            }
+          ],
+          "hint": "A lambda's body must be something that has a value. Which of these bodies is an expression rather than a statement?",
+          "explanation": "A lambda is an anonymous function: it has no name of its own, only its parameter names and a single expression. Its syntax is `lambda <parameters>: <expression>`, all on one line. That makes it ideal for small functions needed only at the point of a call to `map`, `filter` or `reduce`.",
+          "ref": "Section 7.2, \"Using lambda to Create Anonymous Functions\" (p. 182)",
+          "aside": "Python does have an *expression* form of choice, `x if x > y else y`, and because it is an expression it is allowed in a lambda: `lambda x, y: x if x > y else y` returns the larger value. The name lambda comes from Alonzo Church's *lambda calculus* of the 1930s."
+        },
+        {
+          "id": "summation-range-bug",
+          "concept": "summation with reduce, lambda and range",
+          "level": "apply",
+          "stem": "The book's `summation` uses `range(lower, upper + 1)`. A teammate \"tidies\" it to `range(lower, upper)`. What does the last line print now?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "from functools import reduce\n\ndef summation(lower, upper):\n    return reduce(lambda x, y: x + y,\n                  range(lower, upper))\n\nprint(summation(1, 4))",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`6`",
+              "feedback": "`range(1, 4)` produces 1, 2 and 3; it stops *before* its second argument. `reduce` adds them: `(1 + 2) + 3 = 6`. The original `upper + 1` is what made `upper` itself included.",
+              "correct": true
+            },
+            {
+              "text": "`10`",
+              "feedback": "That is what the original function returns. Without `+ 1`, `range` stops before `upper`, so 4 is left out of the sum."
+            },
+            {
+              "text": "`9`",
+              "feedback": "This drops `lower` instead of `upper`. A `range` includes its start value; only the stop value is excluded."
+            },
+            {
+              "text": "`3`",
+              "feedback": "This is the last value the range produces, not the sum. `reduce` combines all the values with the lambda."
+            }
+          ],
+          "hint": "Which numbers does `range(1, 4)` produce?",
+          "explanation": "A lambda supplies the two-argument function on the fly, and `range` supplies the values, so `summation` becomes a single `reduce` call. The `+ 1` matters because `range` excludes its stop value; the book's range is inclusive of `upper`, so the code must say so.",
+          "ref": "Section 7.2, \"Using lambda to Create Anonymous Functions\" (p. 182)"
+        },
+        {
+          "id": "jump-table-call",
+          "concept": "Calling a function from a jump table",
+          "level": "analyze",
+          "stem": "The user picks command `\"2\"`, but nothing is printed. Why?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def insert():\n    print(\"Inserting\")\n\ndef remove():\n    print(\"Removing\")\n\njumpTable = {\"1\": insert, \"2\": remove}\n\ndef runCommand(command):\n    jumpTable[command]\n\nrunCommand(\"2\")",
+            "verify": {
+              "expect": "runs"
+            }
+          },
+          "options": [
+            {
+              "text": "`jumpTable[command]` finds `remove` but never calls it: no `()`",
+              "feedback": "The lookup evaluates to the function object, and then the statement ends. The book's version is `jumpTable[command]()`: look up the function, then call it.",
+              "correct": true
+            },
+            {
+              "text": "Dictionary keys must be numbers, so the string `\"2\"` matches no key",
+              "feedback": "Strings are perfectly good keys, and `\"2\"` is in the table. A key that wasn't there would raise a `KeyError`, not stay silent."
+            },
+            {
+              "text": "A function stored in a dictionary can't be run until it is defined again",
+              "feedback": "Storing a function in a dictionary keeps the function itself, body and all. It can be called from the dictionary at any time."
+            },
+            {
+              "text": "`runCommand` needs a `return` before it, or its output is thrown away",
+              "feedback": "`remove` prints its message itself when called; no `return` is needed for that. The issue is that `remove` is never called."
+            }
+          ],
+          "hint": "What is the difference between the expression `remove` and the expression `remove()`?",
+          "explanation": "A jump table is a dictionary of functions keyed by command names. Looking up a key gives you the function object; adding parentheses calls it. The book's `runCommand` assumes the command is a key in the table and that its function expects no arguments.",
+          "ref": "Section 7.2, \"Creating Jump Tables\" (pp. 182–183)"
+        },
+        {
+          "id": "jump-table-setup",
+          "concept": "Storing functions, not their results",
+          "level": "analyze",
+          "stem": "This setup prints `Inserting` before the menu ever appears, and choosing command 1 later crashes. What is wrong?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def insert():\n    print(\"Inserting\")\n\njumpTable = {}\njumpTable[\"1\"] = insert()\n\n# later, when the user chooses 1\njumpTable[\"1\"]()",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError",
+                "not callable"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "`insert()` runs during setup and stores its result, `None`, in the table",
+              "feedback": "With parentheses, `insert` is called immediately, which prints the message, and its return value is stored. `insert` returns nothing, so the entry is `None`, and calling `None()` is a `TypeError`.",
+              "correct": true
+            },
+            {
+              "text": "Entries must be added in the same order the commands appear in the menu",
+              "feedback": "A dictionary finds entries by key, not by position, so the order of setup does not matter. Each command is looked up directly."
+            },
+            {
+              "text": "Each function in a jump table must take the command string as its argument",
+              "feedback": "The book's jump table assumes the opposite: the functions take no arguments, so `runCommand` can call any of them the same way."
+            },
+            {
+              "text": "Assigning a function to a key calls it once each time the key is looked up",
+              "feedback": "Looking up a key never calls anything. Here the call happened once, at the assignment, because of the parentheses after `insert`."
+            }
+          ],
+          "hint": "At the moment `jumpTable[\"1\"] = insert()` runs, what is actually stored?",
+          "explanation": "When loading a jump table, store each function by name, `jumpTable['1'] = insert`, without parentheses. Then maintaining the command processor becomes a matter of data management: add or remove an entry in the table and the menu, and no selection logic changes.",
+          "ref": "Section 7.2, \"Creating Jump Tables\" (pp. 182–183)",
+          "aside": "Python 3.10 added the `match` statement, but dictionary dispatch is still the idiomatic way to map names to actions, and Python itself works this way: modules, classes and most objects keep their names, functions included, in a dictionary you can inspect with `vars()`."
+        }
+      ]
+    }
+  ]
+}
