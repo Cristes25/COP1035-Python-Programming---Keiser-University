@@ -1,0 +1,1124 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 9: Graphical User Interfaces",
+ "collection_intro": "Short, ungraded practice checks for sections 9.1–9.7 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+ "theme": "harbor",
+ "background": "pattern",
+ "checks": [
+  {
+   "id": "9.1-event-driven-gui-template",
+   "title": "Event-driven programs and the GUI template",
+   "subtitle": "Terminal versus GUI control, the event loop, the steps for coding a GUI, self, and subclassing EasyFrame",
+   "source": "Ch. 9, sections 9.1–9.2 (pp. 224–229)",
+   "intro": "A student's tax program works perfectly, yet users complain they must retype everything to fix one typo. Five questions on what changes when a program stops asking and starts waiting.",
+   "takeaways": [
+    "A terminal program controls the order of the interaction: it prompts, waits for that one input and moves on. A GUI program is *event driven*: it lays out its window, then waits inside `mainloop` and runs a handler method only when the user triggers an event, so the user decides the order.",
+    "Every breezypythongui program has the same shape: a window class that extends `EasyFrame`, an `__init__` that calls `EasyFrame.__init__(self)` and adds the components, event-handling methods, and a `main` that creates the window and calls `mainloop()`.",
+    "Python fills a method's first parameter, `self`, with the object the method was called on. A subclass inherits the attributes and behavior of its parent and every ancestor, so you customize an existing class instead of rebuilding it."
+   ],
+   "questions": [
+    {
+     "id": "who-controls-order",
+     "concept": "Terminal versus GUI interaction",
+     "level": "understand",
+     "stem": "A terminal tax calculator asks for gross income, then dependents, prints the tax and ends. A user mistyped the income and also wants the tax for three different numbers of dependents. What does the GUI version change that solves both problems?",
+     "options": [
+      {
+       "text": "Inputs stay in editable fields: the user changes any one, in any order, and clicks Compute again.",
+       "feedback": "The GUI puts the user in charge: both inputs stay on screen, either can be edited before pressing Compute, and a new data set needs only the changed value, not a fresh run.",
+       "correct": true
+      },
+      {
+       "text": "The GUI checks each value as it is typed, so a mistyped income can never be entered at all.",
+       "feedback": "Checking input is possible in either kind of program, and a wrong but well-formed number would still get through. The improvements the chapter names are freedom of order and not having to re-enter everything."
+      },
+      {
+       "text": "The GUI recomputes the tax continuously, so the program no longer waits for the user to do anything.",
+       "feedback": "An event-driven program does the opposite: it is inactive until the user clicks a button or picks a menu option. The computation runs only when the Compute click triggers it."
+      },
+      {
+       "text": "The GUI asks the same questions in pop-up boxes, one after another, so all the answers stay visible.",
+       "feedback": "A sequence of pop-up prompts is still a fixed order with no way to back up, which is the terminal program's limitation. The GUI's gain comes from fields the user can revisit."
+      }
+     ],
+     "hint": "In which version can the user go back to a value they already entered?",
+     "explanation": "A terminal interface constrains the user to a definite sequence of prompts and forces a rerun for new data. A GUI displays all inputs at once and waits for a command, so the user can edit any field in any order and recompute as often as they like.",
+     "ref": "Section 9.1, \"The Terminal-Based Version\" and \"The GUI-Based Version\" (pp. 224–225)"
+    },
+    {
+     "id": "no-mainloop",
+     "concept": "The event loop",
+     "level": "analyze",
+     "stem": "A student shortens `main` in `labeldemo.py` to just `LabelDemo()`, dropping `.mainloop()`, and runs the file from a terminal. What happens?",
+     "options": [
+      {
+       "text": "The window is built, but nothing waits for events, so the script ends without a usable window.",
+       "feedback": "`mainloop` is the loop that pops the window up and waits for user events until the close box is clicked. Without it, creating the object is the last statement, and the program simply ends.",
+       "correct": true
+      },
+      {
+       "text": "The window opens normally, because creating any `EasyFrame` object starts the event loop on its own.",
+       "feedback": "The constructor only runs `__init__`, which sets up the window and its components. Waiting for events is a separate job, started explicitly by calling `mainloop` on the window."
+      },
+      {
+       "text": "Python raises an error at once, because a subclass of `EasyFrame` must call `mainloop` inside `__init__`.",
+       "feedback": "Nothing requires `mainloop` in `__init__`; the template calls it in `main`, after the window exists. Leaving it out is legal code, it just produces a program that never waits."
+      },
+      {
+       "text": "The window opens and shows the label, but its close box no longer quits the program.",
+       "feedback": "This assumes the window appears and only the quitting changes. In fact the loop that keeps the window alive and handles the close box never starts, so there is nothing left to quit."
+      }
+     ],
+     "hint": "Which part of the program waits for user events, and when does it start?",
+     "explanation": "A GUI program sets up its window and then hands control to an event loop, `mainloop`, which waits for events and dispatches them to handlers until the user closes the window. Building the window object and starting the loop are separate steps.",
+     "aside": "You can check that tkinter works on any machine with `python -m tkinter`: it opens a tiny window showing the installed Tk version, with a button and a Quit button, all driven by `mainloop`.",
+     "ref": "Section 9.2, \"A Simple 'Hello World' Program\", step 4 (p. 228)"
+    },
+    {
+     "id": "self-binding",
+     "concept": "How self is assigned",
+     "level": "apply",
+     "stem": "What does this code print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "class Greeter:\n    def __init__(self, name):\n        self.name = name\n\n    def greet(self, other):\n        print(self.name, \"greets\", other)\n\na = Greeter(\"Ana\")\nb = Greeter(\"Ben\")\nb.greet(\"Ana\")",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`Ben greets Ana`",
+       "feedback": "`b.greet(\"Ana\")` assigns the object `b` to `self` automatically, and the one argument you pass goes to `other`. So `self.name` is Ben's name.",
+       "correct": true
+      },
+      {
+       "text": "`Ana greets Ben`",
+       "feedback": "This matches the string `\"Ana\"` with `self`. But `self` is never a value you pass: it is the object to the left of the dot, here `b`."
+      },
+      {
+       "text": "`Ana greets Ana`",
+       "feedback": "This reads `self.name` as the most recently mentioned name. Each object keeps its own `name`; the call is made on `b`, so `self` is `b`."
+      },
+      {
+       "text": "A `TypeError`: `greet` needs two arguments",
+       "feedback": "The header lists two parameters, but the PVM fills `self` itself at call time. You supply only the remaining one, so one argument is exactly right."
+      }
+     ],
+     "hint": "Which object is to the left of the dot in the last line, and which parameter receives it?",
+     "explanation": "A method always has `self` as its first parameter, and Python assigns to it a reference to the object the method is called on. The caller passes only the remaining arguments, and `self` gives the method access to that object's own data.",
+     "ref": "Section 9.2, \"The Syntax of Class and Method Definitions\" (pp. 228–229)"
+    },
+    {
+     "id": "inheritance-free-behavior",
+     "concept": "Subclassing and inheritance",
+     "level": "understand",
+     "stem": "`LabelDemo` extends `EasyFrame`, which extends tkinter's `Frame`. `LabelDemo` defines only `__init__`, yet `LabelDemo().mainloop()` works and the window has working title-bar buttons. Why?",
+     "options": [
+      {
+       "text": "`LabelDemo` inherits the behavior of parent `EasyFrame` and ancestor `Frame`, `mainloop` included.",
+       "feedback": "A subclass acquires the attributes and behavior of its parent and all its ancestors for free. `LabelDemo` only customizes `__init__`; everything else comes from up the chain.",
+       "correct": true
+      },
+      {
+       "text": "Python searches every imported module for a `mainloop` function and calls the first one it finds.",
+       "feedback": "Method calls are looked up on the object's class and then its parent classes, not in whatever modules happen to be imported."
+      },
+      {
+       "text": "Every Python class can open a window, because `mainloop` is built into the base of all classes.",
+       "feedback": "A plain class such as `Greeter` has no `mainloop` at all. The window behavior exists only because `LabelDemo` descends from tkinter's `Frame`."
+      },
+      {
+       "text": "`EasyFrame.__init__(self)` copies `EasyFrame`'s methods into `LabelDemo` while the object is built.",
+       "feedback": "That call initializes the window's own settings; it copies nothing. The methods are available because the class header names `EasyFrame` as the parent."
+      }
+     ],
+     "hint": "What does the parenthesized name in `class LabelDemo(EasyFrame):` give the new class?",
+     "explanation": "Subclassing is an abstraction mechanism: a new class names a parent in its header and automatically gets everything the parent and its ancestors define. The usual approach is to find a class that already does most of the job and customize it.",
+     "aside": "The name tkinter means \"Tk interface\": it is Python's binding to Tk, the GUI toolkit John Ousterhout created alongside the Tcl language. breezypythongui is in turn a thin layer over tkinter.",
+     "ref": "Section 9.2, \"Subclassing and Inheritance as Abstraction Mechanisms\" (p. 229)"
+    },
+    {
+     "id": "layout-first",
+     "concept": "Steps in coding a GUI program",
+     "level": "evaluate",
+     "stem": "Two students start the GUI tax calculator. One wants to write the tax computation methods first. The other wants to lay out the labels, fields and button first and run the window even though Compute does nothing yet. Which approach does the chapter recommend, and why?",
+     "options": [
+      {
+       "text": "Lay out the window first: it can be previewed and refined while the event steps wait.",
+       "feedback": "The chapter suggests skipping Steps 4 and 5 (registering and defining handlers) at first, so you can check the window's look and layout before any button does anything.",
+       "correct": true
+      },
+      {
+       "text": "Write the computation first, because a window cannot run until every button has a `command`.",
+       "feedback": "A button with no `command` attribute is legal; clicking it simply has no effect. That is exactly what makes a layout-only prototype possible."
+      },
+      {
+       "text": "Lay out the window first, because `mainloop` refuses to start for a window with no components.",
+       "feedback": "The order is right but the reason is not: the point is to refine the look and feel early, not to satisfy `mainloop`."
+      },
+      {
+       "text": "Write both together in `__init__`, since handlers must live in `__init__` to reach the widgets.",
+       "feedback": "Handlers are separate methods of the class. They reach the widgets through instance variables such as `self.label`, which is why layout and handlers can be written in separate stages."
+      }
+     ],
+     "hint": "Of the six coding steps, which ones can be postponed while the window still runs?",
+     "explanation": "Coding a GUI follows steps: define the window class, create and position the components, register handlers and define them, then write `main`. Building the layout first gives a working prototype whose look can be checked before the event-handling logic is added.",
+     "ref": "Section 9.1, \"Event-Driven Programming\" (p. 226)"
+    }
+   ]
+  },
+  {
+   "id": "9.3-windows-grids-and-widgets",
+   "title": "Windows, grids and widgets",
+   "subtitle": "Setting window attributes, grid positions, sticky alignment and spans, what the add methods return, and displaying images",
+   "source": "Ch. 9, section 9.3 (pp. 229–234)",
+   "intro": "A layout that looks centered on your screen can slide into a corner the moment a user drags the window wider. Five questions on window attributes, the grid and the widgets you place in it.",
+   "takeaways": [
+    "A window's attributes (title, size, resizability, background) can be set three ways: as keyword arguments to `EasyFrame.__init__`, through the attribute dictionary (`self[\"background\"] = \"yellow\"`), or with methods such as `setTitle` and `setResizable`.",
+    "Components sit in a grid numbered from (0, 0) at the upper left, row first. Each type has a default alignment in its cell (labels align northwest); `sticky` overrides it, and `columnspan` or `rowspan` takes effect only when the component is centered along that dimension.",
+    "Each `addComponentType` method creates the widget, sets its attributes, places it and returns a reference to it. Keep that reference, in `self` when another method or a resource such as a `PhotoImage` must outlive `__init__`."
+   ],
+   "questions": [
+    {
+     "id": "yellow-fixed-window",
+     "concept": "Changing window attributes",
+     "level": "apply",
+     "stem": "Later in `__init__`, after `EasyFrame.__init__(self, title = \"Label Demo\")`, a student wants a yellow window that the user cannot resize. Which pair of statements does it?",
+     "options": [
+      {
+       "text": "`self[\"background\"] = \"yellow\"` and `self.setResizable(False)`",
+       "feedback": "The first resets an entry in the window's attribute dictionary; the second calls one of the `EasyFrame` methods from Table 9-1. Both act on `self`, the window.",
+       "correct": true
+      },
+      {
+       "text": "`self.background = \"yellow\"` and `self.setResizable(False)`",
+       "feedback": "Dot assignment creates a new instance variable named `background` that the window never reads. Window attributes are reset through the dictionary, with square brackets."
+      },
+      {
+       "text": "`setBackground(\"yellow\")` and `setResizable(False)`",
+       "feedback": "These are the right methods, but they belong to the window object. Called without `self.`, Python looks for plain functions with those names and raises a `NameError`."
+      },
+      {
+       "text": "`self.setBackground = \"yellow\"` and `self.setResizable = False`",
+       "feedback": "Assigning to a method's name replaces the method with a string or a Boolean on this object. A method has to be *called* with its argument in parentheses."
+      }
+     ],
+     "hint": "Which notation reaches the window's attribute dictionary, and how is a method run on the window?",
+     "explanation": "A window's attributes live in a dictionary inside the window object, reached with subscript notation on `self`. `EasyFrame` also offers methods (`setBackground`, `setResizable`, `setSize`, `setTitle`), which, like any method, are called on the object.",
+     "ref": "Section 9.3, \"Windows and Their Attributes\" and Table 9-1 (p. 230)"
+    },
+    {
+     "id": "grid-corner",
+     "concept": "Grid coordinates",
+     "level": "apply",
+     "stem": "Which label's text appears in the lower-right corner of this window?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "class GridDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self)\n        for row in range(2):\n            for column in range(3):\n                self.addLabel(text = str((row, column)),\n                              row = row, column = column)",
+      "verify": {
+       "expect": "output",
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass GridDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self)\n        for row in range(2):\n            for column in range(3):\n                self.addLabel(text = str((row, column)),\n                              row = row, column = column)\n\nwin = GridDemo()\ncorner = max(win._widgets, key = lambda w: (w[\"row\"], w[\"column\"]))\nprint(corner[\"text\"])\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`(1, 2)`",
+       "feedback": "There are rows 0–1 and columns 0–2. The lower-right cell is the last row and last column, so its label reads (1, 2).",
+       "correct": true
+      },
+      {
+       "text": "`(2, 3)`",
+       "feedback": "These are the arguments to `range`, but `range(2)` stops before 2 and `range(3)` before 3. Grid positions start at (0, 0)."
+      },
+      {
+       "text": "`(2, 1)`",
+       "feedback": "This reads the pair as (x, y), column first. In the grid the row comes first, and the bottom row is row 1, not 2."
+      },
+      {
+       "text": "`(1, 3)`",
+       "feedback": "The row is right, but the columns run 0, 1, 2. Counting the three columns from 1 lands one past the last one."
+      }
+     ],
+     "hint": "What is the last value each `range` produces, and which number comes first in a grid position?",
+     "explanation": "A window's grid numbers rows and columns from (0, 0) in the upper-left corner, row first. A nested loop over `range(rows)` and `range(columns)` visits every cell, and the bottom-right cell is (rows − 1, columns − 1).",
+     "ref": "Section 9.3, \"Window Layout\" (pp. 230–231) and Exercise 9-3, question 3"
+    },
+    {
+     "id": "span-needs-sticky",
+     "concept": "Alignment and spanning",
+     "level": "analyze",
+     "stem": "This code should center the third label beneath the other two, across both columns. Instead it sits at the left of the bottom row. Why?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "self.addLabel(text = \"(0, 0)\", row = 0, column = 0)\nself.addLabel(text = \"(0, 1)\", row = 0, column = 1)\nself.addLabel(text = \"(1, 0 and 1)\", row = 1, column = 0,\n              columnspan = 2)",
+      "verify": {
+       "expect": "skip",
+       "reason": "Grid alignment needs tkinter and a display to observe."
+      }
+     },
+     "options": [
+      {
+       "text": "Labels align northwest by default; a span shows only when centered, so it needs `sticky = \"NSEW\"`.",
+       "feedback": "The span does not take effect unless the component is centered along that dimension. Adding `sticky = \"NSEW\"` centers the label, and then it spreads across both columns.",
+       "correct": true
+      },
+      {
+       "text": "`columnspan` counts the starting column separately, so covering two full columns needs `columnspan = 3`.",
+       "feedback": "`columnspan = 2` means two grid positions, like merging two cells. The count is not the problem; the label's alignment is."
+      },
+      {
+       "text": "`columnspan` must come before `row` and `column`, because keyword arguments are applied in order.",
+       "feedback": "Keyword arguments can be given in any order; Python matches them by name. Moving it changes nothing."
+      },
+      {
+       "text": "Only buttons and panels accept `columnspan`; a label always fills a single grid position.",
+       "feedback": "The chapter's own example spans a label across two columns. Any component added with an `add` method can take `rowspan` and `columnspan`."
+      }
+     ],
+     "hint": "What is a label's default alignment, and when does a span take effect?",
+     "explanation": "Each component type has a default alignment within its cell, northwest for labels. The `sticky` argument (any mix of \"N\", \"S\", \"E\", \"W\") overrides it, and spanning only shows when the component is centered along the spanned dimension.",
+     "ref": "Section 9.3, \"Window Layout\" (p. 231)"
+    },
+    {
+     "id": "add-returns-reference",
+     "concept": "What the add methods return",
+     "level": "understand",
+     "stem": "`ImageDemo` writes `textLabel = self.addLabel(text = \"Smokey the cat\", row = 1, column = 0)` and later `textLabel[\"foreground\"] = \"blue\"`. What does `addLabel` give back that makes the second line work?",
+     "options": [
+      {
+       "text": "A reference to the label object itself, so its attribute dictionary can be changed later.",
+       "feedback": "Besides creating the label, setting its attributes and placing it in the grid, `addLabel` returns a reference to it. Subscripting that reference changes the label on screen.",
+       "correct": true
+      },
+      {
+       "text": "A copy of the label's settings, which takes effect only when it is passed to `addLabel` again.",
+       "feedback": "Changing a returned copy would not alter the displayed label. The return value is the label object itself, so the change shows at once."
+      },
+      {
+       "text": "The label's grid position, `(1, 0)`, which the subscript uses to locate the label in the window.",
+       "feedback": "The grid position is an argument you supply, not the result. Subscripting a tuple with `\"foreground\"` would raise a `TypeError`."
+      },
+      {
+       "text": "Nothing, `None`; the subscript works because Python finds the name `textLabel` inside the window.",
+       "feedback": "If `addLabel` returned `None`, `textLabel[\"foreground\"]` would raise a `TypeError`. The method returns the label precisely so code like this can adjust it."
+      }
+     ],
+     "hint": "Section 9.3 lists four things every `addComponentType` method does. What is the last one?",
+     "explanation": "Every `add` method creates an instance of the component, initializes its attributes, places it in its grid position and returns a reference to it. Keeping that reference is how a program changes a component's text, color, font or state later.",
+     "ref": "Section 9.3, \"Types of Window Components and Their Attributes\" (p. 232)"
+    },
+    {
+     "id": "image-instance-variable",
+     "concept": "Displaying images",
+     "level": "analyze",
+     "stem": "A student loads the picture into a temporary variable instead of `self.image`. The window opens, but the image label is blank. What explains it?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "imageLabel = self.addLabel(text = \"\", row = 0, column = 0,\n                           sticky = \"NSEW\")\nimage = PhotoImage(file = \"smokey.gif\")\nimageLabel[\"image\"] = image",
+      "verify": {
+       "expect": "skip",
+       "reason": "Needs tkinter, an image file and a display."
+      }
+     },
+     "options": [
+      {
+       "text": "The image must be held in `self`; a temporary is discarded when `__init__` ends, and the picture with it.",
+       "feedback": "The chapter says the variable holding the image must be prefixed by `self`. A temporary disappears as soon as `__init__` returns, and the label is left with nothing to show.",
+       "correct": true
+      },
+      {
+       "text": "An image can be attached only when the label is created, so assigning `imageLabel[\"image\"]` later is ignored.",
+       "feedback": "`ImageDemo` attaches its image after creating the label, in exactly this way. Changing a label's attributes later is the normal pattern."
+      },
+      {
+       "text": "The label was created with `text = \"\"`, and an empty text attribute hides any image on the same label.",
+       "feedback": "The chapter's working version also creates the image label with an empty string. The text does not hide the image."
+      },
+      {
+       "text": "`PhotoImage` needs the file's full path; given a bare file name it always produces a blank label.",
+       "feedback": "A bare name works when the file is in the program's folder, as in the chapter's example. The only change from the working version is the missing `self.`."
+      }
+     ],
+     "hint": "Compare this with the chapter's working version: which single word is missing?",
+     "explanation": "To show an image, add a label, create a `PhotoImage` from the file and set the label's `image` attribute. The `PhotoImage` must be stored in an instance variable so it survives after `__init__` returns; a temporary is discarded and the label goes blank.",
+     "aside": "This is one of tkinter's best-known traps: a widget displaying an image does not keep the Python `PhotoImage` object alive, so once no variable refers to it, Python discards it. Since Tk 8.6, `PhotoImage` also reads PNG files, not only GIF.",
+     "ref": "Section 9.3, \"Displaying Images\" and Table 9-3 (pp. 233–234)"
+    }
+   ]
+  },
+  {
+   "id": "9.4-buttons-events-and-entry-fields",
+   "title": "Buttons, events and entry fields",
+   "subtitle": "The command attribute, event handlers and button state, text fields versus number fields, read-only output and errors in a GUI",
+   "source": "Ch. 9, sections 9.4–9.5 (pp. 235–240)",
+   "intro": "You click Convert and nothing happens, not even an error. Six questions on wiring buttons to methods and moving data in and out of entry fields.",
+   "takeaways": [
+    "A button responds to a click only through its `command` attribute, which must be a method that takes no arguments besides `self`. Pass the method itself, `command = self.clear`; writing `self.clear()` runs it once during setup and stores its return value, `None`.",
+    "An event handler is an ordinary method: it reads inputs from the window's fields, computes, writes the outputs back, and often updates button `state` (\"normal\" or \"disabled\") so only sensible actions remain available.",
+    "`TextField` moves strings (`getText`, `setText`); `IntegerField` and `FloatField` move numbers (`getNumber`, `setNumber`) and convert for you. Make output fields `state = \"readonly\"`. An exception in a handler does not close the window, but it stops that handler."
+   ],
+   "questions": [
+    {
+     "id": "command-called-too-early",
+     "concept": "Setting a button's command",
+     "level": "apply",
+     "stem": "`invoke()` runs a button's command just as a click would. What does this program print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "class ButtonDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self)\n        self.label = self.addLabel(text = \"Hello world!\",\n                                   row = 0, column = 0)\n        self.clearBtn = self.addButton(text = \"Clear\",\n                                       row = 1, column = 0,\n                                       command = self.clear())\n\n    def clear(self):\n        self.label[\"text\"] = \"\"\n\nwin = ButtonDemo()\nprint(repr(win.label[\"text\"]))\nwin.clearBtn.invoke()    # acts like a click on Clear\nprint(repr(win.label[\"text\"]))",
+      "verify": {
+       "expect": "output",
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass ButtonDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self)\n        self.label = self.addLabel(text = \"Hello world!\",\n                                   row = 0, column = 0)\n        self.clearBtn = self.addButton(text = \"Clear\",\n                                       row = 1, column = 0,\n                                       command = self.clear())\n\n    def clear(self):\n        self.label[\"text\"] = \"\"\n\nwin = ButtonDemo()\nprint(repr(win.label[\"text\"]))\nwin.clearBtn.invoke()    # acts like a click on Clear\nprint(repr(win.label[\"text\"]))"
+      }
+     },
+     "options": [
+      {
+       "text": "`'' ''`",
+       "feedback": "`self.clear()` runs `clear` immediately, during `__init__`, so the label is blank from the start. Its return value, `None`, becomes the command, so the click does nothing.",
+       "correct": true
+      },
+      {
+       "text": "`'Hello world!' ''`",
+       "feedback": "This is what the program would print with `command = self.clear`. The parentheses call the method while the window is being built instead of handing it to the button."
+      },
+      {
+       "text": "`'Hello world!' 'Hello world!'`",
+       "feedback": "This assumes the parentheses only break the connection to the click. They also *run* `clear` once, right away, which erases the label before the first print."
+      },
+      {
+       "text": "`''` and then a `TypeError` from the click",
+       "feedback": "Calling `None` would be an error, but a button whose command is empty simply ignores the click. Nothing is raised; the button just has no effect."
+      }
+     ],
+     "hint": "What is the difference between `self.clear` and `self.clear()`, and when does each one run?",
+     "explanation": "The `command` attribute must hold a method, not the result of calling it. `command = self.clear` stores the method so Python can call it on each click; adding parentheses calls it once at setup and stores whatever it returns.",
+     "aside": "Every tkinter `Button` has an `invoke()` method that runs its command exactly as a click would, and does nothing while the button is disabled. It is a handy way to test event handlers without touching the mouse.",
+     "ref": "Section 9.4, \"Command Buttons and Responding to Events\" (pp. 235–236)"
+    },
+    {
+     "id": "handler-takes-no-args",
+     "concept": "Event handlers take no arguments",
+     "level": "analyze",
+     "stem": "A student gives the handler a parameter for the label. The window opens normally. What happens when the user clicks Clear?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "class ButtonDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self)\n        self.label = self.addLabel(text = \"Hello world!\",\n                                   row = 0, column = 0)\n        self.addButton(text = \"Clear\", row = 1, column = 0,\n                       command = self.clear)\n\n    def clear(self, label):\n        label[\"text\"] = \"\"",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "missing 1 required positional argument"
+       ],
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass ButtonDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self)\n        self.label = self.addLabel(text = \"Hello world!\",\n                                   row = 0, column = 0)\n        self.addButton(text = \"Clear\", row = 1, column = 0,\n                       command = self.clear)\n\n    def clear(self, label):\n        label[\"text\"] = \"\"\n\nwin = ButtonDemo()\nwin._widgets[1].invoke()\n"
+      }
+     },
+     "options": [
+      {
+       "text": "Each click prints a `TypeError` trace, since nothing supplies `label`, and the label stays unchanged.",
+       "feedback": "The command attribute must be a method of no arguments: the button calls it with nothing. `clear` demands a `label`, so each call fails, while the window itself stays open.",
+       "correct": true
+      },
+      {
+       "text": "Python passes the clicked button in as `label`, so the button's own text Clear is erased.",
+       "feedback": "A button calls its command with no arguments at all; it does not pass itself. Since `label` receives nothing, the call fails."
+      },
+      {
+       "text": "The window refuses to open, because `addButton` checks the handler's parameters when the button is made.",
+       "feedback": "`addButton` only stores the method; the window opens normally, as the stem says. The mismatch appears only when the method is finally called."
+      },
+      {
+       "text": "The window closes with an error message on the first click, as a crashed terminal program would.",
+       "feedback": "In a GUI, an exception raised in a handler prints a stack trace in the terminal, but the GUI stays alive and the user can keep using it."
+      }
+     ],
+     "hint": "How many arguments does the button supply when it calls its command?",
+     "explanation": "A button's command is called with no arguments, so a handler can have only `self` as a parameter. Data a handler needs, such as widgets to update, should come from instance variables like `self.label`.",
+     "ref": "Section 9.4, the command attribute (p. 235) and section 9.5 on exceptions in a GUI (p. 239)"
+    },
+    {
+     "id": "text-fields-concatenate",
+     "concept": "Text fields hold strings",
+     "level": "apply",
+     "stem": "In an adder window all three fields are text fields. The user types `2` and `3` into the input fields and clicks Add, which runs this handler. What appears in the output field?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def add(self):\n    a = self.firstField.getText()\n    b = self.secondField.getText()\n    self.outputField.setText(a + b)",
+      "verify": {
+       "expect": "output",
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass AdderDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, title = \"Adder\")\n        self.firstField = self.addTextField(text = \"\", row = 0, column = 0)\n        self.secondField = self.addTextField(text = \"\", row = 0, column = 1)\n        self.outputField = self.addTextField(text = \"\", row = 1, column = 0,\n                                             state = \"readonly\")\n        self.addBtn = self.addButton(text = \"Add\", row = 2, column = 0,\n                                     command = self.add)\n\n    def add(self):\n        a = self.firstField.getText()\n        b = self.secondField.getText()\n        self.outputField.setText(a + b)\n\nwin = AdderDemo()\nwin.firstField.setText(\"2\")\nwin.secondField.setText(\"3\")\nwin.addBtn.invoke()\nprint(win.outputField.getText())\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`23`",
+       "feedback": "`getText` returns the strings `\"2\"` and `\"3\"`, and `+` joins strings. Text fields never convert their contents to numbers.",
+       "correct": true
+      },
+      {
+       "text": "`5`",
+       "feedback": "That needs numbers, and a text field supplies strings. An `IntegerField` with `getNumber` would give `5`, because it converts automatically."
+      },
+      {
+       "text": "`5.0`",
+       "feedback": "No conversion happens anywhere in this handler, let alone to a float. A `FloatField` would produce a float; a text field yields the characters typed."
+      },
+      {
+       "text": "`2 + 3`",
+       "feedback": "`a + b` is evaluated before `setText` sees it; the output field receives the result of the expression, not its source text."
+      }
+     ],
+     "hint": "What type does `getText` return, and what does `+` do with two values of that type?",
+     "explanation": "A text field inputs and outputs strings, so numbers must be converted after input and back before output. `IntegerField` and `FloatField`, with `getNumber` and `setNumber`, do that conversion automatically.",
+     "ref": "Section 9.5, \"Text Fields\" and \"Integer and Float Fields for Numeric Data\" (pp. 237–238)"
+    },
+    {
+     "id": "bad-integer-input",
+     "concept": "Errors in a GUI program",
+     "level": "understand",
+     "stem": "In `NumberFieldDemo` (the version without error handling), the user types `2.5` into the integer field and clicks Compute. What happens?",
+     "options": [
+      {
+       "text": "`getNumber` raises a `ValueError`: a trace appears in the terminal, but the window stays open.",
+       "feedback": "An integer field cannot turn `2.5` into an integer, so `getNumber` raises a `ValueError`. Unlike a terminal program, the GUI survives the exception and waits for the next event.",
+       "correct": true
+      },
+      {
+       "text": "The field rounds the entry down to `2`, and the output field then shows its square root, `1.41`.",
+       "feedback": "An integer field does not round; text that is not an integer makes `getNumber` raise an exception."
+      },
+      {
+       "text": "`getNumber` returns the string `\"2.5\"`, and then `math.sqrt` raises a `TypeError`.",
+       "feedback": "Number fields convert automatically: `getNumber` returns a number or fails trying. The error comes from the field, not from `math.sqrt`."
+      },
+      {
+       "text": "The program crashes and the window closes, exactly as a terminal program would.",
+       "feedback": "A terminal program would crash. A GUI keeps running after an exception in a handler; only that click's work is lost."
+      }
+     ],
+     "hint": "What does the chapter say happens to a GUI when a handler raises an exception?",
+     "explanation": "`getNumber` converts a field's text to a number and raises an exception when it cannot. In a GUI, an unhandled exception in a handler prints a stack trace but leaves the window running; trapping it with `try`/`except` lets the program show a helpful message instead.",
+     "ref": "Section 9.5, \"Integer and Float Fields for Numeric Data\" (pp. 238–239)"
+    },
+    {
+     "id": "readonly-output",
+     "concept": "Read-only output fields",
+     "level": "understand",
+     "stem": "Why does `TextFieldDemo` create its output field with `state = \"readonly\"`?",
+     "options": [
+      {
+       "text": "So the user cannot edit the result, while the program can still display it with `setText`.",
+       "feedback": "A read-only field blocks the user's typing but not the program's output, which is exactly what an output field needs.",
+       "correct": true
+      },
+      {
+       "text": "So that `setText` is allowed to write to it; a normal field accepts text only from the keyboard.",
+       "feedback": "The input field is a normal field, and `setText` works on normal fields too. Read-only restricts the user, not the program."
+      },
+      {
+       "text": "So that the program reads its text with `getText` instead of waiting for the user to press Enter.",
+       "feedback": "`getText` works on any text field at any time. The state of the field is about who may edit it."
+      },
+      {
+       "text": "So that the result keeps its value when the window is resized or moved by the user.",
+       "feedback": "Resizing never changes a field's contents. The state only controls whether the user can type into it."
+      }
+     ],
+     "hint": "Who should be able to change an output field: the user, the program, or both?",
+     "explanation": "Entry fields serve as both input and output. For a field used only to display results, setting `state` to \"readonly\" prevents the user from editing it, while the program can still update it.",
+     "ref": "Section 9.5, \"Text Fields\" (p. 237)"
+    },
+    {
+     "id": "gui-input-output-calls",
+     "concept": "Handlers as input, process, output",
+     "level": "analyze",
+     "stem": "`convert` is three lines: `text = self.inputField.getText()`, `result = text.upper()`, `self.outputField.setText(result)`. The chapter compares it with a terminal program that uses `input` and `print`. Which GUI calls play those two roles?",
+     "options": [
+      {
+       "text": "`getText` on the input field replaces `input`; `setText` on the output field replaces `print`.",
+       "feedback": "The handler follows the same input–process–output pattern as the terminal program. Input now comes from a field, and output goes to a field.",
+       "correct": true
+      },
+      {
+       "text": "`addTextField` replaces `input`, and `addLabel` replaces `print`, since they build the window's fields.",
+       "feedback": "These methods build the window once, in `__init__`. Data moves in and out each time the handler runs, through `getText` and `setText`."
+      },
+      {
+       "text": "Clicking Convert replaces `input`, and `mainloop` replaces `print`.",
+       "feedback": "The click triggers the handler, but it supplies no data. And `mainloop` waits for events; it displays nothing itself."
+      },
+      {
+       "text": "`getText` replaces `print`, since it brings text to the screen, and `setText` replaces `input`.",
+       "feedback": "This reverses the directions. `getText` *reads* what the user typed into the program; `setText` *writes* the program's result to the screen."
+      }
+     ],
+     "hint": "Which direction does data travel with each call: from the user to the program, or the other way?",
+     "explanation": "Most of a GUI program's code sets up the window in `__init__`; the real logic sits in short handlers. Each handler takes input from fields, computes and outputs to fields, the same pattern as `input`, computation and `print` in a terminal program.",
+     "ref": "Section 9.5, \"Text Fields\" (p. 238)"
+    }
+   ]
+  },
+  {
+   "id": "9.6-instance-variables-and-state",
+   "title": "Instance variables and an object's state",
+   "subtitle": "Instance versus temporary variables, what a window must remember, the case study's event-driven loop, and try-except with a message box",
+   "source": "Ch. 9, section 9.6 and Case Study 9-1 (pp. 240–246)",
+   "intro": "A counter that crashes on its first click has forgotten where its count lives. Five questions on what a window must remember between events, and how it recovers from bad input.",
+   "takeaways": [
+    "An instance variable (`self.count`) belongs to one object and keeps its value between method calls; created in `__init__`, it is visible in every method of the class. A temporary variable (`count`) exists only while its own method runs.",
+    "Keep in `self` only what the object must remember between events (the secret number, the count, widgets that will be updated) and use temporaries or parameters for everything else.",
+    "In a GUI the event loop replaces a terminal program's explicit `while` loop: the loop's body becomes an event handler, and disabling a button replaces `break`. Wrapping a handler's input and computation in `try`/`except` lets it show a message box and wait for a corrected input."
+   ],
+   "questions": [
+    {
+     "id": "temporary-count",
+     "concept": "Instance versus temporary variables",
+     "level": "apply",
+     "stem": "A student's counter forgets the `self.` prefix. What happens on the first click of Next?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "class CounterDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, title = \"Counter Demo\")\n        count = 0\n        self.label = self.addLabel(text = \"0\",\n                                   row = 0, column = 0)\n        self.nextBtn = self.addButton(text = \"Next\",\n                                      row = 1, column = 0,\n                                      command = self.next)\n\n    def next(self):\n        count += 1\n        self.label[\"text\"] = str(count)",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "UnboundLocalError"
+       ],
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass CounterDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, title = \"Counter Demo\")\n        count = 0\n        self.label = self.addLabel(text = \"0\",\n                                   row = 0, column = 0)\n        self.nextBtn = self.addButton(text = \"Next\",\n                                      row = 1, column = 0,\n                                      command = self.next)\n\n    def next(self):\n        count += 1\n        self.label[\"text\"] = str(count)\n\nwin = CounterDemo()\nwin.nextBtn.invoke()\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`count += 1` raises `UnboundLocalError`: in `next`, `count` is a local name with no value yet.",
+       "feedback": "The `count` in `__init__` was a temporary that vanished when `__init__` ended. Inside `next`, assigning to `count` makes it local to `next`, and it has no value to add 1 to.",
+       "correct": true
+      },
+      {
+       "text": "The label shows `1` after every click, because `count` starts again from 0 each time.",
+       "feedback": "That would happen if `next` set `count = 0` before adding. Here `next` never gives `count` a value, so the very first `+=` fails."
+      },
+      {
+       "text": "The label counts 1, 2, 3, because `__init__` and `next` belong to the same class and share names.",
+       "feedback": "Methods share data only through `self`. Plain names in different methods are separate temporaries, even inside one class."
+      },
+      {
+       "text": "The label stays at `0`, because `next` quietly updates a copy of `count` that is never shown.",
+       "feedback": "Python does not quietly copy here; `next` has no `count` at all, so the addition raises an error."
+      }
+     ],
+     "hint": "Where can a variable assigned in `__init__` without `self.` be seen?",
+     "explanation": "Data that must survive between method calls has to be an instance variable, created with the `self.` prefix in `__init__`. A variable without the prefix is a temporary, visible only inside the method that assigns it.",
+     "ref": "Section 9.6, \"Defining and Using Instance Variables\" (pp. 240–241)"
+    },
+    {
+     "id": "guess-trace",
+     "concept": "Tracing an object's state across events",
+     "level": "apply",
+     "stem": "The secret number is 42 and `self.count` starts at 0. The user enters 50, then 25, then 42, clicking Next after each, and then clicks Next once more. Which text and state do the hint label and the Next button end with?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def nextGuess(self):\n    self.count += 1\n    guess = self.guessField.getNumber()\n    if guess == self.myNumber:\n        self.hintLabel[\"text\"] = \"You've guessed it in \" + \\\n                                 str(self.count) + \" attempts!\"\n        self.nextButton[\"state\"] = \"disabled\"\n    elif guess < self.myNumber:\n        self.hintLabel[\"text\"] = \"Sorry, too small!\"\n    else:\n        self.hintLabel[\"text\"] = \"Sorry, too large!\"",
+      "verify": {
+       "expect": "output",
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nimport random\n\nclass GuessingGame(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, title = \"Guessing Game\")\n        self.myNumber = random.randint(1, 100)\n        self.count = 0\n        self.hintLabel = self.addLabel(text = \"Guess a number between 1 and 100.\",\n                                       row = 0, column = 0, columnspan = 2)\n        self.guessField = self.addIntegerField(0, row = 1, column = 1)\n        self.nextButton = self.addButton(text = \"Next\", row = 2, column = 0,\n                                         command = self.nextGuess)\n\n    def nextGuess(self):\n        self.count += 1\n        guess = self.guessField.getNumber()\n        if guess == self.myNumber:\n            self.hintLabel[\"text\"] = \"You've guessed it in \" + \\\n                                     str(self.count) + \" attempts!\"\n            self.nextButton[\"state\"] = \"disabled\"\n        elif guess < self.myNumber:\n            self.hintLabel[\"text\"] = \"Sorry, too small!\"\n        else:\n            self.hintLabel[\"text\"] = \"Sorry, too large!\"\n\nwin = GuessingGame()\nwin.myNumber = 42\nfor typed in [50, 25, 42, 42]:\n    win.guessField.setNumber(typed)\n    win.nextButton.invoke()\nprint(win.hintLabel[\"text\"], win.nextButton[\"state\"])\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`You've guessed it in 3 attempts! disabled`",
+       "feedback": "Each enabled click adds 1 to `self.count`. The third guess matches, the label reports 3 and the button is disabled, so the fourth click never reaches `nextGuess`.",
+       "correct": true
+      },
+      {
+       "text": "`You've guessed it in 4 attempts! disabled`",
+       "feedback": "This counts the last click. A disabled button does not run its command, so `self.count` stops at 3."
+      },
+      {
+       "text": "`You've guessed it in 3 attempts! normal`",
+       "feedback": "The winning branch sets the Next button's `state` to \"disabled\"; only the New game handler enables it again."
+      },
+      {
+       "text": "`Sorry, too large! disabled`",
+       "feedback": "This mixes up the guesses: 50 gave \"too large\" and 25 \"too small\", but 42 matches, which replaces the hint with the success message."
+      }
+     ],
+     "hint": "Which clicks actually run `nextGuess`, and what does the winning branch do to the button?",
+     "explanation": "An object's state, the values of its instance variables and widgets, carries over from one event to the next. Tracing a GUI means following that state through each handler call, remembering that a disabled button triggers nothing.",
+     "ref": "Case Study 9-1, \"Implementation\" (pp. 244–245)"
+    },
+    {
+     "id": "what-to-remember",
+     "concept": "Choosing instance variables",
+     "level": "analyze",
+     "stem": "In `nextGuess`, `guess` is a temporary variable, while `self.myNumber` and `self.count` are instance variables. Which reason explains the split?",
+     "options": [
+      {
+       "text": "The number and count are needed on later clicks; each guess is needed only during one click.",
+       "feedback": "Instance variables retain an object's state between method calls. Each guess is read, compared and finished with inside a single call, so a temporary is enough.",
+       "correct": true
+      },
+      {
+       "text": "Instance variables are faster to read, so they're used for the values compared in each `if` test.",
+       "feedback": "Speed is not the criterion; `guess` is compared too. The question is whether a value must survive after the method returns."
+      },
+      {
+       "text": "Values the user types must be temporaries, and values the program creates must be instance variables.",
+       "feedback": "The source of a value does not decide its kind of variable. A user's input that must be remembered, such as a name, would be an instance variable."
+      },
+      {
+       "text": "`guess` cannot be an instance variable, because `getNumber` returns its value only to local names.",
+       "feedback": "A method's return value can be stored anywhere, including `self.guess`. It is simply unnecessary, so the chapter advises against it."
+      }
+     ],
+     "hint": "Which values does the window need again on the *next* click?",
+     "explanation": "Use an instance variable for data the object must keep between method calls, and a temporary for data used only within one method. Keeping instance variables to the minimum makes a class easier to understand.",
+     "aside": "This inversion, where your code waits to be called instead of calling for input, is often nicknamed the Hollywood Principle: \"Don't call us, we'll call you.\"",
+     "ref": "Case Study 9-1, \"Implementation\" (p. 245)"
+    },
+    {
+     "id": "loop-becomes-handler",
+     "concept": "From a terminal loop to event handling",
+     "level": "understand",
+     "stem": "The terminal guessing game used `while True:` with a `break` when the guess was right. In the GUI version, what takes the place of the loop and of the `break`?",
+     "options": [
+      {
+       "text": "The window's event loop calls `nextGuess` once per click, and disabling Next replaces `break`.",
+       "feedback": "The loop's body moves into `nextGuess`, and the event-driven loop runs it on each click. Disabling the button stops further guesses, as `break` once did.",
+       "correct": true
+      },
+      {
+       "text": "A `while True:` loop inside `nextGuess`, which waits for each guess and still ends with `break`.",
+       "feedback": "A loop inside a handler would never return control to the window, so the user could not type a new guess. The GUI needs no explicit loop."
+      },
+      {
+       "text": "A `while` loop in `__init__`, which calls `nextGuess` until the guess is right and then closes the window.",
+       "feedback": "`__init__` must finish before the window can even appear. Repetition comes from user events, not from code in `__init__`."
+      },
+      {
+       "text": "A call to `mainloop` inside `nextGuess`, which restarts the event loop after every guess.",
+       "feedback": "`mainloop` is called once, in `main`, and keeps running until the window closes. Handlers simply return when they finish."
+      }
+     ],
+     "hint": "In an event-driven program, what makes the same code run again and again?",
+     "explanation": "A GUI program needs no explicit input loop: the event loop calls handlers whenever events occur. The body of the terminal loop becomes a handler, and ending the process is done by changing state, such as disabling a button.",
+     "ref": "Case Study 9-1, \"Design\" (pp. 243–244)"
+    },
+    {
+     "id": "try-except-sqrt",
+     "concept": "Fail-safe handlers with try-except",
+     "level": "apply",
+     "stem": "With this version of `computeSqrt`, the user enters `-4` and clicks Compute. What happens?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def computeSqrt(self):\n    try:\n        number = self.inputField.getNumber()\n        result = math.sqrt(number)\n        self.outputField.setNumber(result)\n    except ValueError:\n        self.messageBox(title = \"ERROR\",\n                        message = \"Input must be an integer >= 0\")",
+      "verify": {
+       "expect": "output",
+       "output": "ERROR: Input must be an integer >= 0",
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nimport math\n\nclass NumberFieldDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, title = \"Number Field Demo\")\n        self.inputField = self.addIntegerField(value = 0, row = 0, column = 1)\n        self.outputField = self.addFloatField(value = 0.0, row = 1, column = 1,\n                                              state = \"readonly\")\n        self.computeBtn = self.addButton(text = \"Compute\", row = 2, column = 0,\n                                         command = self.computeSqrt)\n\n    def computeSqrt(self):\n        try:\n            number = self.inputField.getNumber()\n            result = math.sqrt(number)\n            self.outputField.setNumber(result)\n        except ValueError:\n            self.messageBox(title = \"ERROR\",\n                            message = \"Input must be an integer >= 0\")\n\nwin = NumberFieldDemo()\nwin.inputField.setText(\"-4\")\nwin.computeBtn.invoke()\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`math.sqrt` raises `ValueError`, the `except` clause shows the error box, and the user can retry.",
+       "feedback": "`-4` is a well-formed integer, so `getNumber` succeeds, but `math.sqrt` rejects negatives with a `ValueError`. Control jumps to the `except` clause, which shows the message box.",
+       "correct": true
+      },
+      {
+       "text": "`getNumber` rejects the minus sign, so the `ValueError` comes from the field, not from `math.sqrt`.",
+       "feedback": "An integer field accepts negative integers; `-4` converts fine. The chapter notes the error comes from `math.sqrt` in this case."
+      },
+      {
+       "text": "No exception occurs: `math.sqrt` returns `nan` for negatives, and the output field shows it.",
+       "feedback": "Python's `math.sqrt` raises `ValueError: math domain error` for a negative argument rather than returning a special value."
+      },
+      {
+       "text": "The message box appears, and when the user closes it the whole window closes too, ending the program.",
+       "feedback": "After the box closes, the handler returns and the event loop keeps going, so the user can correct the input and try again."
+      }
+     ],
+     "hint": "Is `-4` a valid integer? Then which line can still fail?",
+     "explanation": "A `try` clause runs statements that might raise an exception; if one does, control shifts at once to the matching `except` clause. In a GUI, the event loop then keeps waiting, so the user can correct the input without any explicit loop.",
+     "ref": "Case Study 9-1, \"Fail-Safe Programming\" (pp. 245–246)"
+    }
+   ]
+  },
+  {
+   "id": "9.7a-panels-text-areas-and-dialogs",
+   "title": "Panels, text areas and dialogs",
+   "subtitle": "Nested panels with independent grids, multiline text areas, file dialogs and prompter boxes",
+   "source": "Ch. 9, section 9.7 (pp. 246–253)",
+   "intro": "Three buttons that refuse to space evenly under two columns of fields are a sign the window needs more than one grid. Five questions on panels, multiline text and dialogs.",
+   "takeaways": [
+    "A panel (`addPanel`, which returns an `EasyPanel`) fills one cell of the window's grid but has its own independent grid, so different regions of a window can have different numbers of columns.",
+    "A `TextArea` holds many lines: `setText` replaces its contents, `appendText` adds to the end. A disabled text area ignores the program's output as well as the user's typing, so set its state to \"normal\" before writing and back to \"disabled\" afterward.",
+    "Dialogs hand back values you must check: `askopenfilename` and `asksaveasfilename` return the empty string when the user cancels, and `prompterBox` returns whatever the user typed."
+   ],
+   "questions": [
+    {
+     "id": "uneven-buttons",
+     "concept": "Nested frames (panels)",
+     "level": "analyze",
+     "stem": "A window has labels and text fields in a 2-by-2 block (rows 0–1, columns 0–1) and three buttons in row 2, columns 0–2. The buttons come out unevenly spaced. What fix does the chapter use?",
+     "options": [
+      {
+       "text": "Put the fields in one panel and the buttons in another, giving the buttons their own grid.",
+       "feedback": "All the widgets share one grid, so the button columns inherit widths set by the labels and fields. Two panels give each region an independent grid.",
+       "correct": true
+      },
+      {
+       "text": "Give the three buttons `sticky = \"NSEW\"` so that each one is centered within its own column.",
+       "feedback": "Centering a button inside its cell does not change how wide the cells are. The columns are still shared with the fields above."
+      },
+      {
+       "text": "Give each text field `columnspan = 2` so that the top rows also use three columns.",
+       "feedback": "Stretching the fields changes how they sit in the shared grid, but the bottom row still has to fit columns sized by the rows above."
+      },
+      {
+       "text": "Number the buttons' columns 1–3 instead of 0–2 so that they line up neatly between the fields.",
+       "feedback": "Shifting them right just adds an empty first column. The buttons are still in the same grid as the fields."
+      }
+     ],
+     "hint": "How many grids does the window have, and how many could it have?",
+     "explanation": "When regions of a window need different layouts, decompose it into nested frames, or panels. `addPanel` places a panel in a cell of the window's grid; widgets added to the panel use the panel's own grid, independent of the window's.",
+     "ref": "Section 9.7, \"Using Nested Frames to Organize Components\" (pp. 247–248)"
+    },
+    {
+     "id": "text-area-trace",
+     "concept": "Text areas and their state",
+     "level": "apply",
+     "stem": "What does this method print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def report(self):\n    area = self.outputArea\n    area.setText(\"Year 1\\n\")\n    area.appendText(\"Year 2\\n\")\n    area[\"state\"] = \"disabled\"\n    area.appendText(\"Year 3\\n\")\n    area[\"state\"] = \"normal\"\n    area.appendText(\"Total\")\n    print(area.getText().splitlines())",
+      "verify": {
+       "expect": "output",
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass TextAreaDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, \"Investment Calculator\")\n        self.outputArea = self.addTextArea(\"\", row = 4, column = 0,\n                                           columnspan = 2)\n\n    def report(self):\n        area = self.outputArea\n        area.setText(\"Year 1\\n\")\n        area.appendText(\"Year 2\\n\")\n        area[\"state\"] = \"disabled\"\n        area.appendText(\"Year 3\\n\")\n        area[\"state\"] = \"normal\"\n        area.appendText(\"Total\")\n        print(area.getText().splitlines())\n\nTextAreaDemo().report()\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`['Year 1', 'Year 2', 'Total']`",
+       "feedback": "`setText` and the first `appendText` build two lines. While the area is disabled, the append of Year 3 is ignored. Once re-enabled, Total is appended.",
+       "correct": true
+      },
+      {
+       "text": "`['Year 1', 'Year 2', 'Year 3', 'Total']`",
+       "feedback": "This treats \"disabled\" as blocking only the user's typing. A disabled text area also disables its output methods, so Year 3 is never added."
+      },
+      {
+       "text": "`['Total']`",
+       "feedback": "This treats `appendText` like `setText`. `appendText` adds its string to the end of the current text instead of replacing it."
+      },
+      {
+       "text": "`['Year 1', 'Year 2']`",
+       "feedback": "This assumes the area stays disabled. Setting `state` back to \"normal\" re-enables output, so the final append works."
+      }
+     ],
+     "hint": "What does disabling a text area do to `appendText`, and does setting the state to \"normal\" undo it?",
+     "explanation": "A `TextArea` supports `getText`, `setText` (replace) and `appendText` (add to the end). Disabling it prevents editing but also disables input and output, which is why the investment calculator sets the state to \"normal\", writes, and disables it again.",
+     "aside": "Underneath, tkinter's `Text` widget addresses positions as \"line.column\" strings: \"1.0\" is the very first character, because lines count from 1 while columns count from 0.",
+     "ref": "Section 9.7, \"Multiline Text Areas\" (pp. 248–250)"
+    },
+    {
+     "id": "file-dialog-cancel",
+     "concept": "File dialogs",
+     "level": "apply",
+     "stem": "In this handler the user clicks Open, then clicks Cancel in the file dialog. What happens?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def openFile(self):\n    fList = [(\"Python files\", \"*.py\"), (\"Text files\", \"*.txt\")]\n    fileName = tkinter.filedialog.askopenfilename(parent = self,\n                                                  filetypes = fList)\n    if fileName != \"\":\n        file = open(fileName, 'r')\n        text = file.read()\n        file.close()\n        self.outputArea.setText(text)\n        self.setTitle(fileName)",
+      "verify": {
+       "expect": "skip",
+       "reason": "Needs tkinter's file dialog and a display."
+      }
+     },
+     "options": [
+      {
+       "text": "It returns `\"\"`, so the `if` test is false and the text area and title stay as they were.",
+       "feedback": "On Cancel the dialog returns the empty string, and the handler's `if` exists precisely to skip opening a file in that case.",
+       "correct": true
+      },
+      {
+       "text": "It returns `None`, and then the program raises a `TypeError` when it runs `open(None, 'r')`.",
+       "feedback": "The file dialogs return `\"\"` on Cancel, and the `if` test catches it before `open` runs. Returning `None` on Cancel is what the color chooser does."
+      },
+      {
+       "text": "The dialog keeps reopening until the user selects a `.py` or `.txt` file.",
+       "feedback": "A dialog appears once per call. `filetypes` limits which files can be picked; it does not force the user to pick one."
+      },
+      {
+       "text": "The text area is emptied, and the window's title becomes the empty string.",
+       "feedback": "That would happen only without the `if` test, and even then `open(\"\")` would fail first. With the test, nothing changes."
+      }
+     ],
+     "hint": "What does a file dialog return when the user cancels, and what is the `if` checking?",
+     "explanation": "`askopenfilename` and `asksaveasfilename` pop up the system's standard file dialog. They return the full pathname of the chosen file, or the empty string if the user cancels, so a handler must check the result before opening the file.",
+     "ref": "Section 9.7, \"File Dialogs\" (pp. 250–252)"
+    },
+    {
+     "id": "default-extension",
+     "concept": "File dialog options",
+     "level": "understand",
+     "stem": "A save dialog should add `.txt` when the user types a name such as `notes` without an extension. Which argument to `asksaveasfilename` does that?",
+     "options": [
+      {
+       "text": "`defaultextension = \".txt\"`",
+       "feedback": "Table 9-4: `defaultextension` is the extension added to the filename if the user doesn't give one (the open dialog ignores it).",
+       "correct": true
+      },
+      {
+       "text": "`filetypes = [(\"Text files\", \"*.txt\")]`",
+       "feedback": "`filetypes` controls which kinds of files the dialog offers. It does not change a name the user types."
+      },
+      {
+       "text": "`initialfile = \".txt\"`",
+       "feedback": "`initialfile` only pre-fills the save dialog's name field. The user can replace it, and `notes` would still have no extension."
+      },
+      {
+       "text": "`initialdir = \".txt\"`",
+       "feedback": "`initialdir` names the folder the dialog opens in. It has nothing to do with the file's extension."
+      }
+     ],
+     "hint": "Which option in Table 9-4 is described as being ignored by the open dialog?",
+     "explanation": "The file dialog functions take optional keyword arguments: `filetypes` restricts the files offered, `initialdir` and `initialfile` set the starting folder and name, `title` and `parent` set the dialog's caption and owner, and `defaultextension` supplies a missing extension when saving.",
+     "ref": "Section 9.7, Table 9-4 (p. 251)"
+    },
+    {
+     "id": "prompter-name-error",
+     "concept": "Prompter boxes",
+     "level": "analyze",
+     "stem": "A student copies this handler. The prompter box appears, the user types `ana` and clicks OK, but the label never changes and the terminal shows an error. What is wrong?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def getUserName(self):\n    text = self.prompterBox(title = \"Input Dialog\",\n                            promptString = \"Your username:\")\n    self.label[\"text\"] = \"Hi \" + name + \"!\"",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "NameError"
+       ],
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass PrompterBoxDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, title = \"Prompter Box Demo\")\n        self.label = self.addLabel(text = \"\", row = 0, column = 0)\n        self.userBtn = self.addButton(text = \"Username\", row = 1, column = 0,\n                                      command = self.getUserName)\n\n    def getUserName(self):\n        text = self.prompterBox(title = \"Input Dialog\",\n                                promptString = \"Your username:\")\n        self.label[\"text\"] = \"Hi \" + name + \"!\"\n\nwin = PrompterBoxDemo()\nwin._promptReply = \"ana\"\nwin.userBtn.invoke()\n"
+      }
+     },
+     "options": [
+      {
+       "text": "The box's result is stored in `text`, but the next line uses `name`, which was never assigned.",
+       "feedback": "`prompterBox` returns the typed string, and it lands in `text`. The next line refers to `name`, so Python raises a `NameError`. Using `text` there fixes it.",
+       "correct": true
+      },
+      {
+       "text": "`prompterBox` returns nothing; the typed text must be read from the box with `getText()`.",
+       "feedback": "The method returns the contents of its entry field when the user closes it. The handler did receive `\"ana\"`, in `text`."
+      },
+      {
+       "text": "A label's text is fixed once it is created, so the handler must add a new label instead.",
+       "feedback": "Labels' text can be reset through the attribute dictionary at any time, exactly as this line tries to do."
+      },
+      {
+       "text": "The handler needs an `event` parameter, because the dialog's OK button sends it an event object.",
+       "feedback": "Button commands take no event parameter, and the OK button belongs to the dialog anyway. The error is in the last line, not the header."
+      }
+     ],
+     "hint": "Follow the variable that receives `prompterBox`'s result. Is it the one used afterward?",
+     "explanation": "A prompter box guides the user through a single input in a popup dialog, like a terminal prompt. `prompterBox` returns the text in its entry field when the user closes it, and the handler must store and use that value.",
+     "ref": "Section 9.7, \"Obtaining Input with Prompter Boxes\" (pp. 252–253)"
+    }
+   ]
+  },
+  {
+   "id": "9.7b-choices-keys-and-colors",
+   "title": "Choices, keyboard events and colors",
+   "subtitle": "Check buttons versus radio buttons, binding the Return key, hex color strings and the color chooser",
+   "source": "Ch. 9, section 9.7 (pp. 253–259)",
+   "intro": "An order form that lets a customer pick both chicken and beef as their one main course is using the wrong kind of button. Five questions on choice widgets, keyboard events and color values.",
+   "takeaways": [
+    "Check buttons are independent: any combination can be on, and `isChecked()` reports each one. Radio buttons in a group are exclusive: selecting one deselects the rest, so `getSelectedButton()` always yields exactly one.",
+    "`bind(\"<Return>\", handler)` attaches a keyboard event to a widget, and Python calls the handler with an event object. When a method takes no event, wrap it: `lambda event: self.computeSqrt()`.",
+    "A color can be a name, an RGB triple or a hex string `\"#RRGGBB\"`. Each component from 0 to 255 becomes exactly two hex digits, so values below 16 need a leading `0`."
+   ],
+   "questions": [
+    {
+     "id": "radio-or-check",
+     "concept": "Choosing check or radio buttons",
+     "level": "evaluate",
+     "stem": "A pizza order form needs exactly one size (small, medium or large) and any number of toppings. Which design fits the chapter's guidance?",
+     "options": [
+      {
+       "text": "A radio button group for the size and a check button for each topping.",
+       "feedback": "Radio buttons restrict the user to one selection in a group, which suits the size. Check buttons allow any combination, which suits toppings.",
+       "correct": true
+      },
+      {
+       "text": "Check buttons for both, with code that rejects any order with two sizes checked.",
+       "feedback": "This works, but it makes the user discover the rule by making a mistake. A radio group enforces one choice by itself, with no extra code."
+      },
+      {
+       "text": "A radio button group for the toppings and a check button for each size.",
+       "feedback": "This swaps the roles: a radio group would allow only one topping, while separate check buttons would allow several sizes."
+      },
+      {
+       "text": "One radio button group that holds all the sizes and all the toppings together.",
+       "feedback": "One group allows a single selection in total, so a customer could choose a size or a topping, never both."
+      }
+     ],
+     "hint": "For each part of the order, may the user pick one option or many?",
+     "explanation": "Use check buttons when the user may select any combination of options, and a radio button group when exactly one option must be chosen. One button in a group is normally selected by default, and choosing another deselects it automatically.",
+     "ref": "Section 9.7, \"Check Buttons\" and \"Radio Buttons\" (pp. 253–256)"
+    },
+    {
+     "id": "elif-check-buttons",
+     "concept": "Reading check buttons",
+     "level": "apply",
+     "stem": "This variant of `placeOrder` prints its summary instead of showing a message box. All three check buttons are checked. What does it print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def placeOrder(self):\n    message = \"\"\n    if self.chickCB.isChecked():\n        message += \"Chicken\\n\"\n    elif self.taterCB.isChecked():\n        message += \"French fries\\n\"\n    if self.beanCB.isChecked():\n        message += \"Green beans\\n\"\n    if message == \"\":\n        message = \"No food ordered!\"\n    print(message)",
+      "verify": {
+       "expect": "output",
+       "output": "Chicken Green beans",
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nclass CheckbuttonDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, \"Check Button Demo\")\n        self.chickCB = self.addCheckbutton(text = \"Chicken\", row = 0, column = 0)\n        self.taterCB = self.addCheckbutton(text = \"French fries\", row = 0, column = 1)\n        self.beanCB = self.addCheckbutton(text = \"Green beans\", row = 1, column = 0)\n\n    def placeOrder(self):\n        message = \"\"\n        if self.chickCB.isChecked():\n            message += \"Chicken\\n\"\n        elif self.taterCB.isChecked():\n            message += \"French fries\\n\"\n        if self.beanCB.isChecked():\n            message += \"Green beans\\n\"\n        if message == \"\":\n            message = \"No food ordered!\"\n        print(message)\n\nwin = CheckbuttonDemo()\nfor box in (win.chickCB, win.taterCB, win.beanCB):\n    box[\"checked\"] = True\nwin.placeOrder()\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`Chicken` and `Green beans`, on two lines",
+       "feedback": "Chicken is checked, so the `elif` for fries is skipped. The beans test is a separate `if`, so it still runs. Check buttons need independent tests.",
+       "correct": true
+      },
+      {
+       "text": "`Chicken`, `French fries` and `Green beans`, on three lines",
+       "feedback": "That is what the chapter's version prints, with a separate `if` for each box. Here `elif` makes fries depend on chicken being unchecked."
+      },
+      {
+       "text": "`Chicken` only",
+       "feedback": "The `elif` ends one chain, but `if self.beanCB.isChecked():` starts a new one, which is tested no matter what happened above."
+      },
+      {
+       "text": "`French fries` and `Green beans`, on two lines",
+       "feedback": "An `if`/`elif` chain takes the *first* true branch. Chicken's test comes first and is true, so fries is the one skipped."
+      }
+     ],
+     "hint": "Which tests belong to the same `if`/`elif` chain, and which start a new one?",
+     "explanation": "Because check buttons are independent, a program must examine each one with its own `if` and `isChecked()`. Linking the tests with `elif` would wrongly treat the options as mutually exclusive, the job of radio buttons.",
+     "ref": "Section 9.7, \"Check Buttons\" (pp. 253–254)"
+    },
+    {
+     "id": "bind-needs-event",
+     "concept": "Keyboard events",
+     "level": "analyze",
+     "stem": "A student binds the Return key directly to `computeSqrt`. Pressing Return in the input field prints a `TypeError` instead of computing. Why?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "# In __init__:\nself.inputField.bind(\"<Return>\", self.computeSqrt)\n\ndef computeSqrt(self):\n    number = self.inputField.getNumber()\n    self.outputField.setNumber(math.sqrt(number))",
+      "verify": {
+       "expect": "runtime_error",
+       "error_contains": [
+        "takes 1 positional argument but 2 were given"
+       ],
+       "program": "# Stand-in for breezypythongui (no display): each widget keeps an attribute dictionary.\nclass _Widget:\n    def __init__(self, **options):\n        self._options = dict(options)\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def bind(self, sequence, handler):\n        self._options[sequence] = handler\n    def fire(self, sequence):\n        self._options[sequence](\"<event object>\")\n\nclass Label(_Widget):\n    pass\n\nclass Button(_Widget):\n    def invoke(self):\n        \"\"\"Like tkinter's Button.invoke: runs the command unless disabled.\"\"\"\n        if self[\"state\"] == \"disabled\":\n            return\n        command = self._options.get(\"command\")\n        if command:\n            command()\n\nclass TextField(_Widget):\n    def getText(self):\n        return self[\"text\"]\n    def setText(self, text):\n        self[\"text\"] = text\n\nclass IntegerField(TextField):\n    def getNumber(self):\n        return int(self[\"text\"])\n    def setNumber(self, number):\n        self[\"text\"] = str(number)\n\nclass FloatField(IntegerField):\n    def getNumber(self):\n        return float(self[\"text\"])\n\nclass TextArea(TextField):\n    \"\"\"A disabled text area ignores output, as tkinter's Text does.\"\"\"\n    def setText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = text\n    def appendText(self, text):\n        if self[\"state\"] != \"disabled\":\n            self[\"text\"] = self[\"text\"] + text\n\nclass EasyCheckbutton(_Widget):\n    def isChecked(self):\n        return bool(self._options.get(\"checked\", False))\n\nclass EasyFrame:\n    def __init__(self, title = \"\", width = None, height = None):\n        self._options = {\"title\": title, \"background\": \"white\"}\n        self._widgets = []\n        self._promptReply = \"\"\n    def __getitem__(self, key):\n        return self._options.get(key, \"\")\n    def __setitem__(self, key, value):\n        self._options[key] = value\n    def _add(self, kind, row, column, **options):\n        widget = kind(row = row, column = column, **options)\n        self._widgets.append(widget)\n        return widget\n    def addLabel(self, text, row, column, **options):\n        return self._add(Label, row, column, text = text, **options)\n    def addButton(self, text, row, column, **options):\n        return self._add(Button, row, column, text = text, **options)\n    def addTextField(self, text, row, column, **options):\n        return self._add(TextField, row, column, text = text, **options)\n    def addIntegerField(self, value, row, column, **options):\n        return self._add(IntegerField, row, column, text = str(value), **options)\n    def addFloatField(self, value, row, column, **options):\n        return self._add(FloatField, row, column, text = str(value), **options)\n    def addTextArea(self, text, row, column, **options):\n        return self._add(TextArea, row, column, text = text, **options)\n    def addCheckbutton(self, text, row, column, **options):\n        return self._add(EasyCheckbutton, row, column, text = text, **options)\n    def messageBox(self, title = \"\", message = \"\"):\n        print(title + \": \" + message)\n    def prompterBox(self, title = \"\", promptString = \"\", inputText = \"\"):\n        return self._promptReply\n    def setTitle(self, title):\n        self._options[\"title\"] = title\n    def mainloop(self):\n        pass\n\nimport math\n\nclass NumberFieldDemo(EasyFrame):\n    def __init__(self):\n        EasyFrame.__init__(self, title = \"Number Field Demo\")\n        self.inputField = self.addIntegerField(value = 0, row = 0, column = 1)\n        self.outputField = self.addFloatField(value = 0.0, row = 1, column = 1)\n        self.inputField.bind(\"<Return>\", self.computeSqrt)\n\n    def computeSqrt(self):\n        number = self.inputField.getNumber()\n        self.outputField.setNumber(math.sqrt(number))\n\nwin = NumberFieldDemo()\nwin.inputField.setText(\"16\")\nwin.inputField.fire(\"<Return>\")    # the user presses Return\n"
+      }
+     },
+     "options": [
+      {
+       "text": "`bind` calls its handler with an event object, but `computeSqrt` takes only `self`.",
+       "feedback": "A keyboard handler receives the event that triggered it. `computeSqrt` has no parameter for it, so wrap it: `lambda event: self.computeSqrt()`.",
+       "correct": true
+      },
+      {
+       "text": "The handler must be called in the `bind` line, as `self.computeSqrt()`.",
+       "feedback": "That would run it once during setup and bind its return value, `None`, just like the `command` mistake. `bind` needs a function to call later."
+      },
+      {
+       "text": "The key name must be written `\"Return\"`, without angle brackets.",
+       "feedback": "The chapter uses `\"<Return>\"`. And an unmatched key name would mean no call at all, not a `TypeError` about arguments."
+      },
+      {
+       "text": "Keyboard events can be bound only to buttons, so an entry field cannot receive one.",
+       "feedback": "The chapter's own example binds Return to an entry field, the most common use of keyboard events."
+      }
+     ],
+     "hint": "How many arguments does `bind` pass to its handler, compared with a button's `command`?",
+     "explanation": "The `bind` method links a key event to a handler, which Python calls with the event object as its argument. A method written for a button takes no such argument, so it is wrapped in a lambda that accepts the event and ignores it.",
+     "ref": "Section 9.7, \"Keyboard Events\" (p. 256)"
+    },
+    {
+     "id": "hex-padding",
+     "concept": "RGB triples and hex strings",
+     "level": "apply",
+     "stem": "This version of the chapter's `rgbToHexString` leaves out one step. What does it print?",
+     "code": {
+      "language": "python",
+      "label": "Python",
+      "text": "def rgbToHex(rgbTriple):\n    hexString = \"\"\n    for i in rgbTriple:\n        hexString += hex(i)[2:]\n    return \"#\" + hexString\n\nprint(rgbToHex((10, 8, 32)))",
+      "verify": {
+       "expect": "output"
+      }
+     },
+     "options": [
+      {
+       "text": "`#a820`",
+       "feedback": "`hex(10)[2:]` is `a`, `hex(8)[2:]` is `8` and `hex(32)[2:]` is `20`. Without padding, single digits stay single, so the string has four digits instead of six.",
+       "correct": true
+      },
+      {
+       "text": "`#0a0820`",
+       "feedback": "That is the correct color, produced by the chapter's version, which prepends `'0'` to any one-digit result. This version skips that step."
+      },
+      {
+       "text": "`#0xa0x80x20`",
+       "feedback": "The slice `[2:]` removes the `0x` prefix that `hex` puts on its results, so it never reaches the string."
+      },
+      {
+       "text": "`#10832`",
+       "feedback": "This joins the decimal values. `hex` converts each number to base 16 first, so 10 becomes `a` and 32 becomes `20`."
+      }
+     ],
+     "hint": "What does `hex(8)[2:]` return, and how many characters is it?",
+     "explanation": "A hex string writes a color as `#RRGGBB`, two hexadecimal digits per component. Converting each value with `hex`, removing the `0x` prefix and padding single digits with a leading `0` guarantees exactly six digits.",
+     "aside": "Python's formatting can do all three steps at once: `f\"#{r:02x}{g:02x}{b:02x}\"` writes each value in lowercase hex, padded to two digits.",
+     "ref": "Section 9.7, \"Working with Colors\" and Table 9-5 (pp. 256–258)"
+    },
+    {
+     "id": "askcolor-cancel",
+     "concept": "Using a color chooser",
+     "level": "understand",
+     "stem": "Right after calling `tkinter.colorchooser.askcolor()`, `chooseColor` tests `colorTuple[0]` and may return at once. Why?",
+     "options": [
+      {
+       "text": "On Cancel, `askcolor` returns `(None, None)`; returning early avoids unpacking `None` into `r, g, b`.",
+       "feedback": "When the user cancels, both elements are `None`, and `not None` is true, so the handler leaves before `((r, g, b), hexString) = colorTuple` fails.",
+       "correct": true
+      },
+      {
+       "text": "If the user picks black, the triple `(0, 0, 0)` is false, and black must be skipped.",
+       "feedback": "A tuple is false only when it is empty; `(0, 0, 0)` has three items, so it is true. Black is displayed like any other color."
+      },
+      {
+       "text": "`askcolor` returns floats, and the early return skips them until `int` converts them.",
+       "feedback": "The handler does convert the values with `int`, but after the test, for display. The test is about whether a color was chosen at all."
+      },
+      {
+       "text": "The first element is the hex string, which is empty until the user moves the color wheel.",
+       "feedback": "The first element is the RGB triple; the hex string comes second. And a chosen color always has both."
+      }
+     ],
+     "hint": "What does `askcolor` return when the user clicks Cancel?",
+     "explanation": "`askcolor` returns a pair: the RGB values (as floats) and the hex string. If the user cancels, both elements are `None`, so a handler checks the first element before using the result.",
+     "ref": "Section 9.7, \"Using a Color Chooser\" (pp. 258–259)"
+    }
+   ]
+  }
+ ]
+}
