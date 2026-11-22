@@ -1,0 +1,829 @@
+{
+  "course": "COP1035 · Python Programming",
+  "collection_title": "Chapter 8: Simple Graphics and Image Processing",
+  "collection_intro": "Short, ungraded practice checks for sections 8.1–8.2 of *Fundamentals of Python: First Programs*, 3e. Only your first try on each question counts toward your score, so answer before you peek.",
+  "theme": "harbor",
+  "background": "pattern",
+  "checks": [
+    {
+      "id": "8.1a-turtle-objects-and-state",
+      "title": "Turtle objects: state, interface and instantiation",
+      "subtitle": "Heading and pen state, absolute versus relative turns, creating an instance, interfaces, accessors and mutators, and the turtle's coordinate system",
+      "source": "Ch. 8, section 8.1 (pp. 189–196)",
+      "intro": "A turtle that draws the letter T perfectly can draw it sideways one line later, if you lose track of what it remembers. Six questions on an object's state and the methods that read and change it.",
+      "takeaways": [
+        "An object's state is the set of values of its attributes at a moment. A turtle's position, heading, color, width and pen (up or down) decide what the next method call does, and most method calls change some part of that state and leave the rest alone.",
+        "`left` and `right` turn *relative* to the current heading (left is counterclockwise, so it increases the angle); `setheading` sets an *absolute* direction: 0 is east, 90 north, 180 west, 270 south.",
+        "A class's interface is its set of methods, documented by headers, arguments, return values and changes of state. Accessor methods such as `heading()` only report state; mutator methods such as `up()` or `goto()` change it."
+      ],
+      "questions": [
+        {
+          "id": "heading-trace",
+          "concept": "Relative turns and heading",
+          "level": "apply",
+          "stem": "A new turtle starts at home, facing east. What does this code print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "t = Turtle()\nt.left(90)\nt.forward(30)\nt.left(90)\nt.right(45)\nprint(t.heading())",
+            "verify": {
+              "expect": "output",
+              "program": "import math\n\nclass Turtle:\n    \"\"\"Stand-in for turtle.Turtle (no display): tracks heading, position and pen.\"\"\"\n    def __init__(self):\n        self._x = 0.0\n        self._y = 0.0\n        self._h = 0.0\n        self._down = True\n    def left(self, d):\n        self._h = (self._h + d) % 360\n    def right(self, d):\n        self._h = (self._h - d) % 360\n    def setheading(self, d):\n        self._h = float(d) % 360\n    def forward(self, dist):\n        self._x += dist * math.cos(math.radians(self._h))\n        self._y += dist * math.sin(math.radians(self._h))\n    def up(self):\n        self._down = False\n    def down(self):\n        self._down = True\n    def isdown(self):\n        return self._down\n    def heading(self):\n        return float(self._h)\n\nt = Turtle()\nt.left(90)\nt.forward(30)\nt.left(90)\nt.right(45)\nprint(t.heading())"
+            }
+          },
+          "options": [
+            {
+              "text": "`135.0`",
+              "feedback": "Two left turns of 90 raise the heading from 0 to 180 (west), and the right turn of 45 lowers it to 135. Moving forward changes the position, never the heading.",
+              "correct": true
+            },
+            {
+              "text": "`225.0`",
+              "feedback": "This treats `left` as clockwise: 0 − 90 − 90 + 45 = −135, which is 225. In Turtle graphics the heading *increases* as the turtle turns left, which is why north is 90."
+            },
+            {
+              "text": "`45.0`",
+              "feedback": "This counts only one of the left turns, perhaps because `forward(30)` seemed to reset the direction. Moving changes position but not heading, so both left turns still count."
+            },
+            {
+              "text": "`180.0`",
+              "feedback": "That is the heading before the last line. `right(45)` is relative: it rotates the turtle from wherever it points now, so the final heading is 45 degrees less."
+            }
+          ],
+          "hint": "Which direction does the heading's number move when the turtle turns left, and does moving forward touch the heading at all?",
+          "explanation": "A turtle's heading is part of its state, measured in degrees counterclockwise from east. `left(d)` adds `d`, `right(d)` subtracts it, and movement methods change only the position. Tracing state one line at a time is the reliable way to predict a drawing.",
+          "aside": "Turtle graphics come from Logo, the children's language Seymour Papert and his colleagues created at MIT in the late 1960s. Python still ships a gallery of turtle programs: run `python -m turtledemo` to browse them, with the code beside each drawing.",
+          "ref": "Section 8.1, \"Overview of Turtle Graphics\" and Table 8-1 (p. 190)"
+        },
+        {
+          "id": "pen-and-setheading",
+          "concept": "Pen state and absolute heading",
+          "level": "apply",
+          "stem": "What does this code print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "t = Turtle()\nt.up()\nt.setheading(270)\nt.forward(40)\nt.down()\nt.left(90)\nprint(t.isdown(), t.heading())",
+            "verify": {
+              "expect": "output",
+              "program": "import math\n\nclass Turtle:\n    \"\"\"Stand-in for turtle.Turtle (no display): tracks heading, position and pen.\"\"\"\n    def __init__(self):\n        self._x = 0.0\n        self._y = 0.0\n        self._h = 0.0\n        self._down = True\n    def left(self, d):\n        self._h = (self._h + d) % 360\n    def right(self, d):\n        self._h = (self._h - d) % 360\n    def setheading(self, d):\n        self._h = float(d) % 360\n    def forward(self, dist):\n        self._x += dist * math.cos(math.radians(self._h))\n        self._y += dist * math.sin(math.radians(self._h))\n    def up(self):\n        self._down = False\n    def down(self):\n        self._down = True\n    def isdown(self):\n        return self._down\n    def heading(self):\n        return float(self._h)\n\nt = Turtle()\nt.up()\nt.setheading(270)\nt.forward(40)\nt.down()\nt.left(90)\nprint(t.isdown(), t.heading())"
+            }
+          },
+          "options": [
+            {
+              "text": "`True 0.0`",
+              "feedback": "The pen was lowered by `down()` after the move, so `isdown()` is `True`. Turning left 90 from south (270) brings the heading to 360, which is east again: 0.",
+              "correct": true
+            },
+            {
+              "text": "`False 0.0`",
+              "feedback": "`up()` lifted the pen, but `down()` lowered it again before the print. State holds the *latest* value of each attribute, not the first one set."
+            },
+            {
+              "text": "`True 360.0`",
+              "feedback": "The arithmetic is right, but a heading is an angle: 360 degrees points the same way as 0, and the turtle reports headings in the range 0 up to (not including) 360."
+            },
+            {
+              "text": "`True 180.0`",
+              "feedback": "This turns clockwise from south (270 − 90). A left turn is counterclockwise, which increases the heading: from south it points east."
+            }
+          ],
+          "hint": "Which method call was the last one to change the pen, and which way is a left turn from due south?",
+          "explanation": "`up()` and `down()` set one attribute of the turtle's state, and `setheading` sets the heading to an absolute direction regardless of the old one. Each later call works from the state the earlier calls left behind, and headings wrap around at 360.",
+          "ref": "Section 8.1, Table 8-2 \"The Turtle methods\" (p. 191)"
+        },
+        {
+          "id": "instantiation",
+          "concept": "Instantiation and constructors",
+          "level": "understand",
+          "stem": "After `from turtle import Turtle`, a student writes `t = Turtle` and then `t.forward(50)`, which fails. Written as `t = Turtle()`, the same code opens a window and draws. What is the difference?",
+          "options": [
+            {
+              "text": "Without the parentheses, `t` names the class itself; no constructor runs and no instance exists",
+              "feedback": "The parentheses call the constructor, which manufactures and returns a new `Turtle` object with default attributes. Without them, `t` is just another name for the class.",
+              "correct": true
+            },
+            {
+              "text": "Without the parentheses, Python creates a turtle but skips opening its drawing window",
+              "feedback": "No turtle is created at all. `Turtle` alone is the class, like a blueprint; only calling it, `Turtle()`, instantiates an object (and opens the window)."
+            },
+            {
+              "text": "`Turtle()` imports the turtle module a second time, which the `forward` method requires",
+              "feedback": "Imports happen in `import` statements, not in constructor calls. The module was already imported; what was missing is an instance of the class."
+            },
+            {
+              "text": "The parentheses pass the default position and heading, which `forward` must be given",
+              "feedback": "A constructor *can* receive initial values, but here it receives none and supplies defaults itself. The real difference is that a call happens at all, producing an object."
+            }
+          ],
+          "hint": "What does writing a name with `()` after it do in Python, and what is left if you write only the name?",
+          "explanation": "Objects such as numbers and strings are created from literals, but a class like `Turtle` must be instantiated explicitly with `<variable> = <class name>(<arguments>)`. That expression is a constructor: it resembles a function call, supplies defaults for any optional arguments, and returns a new instance of the class.",
+          "ref": "Section 8.1, \"Object Instantiation and the turtle Module\" (p. 192)"
+        },
+        {
+          "id": "interface",
+          "concept": "Interface of a class",
+          "level": "understand",
+          "stem": "The book writes `drawSquare` using only Table 8-2, without ever reading the code inside the `Turtle` class. What makes that possible?",
+          "options": [
+            {
+              "text": "The class's interface: its method headers and documentation of arguments, results and state changes",
+              "feedback": "An interface contains just enough information to use objects of a class. Knowing that `goto(x, y)` moves the turtle and `down()` lowers the pen is all `drawSquare` needs.",
+              "correct": true
+            },
+            {
+              "text": "`help(Turtle)` displays the code inside each method, so the table merely repeats it",
+              "feedback": "`help` displays docstrings, the documentation of each method, not the code that implements it. That documentation is part of the interface, and it is designed to be enough."
+            },
+            {
+              "text": "The turtle's state: knowing its position, heading and color lets you predict every method",
+              "feedback": "State is the current values of the attributes. Knowing them is useless without knowing which methods exist and what they do to that state, which is the interface."
+            },
+            {
+              "text": "Turtle methods are ordinary functions that never depend on the object they are called on",
+              "feedback": "They depend heavily on the object: `forward` draws or not depending on that turtle's pen. You can use them without their code because the interface documents those effects."
+            }
+          ],
+          "hint": "What does Table 8-2 actually list for each entry, and what does it leave out?",
+          "explanation": "The set of a class's methods is its interface, and programmers interact with objects through it. A good interface documents each method's header, arguments, return value and effect on the object's state, and nothing about how it is implemented. `help(Turtle)` and `dir(Turtle)` show it at the shell.",
+          "ref": "Section 8.1, \"Turtle Operations\" (pp. 190–191)"
+        },
+        {
+          "id": "accessor-mutator",
+          "concept": "Accessor and mutator methods",
+          "level": "analyze",
+          "stem": "Which group contains **only** accessor methods?",
+          "options": [
+            {
+              "text": "`t.position()`, `t.heading()`, `t.isdown()`",
+              "feedback": "Each of these returns the value of an attribute and changes nothing, so calling them in any order leaves the turtle exactly as it was.",
+              "correct": true
+            },
+            {
+              "text": "`t.home()`, `t.position()`, `t.heading()`",
+              "feedback": "`home()` takes no arguments and returns nothing interesting, but it moves the turtle to the center and points it east. Changing state makes it a mutator."
+            },
+            {
+              "text": "`t.up()`, `t.down()`, `t.isdown()`",
+              "feedback": "`isdown()` only reports, but `up()` and `down()` change whether the pen touches the surface: they are mutators, even though they take no arguments."
+            },
+            {
+              "text": "`t.width(2)`, `t.pencolor(\"red\")`, `t.heading()`",
+              "feedback": "`heading()` is an accessor, but given arguments, `width` and `pencolor` set the pen's width and color. A method that alters an attribute is a mutator."
+            }
+          ],
+          "hint": "Ignore whether a method takes arguments. For each call, ask: is the turtle any different afterwards?",
+          "explanation": "Mutator methods change an object's internal state (position, heading, color, pen); accessor methods only return values of its attributes. Having no arguments does not make a method an accessor: `home()` and `up()` change the turtle. Some methods, such as `width` and `pencolor`, are both: with no argument they report the current value.",
+          "aside": "Python's own built-in types follow the same split. A list's `count` and `index` methods are accessors; `append` and `sort` are mutators, and they return `None` precisely to remind you that they changed the list instead of making a new one.",
+          "ref": "Section 8.1, \"Examining an Object's Attributes\" (p. 195)"
+        },
+        {
+          "id": "cartesian-window",
+          "concept": "Turtle coordinate system",
+          "level": "apply",
+          "stem": "With the book's `turtle.cfg`, the window is 300 by 200 pixels. Where does `t.goto(-150, 100)` send the turtle?",
+          "options": [
+            {
+              "text": "To the window's upper-left corner",
+              "feedback": "Turtle graphics use Cartesian coordinates with the origin at the center. Half the width to the left (x = −150) and half the height up (y = 100) is the upper-left corner.",
+              "correct": true
+            },
+            {
+              "text": "To the window's lower-left corner",
+              "feedback": "This treats a larger y as lower on the screen, the convention for image pixels. In the turtle's Cartesian system, positive y is up, as on a graph."
+            },
+            {
+              "text": "Off the left edge of the window, since a window has no negative x values",
+              "feedback": "That holds when (0, 0) is a corner. A turtle's home (0, 0) is the center, so negative x values are simply the window's left half."
+            },
+            {
+              "text": "To the window's upper-right corner",
+              "feedback": "This pairs the 150 with the right side. The minus sign on x means left of the origin; it is y = 100 that means up."
+            }
+          ],
+          "hint": "Where is the turtle's home, (0, 0), and which way does a positive y point?",
+          "explanation": "A turtle moves in the standard Cartesian plane: (0, 0) is the center of the window, x grows to the right and y grows upward. That is why the book locates the corners with `window_width() // 2` and `window_height() // 2` and their negatives.",
+          "ref": "Section 8.1, \"Overview of Turtle Graphics\" (p. 190) and \"Manipulating a Turtle's Screen\" (p. 196)"
+        }
+      ]
+    },
+    {
+      "id": "8.1b-shapes-colors-and-fractals",
+      "title": "Shapes, patterns, RGB color and fractals",
+      "subtitle": "Shape functions that use the turtle's state, turn angles, passing a function as an argument, RGB intensities, bits per color, and the c-curve",
+      "source": "Ch. 8, section 8.1 and Case Study 8-1 (pp. 194–203)",
+      "intro": "Ten hexagons in a ring, a fill color out of 16 million, and a curve that keeps growing more detail: each comes from a few lines of code. Six questions on how.",
+      "takeaways": [
+        "A shape function that starts from the turtle's current position and heading can be placed and rotated by its caller, so it can be reused inside larger patterns. A regular polygon with n sides turns 360 / n degrees at each corner.",
+        "In RGB, each of red, green and blue is an intensity from 0 (absent) to 255 (full). N bits store 2ᴺ values, so 8 bits per component and 24 bits per pixel give 256³ = 16,777,216 colors.",
+        "A recursive drawing replaces each piece with smaller copies of itself. In the c-curve, each level splits every segment into two, so a level-N c-curve draws 2ᴺ line segments."
+      ],
+      "questions": [
+        {
+          "id": "general-square",
+          "concept": "Designing shape functions",
+          "level": "evaluate",
+          "stem": "`drawSquare(t, x, y, length)` moves to (x, y) and points south before drawing; `square(t, length)` just draws from wherever the turtle is. Why does `radialHexagons` use the `square`/`hexagon` style?",
+          "options": [
+            {
+              "text": "It starts from the turtle's own position and heading, so the caller can rotate it between shapes",
+              "feedback": "`radialHexagons` turns the turtle by 360 / n between calls. Because `hexagon` begins at the current heading, each copy comes out rotated, which is what makes the ring.",
+              "correct": true
+            },
+            {
+              "text": "It has fewer parameters, so Python runs it faster in a loop with many shapes",
+              "feedback": "Two fewer arguments make no meaningful difference to speed. The gain is in design: the shape uses state the turtle already has instead of overriding it."
+            },
+            {
+              "text": "It lifts the pen before moving, so no stray lines join one shape to the next",
+              "feedback": "That describes `drawSquare`, which calls `up()` and `goto`. `square` never lifts the pen: it simply draws from the current spot."
+            },
+            {
+              "text": "It returns the turtle to its home position afterwards, so each shape starts in the same place",
+              "feedback": "Neither function calls `home()`. In fact, starting every shape at the same fixed spot and direction is exactly the limitation the new design removes."
+            }
+          ],
+          "hint": "What does the turtle already know that `drawSquare` throws away by calling `goto` and `setheading`?",
+          "explanation": "The book names two limitations of `drawSquare`: the caller must supply a location the turtle already has, and the shape always has the same orientation. Letting the shape start from the turtle's current position and heading makes it composable: any pattern can position and rotate the turtle and then call it.",
+          "ref": "Section 8.1, \"Drawing Two-Dimensional Shapes\" (p. 194)"
+        },
+        {
+          "id": "polygon-angle",
+          "concept": "Regular polygons",
+          "level": "apply",
+          "stem": "Generalising `square` (turn 90, four times) and `hexagon` (turn 60, six times), a student writes `polygon(t, sides, length)`. What should the loop pass to `t.left` at each corner?",
+          "options": [
+            {
+              "text": "`360 / sides`",
+              "feedback": "The turtle makes one full turn, 360 degrees, over the whole trip around the shape, split evenly among the corners: 90 for a square, 60 for a hexagon, 45 for an octagon.",
+              "correct": true
+            },
+            {
+              "text": "`180 - 360 / sides`",
+              "feedback": "That is the polygon's *interior* angle (120 for a hexagon). The turtle turns by the *exterior* angle, how far it changes direction, which is what's left of 180."
+            },
+            {
+              "text": "`180 / sides`",
+              "feedback": "This gives 45 for a square, half the needed turn; the shape would not close. A complete trip around any closed shape turns the turtle through 360 degrees, not 180."
+            },
+            {
+              "text": "`sides * 90 / 4`",
+              "feedback": "This fits the square (90) but gives 135 for a hexagon instead of 60. A formula built from one example has to be checked against the other."
+            }
+          ],
+          "hint": "After the turtle has gone all the way around the shape, how far has it turned in total?",
+          "explanation": "Drawing a closed regular polygon, the turtle ends facing the way it started, having turned through one full circle. Each of the n corners therefore turns 360 / n degrees. The same reasoning gives the `360 / n` turn between shapes in `radialPattern`.",
+          "ref": "Section 8.1, \"Drawing Two-Dimensional Shapes\" (pp. 194–195) and Exercise 8-1, question 4"
+        },
+        {
+          "id": "pass-function",
+          "concept": "Passing a function as an argument",
+          "level": "analyze",
+          "stem": "The book calls `radialPattern(t, n = 10, length = 50, shape = square)`. A student writes the call below instead. What happens?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def square(t, length):\n    for count in range(4):\n        t.forward(length)\n        t.left(90)\n\ndef radialPattern(t, n, length, shape):\n    for count in range(n):\n        shape(t, length)\n        t.left(360 / n)\n\nt = Turtle()\nradialPattern(t, 10, 50, square(t, 50))",
+            "verify": {
+              "expect": "runtime_error",
+              "error_contains": [
+                "TypeError",
+                "NoneType"
+              ],
+              "program": "import math\n\nclass Turtle:\n    \"\"\"Stand-in for turtle.Turtle (no display): tracks heading, position and pen.\"\"\"\n    def __init__(self):\n        self._x = 0.0\n        self._y = 0.0\n        self._h = 0.0\n        self._down = True\n    def left(self, d):\n        self._h = (self._h + d) % 360\n    def right(self, d):\n        self._h = (self._h - d) % 360\n    def setheading(self, d):\n        self._h = float(d) % 360\n    def forward(self, dist):\n        self._x += dist * math.cos(math.radians(self._h))\n        self._y += dist * math.sin(math.radians(self._h))\n    def up(self):\n        self._down = False\n    def down(self):\n        self._down = True\n    def isdown(self):\n        return self._down\n    def heading(self):\n        return float(self._h)\n\ndef square(t, length):\n    for count in range(4):\n        t.forward(length)\n        t.left(90)\n\ndef radialPattern(t, n, length, shape):\n    for count in range(n):\n        shape(t, length)\n        t.left(360 / n)\n\nt = Turtle()\nradialPattern(t, 10, 50, square(t, 50))"
+            }
+          },
+          "options": [
+            {
+              "text": "One square is drawn, then a `TypeError`: `None` is not callable",
+              "feedback": "`square(t, 50)` runs first, as an argument, drawing one square and returning `None`. Inside the loop, `shape(t, length)` then tries to call `None`.",
+              "correct": true
+            },
+            {
+              "text": "Ten squares are drawn in a ring, exactly as when passing `square`",
+              "feedback": "The parentheses make the difference. `square` hands over the function; `square(t, 50)` calls it immediately and hands over its result, which is `None`."
+            },
+            {
+              "text": "A `SyntaxError`, because a function call cannot appear as an argument",
+              "feedback": "Calls as arguments are legal and common, as in `print(len(s))`. The code runs; the problem is the *value* the call produces."
+            },
+            {
+              "text": "Ten squares are drawn, but all on top of one another at the same angle",
+              "feedback": "That would need `square` to run ten times. It runs once, before `radialPattern` starts, and the loop fails on its first pass."
+            }
+          ],
+          "hint": "Python evaluates every argument before the function receives it. What value does `square(t, 50)` produce?",
+          "explanation": "A function's name refers to the function itself, which can be passed and called later; the name with parentheses calls it right away and passes its return value. `radialPattern` needs the function, because it calls `shape(t, length)` ten times, once per pattern element.",
+          "ref": "Section 8.1, \"Drawing Two-Dimensional Shapes\" (p. 195)"
+        },
+        {
+          "id": "bits-per-color",
+          "concept": "Memory needed for colors",
+          "level": "apply",
+          "stem": "An early color display could show 64 distinct colors. At minimum, how many bits of memory did each pixel need?",
+          "options": [
+            {
+              "text": "6",
+              "feedback": "N bits represent 2ᴺ values, and 2⁶ = 64. With 5 bits there would be only 32 colors; with 7, 64 would leave half the patterns unused.",
+              "correct": true
+            },
+            {
+              "text": "64",
+              "feedback": "This is the number of values, not the number of bits. Each extra bit doubles the count, so 64 bits could distinguish about 18 quintillion colors."
+            },
+            {
+              "text": "8",
+              "feedback": "Eight bits, one byte, is the size of one RGB component, and it gives 256 values. For only 64 colors, two of those bits would be wasted."
+            },
+            {
+              "text": "32",
+              "feedback": "This halves the number of colors. Bits and values are related by powers of two, not by division: N distinct values need log₂N bits."
+            }
+          ],
+          "hint": "How many values can 1 bit store? 2 bits? 3 bits? Keep doubling.",
+          "explanation": "N bits of memory can represent 2ᴺ distinct values, and N distinct values need at least log₂N bits. That is how the book gets from 1 bit for black and white, to 3 bits for eight grays, to 24 bits and 16,777,216 colors for true-color RGB.",
+          "aside": "Web colors use the same 24 bits. In a hex code such as `#FF8000`, each pair of hex digits is one RGB component from 00 to FF, that is, 0 to 255: this one is (255, 128, 0), an orange.",
+          "ref": "Section 8.1, \"Colors and the RGB System\" (p. 197)"
+        },
+        {
+          "id": "rgb-intensity",
+          "concept": "RGB components",
+          "level": "understand",
+          "stem": "A program changes a pixel from `(255, 0, 0)` to `(127, 0, 0)`. What does the viewer see?",
+          "options": [
+            {
+              "text": "A darker red, because red is now about half its full intensity",
+              "feedback": "Each component is an intensity: 255 is maximum saturation and 0 is total absence. Halving red, with no green or blue, moves the color halfway toward black.",
+              "correct": true
+            },
+            {
+              "text": "A paler red, closer to pink, because the color is now less saturated",
+              "feedback": "Pale colors come from *adding* the other components, toward white (255, 255, 255). Lowering red with green and blue at 0 moves toward black, (0, 0, 0)."
+            },
+            {
+              "text": "A mid gray, because 127 is the middle value of every component",
+              "feedback": "Gray needs all three components equal, as in (127, 127, 127). Here green and blue stay at 0, so the pixel is still pure red, only dimmer."
+            },
+            {
+              "text": "The same red: the eye cannot tell adjacent RGB values apart",
+              "feedback": "That is true of neighbouring values such as 254 and 255. A drop of 128 steps is far from adjacent, and it is easy to see."
+            }
+          ],
+          "hint": "In RGB, what does 0 in a component mean, and what color has all three components at 0?",
+          "explanation": "RGB mixes three integer intensities, each from 0 (absent) to 255 (full). Lowering a component dims that light; raising all three together lightens a color toward white; equal components give a shade of gray. Table 8-3 shows the anchors: black (0, 0, 0), white (255, 255, 255), gray (127, 127, 127).",
+          "ref": "Section 8.1, \"Colors and the RGB System\" and Table 8-3 (p. 197)"
+        },
+        {
+          "id": "ccurve-segments",
+          "concept": "Recursive patterns (c-curve)",
+          "level": "apply",
+          "stem": "This is the case study's `cCurve`, with `drawLine` replaced by a counter. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "count = 0\n\ndef cCurve(x1, y1, x2, y2, level):\n    global count\n    if level == 0:\n        count += 1    # stands in for drawLine\n    else:\n        xm = (x1 + x2 + y1 - y2) // 2\n        ym = (x2 + y1 + y2 - x1) // 2\n        cCurve(x1, y1, xm, ym, level - 1)\n        cCurve(xm, ym, x2, y2, level - 1)\n\ncCurve(50, -50, 50, 50, 4)\nprint(count)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`16`",
+              "feedback": "Each level replaces every segment with two half-size ones, so the number of segments doubles per level: 1, 2, 4, 8, then 16 at level 4.",
+              "correct": true
+            },
+            {
+              "text": "`8`",
+              "feedback": "This is the count for level 3. The recursion stops at level 0, not level 1, so there are four doublings from the top call, not three."
+            },
+            {
+              "text": "`31`",
+              "feedback": "That is the number of *calls*, 1 + 2 + 4 + 8 + 16. Only the calls that reach the base case draw a segment; the others just split the work."
+            },
+            {
+              "text": "`4`",
+              "feedback": "This counts the levels, as if each level drew one segment. A level draws nothing itself: it makes two calls one level lower."
+            }
+          ],
+          "hint": "How many segments does a level-0 curve draw, and how many does a level-1 curve draw?",
+          "explanation": "A recursive pattern of this shape, two recursive calls per level and work only at the base case, does 2ᴺ pieces of work at level N. That is why a level-10 c-curve has 1,024 segments, and why the program turns off animation with `tracer(False)` when the level is above 8.",
+          "aside": "The c-curve is also called the Lévy C curve, after the French mathematician Paul Lévy, who studied its self-similarity in 1938. Zoom into any part of a high-level c-curve and you find smaller c-curves, which is the self-similarity that makes it a fractal.",
+          "ref": "Case Study 8-1, \"Recursive Patterns in Fractals\" (pp. 200–203)"
+        }
+      ]
+    },
+    {
+      "id": "8.2a-digital-images-and-grids",
+      "title": "Digital images: sampling, formats and grids",
+      "subtitle": "Analog versus digital, how many pixels, lossless and lossy compression, screen coordinates, traversal order and tuples",
+      "source": "Ch. 8, section 8.2 (pp. 203–209)",
+      "intro": "A photo of a cat becomes 29,502 numbered dots, each with three numbers. Six questions on how that happens and how a program walks through them.",
+      "takeaways": [
+        "Digitizing samples a continuous (analog) scene at discrete points on a grid and stores a color value for each. More samples per inch means more pixels and a more realistic image, at the cost of a larger file.",
+        "Lossless compression lets the original values be restored exactly; lossy compression approximates some of them. GIF keeps a palette of at most 256 colors, which suits flat areas but not smooth photographic shading.",
+        "Image pixels use screen coordinates: (0, 0) is the upper-left corner, y grows downward, and the last pixel is (width − 1, height − 1). A row-major traversal uses y in the outer loop and x in the inner loop."
+      ],
+      "questions": [
+        {
+          "id": "sampling",
+          "concept": "Analog information and sampling",
+          "level": "understand",
+          "stem": "A flatbed scanner turns a printed photograph into a digital image. What is it doing?",
+          "options": [
+            {
+              "text": "Measuring a discrete color value at each point of a two-dimensional grid",
+              "feedback": "The photo's colors vary continuously; the scanner samples them at distinct points and stores one value per point. Those values are the pixels.",
+              "correct": true
+            },
+            {
+              "text": "Recording the photo's continuous colors exactly, the way a record's groove follows the sound",
+              "feedback": "That is how analog media work: a groove or film directly mirrors a continuous wave. A computer can only store discrete values, so it must sample."
+            },
+            {
+              "text": "Compressing the photo into a JPEG file so it fits in memory",
+              "feedback": "Compression can happen afterwards, when the image is stored. Before there is anything to compress, the continuous scene must be turned into numbers."
+            },
+            {
+              "text": "Replacing each color with the closest of 256 palette colors",
+              "feedback": "That is the second phase of GIF compression, a storage decision. Scanning itself produces a full color value for each sampled point."
+            }
+          ],
+          "hint": "A computer can only store discrete values. What has to happen to a continuous range of colors first?",
+          "explanation": "Images, sound and most of the physical world carry analog information: a continuous range of values. Digitizing maps it onto discrete values by sampling, measuring at distinct points on a grid. With enough samples, the digital image is nearly indistinguishable from the original scene.",
+          "ref": "Section 8.2, \"Analog and Digital Information\" and \"Sampling and Digitizing Images\" (p. 204)"
+        },
+        {
+          "id": "pixel-count",
+          "concept": "Sampling density",
+          "level": "apply",
+          "stem": "The book uses 250 pixels per linear inch (62,500 per square inch). How many pixels does a 2-inch by 4-inch photo need at that density?",
+          "options": [
+            {
+              "text": "500,000",
+              "feedback": "Along the sides that is 2 × 250 = 500 and 4 × 250 = 1,000 pixels, and 500 × 1,000 = 500,000. Equivalently, 8 square inches × 62,500.",
+              "correct": true
+            },
+            {
+              "text": "2,000",
+              "feedback": "This multiplies the area, 8 square inches, by the *linear* density, 250. Pixels per inch counts along one edge; an area needs pixels per square inch."
+            },
+            {
+              "text": "250,000",
+              "feedback": "This scales only one side, 4 inches × 62,500. The square-inch figure already covers both directions, so it should be multiplied by the full area, 8."
+            },
+            {
+              "text": "1,000,000",
+              "feedback": "This is the book's 3-by-5 example rounded up to a megapixel. A 2-by-4 photo is about half as large in area, so it needs about half as many pixels."
+            }
+          ],
+          "hint": "Count pixels along each side first, then combine them.",
+          "explanation": "A sampling density is given per linear unit, so the number of pixels grows with the *square* of the density: doubling pixels per inch quadruples the total. The book's 3-by-5-inch photo at 250 pixels per inch needs 937,500 pixels, about one megapixel.",
+          "ref": "Section 8.2, \"Sampling and Digitizing Images\" (p. 204)"
+        },
+        {
+          "id": "gif-choice",
+          "concept": "Lossless, lossy and GIF",
+          "level": "evaluate",
+          "stem": "A web page needs (a) a banner logo with large flat areas in five colors and (b) a photo of a sunset with smooth color gradients. For which is GIF a good fit?",
+          "options": [
+            {
+              "text": "The logo, because its few flat colors fit comfortably in a 256-color palette",
+              "feedback": "GIF stores up to 256 prevalent colors and a palette key per pixel. Five flat colors lose nothing that way, while a gradient's thousands of shades must be forced onto 256.",
+              "correct": true
+            },
+            {
+              "text": "The photo, because GIF is a lossless format that keeps every original color",
+              "feedback": "GIF is lossy: every pixel is replaced by the key of the closest palette color. That loss is invisible for a few flat colors and visible as banding in a gradient."
+            },
+            {
+              "text": "Both equally, since the human eye cannot detect what compression removes",
+              "feedback": "That holds for well-tuned lossy schemes in many photos, but 256 colors cannot cover a sunset's smooth shading, and the steps between shades can show."
+            },
+            {
+              "text": "Neither, because GIF can only store grayscale images",
+              "feedback": "Gray is not required: the palette holds up to 256 colors of any kind. The limit is how *many* colors, not which ones."
+            }
+          ],
+          "hint": "How many distinct colors can a GIF hold, and roughly how many does each image contain?",
+          "explanation": "A raw file keeps every sample and is largest. JPEG combines lossless steps (restoring repeated values exactly) and lossy ones (approximating regions). GIF builds a palette of at most 256 colors and stores each pixel as a key into it, so it is lossy and works best on broad flat areas such as cartoons, backgrounds and banners.",
+          "aside": "GIF was introduced by CompuServe in 1987. Its palette of 256 colors is also why an animated GIF made from a video often shows visible bands or speckles: every frame has to be squeezed into at most 256 colors.",
+          "ref": "Section 8.2, \"Image File Formats\" (pp. 204–205)"
+        },
+        {
+          "id": "screen-coordinates",
+          "concept": "Screen coordinate system",
+          "level": "apply",
+          "stem": "`smokey.gif` is 198 pixels wide and 149 pixels high. What are the coordinates of its lower-right pixel?",
+          "options": [
+            {
+              "text": "`(197, 148)`",
+              "feedback": "Coordinates start at 0, so the columns are 0 to 197 and the rows 0 to 148. The lower-right pixel is (width − 1, height − 1).",
+              "correct": true
+            },
+            {
+              "text": "`(198, 149)`",
+              "feedback": "These are the dimensions, not a position. Counting from 0, a width of 198 means the last column is 197, as with the last index of a list."
+            },
+            {
+              "text": "`(99, -74)`",
+              "feedback": "This uses the turtle's Cartesian system, origin at the center and y up. Image pixels use screen coordinates: origin at the upper-left, y growing down."
+            },
+            {
+              "text": "`(148, 197)`",
+              "feedback": "This gives row first, then column. The book's coordinates are (x, y), that is (column, row), matching `getPixel(x, y)`."
+            }
+          ],
+          "hint": "Where is (0, 0) in an image, and what is the largest index in a range of 198 values?",
+          "explanation": "When an image is displayed, its pixels form a grid from (0, 0) at the upper-left corner to (width − 1, height − 1) at the lower-right. This screen coordinate system differs from Turtle graphics, whose origin is the center of the window and whose y axis points up.",
+          "ref": "Section 8.2, \"The Properties of Images\" (p. 205)"
+        },
+        {
+          "id": "column-major",
+          "concept": "Nested-loop traversal",
+          "level": "apply",
+          "stem": "This nested loop has `x` on the outside. What does it print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "width = 3\nheight = 2\nfor x in range(width):\n    for y in range(height):\n        print((x, y), end=\" \")",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`(0, 0) (0, 1) (1, 0) (1, 1) (2, 0) (2, 1)`",
+              "feedback": "The inner loop runs completely for each value of the outer one. With `x` outside, it walks down each column (y = 0, 1) before moving right: a column-major traversal.",
+              "correct": true
+            },
+            {
+              "text": "`(0, 0) (1, 0) (2, 0) (0, 1) (1, 1) (2, 1)`",
+              "feedback": "This is the row-major order from the book, which puts `y` in the outer loop. Here `x` is outer, so `x` changes slowest."
+            },
+            {
+              "text": "`(0, 0) (1, 0) (0, 1) (1, 1) (0, 2) (1, 2)`",
+              "feedback": "This is the book's 2-by-3 example, with width and height swapped. Here `x` takes three values and `y` two, so no pair has a `y` of 2."
+            },
+            {
+              "text": "`(1, 1) (1, 2) (2, 1) (2, 2) (3, 1) (3, 2)`",
+              "feedback": "This starts counting at 1. `range(width)` starts at 0, which matches the grid: the first pixel is (0, 0)."
+            }
+          ],
+          "hint": "Which variable finishes its whole range before the other changes once?",
+          "explanation": "A nested loop visits every position of a grid: the outer loop fixes one coordinate while the inner loop runs through all values of the other. With `y` outside (row-major), each row is crossed before moving down; with `x` outside (column-major), each column is walked down before moving right. Both visit every pixel once.",
+          "ref": "Section 8.2, \"A Loop Pattern for Traversing a Grid\" (p. 208) and Exercise 8-2, question 5"
+        },
+        {
+          "id": "tuple-parameter",
+          "concept": "Tuples and function parameters",
+          "level": "analyze",
+          "stem": "A student wants `average` to unpack its pixel directly in the header. What happens when Python reads this definition?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def average((r, g, b)):\n    return (r + g + b) // 3",
+            "verify": {
+              "expect": "compile_error",
+              "error_contains": [
+                "SyntaxError"
+              ]
+            }
+          },
+          "options": [
+            {
+              "text": "A `SyntaxError`: a parameter must be a single name",
+              "feedback": "Patterns like `(r, g, b)` work in assignments, but a parameter must be a plain name. The book's version takes `triple` and unpacks it in the body.",
+              "correct": true
+            },
+            {
+              "text": "It works: `average((40, 50, 60))` returns `50`",
+              "feedback": "That is the result of the book's correct version. Unpacking in the header is not allowed, so the definition never gets as far as being called."
+            },
+            {
+              "text": "It defines the function, then raises `TypeError` when called with one tuple",
+              "feedback": "This imagines Python reading the header as three parameters. The error comes earlier: the header itself is invalid, before any call happens."
+            },
+            {
+              "text": "It works, but returns a tuple of three averages instead of one number",
+              "feedback": "`(r + g + b) // 3` is one integer either way. The problem is not the body; Python rejects the header before running anything."
+            }
+          ],
+          "hint": "The book says tuple patterns work almost anywhere, with one exception. Which?",
+          "explanation": "Tuple assignment binds each element of a tuple to its own variable, as in `(r, g, b) = image.getPixel(x, y)`. It works almost anywhere except in a function's parameter list, where each parameter must be a single name; the function unpacks the tuple in its body.",
+          "aside": "Python 2 did allow `def average((r, g, b)):`. The feature was removed in Python 3 by PEP 3113, partly because they complicated tools that inspect a function's parameters, while giving little benefit over unpacking in the body.",
+          "ref": "Section 8.2, \"A Word on Tuples\" (p. 209)"
+        }
+      ]
+    },
+    {
+      "id": "8.2b-image-algorithms",
+      "title": "Image algorithms: transform, copy, blur and shrink",
+      "subtitle": "Black and white, weighted grayscale, clone versus an alias, why blur reads from a copy, and how shrinking reduces pixels",
+      "source": "Ch. 8, section 8.2 (pp. 209–215)",
+      "intro": "Every filter in a photo app comes down to a nested loop, a getPixel and a setPixel. Six questions, half of them traces, on the decisions that make those loops right.",
+      "takeaways": [
+        "Some algorithms transform each pixel in place from its own values (black and white, grayscale); others read a source image and build a new one (blur, edge detection, shrink).",
+        "`clone()` makes a structurally equivalent but separate image, so changes to one do not affect the other; assignment only gives the same image a second name. An algorithm that reads neighbors must read from an unchanged source.",
+        "Grayscale weights green (.587) more than red (.299) and red more than blue (.114) because that is how the eye perceives luminance. Shrinking both dimensions by a factor N leaves 1/N² of the pixels."
+      ],
+      "questions": [
+        {
+          "id": "bw-trace",
+          "concept": "Converting to black and white",
+          "level": "apply",
+          "stem": "This is the book's `blackAndWhite`, applied to a two-pixel image. What does the last line print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "def blackAndWhite(image):\n    blackPixel = (0, 0, 0)\n    whitePixel = (255, 255, 255)\n    for y in range(image.getHeight()):\n        for x in range(image.getWidth()):\n            (r, g, b) = image.getPixel(x, y)\n            average = (r + g + b) // 3\n            if average < 128:\n                image.setPixel(x, y, blackPixel)\n            else:\n                image.setPixel(x, y, whitePixel)\n\nimage = Image(2, 1)\nimage.setPixel(0, 0, (90, 120, 160))\nimage.setPixel(1, 0, (250, 30, 120))\nblackAndWhite(image)\nprint(image.getPixel(0, 0), image.getPixel(1, 0))",
+            "verify": {
+              "expect": "output",
+              "program": "class Image:\n    \"\"\"Stand-in for the book's images.Image: a grid of RGB tuples.\"\"\"\n    def __init__(self, width, height):\n        self._w = width\n        self._h = height\n        self._px = [[(0, 0, 0)] * width for _ in range(height)]\n    def getWidth(self):\n        return self._w\n    def getHeight(self):\n        return self._h\n    def getPixel(self, x, y):\n        return self._px[y][x]\n    def setPixel(self, x, y, rgb):\n        self._px[y][x] = rgb\n    def clone(self):\n        new = Image(self._w, self._h)\n        new._px = [row[:] for row in self._px]\n        return new\n\ndef blackAndWhite(image):\n    blackPixel = (0, 0, 0)\n    whitePixel = (255, 255, 255)\n    for y in range(image.getHeight()):\n        for x in range(image.getWidth()):\n            (r, g, b) = image.getPixel(x, y)\n            average = (r + g + b) // 3\n            if average < 128:\n                image.setPixel(x, y, blackPixel)\n            else:\n                image.setPixel(x, y, whitePixel)\n\nimage = Image(2, 1)\nimage.setPixel(0, 0, (90, 120, 160))\nimage.setPixel(1, 0, (250, 30, 120))\nblackAndWhite(image)\nprint(image.getPixel(0, 0), image.getPixel(1, 0))"
+            }
+          },
+          "options": [
+            {
+              "text": "`(0, 0, 0) (255, 255, 255)`",
+              "feedback": "The first pixel averages (90 + 120 + 160) // 3 = 123, under 128, so it turns black. The second averages 400 // 3 = 133, so it turns white.",
+              "correct": true
+            },
+            {
+              "text": "`(255, 255, 255) (255, 255, 255)`",
+              "feedback": "This decides by the brightest component: both pixels have one value above 128. The function compares the *average* of all three components with 128."
+            },
+            {
+              "text": "`(255, 255, 255) (0, 0, 0)`",
+              "feedback": "This swaps the two outcomes, perhaps by judging the bluish pixel as lighter. The rule is numeric: an average below 128 becomes black, otherwise white."
+            },
+            {
+              "text": "`(123, 123, 123) (133, 133, 133)`",
+              "feedback": "These are the averages, the grayscale-style result. `blackAndWhite` uses the average only to choose between two pixels, pure black or pure white."
+            }
+          ],
+          "hint": "Compute each pixel's average with `//`, then compare it with 128.",
+          "explanation": "Converting to black and white visits every pixel with a row-major nested loop, averages its three components, and replaces the pixel with black if the average is closer to 0 or white if it is closer to 255. It changes the argument image itself and returns nothing.",
+          "ref": "Section 8.2, \"Converting an Image to Black and White\" (pp. 209–210)"
+        },
+        {
+          "id": "grayscale-trace",
+          "concept": "Weighted grayscale",
+          "level": "apply",
+          "stem": "These lines are the body of the book's `grayscale` loop, applied to one pixel. What do they print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "(r, g, b) = (100, 200, 50)\nr = int(r * 0.299)\ng = int(g * 0.587)\nb = int(b * 0.114)\nprint(r + g + b)",
+            "verify": {
+              "expect": "output"
+            }
+          },
+          "options": [
+            {
+              "text": "`151`",
+              "feedback": "Each product is truncated *before* adding: `int(29.9)` is 29, `int(117.4)` is 117 and `int(5.7)` is 5, and 29 + 117 + 5 = 151.",
+              "correct": true
+            },
+            {
+              "text": "`153`",
+              "feedback": "29.9 + 117.4 + 5.7 is 153, but the code never adds the unrounded products. `int()` truncates each one separately, losing up to almost 1 per component."
+            },
+            {
+              "text": "`116`",
+              "feedback": "This is the plain average, (100 + 200 + 50) // 3, the crude method the book replaces. The weights give green, the strongest component here, much more influence."
+            },
+            {
+              "text": "`350`",
+              "feedback": "This is the sum of the components. The weights add up to 1, so the result stays in the 0-255 range of a single component."
+            }
+          ],
+          "hint": "Work out each line separately. What does `int()` do to a number such as 29.9?",
+          "explanation": "The grayscale algorithm multiplies each component by its luminance weight, truncates each product with `int`, adds the three, and stores that luminance in all three components. Because the weights sum to 1, the result is a valid component value.",
+          "ref": "Section 8.2, \"Converting an Image to Grayscale\" (pp. 210–211)"
+        },
+        {
+          "id": "why-weights",
+          "concept": "Luminance and perception",
+          "level": "understand",
+          "stem": "Why does the book's `grayscale` weight green by .587 and blue by only .114, instead of taking a plain average?",
+          "options": [
+            {
+              "text": "A plain average would give pure blue the same gray as pure green, though the eye sees blue as darker",
+              "feedback": "The eye is more sensitive to green and red than to blue. Weighting the components by their perceived luminance makes the grays match how bright the colors looked.",
+              "correct": true
+            },
+            {
+              "text": "A plain average can exceed 255 for bright pixels, and the weights keep the result in range",
+              "feedback": "The average of three numbers from 0 to 255 is also between 0 and 255. Both methods stay in range; they differ in how much each component counts."
+            },
+            {
+              "text": "Green is stored with more bits than blue in the RGB system, so it carries more information",
+              "feedback": "Every RGB component uses the same 8 bits and range. The weights come from human perception, not from how the computer stores the values."
+            },
+            {
+              "text": "The weights make the conversion reversible, so the original colors can be restored later",
+              "feedback": "No grayscale conversion is reversible: many different colors map to the same gray. Setting all three components equal throws the color information away."
+            }
+          ],
+          "hint": "Imagine a pure blue square next to a pure green one. Do they look equally bright?",
+          "explanation": "A good grayscale should preserve how light or dark each color *looks*. The human eye is most sensitive to green, then red, then blue, and psychologists measured the relative luminance proportions as .587, .299 and .114, which add up to 1.",
+          "aside": "The same three weights define the brightness signal (luma) in the ITU-R BT.601 video standard, and before that in the 1953 NTSC color TV system, where that signal let existing black-and-white sets keep showing the picture.",
+          "ref": "Section 8.2, \"Converting an Image to Grayscale\" (pp. 210–211)"
+        },
+        {
+          "id": "clone-alias",
+          "concept": "Copying an image",
+          "level": "analyze",
+          "stem": "What does this code print?",
+          "code": {
+            "language": "python",
+            "label": "Python",
+            "text": "image = Image(1, 1)\nimage.setPixel(0, 0, (10, 20, 30))\nalias = image\ncopy = image.clone()\nalias.setPixel(0, 0, (0, 0, 0))\nprint(image.getPixel(0, 0), copy.getPixel(0, 0))",
+            "verify": {
+              "expect": "output",
+              "program": "class Image:\n    \"\"\"Stand-in for the book's images.Image: a grid of RGB tuples.\"\"\"\n    def __init__(self, width, height):\n        self._w = width\n        self._h = height\n        self._px = [[(0, 0, 0)] * width for _ in range(height)]\n    def getWidth(self):\n        return self._w\n    def getHeight(self):\n        return self._h\n    def getPixel(self, x, y):\n        return self._px[y][x]\n    def setPixel(self, x, y, rgb):\n        self._px[y][x] = rgb\n    def clone(self):\n        new = Image(self._w, self._h)\n        new._px = [row[:] for row in self._px]\n        return new\n\nimage = Image(1, 1)\nimage.setPixel(0, 0, (10, 20, 30))\nalias = image\ncopy = image.clone()\nalias.setPixel(0, 0, (0, 0, 0))\nprint(image.getPixel(0, 0), copy.getPixel(0, 0))"
+            }
+          },
+          "options": [
+            {
+              "text": "`(0, 0, 0) (10, 20, 30)`",
+              "feedback": "`alias` is another name for the same image, so changing it changes `image`. `clone()` built a separate image earlier, so `copy` keeps the old pixel.",
+              "correct": true
+            },
+            {
+              "text": "`(10, 20, 30) (10, 20, 30)`",
+              "feedback": "This treats `alias = image` as making a copy. Assignment never copies an object; it binds a second name to the very same image."
+            },
+            {
+              "text": "`(0, 0, 0) (0, 0, 0)`",
+              "feedback": "This treats the clone as sharing pixels with the original. `clone()` builds a structurally equivalent image whose pixels are independent of the original's."
+            },
+            {
+              "text": "`(10, 20, 30) (0, 0, 0)`",
+              "feedback": "This swaps the roles of the two names. The change was made through `alias`, which refers to `image`; `copy` is the only independent object."
+            }
+          ],
+          "hint": "How many image objects exist after the third line? After the fourth?",
+          "explanation": "`clone()` returns a new image with the same width, height and pixels but a separate identity (and an empty filename): structurally equivalent but not identical. Changing pixels in one leaves the other alone. Assignment, by contrast, creates an alias, as with lists in Chapter 5.",
+          "ref": "Section 8.2, \"Copying an Image\" (p. 211)"
+        },
+        {
+          "id": "blur-copy",
+          "concept": "Why blur reads from a copy",
+          "level": "analyze",
+          "stem": "`blur` reads neighbors from `image` and writes averages into `new = image.clone()`. Suppose it wrote each average back into `image` instead. What would go wrong?",
+          "options": [
+            {
+              "text": "Neighbors to the left and above would already be blurred when read, skewing each average",
+              "feedback": "In a row-major loop, the pixel on the left and the one above were visited first. Reading their *new* values mixes blurred and original colors, smearing in the loop's direction.",
+              "correct": true
+            },
+            {
+              "text": "Nothing: the result is identical, and the program saves the memory of a second image",
+              "feedback": "The result is identical only if every average uses original values. Writing in place changes pixels that later averages still read, so the output differs."
+            },
+            {
+              "text": "`setPixel` raises an error when an image is changed while a loop is traversing it",
+              "feedback": "Changing pixels during a traversal is legal: `blackAndWhite` and `grayscale` do exactly that. They are safe because each pixel uses only its own values."
+            },
+            {
+              "text": "The pixels on the outer edges would get blurred too, which the original avoids",
+              "feedback": "The edges are skipped by the ranges `1` to `height - 1` and `1` to `width - 1`, not by the copy. Writing in place would not change which pixels are visited."
+            }
+          ],
+          "hint": "In a row-major loop, which of a pixel's four neighbors have already been processed when the pixel is reached?",
+          "explanation": "An algorithm whose result for one pixel depends on its neighbors must read from an unchanged source and write to a separate image. Algorithms that use only the pixel's own values, like grayscale, can safely modify the image in place.",
+          "aside": "Averaging a pixel with its neighbors equally is called a *box blur*. A Gaussian blur, the default in most photo editors, instead gives nearer pixels more weight, which looks smoother.",
+          "ref": "Section 8.2, \"Blurring an Image\" (p. 212) and Exercise 8-2, question 7"
+        },
+        {
+          "id": "shrink-factor",
+          "concept": "Reducing image size",
+          "level": "apply",
+          "stem": "`shrink(image, 3)` is applied to an image 600 pixels wide and 300 high. How many pixels does the new image have?",
+          "options": [
+            {
+              "text": "20,000, one-ninth of the original",
+              "feedback": "The new image is 600 // 3 by 300 // 3, that is 200 × 100 = 20,000. The original has 180,000, so dividing each dimension by 3 divides the pixels by 3² = 9.",
+              "correct": true
+            },
+            {
+              "text": "60,000, one-third of the original",
+              "feedback": "This divides the total by the factor once. But both the width *and* the height are divided by 3, so the count falls by 3 × 3."
+            },
+            {
+              "text": "180,000, the same as the original",
+              "feedback": "That describes changing the display's resolution, which makes an image look smaller. `shrink` builds a new image with fewer pixels."
+            },
+            {
+              "text": "About 6,667, one twenty-seventh of the original",
+              "feedback": "This divides by the factor cubed. An image is two-dimensional, so the factor applies twice, not three times."
+            }
+          ],
+          "hint": "Work out the new width and the new height first.",
+          "explanation": "If the width and height of an image are each reduced by a factor of N, the number of color values falls by a factor of N². `shrink` copies the color of every Nth pixel in every Nth row into the new image, preserving the aspect ratio while throwing information away.",
+          "ref": "Section 8.2, \"Reducing the Image Size\" (pp. 214–215)"
+        }
+      ]
+    }
+  ]
+}
