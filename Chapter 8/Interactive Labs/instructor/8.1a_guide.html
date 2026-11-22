@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Objects, state and interface: the makerspace laser engraver</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 8.1a</div>
+  <h1>Objects, state and interface: the makerspace laser engraver</h1>
+<h2>Objectives</h2><ul><li>Use a Turtle object through its interface: instantiate it, then change its state with mutator methods</li><li>Generalize <code>square</code> and <code>hexagon</code> into one <code>polygon</code> function that works for any number of sides</li><li>Use accessor methods (<code>position</code>, <code>heading</code>, <code>isdown</code>) to save an object&#x27;s state and restore it afterwards</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>polygon</code> repeats <code>sides</code> times: move forward <code>length</code>, then turn left <code>360 / sides</code> degrees. No number of sides is hard-coded.</li><li><strong>R2</strong> <code>badge</code> lifts the pen before travelling to <code>(x, y)</code>, faces east (<code>setheading(0)</code>) and lowers the pen before drawing.</li><li><strong>R3</strong> <code>badge</code> reads the turtle&#x27;s position, heading and pen state with accessor methods before changing anything, and restores all three at the end: it travels back with the pen up, and lowers the pen only if it was down before.</li><li><strong>R4</strong> The test program&#x27;s badges burn no stray lines, and the turtle ends where and how it started. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>Run the starter. <code>badge</code> calls <code>t.goto(x, y)</code> on a brand-new turtle. Which line does the laser burn that isn&#x27;t part of any badge, and which part of the turtle&#x27;s state causes it?</p><div class="answer"><p>A straight line from the home position (0, 0) to the badge&#x27;s corner (-100, 50). A new turtle&#x27;s pen is down (<code>isdown()</code> is True), and <code>goto</code> draws whenever the pen is down, so moving to the corner burns a line.</p></div></li><li><p><code>square</code> turns 90 degrees four times and <code>hexagon</code> turns 60 degrees six times. What do the turns of each shape add up to, and what would one turn of a pentagon be?</p><div class="answer"><p>Both add up to 360 degrees, one full turn, so the turtle ends facing the way it started. A pentagon turns 360 / 5 = 72 degrees at each corner.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">badges.py</div><pre class="code-block"><code><span class="t-sd">"""badges.py - burn badge outlines with the makerspace laser engraver.</span>
+
+<span class="t-sd">The engraver is driven by a Turtle object: whenever its pen is down,</span>
+<span class="t-sd">the laser burns.</span>
+<span class="t-sd">"""</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">penturtle</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Turtle</span>   <span class="t-c1"># in IDLE: from turtle import Turtle</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">square</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a square with the given length, from t's position and heading."""</span>
+    <span class="t-k">for</span> <span class="t-n">count</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">4</span><span class="t-p">):</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">forward</span><span class="t-p">(</span><span class="t-n">length</span><span class="t-p">)</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">left</span><span class="t-p">(</span><span class="t-mi">90</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">hexagon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a hexagon with the given length, from t's position and heading."""</span>
+    <span class="t-k">for</span> <span class="t-n">count</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">6</span><span class="t-p">):</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">forward</span><span class="t-p">(</span><span class="t-n">length</span><span class="t-p">)</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">left</span><span class="t-p">(</span><span class="t-mi">60</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">polygon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">sides</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a regular polygon with the given number of sides and</span>
+<span class="t-sd">    side length."""</span>
+    <span class="t-c1"># TODO (R1): square and hexagon differ only in the number of sides and the</span>
+    <span class="t-c1"># angle of each turn. Write one loop that works for any number of sides.</span>
+    <span class="t-k">pass</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">,</span> <span class="t-n">sides</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Burns a badge outline with its first corner at (x, y) and its</span>
+<span class="t-sd">    first side facing east. Leaves t as it found it: same position,</span>
+<span class="t-sd">    heading and pen state."""</span>
+    <span class="t-c1"># TODO (R3): remember t's position, heading and pen state.</span>
+    <span class="t-c1"># TODO (R2): travel to (x, y) without burning, face east, lower the pen.</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span>
+    <span class="t-n">polygon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">sides</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">)</span>
+    <span class="t-c1"># TODO (R3): travel back without burning, then restore the heading</span>
+    <span class="t-c1"># and the pen state.</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Burns two badges and prints what the laser did."""</span>
+    <span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+    <span class="t-n">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-mi">100</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">6</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">)</span>
+    <span class="t-n">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">40</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">report</span><span class="t-p">())</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Laser head at"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">position</span><span class="t-p">(),</span> <span class="t-s2">"facing"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">heading</span><span class="t-p">())</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre><div class="file">penturtle.py (read-only for students)</div><pre class="code-block"><code><span class="t-sd">"""penturtle.py - a text-mode stand-in for turtle.Turtle.</span>
+
+<span class="t-sd">It has the same method names as the Turtle methods in Table 8-2, so code</span>
+<span class="t-sd">you write with it also runs in IDLE: change the import to</span>
+<span class="t-sd">    from turtle import Turtle</span>
+<span class="t-sd">Instead of opening a window, this Turtle keeps a log of the lines it draws.</span>
+
+<span class="t-sd">Extras for the labs (NOT in the real Turtle):</span>
+<span class="t-sd">    t.lines(), t.lineColors(), t.report()</span>
+<span class="t-sd">"""</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">math</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_tidy</span><span class="t-p">(</span><span class="t-n">value</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Rounds to 2 decimals and turns -0.0 into 0.0."""</span>
+    <span class="t-k">return</span> <span class="t-nb">round</span><span class="t-p">(</span><span class="t-n">value</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-mf">0.0</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_checkColor</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns the color given to pencolor/fillcolor, or raises ValueError."""</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">1</span> <span class="t-ow">and</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">],</span> <span class="t-nb">str</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">]</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">1</span> <span class="t-ow">and</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">],</span> <span class="t-nb">tuple</span><span class="t-p">):</span>
+        <span class="t-n">args</span> <span class="t-o">=</span> <span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">]</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">!=</span> <span class="t-mi">3</span><span class="t-p">:</span>
+        <span class="t-k">raise</span> <span class="t-ne">ValueError</span><span class="t-p">(</span><span class="t-s2">"a color is a string or three RGB values, got "</span> <span class="t-o">+</span>
+                         <span class="t-nb">repr</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">))</span>
+    <span class="t-k">for</span> <span class="t-n">part</span> <span class="t-ow">in</span> <span class="t-n">args</span><span class="t-p">:</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">part</span><span class="t-p">,</span> <span class="t-nb">int</span><span class="t-p">)</span> <span class="t-ow">or</span> <span class="t-n">part</span> <span class="t-o">&lt;</span> <span class="t-mi">0</span> <span class="t-ow">or</span> <span class="t-n">part</span> <span class="t-o">&gt;</span> <span class="t-mi">255</span><span class="t-p">:</span>
+            <span class="t-k">raise</span> <span class="t-ne">ValueError</span><span class="t-p">(</span><span class="t-s2">"bad color sequence: "</span> <span class="t-o">+</span> <span class="t-nb">repr</span><span class="t-p">(</span><span class="t-nb">tuple</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">))</span> <span class="t-o">+</span>
+                             <span class="t-s2">" (each RGB component is an int from 0 to 255)"</span><span class="t-p">)</span>
+    <span class="t-k">return</span> <span class="t-nb">tuple</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span>
+
+
+<span class="t-k">class</span><span class="t-w"> </span><span class="t-nc">_Screen</span><span class="t-p">:</span>
+<span class="t-w">    </span><span class="t-sd">"""The turtle's window: 300 by 200 pixels, as in the book's turtle.cfg."""</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-fm">__init__</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_bg</span> <span class="t-o">=</span> <span class="t-s2">"white"</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">window_width</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">300</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">window_height</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">200</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">bgcolor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-o">*</span><span class="t-n">color</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">color</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_bg</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_bg</span> <span class="t-o">=</span> <span class="t-n">_checkColor</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">colormode</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">mode</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">255</span>
+
+
+<span class="t-k">class</span><span class="t-w"> </span><span class="t-nc">Turtle</span><span class="t-p">:</span>
+<span class="t-w">    </span><span class="t-sd">"""A turtle that logs its lines instead of drawing them in a window."""</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-fm">__init__</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span> <span class="t-o">=</span> <span class="t-s2">"black"</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_fill</span> <span class="t-o">=</span> <span class="t-s2">"black"</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_width</span> <span class="t-o">=</span> <span class="t-mi">1</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_filling</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span> <span class="t-o">=</span> <span class="t-p">[]</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">screen</span> <span class="t-o">=</span> <span class="t-n">_Screen</span><span class="t-p">()</span>
+
+    <span class="t-c1"># ---- accessor methods: report the state, change nothing ----</span>
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">position</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the current position (x, y)."""</span>
+        <span class="t-k">return</span> <span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span><span class="t-p">),</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span><span class="t-p">))</span>
+
+    <span class="t-n">pos</span> <span class="t-o">=</span> <span class="t-n">position</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">xcor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">ycor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">heading</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the current direction in degrees (0 east, 90 north)."""</span>
+        <span class="t-n">h</span> <span class="t-o">=</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">%</span> <span class="t-mi">360</span><span class="t-p">)</span>
+        <span class="t-k">return</span> <span class="t-mf">0.0</span> <span class="t-k">if</span> <span class="t-n">h</span> <span class="t-o">==</span> <span class="t-mi">360</span> <span class="t-k">else</span> <span class="t-n">h</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">isdown</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns True if the pen is down."""</span>
+        <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">isvisible</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span>
+
+    <span class="t-c1"># ---- mutator methods: change the state ----</span>
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">up</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+
+    <span class="t-n">penup</span> <span class="t-o">=</span> <span class="t-n">pu</span> <span class="t-o">=</span> <span class="t-n">up</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">down</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+
+    <span class="t-n">pendown</span> <span class="t-o">=</span> <span class="t-n">pd</span> <span class="t-o">=</span> <span class="t-n">down</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">setheading</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">degrees</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-n">degrees</span><span class="t-p">)</span>
+
+    <span class="t-n">seth</span> <span class="t-o">=</span> <span class="t-n">setheading</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">left</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">degrees</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">+=</span> <span class="t-n">degrees</span>
+
+    <span class="t-n">lt</span> <span class="t-o">=</span> <span class="t-n">left</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">right</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">degrees</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">-=</span> <span class="t-n">degrees</span>
+
+    <span class="t-n">rt</span> <span class="t-o">=</span> <span class="t-n">right</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">goto</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-n">y</span> <span class="t-ow">is</span> <span class="t-kc">None</span><span class="t-p">:</span>
+            <span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span> <span class="t-o">=</span> <span class="t-n">x</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_moveTo</span><span class="t-p">(</span><span class="t-nb">float</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">),</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-n">y</span><span class="t-p">))</span>
+
+    <span class="t-n">setpos</span> <span class="t-o">=</span> <span class="t-n">setposition</span> <span class="t-o">=</span> <span class="t-n">goto</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">forward</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">distance</span><span class="t-p">):</span>
+        <span class="t-n">angle</span> <span class="t-o">=</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">radians</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span><span class="t-p">)</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_moveTo</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span> <span class="t-o">+</span> <span class="t-n">distance</span> <span class="t-o">*</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">cos</span><span class="t-p">(</span><span class="t-n">angle</span><span class="t-p">),</span>
+                     <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span> <span class="t-o">+</span> <span class="t-n">distance</span> <span class="t-o">*</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">sin</span><span class="t-p">(</span><span class="t-n">angle</span><span class="t-p">))</span>
+
+    <span class="t-n">fd</span> <span class="t-o">=</span> <span class="t-n">forward</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">backward</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">distance</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">forward</span><span class="t-p">(</span><span class="t-o">-</span><span class="t-n">distance</span><span class="t-p">)</span>
+
+    <span class="t-n">back</span> <span class="t-o">=</span> <span class="t-n">bk</span> <span class="t-o">=</span> <span class="t-n">backward</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">home</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">)</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">setheading</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">pencolor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-o">*</span><span class="t-n">color</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">color</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span> <span class="t-o">=</span> <span class="t-n">_checkColor</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">fillcolor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-o">*</span><span class="t-n">color</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">color</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_fill</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_fill</span> <span class="t-o">=</span> <span class="t-n">_checkColor</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">width</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">pixels</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-n">pixels</span> <span class="t-ow">is</span> <span class="t-kc">None</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_width</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_width</span> <span class="t-o">=</span> <span class="t-n">pixels</span>
+
+    <span class="t-n">pensize</span> <span class="t-o">=</span> <span class="t-n">width</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">begin_fill</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_filling</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">end_fill</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_filling</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">clear</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Erases the drawings; the turtle's state does not change."""</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span> <span class="t-o">=</span> <span class="t-p">[]</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">hideturtle</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+
+    <span class="t-n">ht</span> <span class="t-o">=</span> <span class="t-n">hideturtle</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">showturtle</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+
+    <span class="t-n">st</span> <span class="t-o">=</span> <span class="t-n">showturtle</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">speed</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">value</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">0</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">shape</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">name</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-s2">"classic"</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_moveTo</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">):</span>
+        <span class="t-n">start</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span><span class="t-p">),</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span><span class="t-p">))</span>
+        <span class="t-n">end</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">),</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-n">y</span><span class="t-p">))</span>
+        <span class="t-k">if</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-ow">and</span> <span class="t-n">start</span> <span class="t-o">!=</span> <span class="t-n">end</span><span class="t-p">:</span>
+            <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-o">.</span><span class="t-n">append</span><span class="t-p">((</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">,</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span><span class="t-p">))</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span> <span class="t-o">=</span> <span class="t-n">x</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span> <span class="t-o">=</span> <span class="t-n">y</span>
+
+    <span class="t-c1"># ---- extras for the labs (not in the real Turtle) ----</span>
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">lines</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the lines drawn so far as a list of (start, end) points."""</span>
+        <span class="t-k">return</span> <span class="t-p">[(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">)</span> <span class="t-k">for</span> <span class="t-p">(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">,</span> <span class="t-n">color</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">]</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">lineColors</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the pen color of each line drawn so far."""</span>
+        <span class="t-k">return</span> <span class="t-p">[</span><span class="t-n">color</span> <span class="t-k">for</span> <span class="t-p">(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">,</span> <span class="t-n">color</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">]</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">report</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns a short summary of the drawing."""</span>
+        <span class="t-n">total</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-k">for</span> <span class="t-p">((</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">),</span> <span class="t-n">color</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">:</span>
+            <span class="t-n">total</span> <span class="t-o">+=</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">hypot</span><span class="t-p">(</span><span class="t-n">x2</span> <span class="t-o">-</span> <span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y2</span> <span class="t-o">-</span> <span class="t-n">y1</span><span class="t-p">)</span>
+        <span class="t-k">return</span> <span class="t-p">(</span><span class="t-s2">"Lines drawn: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-nb">len</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">))</span> <span class="t-o">+</span> <span class="t-s2">", total length "</span> <span class="t-o">+</span>
+                <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-n">total</span><span class="t-p">))</span> <span class="t-o">+</span> <span class="t-s2">" pixels"</span><span class="t-p">)</span></code></pre>
+<h2>Solution</h2><div class="file">badges.py</div><pre class="code-block"><code><span class="t-sd">"""badges.py - burn badge outlines with the makerspace laser engraver.</span>
+
+<span class="t-sd">The engraver is driven by a Turtle object: whenever its pen is down,</span>
+<span class="t-sd">the laser burns.</span>
+<span class="t-sd">"""</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">penturtle</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Turtle</span>   <span class="t-c1"># in IDLE: from turtle import Turtle</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">square</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a square with the given length, from t's position and heading."""</span>
+    <span class="t-k">for</span> <span class="t-n">count</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">4</span><span class="t-p">):</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">forward</span><span class="t-p">(</span><span class="t-n">length</span><span class="t-p">)</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">left</span><span class="t-p">(</span><span class="t-mi">90</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">hexagon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a hexagon with the given length, from t's position and heading."""</span>
+    <span class="t-k">for</span> <span class="t-n">count</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">6</span><span class="t-p">):</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">forward</span><span class="t-p">(</span><span class="t-n">length</span><span class="t-p">)</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">left</span><span class="t-p">(</span><span class="t-mi">60</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">polygon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">sides</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a regular polygon with the given number of sides and</span>
+<span class="t-sd">    side length."""</span>
+    <span class="t-k">for</span> <span class="t-n">count</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">sides</span><span class="t-p">):</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">forward</span><span class="t-p">(</span><span class="t-n">length</span><span class="t-p">)</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">left</span><span class="t-p">(</span><span class="t-mi">360</span> <span class="t-o">/</span> <span class="t-n">sides</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">,</span> <span class="t-n">sides</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Burns a badge outline with its first corner at (x, y) and its</span>
+<span class="t-sd">    first side facing east. Leaves t as it found it: same position,</span>
+<span class="t-sd">    heading and pen state."""</span>
+    <span class="t-p">(</span><span class="t-n">oldX</span><span class="t-p">,</span> <span class="t-n">oldY</span><span class="t-p">)</span> <span class="t-o">=</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">position</span><span class="t-p">()</span>
+    <span class="t-n">oldHeading</span> <span class="t-o">=</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">heading</span><span class="t-p">()</span>
+    <span class="t-n">wasDown</span> <span class="t-o">=</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">isdown</span><span class="t-p">()</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">up</span><span class="t-p">()</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">setheading</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">down</span><span class="t-p">()</span>
+    <span class="t-n">polygon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">sides</span><span class="t-p">,</span> <span class="t-n">length</span><span class="t-p">)</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">up</span><span class="t-p">()</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-n">oldX</span><span class="t-p">,</span> <span class="t-n">oldY</span><span class="t-p">)</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">setheading</span><span class="t-p">(</span><span class="t-n">oldHeading</span><span class="t-p">)</span>
+    <span class="t-k">if</span> <span class="t-n">wasDown</span><span class="t-p">:</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">down</span><span class="t-p">()</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Burns two badges and prints what the laser did."""</span>
+    <span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+    <span class="t-n">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-mi">100</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">6</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">)</span>
+    <span class="t-n">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">40</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">report</span><span class="t-p">())</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Laser head at"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">position</span><span class="t-p">(),</span> <span class="t-s2">"facing"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">heading</span><span class="t-p">())</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p><code>polygon</code> is the reading&#x27;s Exercise 8-1, question 4: the only differences between <code>square</code> and <code>hexagon</code> are the loop count and the turn, and for a regular polygon the turns add up to one full circle, so each one is <code>360 / sides</code>. In <code>badge</code>, the three accessor calls must come first, because every mutator after them changes the state they report. <code>goto</code> draws whenever the pen is down, so the pen goes up before both trips (to the badge and back). Restoring the pen with <code>if wasDown: t.down()</code> matters: a caller that had lifted the pen expects it still up afterwards. Equivalent forms: <code>t.penup()</code>/<code>t.pendown()</code>, <code>t.xcor()</code>/<code>t.ycor()</code> instead of <code>position()</code>, or <code>if not wasDown: t.up()</code> placed after an unconditional <code>t.down()</code>.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">penturtle</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Turtle</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">badges</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">polygon</span><span class="t-p">,</span> <span class="t-n">badge</span>
+
+<span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+<span class="t-n">polygon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">4</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Square:"</span><span class="t-p">,</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">lines</span><span class="t-p">()),</span> <span class="t-s2">"lines"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"  back at"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">position</span><span class="t-p">(),</span> <span class="t-s2">"facing"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">heading</span><span class="t-p">())</span>
+<span class="t-n">t</span><span class="t-o">.</span><span class="t-n">clear</span><span class="t-p">()</span>
+<span class="t-n">polygon</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">3</span><span class="t-p">,</span> <span class="t-mi">60</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Triangle corners:"</span><span class="t-p">,</span> <span class="t-p">[</span><span class="t-n">end</span> <span class="t-k">for</span> <span class="t-p">(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">lines</span><span class="t-p">()])</span>
+
+<span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+<span class="t-n">t</span><span class="t-o">.</span><span class="t-n">up</span><span class="t-p">()</span>
+<span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">,</span> <span class="t-mi">20</span><span class="t-p">)</span>
+<span class="t-n">t</span><span class="t-o">.</span><span class="t-n">setheading</span><span class="t-p">(</span><span class="t-mi">90</span><span class="t-p">)</span>
+<span class="t-n">t</span><span class="t-o">.</span><span class="t-n">down</span><span class="t-p">()</span>
+<span class="t-n">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-mi">100</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">6</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"After the hexagon badge:"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">position</span><span class="t-p">(),</span> <span class="t-s2">"facing"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">heading</span><span class="t-p">())</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"  pen down:"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">isdown</span><span class="t-p">())</span>
+<span class="t-n">t</span><span class="t-o">.</span><span class="t-n">up</span><span class="t-p">()</span>
+<span class="t-n">badge</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">40</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">5</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"After the pentagon badge:"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">position</span><span class="t-p">(),</span> <span class="t-s2">"facing"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">heading</span><span class="t-p">())</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"  pen down:"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">isdown</span><span class="t-p">())</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"First line starts at"</span><span class="t-p">,</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">lines</span><span class="t-p">()[</span><span class="t-mi">0</span><span class="t-p">][</span><span class="t-mi">0</span><span class="t-p">])</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">report</span><span class="t-p">())</span></code></pre><h3>Expected output</h3><pre class="output">Square: 4 lines
+  back at (0.0, 0.0) facing 0.0
+Triangle corners: [(60.0, 0.0), (30.0, 51.96), (0.0, 0.0)]
+After the hexagon badge: (10.0, 20.0) facing 90.0
+  pen down: True
+After the pentagon badge: (10.0, 20.0) facing 90.0
+  pen down: False
+First line starts at (-100.0, 50.0)
+Lines drawn: 11, total length 330.0 pixels
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td><code>polygon</code> loops <code>sides</code> times<div class="small">in <code>polygon</code></div></td><td><div><span class="tag">require</span> <code>for\s+\w+\s+in\s+range\(\s*sides\s*\)</code></div></td></tr><tr><td>C2</td><td>R1</td><td><code>polygon</code> turns <code>360 / sides</code><div class="small">in <code>polygon</code></div></td><td><div><span class="tag">require</span> <code>360\s*/\s*sides</code></div><div><span class="tag">forbid</span> <code>left\(\s*(60|90|120|72)\s*\)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>pen up before travelling to (x, y)<div class="small">in <code>badge</code></div></td><td><div><span class="tag">require</span> <code>\.(up|penup|pu)\s*\(\s*\)[\s\S]*\.goto\s*\(\s*x\s*,\s*y\s*\)</code></div></td></tr><tr><td>C4</td><td>R2</td><td>faces east and lowers the pen before drawing<div class="small">in <code>badge</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\.setheading\s*\(\s*0\s*\))(?=[\s\S]*\.(down|pendown|pd)\s*\(\s*\)[\s\S]*polygon\s*\()</code></div></td></tr><tr><td>C5</td><td>R3</td><td>saves the state with accessor methods<div class="small">in <code>badge</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*\.(position|pos|xcor)\s*\(\s*\))(?=[\s\S]*\.heading\s*\(\s*\))(?=[\s\S]*\.isdown\s*\(\s*\))</code></div></td></tr><tr><td>C6</td><td>R3</td><td>restores position and heading<div class="small">in <code>badge</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*polygon\s*\([\s\S]*\.(up|penup|pu)\s*\(\s*\)[\s\S]*\.(goto|setpos|setposition)\s*\()(?=[\s\S]*polygon\s*\([\s\S]*\.setheading\s*\(\s*[A-Za-z_]\w*\s*\))</code></div></td></tr><tr><td>C7</td><td>R3</td><td>restores the pen only as it was<div class="small">in <code>badge</code></div></td><td><div><span class="tag">require</span> <code>\bif\b[^\n]*:\s*\n\s*\w+\.(down|pendown|pd|up|penup|pu)\s*\(\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · <code>polygon</code> loops <code>sides</code> times</dt><dd><p>Loop <code>for count in range(sides):</code> so the same function draws a triangle, a square or a hexagon. A fixed number such as <code>range(6)</code> only ever draws one shape.</p></dd><dt>C2 · <code>polygon</code> turns <code>360 / sides</code></dt><dd><p>A regular polygon&#x27;s turns add up to 360 degrees, so each turn is <code>360 / sides</code> (90 for a square, 60 for a hexagon). Compute it from the argument rather than writing one angle.</p></dd><dt>C3 · pen up before travelling to (x, y)</dt><dd><p><code>goto</code> draws a line whenever the pen is down, and a new turtle&#x27;s pen starts down. Call <code>t.up()</code> before <code>t.goto(x, y)</code> so the laser travels without burning.</p></dd><dt>C4 · faces east and lowers the pen before drawing</dt><dd><p>Point the turtle east with <code>t.setheading(0)</code> (so every badge has the same orientation) and call <code>t.down()</code> before <code>polygon(...)</code>, or nothing gets burned.</p></dd><dt>C5 · saves the state with accessor methods</dt><dd><p>Store the turtle&#x27;s state before you change it: <code>t.position()</code>, <code>t.heading()</code> and <code>t.isdown()</code> are accessor methods; they report the state without changing it.</p></dd><dt>C6 · restores position and heading</dt><dd><p>After the polygon, lift the pen, <code>goto</code> the saved position and <code>setheading</code> to the saved heading (a variable, not a number). Without the lift, the trip back burns a second scar.</p></dd><dt>C7 · restores the pen only as it was</dt><dd><p>Use the pen state you saved: <code>if wasDown: t.down()</code>. Always lowering it would surprise a caller who had lifted the pen; always leaving it up would surprise one who hadn&#x27;t.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Start with <code>polygon</code>: compare <code>square</code> and <code>hexagon</code> line by line. Which two numbers change, and how are they related?</p></li><li><p>In <code>badge</code>, a turtle forgets nothing, but it only tells you its state when you ask. Ask (with accessor methods) before the first mutator call, and keep the answers in variables.</p></li><li><p>Both trips use <code>goto</code>, and <code>goto</code> burns whenever the pen is down. The pen needs to be up for the trip to the badge and for the trip back; only the final pen state depends on what you saved.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Which methods in your <code>badge</code> are accessors and which are mutators? Why must the accessor calls come before the first mutator?</p><div class="answer"><p>position, heading and isdown are accessors: they report the state without changing it. up, goto, setheading, down, forward and left are mutators: they change it. The accessors must run first because each mutator changes the state they report; after t.up() and t.goto(x, y), position() and isdown() would return the badge&#x27;s corner and False instead of the original values.</p></div></li><li><p>Your code ran with <code>penturtle.Turtle</code>, and it will run unchanged with <code>turtle.Turtle</code> in IDLE. What does that say about how programmers use objects through their interfaces?</p><div class="answer"><p>Your functions only call methods by name and rely on what each method is documented to do. They never look inside the object. Any class with the same interface (the same method headers and behavior) can stand in, so the drawing code doesn&#x27;t care whether the turtle draws on screen or records lines. This is why an interface should give just enough information to use the object.</p></div></li><li><p>Why should a helper such as <code>badge</code> leave the turtle as it found it, instead of leaving it at the badge&#x27;s last corner?</p><div class="answer"><p>The caller decides where the turtle is and which way it faces, and the next command assumes that state hasn&#x27;t changed. If badge moved or rotated the turtle, every later shape would be shifted or rotated, as happened with the ruined board. Restoring the state makes badge safe to call in any order and from any other function.</p></div></li></ol>
+<h2>Extension</h2><p>Add <code>radialBadge(t, x, y, n, sides, length)</code> that burns <code>n</code> copies of a polygon around <code>(x, y)</code>, turning <code>360 / n</code> between them like the reading&#x27;s <code>radialPattern</code>, and still leaves the turtle as it found it. How many lines does <code>radialBadge(t, 0, 0, 10, 6, 20)</code> burn?</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

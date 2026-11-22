@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · RGB colors and a recursive fractal: the c-curve poster</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 8.1b</div>
+  <h1>RGB colors and a recursive fractal: the c-curve poster</h1>
+<h2>Objectives</h2><ul><li>Generate random RGB colors whose components stay within 0 to 255</li><li>Complete the recursive c-curve algorithm from its base case and recursive step</li><li>Predict how many lines a fractal of a given level draws, and confirm it with a recursive count</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>randomColor()</code> returns a tuple of three random integers, each from 0 to 255 inclusive.</li><li><strong>R2</strong> In the base case (level 0), <code>cCurve</code> sets the pen to a new <code>randomColor()</code> before drawing its line.</li><li><strong>R3</strong> In the recursive step, <code>cCurve</code> computes <code>xm = (x1 + x2 + y1 - y2) // 2</code> and <code>ym = (x2 + y1 + y2 - x1) // 2</code>, then draws two c-curves of <code>level - 1</code>: from (x1, y1) to (xm, ym), and from (xm, ym) to (x2, y2).</li><li><strong>R4</strong> <code>countLines(level)</code> returns the number of lines a c-curve of that level draws, using recursion (1 at level 0) and without drawing anything.</li><li><strong>R5</strong> The test program&#x27;s line counts, traced endpoints and color checks match. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The starter&#x27;s <code>randomColor</code> uses <code>random.randint(0, 256)</code>. How many different values can each call return, and which of them is not a valid RGB component?</p><div class="answer"><p>257 values, 0 through 256, because randint includes both ends. 256 is invalid: each component is 8 bits, which holds 256 values, 0 to 255.</p></div></li><li><p>Using the formulas, compute (xm, ym) for a level-1 c-curve from (50, -50) to (50, 50). What shape do the two new lines make?</p><div class="answer"><p>xm = (50 + 50 + (-50) - 50) // 2 = 0 and ym = (50 + (-50) + 50 - 50) // 2 = 0, so the corner is (0, 0). The lines (50, -50) to (0, 0) and (0, 0) to (50, 50) meet at a right angle, like a V on its side.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">ccurve.py</div><pre class="code-block"><code><span class="t-sd">"""ccurve.py - draw a c-curve fractal, each line in a random color."""</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">random</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">penturtle</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Turtle</span>   <span class="t-c1"># in IDLE: from turtle import Turtle</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">randomColor</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns a random RGB color as a tuple of three integers."""</span>
+    <span class="t-c1"># TODO (R1): every component must be a valid RGB value.</span>
+    <span class="t-k">return</span> <span class="t-p">(</span><span class="t-n">random</span><span class="t-o">.</span><span class="t-n">randint</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">256</span><span class="t-p">),</span> <span class="t-n">random</span><span class="t-o">.</span><span class="t-n">randint</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">256</span><span class="t-p">),</span>
+            <span class="t-n">random</span><span class="t-o">.</span><span class="t-n">randint</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">256</span><span class="t-p">))</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">,</span> <span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a c-curve of the given level from (x1, y1) to (x2, y2)."""</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">drawLine</span><span class="t-p">(</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">,</span> <span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Draws a line segment between the endpoints."""</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">up</span><span class="t-p">()</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">)</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">down</span><span class="t-p">()</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">)</span>
+
+    <span class="t-k">if</span> <span class="t-n">level</span> <span class="t-o">==</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-c1"># TODO (R2): give this line its own random pen color.</span>
+        <span class="t-n">drawLine</span><span class="t-p">(</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">,</span> <span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">)</span>
+    <span class="t-k">else</span><span class="t-p">:</span>
+        <span class="t-c1"># TODO (R3): find the corner point (xm, ym), then draw two c-curves</span>
+        <span class="t-c1"># of level - 1: from (x1, y1) to (xm, ym), and from (xm, ym)</span>
+        <span class="t-c1"># to (x2, y2).</span>
+        <span class="t-k">pass</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">countLines</span><span class="t-p">(</span><span class="t-n">level</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns how many lines a c-curve of the given level draws,</span>
+<span class="t-sd">    without drawing it."""</span>
+    <span class="t-c1"># TODO (R4): a level-0 c-curve is 1 line. How is level N built from</span>
+    <span class="t-c1"># level N - 1?</span>
+    <span class="t-k">return</span> <span class="t-mi">1</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Asks for a level, draws the c-curve and reports the drawing."""</span>
+    <span class="t-n">level</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Enter the level (0 or greater): "</span><span class="t-p">))</span>
+    <span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">hideturtle</span><span class="t-p">()</span>
+    <span class="t-n">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">report</span><span class="t-p">())</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"countLines predicted"</span><span class="t-p">,</span> <span class="t-n">countLines</span><span class="t-p">(</span><span class="t-n">level</span><span class="t-p">))</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre><div class="file">penturtle.py (read-only for students)</div><pre class="code-block"><code><span class="t-sd">"""penturtle.py - a text-mode stand-in for turtle.Turtle.</span>
+
+<span class="t-sd">It has the same method names as the Turtle methods in Table 8-2, so code</span>
+<span class="t-sd">you write with it also runs in IDLE: change the import to</span>
+<span class="t-sd">    from turtle import Turtle</span>
+<span class="t-sd">Instead of opening a window, this Turtle keeps a log of the lines it draws.</span>
+
+<span class="t-sd">Extras for the labs (NOT in the real Turtle):</span>
+<span class="t-sd">    t.lines(), t.lineColors(), t.report()</span>
+<span class="t-sd">"""</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">math</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_tidy</span><span class="t-p">(</span><span class="t-n">value</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Rounds to 2 decimals and turns -0.0 into 0.0."""</span>
+    <span class="t-k">return</span> <span class="t-nb">round</span><span class="t-p">(</span><span class="t-n">value</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-mf">0.0</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_checkColor</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns the color given to pencolor/fillcolor, or raises ValueError."""</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">1</span> <span class="t-ow">and</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">],</span> <span class="t-nb">str</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">]</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">1</span> <span class="t-ow">and</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">],</span> <span class="t-nb">tuple</span><span class="t-p">):</span>
+        <span class="t-n">args</span> <span class="t-o">=</span> <span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">]</span>
+    <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">!=</span> <span class="t-mi">3</span><span class="t-p">:</span>
+        <span class="t-k">raise</span> <span class="t-ne">ValueError</span><span class="t-p">(</span><span class="t-s2">"a color is a string or three RGB values, got "</span> <span class="t-o">+</span>
+                         <span class="t-nb">repr</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">))</span>
+    <span class="t-k">for</span> <span class="t-n">part</span> <span class="t-ow">in</span> <span class="t-n">args</span><span class="t-p">:</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">part</span><span class="t-p">,</span> <span class="t-nb">int</span><span class="t-p">)</span> <span class="t-ow">or</span> <span class="t-n">part</span> <span class="t-o">&lt;</span> <span class="t-mi">0</span> <span class="t-ow">or</span> <span class="t-n">part</span> <span class="t-o">&gt;</span> <span class="t-mi">255</span><span class="t-p">:</span>
+            <span class="t-k">raise</span> <span class="t-ne">ValueError</span><span class="t-p">(</span><span class="t-s2">"bad color sequence: "</span> <span class="t-o">+</span> <span class="t-nb">repr</span><span class="t-p">(</span><span class="t-nb">tuple</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">))</span> <span class="t-o">+</span>
+                             <span class="t-s2">" (each RGB component is an int from 0 to 255)"</span><span class="t-p">)</span>
+    <span class="t-k">return</span> <span class="t-nb">tuple</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span>
+
+
+<span class="t-k">class</span><span class="t-w"> </span><span class="t-nc">_Screen</span><span class="t-p">:</span>
+<span class="t-w">    </span><span class="t-sd">"""The turtle's window: 300 by 200 pixels, as in the book's turtle.cfg."""</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-fm">__init__</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_bg</span> <span class="t-o">=</span> <span class="t-s2">"white"</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">window_width</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">300</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">window_height</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">200</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">bgcolor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-o">*</span><span class="t-n">color</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">color</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_bg</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_bg</span> <span class="t-o">=</span> <span class="t-n">_checkColor</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">colormode</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">mode</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">255</span>
+
+
+<span class="t-k">class</span><span class="t-w"> </span><span class="t-nc">Turtle</span><span class="t-p">:</span>
+<span class="t-w">    </span><span class="t-sd">"""A turtle that logs its lines instead of drawing them in a window."""</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-fm">__init__</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span> <span class="t-o">=</span> <span class="t-s2">"black"</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_fill</span> <span class="t-o">=</span> <span class="t-s2">"black"</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_width</span> <span class="t-o">=</span> <span class="t-mi">1</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_filling</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span> <span class="t-o">=</span> <span class="t-p">[]</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">screen</span> <span class="t-o">=</span> <span class="t-n">_Screen</span><span class="t-p">()</span>
+
+    <span class="t-c1"># ---- accessor methods: report the state, change nothing ----</span>
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">position</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the current position (x, y)."""</span>
+        <span class="t-k">return</span> <span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span><span class="t-p">),</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span><span class="t-p">))</span>
+
+    <span class="t-n">pos</span> <span class="t-o">=</span> <span class="t-n">position</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">xcor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">ycor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">heading</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the current direction in degrees (0 east, 90 north)."""</span>
+        <span class="t-n">h</span> <span class="t-o">=</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">%</span> <span class="t-mi">360</span><span class="t-p">)</span>
+        <span class="t-k">return</span> <span class="t-mf">0.0</span> <span class="t-k">if</span> <span class="t-n">h</span> <span class="t-o">==</span> <span class="t-mi">360</span> <span class="t-k">else</span> <span class="t-n">h</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">isdown</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns True if the pen is down."""</span>
+        <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">isvisible</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span>
+
+    <span class="t-c1"># ---- mutator methods: change the state ----</span>
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">up</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+
+    <span class="t-n">penup</span> <span class="t-o">=</span> <span class="t-n">pu</span> <span class="t-o">=</span> <span class="t-n">up</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">down</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+
+    <span class="t-n">pendown</span> <span class="t-o">=</span> <span class="t-n">pd</span> <span class="t-o">=</span> <span class="t-n">down</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">setheading</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">degrees</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">=</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-n">degrees</span><span class="t-p">)</span>
+
+    <span class="t-n">seth</span> <span class="t-o">=</span> <span class="t-n">setheading</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">left</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">degrees</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">+=</span> <span class="t-n">degrees</span>
+
+    <span class="t-n">lt</span> <span class="t-o">=</span> <span class="t-n">left</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">right</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">degrees</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span> <span class="t-o">-=</span> <span class="t-n">degrees</span>
+
+    <span class="t-n">rt</span> <span class="t-o">=</span> <span class="t-n">right</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">goto</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-n">y</span> <span class="t-ow">is</span> <span class="t-kc">None</span><span class="t-p">:</span>
+            <span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span> <span class="t-o">=</span> <span class="t-n">x</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_moveTo</span><span class="t-p">(</span><span class="t-nb">float</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">),</span> <span class="t-nb">float</span><span class="t-p">(</span><span class="t-n">y</span><span class="t-p">))</span>
+
+    <span class="t-n">setpos</span> <span class="t-o">=</span> <span class="t-n">setposition</span> <span class="t-o">=</span> <span class="t-n">goto</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">forward</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">distance</span><span class="t-p">):</span>
+        <span class="t-n">angle</span> <span class="t-o">=</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">radians</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_heading</span><span class="t-p">)</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_moveTo</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span> <span class="t-o">+</span> <span class="t-n">distance</span> <span class="t-o">*</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">cos</span><span class="t-p">(</span><span class="t-n">angle</span><span class="t-p">),</span>
+                     <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span> <span class="t-o">+</span> <span class="t-n">distance</span> <span class="t-o">*</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">sin</span><span class="t-p">(</span><span class="t-n">angle</span><span class="t-p">))</span>
+
+    <span class="t-n">fd</span> <span class="t-o">=</span> <span class="t-n">forward</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">backward</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">distance</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">forward</span><span class="t-p">(</span><span class="t-o">-</span><span class="t-n">distance</span><span class="t-p">)</span>
+
+    <span class="t-n">back</span> <span class="t-o">=</span> <span class="t-n">bk</span> <span class="t-o">=</span> <span class="t-n">backward</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">home</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">)</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">setheading</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">pencolor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-o">*</span><span class="t-n">color</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">color</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span> <span class="t-o">=</span> <span class="t-n">_checkColor</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">fillcolor</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-o">*</span><span class="t-n">color</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">color</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_fill</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_fill</span> <span class="t-o">=</span> <span class="t-n">_checkColor</span><span class="t-p">(</span><span class="t-n">color</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">width</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">pixels</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">if</span> <span class="t-n">pixels</span> <span class="t-ow">is</span> <span class="t-kc">None</span><span class="t-p">:</span>
+            <span class="t-k">return</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_width</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_width</span> <span class="t-o">=</span> <span class="t-n">pixels</span>
+
+    <span class="t-n">pensize</span> <span class="t-o">=</span> <span class="t-n">width</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">begin_fill</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_filling</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">end_fill</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_filling</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">clear</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Erases the drawings; the turtle's state does not change."""</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span> <span class="t-o">=</span> <span class="t-p">[]</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">hideturtle</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span> <span class="t-o">=</span> <span class="t-kc">False</span>
+
+    <span class="t-n">ht</span> <span class="t-o">=</span> <span class="t-n">hideturtle</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">showturtle</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_visible</span> <span class="t-o">=</span> <span class="t-kc">True</span>
+
+    <span class="t-n">st</span> <span class="t-o">=</span> <span class="t-n">showturtle</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">speed</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">value</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-mi">0</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">shape</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">name</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-s2">"classic"</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_moveTo</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">):</span>
+        <span class="t-n">start</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span><span class="t-p">),</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span><span class="t-p">))</span>
+        <span class="t-n">end</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">),</span> <span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-n">y</span><span class="t-p">))</span>
+        <span class="t-k">if</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_down</span> <span class="t-ow">and</span> <span class="t-n">start</span> <span class="t-o">!=</span> <span class="t-n">end</span><span class="t-p">:</span>
+            <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-o">.</span><span class="t-n">append</span><span class="t-p">((</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">,</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_color</span><span class="t-p">))</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_x</span> <span class="t-o">=</span> <span class="t-n">x</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_y</span> <span class="t-o">=</span> <span class="t-n">y</span>
+
+    <span class="t-c1"># ---- extras for the labs (not in the real Turtle) ----</span>
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">lines</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the lines drawn so far as a list of (start, end) points."""</span>
+        <span class="t-k">return</span> <span class="t-p">[(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">)</span> <span class="t-k">for</span> <span class="t-p">(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">,</span> <span class="t-n">color</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">]</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">lineColors</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the pen color of each line drawn so far."""</span>
+        <span class="t-k">return</span> <span class="t-p">[</span><span class="t-n">color</span> <span class="t-k">for</span> <span class="t-p">(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">,</span> <span class="t-n">color</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">]</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">report</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns a short summary of the drawing."""</span>
+        <span class="t-n">total</span> <span class="t-o">=</span> <span class="t-mf">0.0</span>
+        <span class="t-k">for</span> <span class="t-p">((</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">),</span> <span class="t-n">color</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">:</span>
+            <span class="t-n">total</span> <span class="t-o">+=</span> <span class="t-n">math</span><span class="t-o">.</span><span class="t-n">hypot</span><span class="t-p">(</span><span class="t-n">x2</span> <span class="t-o">-</span> <span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y2</span> <span class="t-o">-</span> <span class="t-n">y1</span><span class="t-p">)</span>
+        <span class="t-k">return</span> <span class="t-p">(</span><span class="t-s2">"Lines drawn: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-nb">len</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_lines</span><span class="t-p">))</span> <span class="t-o">+</span> <span class="t-s2">", total length "</span> <span class="t-o">+</span>
+                <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">_tidy</span><span class="t-p">(</span><span class="t-n">total</span><span class="t-p">))</span> <span class="t-o">+</span> <span class="t-s2">" pixels"</span><span class="t-p">)</span></code></pre>
+<h2>Solution</h2><div class="file">ccurve.py</div><pre class="code-block"><code><span class="t-sd">"""ccurve.py - draw a c-curve fractal, each line in a random color."""</span>
+<span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">random</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">penturtle</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Turtle</span>   <span class="t-c1"># in IDLE: from turtle import Turtle</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">randomColor</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns a random RGB color as a tuple of three integers."""</span>
+    <span class="t-k">return</span> <span class="t-p">(</span><span class="t-n">random</span><span class="t-o">.</span><span class="t-n">randint</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">),</span> <span class="t-n">random</span><span class="t-o">.</span><span class="t-n">randint</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">),</span>
+            <span class="t-n">random</span><span class="t-o">.</span><span class="t-n">randint</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">))</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">,</span> <span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Draws a c-curve of the given level from (x1, y1) to (x2, y2)."""</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">drawLine</span><span class="t-p">(</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">,</span> <span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Draws a line segment between the endpoints."""</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">up</span><span class="t-p">()</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">)</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">down</span><span class="t-p">()</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">goto</span><span class="t-p">(</span><span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">)</span>
+
+    <span class="t-k">if</span> <span class="t-n">level</span> <span class="t-o">==</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">pencolor</span><span class="t-p">(</span><span class="t-n">randomColor</span><span class="t-p">())</span>
+        <span class="t-n">drawLine</span><span class="t-p">(</span><span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">,</span> <span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">)</span>
+    <span class="t-k">else</span><span class="t-p">:</span>
+        <span class="t-n">xm</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">x1</span> <span class="t-o">+</span> <span class="t-n">x2</span> <span class="t-o">+</span> <span class="t-n">y1</span> <span class="t-o">-</span> <span class="t-n">y2</span><span class="t-p">)</span> <span class="t-o">//</span> <span class="t-mi">2</span>
+        <span class="t-n">ym</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">x2</span> <span class="t-o">+</span> <span class="t-n">y1</span> <span class="t-o">+</span> <span class="t-n">y2</span> <span class="t-o">-</span> <span class="t-n">x1</span><span class="t-p">)</span> <span class="t-o">//</span> <span class="t-mi">2</span>
+        <span class="t-n">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">x1</span><span class="t-p">,</span> <span class="t-n">y1</span><span class="t-p">,</span> <span class="t-n">xm</span><span class="t-p">,</span> <span class="t-n">ym</span><span class="t-p">,</span> <span class="t-n">level</span> <span class="t-o">-</span> <span class="t-mi">1</span><span class="t-p">)</span>
+        <span class="t-n">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-n">xm</span><span class="t-p">,</span> <span class="t-n">ym</span><span class="t-p">,</span> <span class="t-n">x2</span><span class="t-p">,</span> <span class="t-n">y2</span><span class="t-p">,</span> <span class="t-n">level</span> <span class="t-o">-</span> <span class="t-mi">1</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">countLines</span><span class="t-p">(</span><span class="t-n">level</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns how many lines a c-curve of the given level draws,</span>
+<span class="t-sd">    without drawing it."""</span>
+    <span class="t-k">if</span> <span class="t-n">level</span> <span class="t-o">==</span> <span class="t-mi">0</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-mi">1</span>
+    <span class="t-k">else</span><span class="t-p">:</span>
+        <span class="t-k">return</span> <span class="t-mi">2</span> <span class="t-o">*</span> <span class="t-n">countLines</span><span class="t-p">(</span><span class="t-n">level</span> <span class="t-o">-</span> <span class="t-mi">1</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Asks for a level, draws the c-curve and reports the drawing."""</span>
+    <span class="t-n">level</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Enter the level (0 or greater): "</span><span class="t-p">))</span>
+    <span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+    <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">hideturtle</span><span class="t-p">()</span>
+    <span class="t-n">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">report</span><span class="t-p">())</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"countLines predicted"</span><span class="t-p">,</span> <span class="t-n">countLines</span><span class="t-p">(</span><span class="t-n">level</span><span class="t-p">))</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p><code>random.randint(a, b)</code> includes both ends, so <code>randint(0, 256)</code> can return 256, one more than an 8-bit component can hold (<code>random.randrange(256)</code> is an equivalent fix). The base case draws exactly one line in a fresh color; because every line of the fractal is drawn by some level-0 call, every line gets its own color. The recursive step is the case study&#x27;s pseudocode: the two formulas find the corner where two half-length segments meet at a right angle. Since each level replaces every line with two, a level-N curve has 2 * (lines at level N - 1), which is 2 ** N: <code>countLines</code> mirrors the shape of <code>cCurve</code> but returns a number instead of drawing. In IDLE the real turtle needs <code>colormode = 255</code> (the book&#x27;s turtle.cfg) or <code>t.screen.colormode(255)</code> to accept RGB integers.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">import</span><span class="t-w"> </span><span class="t-nn">random</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">penturtle</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Turtle</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">ccurve</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">randomColor</span><span class="t-p">,</span> <span class="t-n">cCurve</span><span class="t-p">,</span> <span class="t-n">countLines</span>
+
+<span class="t-n">random</span><span class="t-o">.</span><span class="t-n">seed</span><span class="t-p">(</span><span class="t-mi">1035</span><span class="t-p">)</span>
+<span class="t-n">colors</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-n">randomColor</span><span class="t-p">()</span> <span class="t-k">for</span> <span class="t-n">count</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">3000</span><span class="t-p">)]</span>
+<span class="t-n">valid</span> <span class="t-o">=</span> <span class="t-nb">all</span><span class="t-p">(</span><span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">3</span> <span class="t-ow">and</span> <span class="t-nb">all</span><span class="t-p">(</span><span class="t-mi">0</span> <span class="t-o">&lt;=</span> <span class="t-n">part</span> <span class="t-o">&lt;=</span> <span class="t-mi">255</span> <span class="t-k">for</span> <span class="t-n">part</span> <span class="t-ow">in</span> <span class="t-n">c</span><span class="t-p">)</span>
+            <span class="t-k">for</span> <span class="t-n">c</span> <span class="t-ow">in</span> <span class="t-n">colors</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Every color is a valid RGB tuple:"</span><span class="t-p">,</span> <span class="t-n">valid</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Some component reached 0:"</span><span class="t-p">,</span> <span class="t-nb">any</span><span class="t-p">(</span><span class="t-mi">0</span> <span class="t-ow">in</span> <span class="t-n">c</span> <span class="t-k">for</span> <span class="t-n">c</span> <span class="t-ow">in</span> <span class="t-n">colors</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Some component reached 255:"</span><span class="t-p">,</span> <span class="t-nb">any</span><span class="t-p">(</span><span class="t-mi">255</span> <span class="t-ow">in</span> <span class="t-n">c</span> <span class="t-k">for</span> <span class="t-n">c</span> <span class="t-ow">in</span> <span class="t-n">colors</span><span class="t-p">))</span>
+
+<span class="t-k">for</span> <span class="t-n">level</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-mi">6</span><span class="t-p">):</span>
+    <span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+    <span class="t-n">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">)</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Level"</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">,</span> <span class="t-s2">"drew"</span><span class="t-p">,</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">lines</span><span class="t-p">()),</span> <span class="t-s2">"lines;"</span><span class="t-p">,</span>
+          <span class="t-s2">"countLines says"</span><span class="t-p">,</span> <span class="t-n">countLines</span><span class="t-p">(</span><span class="t-n">level</span><span class="t-p">))</span>
+
+<span class="t-n">level</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-nb">input</span><span class="t-p">(</span><span class="t-s2">"Level to trace: "</span><span class="t-p">))</span>
+<span class="t-n">t</span> <span class="t-o">=</span> <span class="t-n">Turtle</span><span class="t-p">()</span>
+<span class="t-n">cCurve</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-o">-</span><span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">,</span> <span class="t-n">level</span><span class="t-p">)</span>
+<span class="t-k">for</span> <span class="t-p">(</span><span class="t-n">start</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">)</span> <span class="t-ow">in</span> <span class="t-n">t</span><span class="t-o">.</span><span class="t-n">lines</span><span class="t-p">():</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"  "</span><span class="t-p">,</span> <span class="t-n">start</span><span class="t-p">,</span> <span class="t-s2">"-&gt;"</span><span class="t-p">,</span> <span class="t-n">end</span><span class="t-p">)</span>
+<span class="t-n">own</span> <span class="t-o">=</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-nb">set</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">lineColors</span><span class="t-p">()))</span> <span class="t-o">==</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">t</span><span class="t-o">.</span><span class="t-n">lines</span><span class="t-p">())</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Each line has its own color:"</span><span class="t-p">,</span> <span class="t-n">own</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"countLines(10) ="</span><span class="t-p">,</span> <span class="t-n">countLines</span><span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">))</span></code></pre><h3>Program input it receives</h3><pre class="output">2
+</pre><h3>Expected output</h3><pre class="output">Every color is a valid RGB tuple: True
+Some component reached 0: True
+Some component reached 255: True
+Level 0 drew 1 lines; countLines says 1
+Level 1 drew 2 lines; countLines says 2
+Level 2 drew 4 lines; countLines says 4
+Level 3 drew 8 lines; countLines says 8
+Level 4 drew 16 lines; countLines says 16
+Level 5 drew 32 lines; countLines says 32
+Level to trace:    (50.0, -50.0) -&gt; (0.0, -50.0)
+   (0.0, -50.0) -&gt; (0.0, 0.0)
+   (0.0, 0.0) -&gt; (0.0, 50.0)
+   (0.0, 50.0) -&gt; (50.0, 50.0)
+Each line has its own color: True
+countLines(10) = 1024
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>components range from 0 to 255<div class="small">in <code>randomColor</code></div></td><td><div><span class="tag">require</span> <code>randint\(\s*0\s*,\s*255\s*\)</code></div><div><span class="tag">require</span> <code>randrange\(\s*(0\s*,\s*)?256\s*\)</code></div><div><span class="tag">forbid</span> <code>randint\(\s*\d+\s*,\s*256\s*\)</code></div><div><span class="tag">forbid</span> <code>randint\(\s*[1-9]\d*\s*,</code></div></td></tr><tr><td>C2</td><td>R2</td><td>a new random pen color per line<div class="small">in <code>cCurve</code></div></td><td><div><span class="tag">require</span> <code>\.pencolor\s*\(\s*randomColor\s*\(\s*\)\s*\)|\.pencolor\s*\(\s*\w+\s*\)</code></div></td></tr><tr><td>C3</td><td>R3</td><td>the corner point formulas<div class="small">in <code>cCurve</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*x1\s*\+\s*x2\s*\+\s*y1\s*-\s*y2)(?=[\s\S]*x2\s*\+\s*y1\s*\+\s*y2\s*-\s*x1)</code></div></td></tr><tr><td>C4</td><td>R3</td><td>two recursive calls at <code>level - 1</code><div class="small">in <code>cCurve</code></div></td><td><div><span class="tag">require</span> <code>cCurve\s*\(\s*t\s*,\s*x1\s*,\s*y1\s*,\s*xm\s*,\s*ym\s*,\s*level\s*-\s*1\s*\)[\s\S]*cCurve\s*\(\s*t\s*,\s*xm\s*,\s*ym\s*,\s*x2\s*,\s*y2\s*,\s*level\s*-\s*1\s*\)</code></div></td></tr><tr><td>C5</td><td>R4</td><td><code>countLines</code> is recursive<div class="small">in <code>countLines</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*level\s*==\s*0|level\s*&lt;\s*1|not\s+level)(?=[\s\S]*countLines\s*\(\s*level\s*-\s*1\s*\))</code></div><div><span class="tag">forbid</span> <code>\.forward\s*\(|cCurve\s*\(|Turtle\s*\(</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · components range from 0 to 255</dt><dd><p><code>random.randint(a, b)</code> includes both a and b. An RGB component goes from 0 to 255 (8 bits, 256 values), so use <code>random.randint(0, 255)</code> for each of the three.</p></dd><dt>C2 · a new random pen color per line</dt><dd><p>In the <code>level == 0</code> branch, call <code>t.pencolor(randomColor())</code> before <code>drawLine</code>. Each level-0 call draws exactly one line, so this gives every line its own color.</p></dd><dt>C3 · the corner point formulas</dt><dd><p>Compute the corner with the case study&#x27;s formulas: <code>xm = (x1 + x2 + y1 - y2) // 2</code> and <code>ym = (x2 + y1 + y2 - x1) // 2</code>.</p></dd><dt>C4 · two recursive calls at <code>level - 1</code></dt><dd><p>Draw the two halves in order: <code>cCurve(t, x1, y1, xm, ym, level - 1)</code>, then <code>cCurve(t, xm, ym, x2, y2, level - 1)</code>. Passing <code>level - 1</code> moves each call toward the base case.</p></dd><dt>C5 · <code>countLines</code> is recursive</dt><dd><p>Give <code>countLines</code> the same shape as <code>cCurve</code>: a base case (<code>level == 0</code> returns 1) and a recursive step that uses <code>countLines(level - 1)</code>. It should count, not draw.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>For R1, check the documentation of <code>random.randint(a, b)</code>: is <code>b</code> one of the values it can return?</p></li><li><p>A level-0 call is the only place a line is drawn. If the pen color changes right there, how many lines share a color?</p></li><li><p>For <code>countLines</code>: a level-1 curve is two level-0 curves. A level-2 curve is two level-1 curves. Write that sentence as a return statement.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>Explain, using the structure of <code>cCurve</code>, why a level-N c-curve draws 2 ** N lines. How many lines does a level-10 curve draw?</p><div class="answer"><p>Every call above level 0 makes exactly two calls one level lower and draws nothing itself, so the number of level-0 calls doubles at each level. Only level-0 calls draw, one line each, giving 2 <strong> N lines. A level-10 curve draws 2 </strong> 10 = 1024 lines.</p></div></li><li><p>The case study turns off animation with <code>tracer(False)</code> for levels above 8. Using your line counts, explain why.</p><div class="answer"><p>The number of lines doubles with each level, so level 9 already draws 512 lines and level 12 draws 4096. Animating each line would take a long time, so the program builds the whole drawing in memory and shows it once with update().</p></div></li><li><p>How many bits does one RGB color take, and how many different colors could <code>randomColor</code> return?</p><div class="answer"><p>Three components of 8 bits each, 24 bits in total. Each component has 256 values, so there are 256 * 256 * 256 = 16,777,216 colors, which is 2 ** 24.</p></div></li></ol>
+<h2>Extension</h2><p>Write <code>curveLength(level)</code> that returns the total length of a c-curve from (50, -50) to (50, 50) without drawing it. Each level multiplies the length of every line by <code>1 / sqrt(2)</code> and doubles the number of lines. Compare its answer for level 3 with <code>t.report()</code> after <code>Run</code>.</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instructor guide · Traversing a grid of pixels: student ID photo filters</title>
+<style>
+:root{--paper:#FFFFFF;--ink:#1B1B18;--ink-2:#4A4944;--ink-3:#6A6962;--rule:#E2E0D8;--code-bg:#F7F6F2;--accent:#1F4E79;--accent-soft:#EAF0F6;
+  --c-kw:#7A2E8E;--c-str:#2E6B3A;--c-com:#6E6D66;--c-num:#A14C12;--c-fn:#1F4E79;--c-type:#0F6B6B;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--sans)}
+.wrap{max-width:52rem;margin:0 auto;padding:3rem 1rem 4rem}
+.private{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9B3127;border:1px solid #9B3127;display:inline-block;padding:.2rem .5rem;border-radius:4px}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-top:1.5rem}
+h1{font-family:var(--serif);font-size:2.2rem;line-height:1.15;margin:.4rem 0 1.5rem}
+h2{font-family:var(--serif);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-top:1.25rem;border-top:1px solid var(--rule)}
+h3{font-size:1rem;margin:1.5rem 0 .5rem}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.05em .3em;border-radius:4px}
+pre.code-block,pre.output{background:var(--code-bg);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow:auto;font:13px/1.6 var(--mono);margin:.5rem 0}
+pre code{background:none;padding:0}
+.file{font-family:var(--mono);font-size:.82rem;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.5rem 0}
+th,td{text-align:left;vertical-align:top;padding:.5rem .6rem;border-bottom:1px solid var(--rule)}
+th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+td code{word-break:break-all}
+.tag{font-size:.7rem;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.small{font-size:.85rem;color:var(--ink-3)}
+dt{font-weight:600;margin-top:1rem} dd{margin:.25rem 0 0 0;color:var(--ink-2)}
+.answer{background:var(--accent-soft);padding:.75rem 1rem;border-radius:8px;margin:.5rem 0 1rem}
+ol.reqs li{margin:.4rem 0}
+@media print{h2{break-after:avoid}pre{break-inside:avoid}}
+
+.t-k,.t-kd,.t-kn,.t-kr,.t-kt,.t-kc{color:var(--c-kw)}
+.t-s,.t-s1,.t-s2,.t-sa,.t-sb,.t-sc,.t-sd,.t-se,.t-sh,.t-si,.t-sx,.t-sr{color:var(--c-str)}
+.t-c,.t-c1,.t-cm,.t-cs,.t-cp,.t-ch{color:var(--c-com);font-style:italic}
+.t-m,.t-mi,.t-mf,.t-mh,.t-mo,.t-il{color:var(--c-num)}
+.t-nf,.t-fm{color:var(--c-fn)}
+.t-nc,.t-nn,.t-nt{color:var(--c-type)}
+.t-nb,.t-bp{color:var(--c-type)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="private">Instructor only &middot; do not post for students</span>
+  <div class="eyebrow">COP1035 · Python Programming · Lab 8.2a</div>
+  <h1>Traversing a grid of pixels: student ID photo filters</h1>
+<h2>Objectives</h2><ul><li>Visit every pixel of an image of any size with a row-major nested loop, using screen coordinates (x is the column, y is the row)</li><li>Unpack a pixel&#x27;s <code>(r, g, b)</code> tuple, compute with its parts and set a new tuple</li><li>Convert to grayscale with luminance weights, and generalize black and white into a two-color filter</li></ul>
+<h2>Requirements</h2><ol class="reqs"><li><strong>R1</strong> <code>grayscale</code> visits every pixel of any image in row-major order: the outer loop goes through the rows (<code>y</code> up to <code>getHeight()</code>), the inner loop through the columns (<code>x</code> up to <code>getWidth()</code>).</li><li><strong>R2</strong> <code>grayscale</code> uses the luminance weights: red times 0.299, green times 0.587, blue times 0.114, each converted with <code>int</code>, and sets the pixel to <code>(lum, lum, lum)</code>.</li><li><strong>R3</strong> <code>posterize(image, color)</code> visits every pixel and decides with the RGB average: below 128 is dark, 128 or above is light.</li><li><strong>R4</strong> <code>posterize</code> sets dark pixels to the <code>color</code> argument and light pixels to white <code>(255, 255, 255)</code>. No color is hard-coded for dark pixels.</li><li><strong>R5</strong> The test program&#x27;s grayscale values, the 1-by-5 strip and the poster match. <em>(verified by the program output)</em></li></ol>
+<h2>Before you code: warm-up and model answers</h2><ol><li><p>The sample photo is 4 pixels wide and 3 tall. The starter&#x27;s outer loop is <code>for y in range(image.getWidth())</code> and the inner one <code>for x in range(image.getHeight())</code>. Which <code>getPixel</code> call fails first, and which column is never visited?</p><div class="answer"><p>getPixel(0, 3) fails first: y runs 0 to 3 because the width is 4, but the rows are only 0 to 2. Column x = 3 is never visited, because x only goes to 2 (the height minus 1).</p></div></li><li><p>With the plain average, pure green (0, 255, 0) and pure blue (0, 0, 255) both become the same gray. Which one looks brighter to the human eye?</p><div class="answer"><p>Green. The eye is most sensitive to green and least to blue, so averaging makes blue areas too light and green areas too dark. Both average to 85.</p></div></li></ol>
+<h2>Starter files</h2><div class="file">filters.py</div><pre class="code-block"><code><span class="t-sd">"""filters.py - prepare student ID photos for the card printer and</span>
+<span class="t-sd">the event poster."""</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">images</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Image</span>   <span class="t-c1"># the real images module has the same Image methods</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">grayscale</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Converts the argument image to grayscale (changes it in place)."""</span>
+    <span class="t-c1"># TODO (R1): this traversal worked on last year's square photos but crashes</span>
+    <span class="t-c1"># on the new 4-by-3 ones. Fix it so it visits every pixel of any image.</span>
+    <span class="t-k">for</span> <span class="t-n">y</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getWidth</span><span class="t-p">()):</span>
+        <span class="t-k">for</span> <span class="t-n">x</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">()):</span>
+            <span class="t-p">(</span><span class="t-n">r</span><span class="t-p">,</span> <span class="t-n">g</span><span class="t-p">,</span> <span class="t-n">b</span><span class="t-p">)</span> <span class="t-o">=</span> <span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span>
+            <span class="t-c1"># TODO (R2): weight each component by its luminance instead</span>
+            <span class="t-c1"># of averaging.</span>
+            <span class="t-n">average</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">r</span> <span class="t-o">+</span> <span class="t-n">g</span> <span class="t-o">+</span> <span class="t-n">b</span><span class="t-p">)</span> <span class="t-o">//</span> <span class="t-mi">3</span>
+            <span class="t-n">image</span><span class="t-o">.</span><span class="t-n">setPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-n">average</span><span class="t-p">,</span> <span class="t-n">average</span><span class="t-p">,</span> <span class="t-n">average</span><span class="t-p">))</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">posterize</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-p">,</span> <span class="t-n">color</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Converts the argument image to two colors (changes it in place):</span>
+<span class="t-sd">    dark pixels become the given color, light pixels become white."""</span>
+    <span class="t-c1"># TODO (R3): visit every pixel. A pixel whose RGB average is below</span>
+    <span class="t-c1"># 128 is dark.</span>
+    <span class="t-c1"># TODO (R4): dark pixels get the color argument, light ones get white.</span>
+    <span class="t-k">pass</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">samplePhoto</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns a small 4-by-3 test photo."""</span>
+    <span class="t-k">return</span> <span class="t-n">Image</span><span class="t-p">([</span>
+        <span class="t-p">[(</span><span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">)],</span>
+        <span class="t-p">[(</span><span class="t-mi">200</span><span class="t-p">,</span> <span class="t-mi">180</span><span class="t-p">,</span> <span class="t-mi">40</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">,</span> <span class="t-mi">20</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">90</span><span class="t-p">,</span> <span class="t-mi">200</span><span class="t-p">,</span> <span class="t-mi">250</span><span class="t-p">)],</span>
+        <span class="t-p">[(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">127</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">129</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">250</span><span class="t-p">,</span> <span class="t-mi">100</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">60</span><span class="t-p">,</span> <span class="t-mi">60</span><span class="t-p">,</span> <span class="t-mi">200</span><span class="t-p">)]])</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Shows a sample photo before and after each filter."""</span>
+    <span class="t-n">photo</span> <span class="t-o">=</span> <span class="t-n">samplePhoto</span><span class="t-p">()</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">photo</span><span class="t-p">)</span>
+    <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Grayscale:"</span><span class="t-p">)</span>
+    <span class="t-n">grayscale</span><span class="t-p">(</span><span class="t-n">photo</span><span class="t-p">)</span>
+    <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Poster in school navy:"</span><span class="t-p">)</span>
+    <span class="t-n">poster</span> <span class="t-o">=</span> <span class="t-n">samplePhoto</span><span class="t-p">()</span>
+    <span class="t-n">posterize</span><span class="t-p">(</span><span class="t-n">poster</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">51</span><span class="t-p">,</span> <span class="t-mi">102</span><span class="t-p">))</span>
+    <span class="t-n">poster</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre><div class="file">images.py (read-only for students)</div><pre class="code-block"><code><span class="t-sd">"""images.py - a text-mode stand-in for the book's images module.</span>
+
+<span class="t-sd">The Image class has the same methods as Table 8-4 (getWidth, getHeight,</span>
+<span class="t-sd">getPixel, setPixel, clone, draw, save), so functions you write with it also</span>
+<span class="t-sd">run with the real images module. Two differences:</span>
+<span class="t-sd">  - Build an image from rows of RGB tuples, Image(rows), instead of a GIF file</span>
+<span class="t-sd">    (Image(width, height) still makes a blank image, as in the book).</span>
+<span class="t-sd">  - draw() prints the pixels instead of opening a window; a blank (transparent)</span>
+<span class="t-sd">    pixel prints as  --  .</span>
+<span class="t-sd">Extra for the labs (NOT in the real module): image.blankPixels().</span>
+<span class="t-sd">"""</span>
+
+
+<span class="t-k">class</span><span class="t-w"> </span><span class="t-nc">Image</span><span class="t-p">:</span>
+<span class="t-w">    </span><span class="t-sd">"""A grid of RGB pixels with (0, 0) at the upper-left corner."""</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-fm">__init__</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-o">*</span><span class="t-n">args</span><span class="t-p">):</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">filename</span> <span class="t-o">=</span> <span class="t-s2">""</span>
+        <span class="t-k">if</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">2</span> <span class="t-ow">and</span> <span class="t-nb">all</span><span class="t-p">(</span><span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">a</span><span class="t-p">,</span> <span class="t-nb">int</span><span class="t-p">)</span> <span class="t-k">for</span> <span class="t-n">a</span> <span class="t-ow">in</span> <span class="t-n">args</span><span class="t-p">):</span>
+            <span class="t-p">(</span><span class="t-n">width</span><span class="t-p">,</span> <span class="t-n">height</span><span class="t-p">)</span> <span class="t-o">=</span> <span class="t-n">args</span>
+            <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span> <span class="t-o">=</span> <span class="t-p">[[</span><span class="t-kc">None</span><span class="t-p">]</span> <span class="t-o">*</span> <span class="t-n">width</span> <span class="t-k">for</span> <span class="t-n">y</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">height</span><span class="t-p">)]</span>
+        <span class="t-k">elif</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">1</span> <span class="t-ow">and</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">],</span> <span class="t-nb">list</span><span class="t-p">):</span>
+            <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-nb">list</span><span class="t-p">(</span><span class="t-n">row</span><span class="t-p">)</span> <span class="t-k">for</span> <span class="t-n">row</span> <span class="t-ow">in</span> <span class="t-n">args</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">]]</span>
+            <span class="t-k">for</span> <span class="t-n">row</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">:</span>
+                <span class="t-k">for</span> <span class="t-n">p</span> <span class="t-ow">in</span> <span class="t-n">row</span><span class="t-p">:</span>
+                    <span class="t-n">_checkRGB</span><span class="t-p">(</span><span class="t-n">p</span><span class="t-p">)</span>
+        <span class="t-k">else</span><span class="t-p">:</span>
+            <span class="t-k">raise</span> <span class="t-ne">ValueError</span><span class="t-p">(</span><span class="t-s2">"this stand-in builds Image(width, height) or "</span>
+                             <span class="t-s2">"Image(rows); it cannot open image files"</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">getWidth</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the width in pixels."""</span>
+        <span class="t-k">return</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">[</span><span class="t-mi">0</span><span class="t-p">])</span> <span class="t-k">if</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span> <span class="t-k">else</span> <span class="t-mi">0</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">getHeight</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the height in pixels."""</span>
+        <span class="t-k">return</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">getPixel</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns the (r, g, b) tuple at column x, row y."""</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_checkPosition</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span>
+        <span class="t-n">p</span> <span class="t-o">=</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">[</span><span class="t-n">y</span><span class="t-p">][</span><span class="t-n">x</span><span class="t-p">]</span>
+        <span class="t-k">return</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">)</span> <span class="t-k">if</span> <span class="t-n">p</span> <span class="t-ow">is</span> <span class="t-kc">None</span> <span class="t-k">else</span> <span class="t-n">p</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">setPixel</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">,</span> <span class="t-n">rgb</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Replaces the pixel at column x, row y with the tuple (r, g, b)."""</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_checkPosition</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span>
+        <span class="t-n">_checkRGB</span><span class="t-p">(</span><span class="t-n">rgb</span><span class="t-p">)</span>
+        <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">[</span><span class="t-n">y</span><span class="t-p">][</span><span class="t-n">x</span><span class="t-p">]</span> <span class="t-o">=</span> <span class="t-nb">tuple</span><span class="t-p">(</span><span class="t-n">rgb</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">clone</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns a new image with the same pixels; changing one leaves</span>
+<span class="t-sd">        the other alone."""</span>
+        <span class="t-n">copy</span> <span class="t-o">=</span> <span class="t-n">Image</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">getWidth</span><span class="t-p">(),</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">())</span>
+        <span class="t-n">copy</span><span class="t-o">.</span><span class="t-n">_pixels</span> <span class="t-o">=</span> <span class="t-p">[</span><span class="t-nb">list</span><span class="t-p">(</span><span class="t-n">row</span><span class="t-p">)</span> <span class="t-k">for</span> <span class="t-n">row</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">]</span>
+        <span class="t-k">return</span> <span class="t-n">copy</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">draw</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Prints the pixels, one row per line (the real one opens a window)."""</span>
+        <span class="t-k">for</span> <span class="t-n">row</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">:</span>
+            <span class="t-n">cells</span> <span class="t-o">=</span> <span class="t-p">[]</span>
+            <span class="t-k">for</span> <span class="t-n">p</span> <span class="t-ow">in</span> <span class="t-n">row</span><span class="t-p">:</span>
+                <span class="t-k">if</span> <span class="t-n">p</span> <span class="t-ow">is</span> <span class="t-kc">None</span><span class="t-p">:</span>
+                    <span class="t-n">cells</span><span class="t-o">.</span><span class="t-n">append</span><span class="t-p">(</span><span class="t-s2">"     --     "</span><span class="t-p">)</span>
+                <span class="t-k">else</span><span class="t-p">:</span>
+                    <span class="t-n">cells</span><span class="t-o">.</span><span class="t-n">append</span><span class="t-p">(</span><span class="t-s2">"(</span><span class="t-si">%3d</span><span class="t-s2">,</span><span class="t-si">%3d</span><span class="t-s2">,</span><span class="t-si">%3d</span><span class="t-s2">)"</span> <span class="t-o">%</span> <span class="t-n">p</span><span class="t-p">)</span>
+            <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">" "</span><span class="t-o">.</span><span class="t-n">join</span><span class="t-p">(</span><span class="t-n">cells</span><span class="t-p">))</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">save</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">filename</span><span class="t-o">=</span><span class="t-kc">None</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Records the filename (the real module writes a GIF file)."""</span>
+        <span class="t-k">if</span> <span class="t-n">filename</span> <span class="t-ow">is</span> <span class="t-ow">not</span> <span class="t-kc">None</span><span class="t-p">:</span>
+            <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">filename</span><span class="t-o">.</span><span class="t-n">endswith</span><span class="t-p">(</span><span class="t-s2">".gif"</span><span class="t-p">):</span>
+                <span class="t-n">filename</span> <span class="t-o">+=</span> <span class="t-s2">".gif"</span>
+            <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">filename</span> <span class="t-o">=</span> <span class="t-n">filename</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">blankPixels</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+<span class="t-w">        </span><span class="t-sd">"""Returns how many pixels have never been given a color."""</span>
+        <span class="t-k">return</span> <span class="t-nb">sum</span><span class="t-p">(</span><span class="t-n">row</span><span class="t-o">.</span><span class="t-n">count</span><span class="t-p">(</span><span class="t-kc">None</span><span class="t-p">)</span> <span class="t-k">for</span> <span class="t-n">row</span> <span class="t-ow">in</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">_pixels</span><span class="t-p">)</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-fm">__str__</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">):</span>
+        <span class="t-k">return</span> <span class="t-p">(</span><span class="t-s2">"Filename: "</span> <span class="t-o">+</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">filename</span> <span class="t-o">+</span>
+                <span class="t-s2">"</span><span class="t-se">\n</span><span class="t-s2">Width: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">getWidth</span><span class="t-p">())</span> <span class="t-o">+</span>
+                <span class="t-s2">"</span><span class="t-se">\n</span><span class="t-s2">Height: "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">()))</span>
+
+    <span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_checkPosition</span><span class="t-p">(</span><span class="t-bp">self</span><span class="t-p">,</span> <span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">):</span>
+        <span class="t-n">w</span> <span class="t-o">=</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">getWidth</span><span class="t-p">()</span>
+        <span class="t-n">h</span> <span class="t-o">=</span> <span class="t-bp">self</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">()</span>
+        <span class="t-n">inside</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-nb">int</span><span class="t-p">)</span> <span class="t-ow">and</span> <span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">y</span><span class="t-p">,</span> <span class="t-nb">int</span><span class="t-p">)</span> <span class="t-ow">and</span>
+                  <span class="t-mi">0</span> <span class="t-o">&lt;=</span> <span class="t-n">x</span> <span class="t-o">&lt;</span> <span class="t-n">w</span> <span class="t-ow">and</span> <span class="t-mi">0</span> <span class="t-o">&lt;=</span> <span class="t-n">y</span> <span class="t-o">&lt;</span> <span class="t-n">h</span><span class="t-p">)</span>
+        <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-n">inside</span><span class="t-p">:</span>
+            <span class="t-k">raise</span> <span class="t-ne">IndexError</span><span class="t-p">(</span><span class="t-s2">"pixel ("</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">", "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">y</span><span class="t-p">)</span> <span class="t-o">+</span>
+                             <span class="t-s2">") is outside this "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">w</span><span class="t-p">)</span> <span class="t-o">+</span> <span class="t-s2">" x "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">h</span><span class="t-p">)</span> <span class="t-o">+</span>
+                             <span class="t-s2">" image: x goes 0 to "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">w</span> <span class="t-o">-</span> <span class="t-mi">1</span><span class="t-p">)</span> <span class="t-o">+</span>
+                             <span class="t-s2">", y goes 0 to "</span> <span class="t-o">+</span> <span class="t-nb">str</span><span class="t-p">(</span><span class="t-n">h</span> <span class="t-o">-</span> <span class="t-mi">1</span><span class="t-p">))</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">_checkRGB</span><span class="t-p">(</span><span class="t-n">rgb</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Raises ValueError unless rgb is three ints from 0 to 255."""</span>
+    <span class="t-k">if</span> <span class="t-ow">not</span> <span class="t-p">(</span><span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">rgb</span><span class="t-p">,</span> <span class="t-nb">tuple</span><span class="t-p">)</span> <span class="t-ow">and</span> <span class="t-nb">len</span><span class="t-p">(</span><span class="t-n">rgb</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-mi">3</span> <span class="t-ow">and</span>
+            <span class="t-nb">all</span><span class="t-p">(</span><span class="t-nb">isinstance</span><span class="t-p">(</span><span class="t-n">c</span><span class="t-p">,</span> <span class="t-nb">int</span><span class="t-p">)</span> <span class="t-ow">and</span> <span class="t-mi">0</span> <span class="t-o">&lt;=</span> <span class="t-n">c</span> <span class="t-o">&lt;=</span> <span class="t-mi">255</span> <span class="t-k">for</span> <span class="t-n">c</span> <span class="t-ow">in</span> <span class="t-n">rgb</span><span class="t-p">)):</span>
+        <span class="t-k">raise</span> <span class="t-ne">ValueError</span><span class="t-p">(</span><span class="t-s2">"a pixel is a tuple of three ints from 0 to 255, "</span>
+                         <span class="t-s2">"got "</span> <span class="t-o">+</span> <span class="t-nb">repr</span><span class="t-p">(</span><span class="t-n">rgb</span><span class="t-p">))</span></code></pre>
+<h2>Solution</h2><div class="file">filters.py</div><pre class="code-block"><code><span class="t-sd">"""filters.py - prepare student ID photos for the card printer and</span>
+<span class="t-sd">the event poster."""</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">images</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Image</span>   <span class="t-c1"># the real images module has the same Image methods</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">grayscale</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Converts the argument image to grayscale (changes it in place)."""</span>
+    <span class="t-k">for</span> <span class="t-n">y</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">()):</span>
+        <span class="t-k">for</span> <span class="t-n">x</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getWidth</span><span class="t-p">()):</span>
+            <span class="t-p">(</span><span class="t-n">r</span><span class="t-p">,</span> <span class="t-n">g</span><span class="t-p">,</span> <span class="t-n">b</span><span class="t-p">)</span> <span class="t-o">=</span> <span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span>
+            <span class="t-n">r</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-n">r</span> <span class="t-o">*</span> <span class="t-mf">0.299</span><span class="t-p">)</span>
+            <span class="t-n">g</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-n">g</span> <span class="t-o">*</span> <span class="t-mf">0.587</span><span class="t-p">)</span>
+            <span class="t-n">b</span> <span class="t-o">=</span> <span class="t-nb">int</span><span class="t-p">(</span><span class="t-n">b</span> <span class="t-o">*</span> <span class="t-mf">0.114</span><span class="t-p">)</span>
+            <span class="t-n">lum</span> <span class="t-o">=</span> <span class="t-n">r</span> <span class="t-o">+</span> <span class="t-n">g</span> <span class="t-o">+</span> <span class="t-n">b</span>
+            <span class="t-n">image</span><span class="t-o">.</span><span class="t-n">setPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-n">lum</span><span class="t-p">,</span> <span class="t-n">lum</span><span class="t-p">,</span> <span class="t-n">lum</span><span class="t-p">))</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">posterize</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-p">,</span> <span class="t-n">color</span><span class="t-p">):</span>
+<span class="t-w">    </span><span class="t-sd">"""Converts the argument image to two colors (changes it in place):</span>
+<span class="t-sd">    dark pixels become the given color, light pixels become white."""</span>
+    <span class="t-n">whitePixel</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">)</span>
+    <span class="t-k">for</span> <span class="t-n">y</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">()):</span>
+        <span class="t-k">for</span> <span class="t-n">x</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getWidth</span><span class="t-p">()):</span>
+            <span class="t-p">(</span><span class="t-n">r</span><span class="t-p">,</span> <span class="t-n">g</span><span class="t-p">,</span> <span class="t-n">b</span><span class="t-p">)</span> <span class="t-o">=</span> <span class="t-n">image</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span>
+            <span class="t-n">average</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-n">r</span> <span class="t-o">+</span> <span class="t-n">g</span> <span class="t-o">+</span> <span class="t-n">b</span><span class="t-p">)</span> <span class="t-o">//</span> <span class="t-mi">3</span>
+            <span class="t-k">if</span> <span class="t-n">average</span> <span class="t-o">&lt;</span> <span class="t-mi">128</span><span class="t-p">:</span>
+                <span class="t-n">image</span><span class="t-o">.</span><span class="t-n">setPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">,</span> <span class="t-n">color</span><span class="t-p">)</span>
+            <span class="t-k">else</span><span class="t-p">:</span>
+                <span class="t-n">image</span><span class="t-o">.</span><span class="t-n">setPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">,</span> <span class="t-n">whitePixel</span><span class="t-p">)</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">samplePhoto</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Returns a small 4-by-3 test photo."""</span>
+    <span class="t-k">return</span> <span class="t-n">Image</span><span class="t-p">([</span>
+        <span class="t-p">[(</span><span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">)],</span>
+        <span class="t-p">[(</span><span class="t-mi">200</span><span class="t-p">,</span> <span class="t-mi">180</span><span class="t-p">,</span> <span class="t-mi">40</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">10</span><span class="t-p">,</span> <span class="t-mi">20</span><span class="t-p">,</span> <span class="t-mi">30</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">90</span><span class="t-p">,</span> <span class="t-mi">200</span><span class="t-p">,</span> <span class="t-mi">250</span><span class="t-p">)],</span>
+        <span class="t-p">[(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">127</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">129</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">250</span><span class="t-p">,</span> <span class="t-mi">100</span><span class="t-p">,</span> <span class="t-mi">50</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">60</span><span class="t-p">,</span> <span class="t-mi">60</span><span class="t-p">,</span> <span class="t-mi">200</span><span class="t-p">)]])</span>
+
+
+<span class="t-k">def</span><span class="t-w"> </span><span class="t-nf">main</span><span class="t-p">():</span>
+<span class="t-w">    </span><span class="t-sd">"""Shows a sample photo before and after each filter."""</span>
+    <span class="t-n">photo</span> <span class="t-o">=</span> <span class="t-n">samplePhoto</span><span class="t-p">()</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-n">photo</span><span class="t-p">)</span>
+    <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Grayscale:"</span><span class="t-p">)</span>
+    <span class="t-n">grayscale</span><span class="t-p">(</span><span class="t-n">photo</span><span class="t-p">)</span>
+    <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+    <span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Poster in school navy:"</span><span class="t-p">)</span>
+    <span class="t-n">poster</span> <span class="t-o">=</span> <span class="t-n">samplePhoto</span><span class="t-p">()</span>
+    <span class="t-n">posterize</span><span class="t-p">(</span><span class="t-n">poster</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">51</span><span class="t-p">,</span> <span class="t-mi">102</span><span class="t-p">))</span>
+    <span class="t-n">poster</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+
+
+<span class="t-k">if</span> <span class="t-vm">__name__</span> <span class="t-o">==</span> <span class="t-s2">"__main__"</span><span class="t-p">:</span>
+    <span class="t-n">main</span><span class="t-p">()</span></code></pre>
+<h3>Walkthrough</h3><p>Screen coordinates are (column, row): <code>getPixel(x, y)</code> takes x up to <code>getWidth() - 1</code> and y up to <code>getHeight() - 1</code>. The starter&#x27;s loops took their ranges from the wrong dimension, which is invisible on a square image and fails on the first wide one (y reaches 3 on a 3-row image). The weights follow the reading&#x27;s <code>grayscale</code>; truncating each product separately is why white becomes (254, 254, 254): 76 + 149 + 29. <code>posterize</code> is the reading&#x27;s <code>blackAndWhite</code> with the dark color taken from a parameter. A column-major traversal (x outer, y inner) also visits every pixel and is accepted, as are <code>width = image.getWidth()</code> style variables. The stand-in rejects floats in a pixel, so a missing <code>int</code> shows up as a clear error.</p>
+<h2>Test program</h2><p class="small">Students run it in the lab page (in the browser); the page compares the output automatically.</p><div class="file">run_tests.py</div><pre class="code-block"><code><span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">images</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">Image</span>
+<span class="t-kn">from</span><span class="t-w"> </span><span class="t-nn">filters</span><span class="t-w"> </span><span class="t-kn">import</span> <span class="t-n">grayscale</span><span class="t-p">,</span> <span class="t-n">posterize</span><span class="t-p">,</span> <span class="t-n">samplePhoto</span>
+
+<span class="t-n">photo</span> <span class="t-o">=</span> <span class="t-n">samplePhoto</span><span class="t-p">()</span>
+<span class="t-n">grayscale</span><span class="t-p">(</span><span class="t-n">photo</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Red becomes:"</span><span class="t-p">,</span> <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Green becomes:"</span><span class="t-p">,</span> <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Blue becomes:"</span><span class="t-p">,</span> <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">2</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"White becomes:"</span><span class="t-p">,</span> <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Bottom-right corner:"</span><span class="t-p">,</span> <span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">3</span><span class="t-p">,</span> <span class="t-mi">2</span><span class="t-p">))</span>
+<span class="t-n">photo</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+
+<span class="t-n">strip</span> <span class="t-o">=</span> <span class="t-n">Image</span><span class="t-p">([[(</span><span class="t-mi">100</span><span class="t-p">,</span> <span class="t-mi">150</span><span class="t-p">,</span> <span class="t-mi">200</span><span class="t-p">)],</span> <span class="t-p">[(</span><span class="t-mi">10</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">,</span> <span class="t-mi">10</span><span class="t-p">)],</span> <span class="t-p">[(</span><span class="t-mi">240</span><span class="t-p">,</span> <span class="t-mi">230</span><span class="t-p">,</span> <span class="t-mi">220</span><span class="t-p">)],</span>
+               <span class="t-p">[(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">)],</span> <span class="t-p">[(</span><span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">)]])</span>
+<span class="t-n">grayscale</span><span class="t-p">(</span><span class="t-n">strip</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"A 1-by-5 strip:"</span><span class="t-p">)</span>
+<span class="t-nb">print</span><span class="t-p">([</span><span class="t-n">strip</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)[</span><span class="t-mi">0</span><span class="t-p">]</span> <span class="t-k">for</span> <span class="t-n">y</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">strip</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">())])</span>
+
+<span class="t-n">navy</span> <span class="t-o">=</span> <span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">51</span><span class="t-p">,</span> <span class="t-mi">102</span><span class="t-p">)</span>
+<span class="t-n">poster</span> <span class="t-o">=</span> <span class="t-n">samplePhoto</span><span class="t-p">()</span>
+<span class="t-n">posterize</span><span class="t-p">(</span><span class="t-n">poster</span><span class="t-p">,</span> <span class="t-n">navy</span><span class="t-p">)</span>
+<span class="t-n">poster</span><span class="t-o">.</span><span class="t-n">draw</span><span class="t-p">()</span>
+<span class="t-n">count</span> <span class="t-o">=</span> <span class="t-mi">0</span>
+<span class="t-k">for</span> <span class="t-n">y</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">poster</span><span class="t-o">.</span><span class="t-n">getHeight</span><span class="t-p">()):</span>
+    <span class="t-k">for</span> <span class="t-n">x</span> <span class="t-ow">in</span> <span class="t-nb">range</span><span class="t-p">(</span><span class="t-n">poster</span><span class="t-o">.</span><span class="t-n">getWidth</span><span class="t-p">()):</span>
+        <span class="t-k">if</span> <span class="t-n">poster</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-n">x</span><span class="t-p">,</span> <span class="t-n">y</span><span class="t-p">)</span> <span class="t-o">==</span> <span class="t-n">navy</span><span class="t-p">:</span>
+            <span class="t-n">count</span> <span class="t-o">+=</span> <span class="t-mi">1</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Navy pixels:"</span><span class="t-p">,</span> <span class="t-n">count</span><span class="t-p">)</span>
+<span class="t-n">gold</span> <span class="t-o">=</span> <span class="t-n">Image</span><span class="t-p">([[(</span><span class="t-mi">127</span><span class="t-p">,</span> <span class="t-mi">127</span><span class="t-p">,</span> <span class="t-mi">127</span><span class="t-p">),</span> <span class="t-p">(</span><span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">,</span> <span class="t-mi">128</span><span class="t-p">)]])</span>
+<span class="t-n">posterize</span><span class="t-p">(</span><span class="t-n">gold</span><span class="t-p">,</span> <span class="t-p">(</span><span class="t-mi">255</span><span class="t-p">,</span> <span class="t-mi">200</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Average 127 becomes:"</span><span class="t-p">,</span> <span class="t-n">gold</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">0</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">))</span>
+<span class="t-nb">print</span><span class="t-p">(</span><span class="t-s2">"Average 128 becomes:"</span><span class="t-p">,</span> <span class="t-n">gold</span><span class="t-o">.</span><span class="t-n">getPixel</span><span class="t-p">(</span><span class="t-mi">1</span><span class="t-p">,</span> <span class="t-mi">0</span><span class="t-p">))</span></code></pre><h3>Expected output</h3><pre class="output">Red becomes: (76, 76, 76)
+Green becomes: (149, 149, 149)
+Blue becomes: (29, 29, 29)
+White becomes: (254, 254, 254)
+Bottom-right corner: (74, 74, 74)
+( 76, 76, 76) (149,149,149) ( 29, 29, 29) (254,254,254)
+(168,168,168) ( 16, 16, 16) (127,127,127) (171,171,171)
+(  0,  0,  0) (126,126,126) (137,137,137) ( 74, 74, 74)
+A 1-by-5 strip:
+[139, 8, 231, 104, 225]
+(  0, 51,102) (  0, 51,102) (  0, 51,102) (255,255,255)
+(255,255,255) (  0, 51,102) (255,255,255) (255,255,255)
+(  0, 51,102) (255,255,255) (255,255,255) (  0, 51,102)
+Navy pixels: 6
+Average 127 becomes: (255, 200, 0)
+Average 128 becomes: (255, 255, 255)
+</pre>
+<h2>Structure checks</h2><p class="small">Patterns run on the student's code with comments removed and string contents blanked (unless strings are included; HTML attribute values are never blanked). Matching is case-sensitive unless flags contain <code>i</code>.</p><table><thead><tr><th>Check</th><th>Req.</th><th>What it looks for</th><th>Patterns</th></tr></thead><tbody><tr><td>C1</td><td>R1</td><td>rows come from the height, columns from the width<div class="small">in <code>grayscale</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*for\s+y\s+in\s+range\(\s*(image\.getHeight\(\s*\)|height)\s*\))(?=[\s\S]*for\s+x\s+in\s+range\(\s*(image\.getWidth\(\s*\)|width)\s*\))</code></div><div><span class="tag">forbid</span> <code>for\s+y\s+in\s+range\(\s*(image\.getWidth|width)</code></div><div><span class="tag">forbid</span> <code>for\s+x\s+in\s+range\(\s*(image\.getHeight|height)</code></div></td></tr><tr><td>C2</td><td>R2</td><td>luminance weights<div class="small">in <code>grayscale</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*0?\.299)(?=[\s\S]*0?\.587)(?=[\s\S]*0?\.114)</code></div></td></tr><tr><td>C3</td><td>R2</td><td>integers, not the plain average<div class="small">in <code>grayscale</code></div></td><td><div><span class="tag">require</span> <code>\bint\s*\(</code></div><div><span class="tag">forbid</span> <code>//\s*3</code></div></td></tr><tr><td>C4</td><td>R3</td><td>every pixel, judged by its average<div class="small">in <code>posterize</code></div></td><td><div><span class="tag">require</span> <code>^(?=[\s\S]*for\s+\w+\s+in\s+range\([\s\S]*for\s+\w+\s+in\s+range\()(?=[\s\S]*(&lt;\s*128|&gt;=\s*128|&lt;=\s*127|&gt;\s*127))</code></div></td></tr><tr><td>C5</td><td>R4</td><td>dark pixels get the <code>color</code> argument<div class="small">in <code>posterize</code></div></td><td><div><span class="tag">require</span> <code>setPixel\s*\(\s*x\s*,\s*y\s*,\s*color\s*\)</code></div><div><span class="tag">forbid</span> <code>\(\s*0\s*,\s*0\s*,\s*0\s*\)</code></div></td></tr></tbody></table>
+<h2>Messages students see when a check fails</h2><dl><dt>C1 · rows come from the height, columns from the width</dt><dd><p>In screen coordinates, x is the column and y is the row. Loop <code>for y in range(image.getHeight()):</code> and inside it <code>for x in range(image.getWidth()):</code>, so x never passes the last column and y never passes the last row.</p></dd><dt>C2 · luminance weights</dt><dd><p>Weight the components by how bright they look to the eye: <code>r * 0.299</code>, <code>g * 0.587</code>, <code>b * 0.114</code>. Green looks brightest and blue darkest, so a plain average misjudges them.</p></dd><dt>C3 · integers, not the plain average</dt><dd><p>Replace the <code>// 3</code> average with the weighted sum, and convert with <code>int(...)</code>: a pixel&#x27;s components must be integers, and <code>0.299 * r</code> is a float.</p></dd><dt>C4 · every pixel, judged by its average</dt><dd><p>Use the same nested loops as <code>grayscale</code>, compute <code>(r + g + b) // 3</code> for each pixel, and compare it with 128, as the reading&#x27;s <code>blackAndWhite</code> does.</p></dd><dt>C5 · dark pixels get the <code>color</code> argument</dt><dd><p>Pass the parameter itself: <code>image.setPixel(x, y, color)</code>. That is what makes <code>posterize</code> a generalization of <code>blackAndWhite</code>: the caller chooses the dark color.</p></dd></dl>
+<h2>Progressive hints</h2><ol><li><p>Run the starter and read the last line of the error: which coordinate is outside the image, and which loop produced it?</p></li><li><p>Unpack first, then compute: <code>(r, g, b) = image.getPixel(x, y)</code>. Each weighted part needs <code>int(...)</code> before you add them up.</p></li><li><p><code>posterize</code> is <code>blackAndWhite</code> with one change: the dark color comes from the <code>color</code> parameter instead of <code>(0, 0, 0)</code>.</p></li></ol>
+<h2>Reflection: questions and model answers</h2><ol><li><p>White (255, 255, 255) came out as (254, 254, 254). Explain exactly where the missing 1 went.</p><div class="answer"><p>Each product is truncated separately with int: int(255 * 0.299) = 76, int(255 * 0.587) = 149 and int(255 * 0.114) = 29, which add up to 254. The fractions .245, .685 and .07 that were dropped add up to about 1. Rounding the total, int(r * 0.299 + g * 0.587 + b * 0.114 + 0.5), would keep white at 255.</p></div></li><li><p><code>grayscale</code> and <code>posterize</code> change the image they receive and return nothing. When is that a good design, and when would you rather return a new image?</p><div class="answer"><p>Changing the image in place saves memory and suits a pipeline where the original isn&#x27;t needed again. But it destroys the original, so if the program must keep it (to compare, undo, or make the card and the poster from the same photo) it should work on a clone or return a new image. That is why main builds a second samplePhoto for the poster.</p></div></li><li><p>Why does a pixel at average 127 become navy while one at 128 becomes white? Is 128 a good threshold for every photo?</p><div class="answer"><p>The test is average &lt; 128, so 127 counts as dark and 128 as light; 128 is the midpoint of 0 to 255. It&#x27;s a reasonable default, but a dark photo would turn almost all navy and a bright one almost all white. A better poster might take the threshold as a parameter or use the photo&#x27;s own average brightness.</p></div></li></ol>
+<h2>Extension</h2><p>Write <code>invert(image)</code> (the reading&#x27;s Programming Exercise 7): each component becomes 255 minus itself. Predict what inverting a grayscale image twice gives, then check it with <code>draw()</code>.</p>
+<h2>Rubric</h2><p class="small">Default rubric; replace with your own in the spec (<code>rubric</code>).</p><table><thead><tr><th>Criterion</th><th>Points</th><th>Evidence</th></tr></thead><tbody><tr><td>Requirements</td><td>4</td><td>The code meets each requirement. The lab&#x27;s checks are a guide; the code itself is also read.</td></tr><tr><td>Behaviour</td><td>3</td><td>The test program&#x27;s output matches the expected output.</td></tr><tr><td>Reflection</td><td>2</td><td>Answers explain <em>why</em>, in your own words, using the reading&#x27;s terms.</td></tr><tr><td>Code quality</td><td>1</td><td>Readable names, consistent indentation, no leftover dead code.</td></tr><tr><td><strong>Total</strong></td><td><strong>10</strong></td><td></td></tr></tbody></table>
+<h2>Notes for posting</h2><ul><li>Solution policy: <strong>after_attempts</strong>. The solution is encoded inside the student page, not secured: a determined student can extract it. Use <code>"solution_policy": "never"</code> for graded work.</li><li>The expected output is hidden until a student has compared their own output once. The report says whether the expected output was on screen before the student's output matched, and whether the output was produced in the page or pasted; when in doubt, run their code yourself.</li><li>Python runs in the browser with Pyodide, downloaded from a CDN on first use (about 12 MB, then cached). It needs the page to be opened from a web address (Blackboard is fine), not as a file on disk.</li><li>Students submit the lab report (.txt) and their code file(s) to a Blackboard Assignment; the assignment text is in <code>blackboard/</code>.</li><li>Keep this guide out of student-visible content areas.</li></ul>
+</div>
+</body>
+</html>

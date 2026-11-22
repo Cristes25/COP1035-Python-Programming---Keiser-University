@@ -1,0 +1,594 @@
+{
+ "course": "COP1035 · Python Programming",
+ "collection_title": "Chapter 8 labs: Simple Graphics and Image Processing",
+ "collection_intro": "Four hands-on labs for sections 8.1 and 8.2 of *Fundamentals of Python: First Programs*. Each one runs in your browser: read the given code, predict, write, run the test program and explain your choices. Turtle windows and GIF images can't open in a browser, so the labs use small stand-in modules with the same methods as the book's: your code runs unchanged in IDLE. Your work saves as you type.",
+ "theme": "harbor",
+ "language": "python",
+ "labs": [
+  {
+   "id": "8.1a",
+   "title": "Objects, state and interface: the makerspace laser engraver",
+   "subtitle": "Mutator and accessor methods of a Turtle object",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 8.1, Overview of Turtle Graphics, Turtle Operations, Object Instantiation and the turtle Module, Drawing Two-Dimensional Shapes and Examining an Object's Attributes, pp. 189-196",
+   "minutes": 30,
+   "objectives": [
+    "Use a Turtle object through its interface: instantiate it, then change its state with mutator methods",
+    "Generalize `square` and `hexagon` into one `polygon` function that works for any number of sides",
+    "Use accessor methods (`position`, `heading`, `isdown`) to save an object's state and restore it afterwards"
+   ],
+   "scenario": "The campus makerspace has a laser engraver driven by a **Turtle object**: whenever the turtle's pen is down, the laser burns the wood. Members order name badges, each a regular polygon outline burned at a spot on the board.\n\nLast week's script ruined a board. It burned a diagonal scar from the laser's resting spot to every badge, and the next job came out rotated, because the script left the laser head wherever the badge ended, facing whichever way it last turned.\n\nFinish `badges.py`:\n\n- `polygon(t, sides, length)` draws any regular polygon, from the turtle's current position and heading, the way the reading's `square` and `hexagon` do.\n- `badge(t, x, y, sides, length)` burns one badge at `(x, y)` and then leaves the turtle **exactly as it found it**: same position, same heading, pen up or down as it was.\n\nThe engraver can't run in a browser, so this lab uses `penturtle.py` (read-only): a Turtle with the same methods as Python's `turtle.Turtle` that records the lines it would burn instead of opening a window. In IDLE, change one line to `from turtle import Turtle` and the same code draws on screen.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`polygon` repeats `sides` times: move forward `length`, then turn left `360 / sides` degrees. No number of sides is hard-coded."
+    },
+    {
+     "id": "R2",
+     "text": "`badge` lifts the pen before travelling to `(x, y)`, faces east (`setheading(0)`) and lowers the pen before drawing."
+    },
+    {
+     "id": "R3",
+     "text": "`badge` reads the turtle's position, heading and pen state with accessor methods before changing anything, and restores all three at the end: it travels back with the pen up, and lowers the pen only if it was down before."
+    },
+    {
+     "id": "R4",
+     "text": "The test program's badges burn no stray lines, and the turtle ends where and how it started.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "badges.py",
+     "starter": "\"\"\"badges.py - burn badge outlines with the makerspace laser engraver.\n\nThe engraver is driven by a Turtle object: whenever its pen is down,\nthe laser burns.\n\"\"\"\nfrom penturtle import Turtle   # in IDLE: from turtle import Turtle\n\n\ndef square(t, length):\n    \"\"\"Draws a square with the given length, from t's position and heading.\"\"\"\n    for count in range(4):\n        t.forward(length)\n        t.left(90)\n\n\ndef hexagon(t, length):\n    \"\"\"Draws a hexagon with the given length, from t's position and heading.\"\"\"\n    for count in range(6):\n        t.forward(length)\n        t.left(60)\n\n\ndef polygon(t, sides, length):\n    \"\"\"Draws a regular polygon with the given number of sides and\n    side length.\"\"\"\n    # TODO (R1): square and hexagon differ only in the number of sides and the\n    # angle of each turn. Write one loop that works for any number of sides.\n    pass\n\n\ndef badge(t, x, y, sides, length):\n    \"\"\"Burns a badge outline with its first corner at (x, y) and its\n    first side facing east. Leaves t as it found it: same position,\n    heading and pen state.\"\"\"\n    # TODO (R3): remember t's position, heading and pen state.\n    # TODO (R2): travel to (x, y) without burning, face east, lower the pen.\n    t.goto(x, y)\n    polygon(t, sides, length)\n    # TODO (R3): travel back without burning, then restore the heading\n    # and the pen state.\n\n\ndef main():\n    \"\"\"Burns two badges and prints what the laser did.\"\"\"\n    t = Turtle()\n    badge(t, -100, 50, 6, 30)\n    badge(t, 40, 50, 5, 30)\n    print(t.report())\n    print(\"Laser head at\", t.position(), \"facing\", t.heading())\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "solution": "\"\"\"badges.py - burn badge outlines with the makerspace laser engraver.\n\nThe engraver is driven by a Turtle object: whenever its pen is down,\nthe laser burns.\n\"\"\"\nfrom penturtle import Turtle   # in IDLE: from turtle import Turtle\n\n\ndef square(t, length):\n    \"\"\"Draws a square with the given length, from t's position and heading.\"\"\"\n    for count in range(4):\n        t.forward(length)\n        t.left(90)\n\n\ndef hexagon(t, length):\n    \"\"\"Draws a hexagon with the given length, from t's position and heading.\"\"\"\n    for count in range(6):\n        t.forward(length)\n        t.left(60)\n\n\ndef polygon(t, sides, length):\n    \"\"\"Draws a regular polygon with the given number of sides and\n    side length.\"\"\"\n    for count in range(sides):\n        t.forward(length)\n        t.left(360 / sides)\n\n\ndef badge(t, x, y, sides, length):\n    \"\"\"Burns a badge outline with its first corner at (x, y) and its\n    first side facing east. Leaves t as it found it: same position,\n    heading and pen state.\"\"\"\n    (oldX, oldY) = t.position()\n    oldHeading = t.heading()\n    wasDown = t.isdown()\n    t.up()\n    t.goto(x, y)\n    t.setheading(0)\n    t.down()\n    polygon(t, sides, length)\n    t.up()\n    t.goto(oldX, oldY)\n    t.setheading(oldHeading)\n    if wasDown:\n        t.down()\n\n\ndef main():\n    \"\"\"Burns two badges and prints what the laser did.\"\"\"\n    t = Turtle()\n    badge(t, -100, 50, 6, 30)\n    badge(t, 40, 50, 5, 30)\n    print(t.report())\n    print(\"Laser head at\", t.position(), \"facing\", t.heading())\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "editable": true
+    },
+    {
+     "name": "penturtle.py",
+     "starter": "\"\"\"penturtle.py - a text-mode stand-in for turtle.Turtle.\n\nIt has the same method names as the Turtle methods in Table 8-2, so code\nyou write with it also runs in IDLE: change the import to\n    from turtle import Turtle\nInstead of opening a window, this Turtle keeps a log of the lines it draws.\n\nExtras for the labs (NOT in the real Turtle):\n    t.lines(), t.lineColors(), t.report()\n\"\"\"\nimport math\n\n\ndef _tidy(value):\n    \"\"\"Rounds to 2 decimals and turns -0.0 into 0.0.\"\"\"\n    return round(value, 2) + 0.0\n\n\ndef _checkColor(args):\n    \"\"\"Returns the color given to pencolor/fillcolor, or raises ValueError.\"\"\"\n    if len(args) == 1 and isinstance(args[0], str):\n        return args[0]\n    if len(args) == 1 and isinstance(args[0], tuple):\n        args = args[0]\n    if len(args) != 3:\n        raise ValueError(\"a color is a string or three RGB values, got \" +\n                         repr(args))\n    for part in args:\n        if not isinstance(part, int) or part < 0 or part > 255:\n            raise ValueError(\"bad color sequence: \" + repr(tuple(args)) +\n                             \" (each RGB component is an int from 0 to 255)\")\n    return tuple(args)\n\n\nclass _Screen:\n    \"\"\"The turtle's window: 300 by 200 pixels, as in the book's turtle.cfg.\"\"\"\n\n    def __init__(self):\n        self._bg = \"white\"\n\n    def window_width(self):\n        return 300\n\n    def window_height(self):\n        return 200\n\n    def bgcolor(self, *color):\n        if not color:\n            return self._bg\n        self._bg = _checkColor(color)\n\n    def colormode(self, mode=None):\n        return 255\n\n\nclass Turtle:\n    \"\"\"A turtle that logs its lines instead of drawing them in a window.\"\"\"\n\n    def __init__(self):\n        self._x = 0.0\n        self._y = 0.0\n        self._heading = 0.0\n        self._down = True\n        self._color = \"black\"\n        self._fill = \"black\"\n        self._width = 1\n        self._visible = True\n        self._filling = False\n        self._lines = []\n        self.screen = _Screen()\n\n    # ---- accessor methods: report the state, change nothing ----\n    def position(self):\n        \"\"\"Returns the current position (x, y).\"\"\"\n        return (_tidy(self._x), _tidy(self._y))\n\n    pos = position\n\n    def xcor(self):\n        return _tidy(self._x)\n\n    def ycor(self):\n        return _tidy(self._y)\n\n    def heading(self):\n        \"\"\"Returns the current direction in degrees (0 east, 90 north).\"\"\"\n        h = _tidy(self._heading % 360)\n        return 0.0 if h == 360 else h\n\n    def isdown(self):\n        \"\"\"Returns True if the pen is down.\"\"\"\n        return self._down\n\n    def isvisible(self):\n        return self._visible\n\n    # ---- mutator methods: change the state ----\n    def up(self):\n        self._down = False\n\n    penup = pu = up\n\n    def down(self):\n        self._down = True\n\n    pendown = pd = down\n\n    def setheading(self, degrees):\n        self._heading = float(degrees)\n\n    seth = setheading\n\n    def left(self, degrees):\n        self._heading += degrees\n\n    lt = left\n\n    def right(self, degrees):\n        self._heading -= degrees\n\n    rt = right\n\n    def goto(self, x, y=None):\n        if y is None:\n            (x, y) = x\n        self._moveTo(float(x), float(y))\n\n    setpos = setposition = goto\n\n    def forward(self, distance):\n        angle = math.radians(self._heading)\n        self._moveTo(self._x + distance * math.cos(angle),\n                     self._y + distance * math.sin(angle))\n\n    fd = forward\n\n    def backward(self, distance):\n        self.forward(-distance)\n\n    back = bk = backward\n\n    def home(self):\n        self.goto(0, 0)\n        self.setheading(0)\n\n    def pencolor(self, *color):\n        if not color:\n            return self._color\n        self._color = _checkColor(color)\n\n    def fillcolor(self, *color):\n        if not color:\n            return self._fill\n        self._fill = _checkColor(color)\n\n    def width(self, pixels=None):\n        if pixels is None:\n            return self._width\n        self._width = pixels\n\n    pensize = width\n\n    def begin_fill(self):\n        self._filling = True\n\n    def end_fill(self):\n        self._filling = False\n\n    def clear(self):\n        \"\"\"Erases the drawings; the turtle's state does not change.\"\"\"\n        self._lines = []\n\n    def hideturtle(self):\n        self._visible = False\n\n    ht = hideturtle\n\n    def showturtle(self):\n        self._visible = True\n\n    st = showturtle\n\n    def speed(self, value=None):\n        return 0\n\n    def shape(self, name=None):\n        return \"classic\"\n\n    def _moveTo(self, x, y):\n        start = (_tidy(self._x), _tidy(self._y))\n        end = (_tidy(x), _tidy(y))\n        if self._down and start != end:\n            self._lines.append((start, end, self._color))\n        self._x = x\n        self._y = y\n\n    # ---- extras for the labs (not in the real Turtle) ----\n    def lines(self):\n        \"\"\"Returns the lines drawn so far as a list of (start, end) points.\"\"\"\n        return [(start, end) for (start, end, color) in self._lines]\n\n    def lineColors(self):\n        \"\"\"Returns the pen color of each line drawn so far.\"\"\"\n        return [color for (start, end, color) in self._lines]\n\n    def report(self):\n        \"\"\"Returns a short summary of the drawing.\"\"\"\n        total = 0.0\n        for ((x1, y1), (x2, y2), color) in self._lines:\n            total += math.hypot(x2 - x1, y2 - y1)\n        return (\"Lines drawn: \" + str(len(self._lines)) + \", total length \" +\n                str(_tidy(total)) + \" pixels\")\n",
+     "solution": "\"\"\"penturtle.py - a text-mode stand-in for turtle.Turtle.\n\nIt has the same method names as the Turtle methods in Table 8-2, so code\nyou write with it also runs in IDLE: change the import to\n    from turtle import Turtle\nInstead of opening a window, this Turtle keeps a log of the lines it draws.\n\nExtras for the labs (NOT in the real Turtle):\n    t.lines(), t.lineColors(), t.report()\n\"\"\"\nimport math\n\n\ndef _tidy(value):\n    \"\"\"Rounds to 2 decimals and turns -0.0 into 0.0.\"\"\"\n    return round(value, 2) + 0.0\n\n\ndef _checkColor(args):\n    \"\"\"Returns the color given to pencolor/fillcolor, or raises ValueError.\"\"\"\n    if len(args) == 1 and isinstance(args[0], str):\n        return args[0]\n    if len(args) == 1 and isinstance(args[0], tuple):\n        args = args[0]\n    if len(args) != 3:\n        raise ValueError(\"a color is a string or three RGB values, got \" +\n                         repr(args))\n    for part in args:\n        if not isinstance(part, int) or part < 0 or part > 255:\n            raise ValueError(\"bad color sequence: \" + repr(tuple(args)) +\n                             \" (each RGB component is an int from 0 to 255)\")\n    return tuple(args)\n\n\nclass _Screen:\n    \"\"\"The turtle's window: 300 by 200 pixels, as in the book's turtle.cfg.\"\"\"\n\n    def __init__(self):\n        self._bg = \"white\"\n\n    def window_width(self):\n        return 300\n\n    def window_height(self):\n        return 200\n\n    def bgcolor(self, *color):\n        if not color:\n            return self._bg\n        self._bg = _checkColor(color)\n\n    def colormode(self, mode=None):\n        return 255\n\n\nclass Turtle:\n    \"\"\"A turtle that logs its lines instead of drawing them in a window.\"\"\"\n\n    def __init__(self):\n        self._x = 0.0\n        self._y = 0.0\n        self._heading = 0.0\n        self._down = True\n        self._color = \"black\"\n        self._fill = \"black\"\n        self._width = 1\n        self._visible = True\n        self._filling = False\n        self._lines = []\n        self.screen = _Screen()\n\n    # ---- accessor methods: report the state, change nothing ----\n    def position(self):\n        \"\"\"Returns the current position (x, y).\"\"\"\n        return (_tidy(self._x), _tidy(self._y))\n\n    pos = position\n\n    def xcor(self):\n        return _tidy(self._x)\n\n    def ycor(self):\n        return _tidy(self._y)\n\n    def heading(self):\n        \"\"\"Returns the current direction in degrees (0 east, 90 north).\"\"\"\n        h = _tidy(self._heading % 360)\n        return 0.0 if h == 360 else h\n\n    def isdown(self):\n        \"\"\"Returns True if the pen is down.\"\"\"\n        return self._down\n\n    def isvisible(self):\n        return self._visible\n\n    # ---- mutator methods: change the state ----\n    def up(self):\n        self._down = False\n\n    penup = pu = up\n\n    def down(self):\n        self._down = True\n\n    pendown = pd = down\n\n    def setheading(self, degrees):\n        self._heading = float(degrees)\n\n    seth = setheading\n\n    def left(self, degrees):\n        self._heading += degrees\n\n    lt = left\n\n    def right(self, degrees):\n        self._heading -= degrees\n\n    rt = right\n\n    def goto(self, x, y=None):\n        if y is None:\n            (x, y) = x\n        self._moveTo(float(x), float(y))\n\n    setpos = setposition = goto\n\n    def forward(self, distance):\n        angle = math.radians(self._heading)\n        self._moveTo(self._x + distance * math.cos(angle),\n                     self._y + distance * math.sin(angle))\n\n    fd = forward\n\n    def backward(self, distance):\n        self.forward(-distance)\n\n    back = bk = backward\n\n    def home(self):\n        self.goto(0, 0)\n        self.setheading(0)\n\n    def pencolor(self, *color):\n        if not color:\n            return self._color\n        self._color = _checkColor(color)\n\n    def fillcolor(self, *color):\n        if not color:\n            return self._fill\n        self._fill = _checkColor(color)\n\n    def width(self, pixels=None):\n        if pixels is None:\n            return self._width\n        self._width = pixels\n\n    pensize = width\n\n    def begin_fill(self):\n        self._filling = True\n\n    def end_fill(self):\n        self._filling = False\n\n    def clear(self):\n        \"\"\"Erases the drawings; the turtle's state does not change.\"\"\"\n        self._lines = []\n\n    def hideturtle(self):\n        self._visible = False\n\n    ht = hideturtle\n\n    def showturtle(self):\n        self._visible = True\n\n    st = showturtle\n\n    def speed(self, value=None):\n        return 0\n\n    def shape(self, name=None):\n        return \"classic\"\n\n    def _moveTo(self, x, y):\n        start = (_tidy(self._x), _tidy(self._y))\n        end = (_tidy(x), _tidy(y))\n        if self._down and start != end:\n            self._lines.append((start, end, self._color))\n        self._x = x\n        self._y = y\n\n    # ---- extras for the labs (not in the real Turtle) ----\n    def lines(self):\n        \"\"\"Returns the lines drawn so far as a list of (start, end) points.\"\"\"\n        return [(start, end) for (start, end, color) in self._lines]\n\n    def lineColors(self):\n        \"\"\"Returns the pen color of each line drawn so far.\"\"\"\n        return [color for (start, end, color) in self._lines]\n\n    def report(self):\n        \"\"\"Returns a short summary of the drawing.\"\"\"\n        total = 0.0\n        for ((x1, y1), (x2, y2), color) in self._lines:\n            total += math.hypot(x2 - x1, y2 - y1)\n        return (\"Lines drawn: \" + str(len(self._lines)) + \", total length \" +\n                str(_tidy(total)) + \" pixels\")\n",
+     "editable": false
+    }
+   ],
+   "main_file": "badges.py",
+   "run_entry": "badges.py",
+   "solution_notes": "`polygon` is the reading's Exercise 8-1, question 4: the only differences between `square` and `hexagon` are the loop count and the turn, and for a regular polygon the turns add up to one full circle, so each one is `360 / sides`. In `badge`, the three accessor calls must come first, because every mutator after them changes the state they report. `goto` draws whenever the pen is down, so the pen goes up before both trips (to the badge and back). Restoring the pen with `if wasDown: t.down()` matters: a caller that had lifted the pen expects it still up afterwards. Equivalent forms: `t.penup()`/`t.pendown()`, `t.xcor()`/`t.ycor()` instead of `position()`, or `if not wasDown: t.up()` placed after an unconditional `t.down()`.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`polygon` loops `sides` times",
+     "within": "polygon",
+     "require": "for\\s+\\w+\\s+in\\s+range\\(\\s*sides\\s*\\)",
+     "message": "Loop `for count in range(sides):` so the same function draws a triangle, a square or a hexagon. A fixed number such as `range(6)` only ever draws one shape."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "`polygon` turns `360 / sides`",
+     "within": "polygon",
+     "require": "360\\s*/\\s*sides",
+     "forbid": [
+      "left\\(\\s*(60|90|120|72)\\s*\\)"
+     ],
+     "message": "A regular polygon's turns add up to 360 degrees, so each turn is `360 / sides` (90 for a square, 60 for a hexagon). Compute it from the argument rather than writing one angle."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "pen up before travelling to (x, y)",
+     "within": "badge",
+     "require": "\\.(up|penup|pu)\\s*\\(\\s*\\)[\\s\\S]*\\.goto\\s*\\(\\s*x\\s*,\\s*y\\s*\\)",
+     "message": "`goto` draws a line whenever the pen is down, and a new turtle's pen starts down. Call `t.up()` before `t.goto(x, y)` so the laser travels without burning."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "faces east and lowers the pen before drawing",
+     "within": "badge",
+     "require": "^(?=[\\s\\S]*\\.setheading\\s*\\(\\s*0\\s*\\))(?=[\\s\\S]*\\.(down|pendown|pd)\\s*\\(\\s*\\)[\\s\\S]*polygon\\s*\\()",
+     "message": "Point the turtle east with `t.setheading(0)` (so every badge has the same orientation) and call `t.down()` before `polygon(...)`, or nothing gets burned."
+    },
+    {
+     "id": "C5",
+     "requirement": "R3",
+     "title": "saves the state with accessor methods",
+     "within": "badge",
+     "require": "^(?=[\\s\\S]*\\.(position|pos|xcor)\\s*\\(\\s*\\))(?=[\\s\\S]*\\.heading\\s*\\(\\s*\\))(?=[\\s\\S]*\\.isdown\\s*\\(\\s*\\))",
+     "message": "Store the turtle's state before you change it: `t.position()`, `t.heading()` and `t.isdown()` are accessor methods; they report the state without changing it."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "restores position and heading",
+     "within": "badge",
+     "require": "^(?=[\\s\\S]*polygon\\s*\\([\\s\\S]*\\.(up|penup|pu)\\s*\\(\\s*\\)[\\s\\S]*\\.(goto|setpos|setposition)\\s*\\()(?=[\\s\\S]*polygon\\s*\\([\\s\\S]*\\.setheading\\s*\\(\\s*[A-Za-z_]\\w*\\s*\\))",
+     "message": "After the polygon, lift the pen, `goto` the saved position and `setheading` to the saved heading (a variable, not a number). Without the lift, the trip back burns a second scar."
+    },
+    {
+     "id": "C7",
+     "requirement": "R3",
+     "title": "restores the pen only as it was",
+     "within": "badge",
+     "require": "\\bif\\b[^\\n]*:\\s*\\n\\s*\\w+\\.(down|pendown|pd|up|penup|pu)\\s*\\(\\s*\\)",
+     "message": "Use the pen state you saved: `if wasDown: t.down()`. Always lowering it would surprise a caller who had lifted the pen; always leaving it up would surprise one who hadn't."
+    }
+   ],
+   "hints": [
+    "Start with `polygon`: compare `square` and `hexagon` line by line. Which two numbers change, and how are they related?",
+    "In `badge`, a turtle forgets nothing, but it only tells you its state when you ask. Ask (with accessor methods) before the first mutator call, and keep the answers in variables.",
+    "Both trips use `goto`, and `goto` burns whenever the pen is down. The pen needs to be up for the trip to the badge and for the trip back; only the final pen state depends on what you saved."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from penturtle import Turtle\nfrom badges import polygon, badge\n\nt = Turtle()\npolygon(t, 4, 50)\nprint(\"Square:\", len(t.lines()), \"lines\")\nprint(\"  back at\", t.position(), \"facing\", t.heading())\nt.clear()\npolygon(t, 3, 60)\nprint(\"Triangle corners:\", [end for (start, end) in t.lines()])\n\nt = Turtle()\nt.up()\nt.goto(10, 20)\nt.setheading(90)\nt.down()\nbadge(t, -100, 50, 6, 30)\nprint(\"After the hexagon badge:\", t.position(), \"facing\", t.heading())\nprint(\"  pen down:\", t.isdown())\nt.up()\nbadge(t, 40, 50, 5, 30)\nprint(\"After the pentagon badge:\", t.position(), \"facing\", t.heading())\nprint(\"  pen down:\", t.isdown())\nprint(\"First line starts at\", t.lines()[0][0])\nprint(t.report())\n",
+    "stdin": "",
+    "expected_output": "Square: 4 lines\n  back at (0.0, 0.0) facing 0.0\nTriangle corners: [(60.0, 0.0), (30.0, 51.96), (0.0, 0.0)]\nAfter the hexagon badge: (10.0, 20.0) facing 90.0\n  pen down: True\nAfter the pentagon badge: (10.0, 20.0) facing 90.0\n  pen down: False\nFirst line starts at (-100.0, 50.0)\nLines drawn: 11, total length 330.0 pixels\n",
+    "predict": "The test program first draws a square and a triangle with `polygon`. Then it moves the turtle to **(10, 20) facing north** with its pen down, and burns two badges (with the pen up before the second one). Predict: where is the turtle after each badge, which way does it face, and is its pen down?"
+   },
+   "warmup": [
+    {
+     "question": "Run the starter. `badge` calls `t.goto(x, y)` on a brand-new turtle. Which line does the laser burn that isn't part of any badge, and which part of the turtle's state causes it?",
+     "model_answer": "A straight line from the home position (0, 0) to the badge's corner (-100, 50). A new turtle's pen is down (`isdown()` is True), and `goto` draws whenever the pen is down, so moving to the corner burns a line."
+    },
+    {
+     "question": "`square` turns 90 degrees four times and `hexagon` turns 60 degrees six times. What do the turns of each shape add up to, and what would one turn of a pentagon be?",
+     "model_answer": "Both add up to 360 degrees, one full turn, so the turtle ends facing the way it started. A pentagon turns 360 / 5 = 72 degrees at each corner."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Which methods in your `badge` are accessors and which are mutators? Why must the accessor calls come before the first mutator?",
+     "model_answer": "position, heading and isdown are accessors: they report the state without changing it. up, goto, setheading, down, forward and left are mutators: they change it. The accessors must run first because each mutator changes the state they report; after t.up() and t.goto(x, y), position() and isdown() would return the badge's corner and False instead of the original values."
+    },
+    {
+     "question": "Your code ran with `penturtle.Turtle`, and it will run unchanged with `turtle.Turtle` in IDLE. What does that say about how programmers use objects through their interfaces?",
+     "model_answer": "Your functions only call methods by name and rely on what each method is documented to do. They never look inside the object. Any class with the same interface (the same method headers and behavior) can stand in, so the drawing code doesn't care whether the turtle draws on screen or records lines. This is why an interface should give just enough information to use the object."
+    },
+    {
+     "question": "Why should a helper such as `badge` leave the turtle as it found it, instead of leaving it at the badge's last corner?",
+     "model_answer": "The caller decides where the turtle is and which way it faces, and the next command assumes that state hasn't changed. If badge moved or rotated the turtle, every later shape would be shifted or rotated, as happened with the ruined board. Restoring the state makes badge safe to call in any order and from any other function."
+    }
+   ],
+   "extension": "Add `radialBadge(t, x, y, n, sides, length)` that burns `n` copies of a polygon around `(x, y)`, turning `360 / n` between them like the reading's `radialPattern`, and still leaves the turtle as it found it. How many lines does `radialBadge(t, 0, 0, 10, 6, 20)` burn?",
+   "worth_knowing": "The first Logo turtles weren't on a screen at all. At MIT around 1970 they were dome-shaped robots that rolled across paper on the floor, dragging a real pen. That's why the commands are still called pen up and pen down."
+  },
+  {
+   "id": "8.1b",
+   "title": "RGB colors and a recursive fractal: the c-curve poster",
+   "subtitle": "Valid RGB values, random colors and the c-curve case study",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 8.1, Colors and the RGB System, Example: Filling Radial Patterns with Random Colors, and Case Study 8-1: Recursive Patterns in Fractals, pp. 197-203",
+   "minutes": 35,
+   "objectives": [
+    "Generate random RGB colors whose components stay within 0 to 255",
+    "Complete the recursive c-curve algorithm from its base case and recursive step",
+    "Predict how many lines a fractal of a given level draws, and confirm it with a recursive count"
+   ],
+   "scenario": "The Computer Science club is printing a poster of **c-curve fractals**, one per level, with every line in a different random color (the reading's Programming Exercise 2). A member started `ccurve.py` from the case study, but:\n\n- the color function sometimes produces a value the printer driver rejects;\n- the recursive step is missing, so every level above 0 draws nothing;\n- the print shop charges by the number of lines, and the club needs `countLines(level)` to quote a price **without** drawing the curve first.\n\nLike Lab 8.1a, this lab uses the read-only `penturtle.py`, a Turtle with the same interface that records lines instead of opening a window. Its `pencolor` accepts a tuple `(r, g, b)` and raises an error for a component outside 0 to 255, as the real `turtle` module does.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`randomColor()` returns a tuple of three random integers, each from 0 to 255 inclusive."
+    },
+    {
+     "id": "R2",
+     "text": "In the base case (level 0), `cCurve` sets the pen to a new `randomColor()` before drawing its line."
+    },
+    {
+     "id": "R3",
+     "text": "In the recursive step, `cCurve` computes `xm = (x1 + x2 + y1 - y2) // 2` and `ym = (x2 + y1 + y2 - x1) // 2`, then draws two c-curves of `level - 1`: from (x1, y1) to (xm, ym), and from (xm, ym) to (x2, y2)."
+    },
+    {
+     "id": "R4",
+     "text": "`countLines(level)` returns the number of lines a c-curve of that level draws, using recursion (1 at level 0) and without drawing anything."
+    },
+    {
+     "id": "R5",
+     "text": "The test program's line counts, traced endpoints and color checks match.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "ccurve.py",
+     "starter": "\"\"\"ccurve.py - draw a c-curve fractal, each line in a random color.\"\"\"\nimport random\nfrom penturtle import Turtle   # in IDLE: from turtle import Turtle\n\n\ndef randomColor():\n    \"\"\"Returns a random RGB color as a tuple of three integers.\"\"\"\n    # TODO (R1): every component must be a valid RGB value.\n    return (random.randint(0, 256), random.randint(0, 256),\n            random.randint(0, 256))\n\n\ndef cCurve(t, x1, y1, x2, y2, level):\n    \"\"\"Draws a c-curve of the given level from (x1, y1) to (x2, y2).\"\"\"\n\n    def drawLine(x1, y1, x2, y2):\n        \"\"\"Draws a line segment between the endpoints.\"\"\"\n        t.up()\n        t.goto(x1, y1)\n        t.down()\n        t.goto(x2, y2)\n\n    if level == 0:\n        # TODO (R2): give this line its own random pen color.\n        drawLine(x1, y1, x2, y2)\n    else:\n        # TODO (R3): find the corner point (xm, ym), then draw two c-curves\n        # of level - 1: from (x1, y1) to (xm, ym), and from (xm, ym)\n        # to (x2, y2).\n        pass\n\n\ndef countLines(level):\n    \"\"\"Returns how many lines a c-curve of the given level draws,\n    without drawing it.\"\"\"\n    # TODO (R4): a level-0 c-curve is 1 line. How is level N built from\n    # level N - 1?\n    return 1\n\n\ndef main():\n    \"\"\"Asks for a level, draws the c-curve and reports the drawing.\"\"\"\n    level = int(input(\"Enter the level (0 or greater): \"))\n    t = Turtle()\n    t.hideturtle()\n    cCurve(t, 50, -50, 50, 50, level)\n    print(t.report())\n    print(\"countLines predicted\", countLines(level))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "solution": "\"\"\"ccurve.py - draw a c-curve fractal, each line in a random color.\"\"\"\nimport random\nfrom penturtle import Turtle   # in IDLE: from turtle import Turtle\n\n\ndef randomColor():\n    \"\"\"Returns a random RGB color as a tuple of three integers.\"\"\"\n    return (random.randint(0, 255), random.randint(0, 255),\n            random.randint(0, 255))\n\n\ndef cCurve(t, x1, y1, x2, y2, level):\n    \"\"\"Draws a c-curve of the given level from (x1, y1) to (x2, y2).\"\"\"\n\n    def drawLine(x1, y1, x2, y2):\n        \"\"\"Draws a line segment between the endpoints.\"\"\"\n        t.up()\n        t.goto(x1, y1)\n        t.down()\n        t.goto(x2, y2)\n\n    if level == 0:\n        t.pencolor(randomColor())\n        drawLine(x1, y1, x2, y2)\n    else:\n        xm = (x1 + x2 + y1 - y2) // 2\n        ym = (x2 + y1 + y2 - x1) // 2\n        cCurve(t, x1, y1, xm, ym, level - 1)\n        cCurve(t, xm, ym, x2, y2, level - 1)\n\n\ndef countLines(level):\n    \"\"\"Returns how many lines a c-curve of the given level draws,\n    without drawing it.\"\"\"\n    if level == 0:\n        return 1\n    else:\n        return 2 * countLines(level - 1)\n\n\ndef main():\n    \"\"\"Asks for a level, draws the c-curve and reports the drawing.\"\"\"\n    level = int(input(\"Enter the level (0 or greater): \"))\n    t = Turtle()\n    t.hideturtle()\n    cCurve(t, 50, -50, 50, 50, level)\n    print(t.report())\n    print(\"countLines predicted\", countLines(level))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "editable": true
+    },
+    {
+     "name": "penturtle.py",
+     "starter": "\"\"\"penturtle.py - a text-mode stand-in for turtle.Turtle.\n\nIt has the same method names as the Turtle methods in Table 8-2, so code\nyou write with it also runs in IDLE: change the import to\n    from turtle import Turtle\nInstead of opening a window, this Turtle keeps a log of the lines it draws.\n\nExtras for the labs (NOT in the real Turtle):\n    t.lines(), t.lineColors(), t.report()\n\"\"\"\nimport math\n\n\ndef _tidy(value):\n    \"\"\"Rounds to 2 decimals and turns -0.0 into 0.0.\"\"\"\n    return round(value, 2) + 0.0\n\n\ndef _checkColor(args):\n    \"\"\"Returns the color given to pencolor/fillcolor, or raises ValueError.\"\"\"\n    if len(args) == 1 and isinstance(args[0], str):\n        return args[0]\n    if len(args) == 1 and isinstance(args[0], tuple):\n        args = args[0]\n    if len(args) != 3:\n        raise ValueError(\"a color is a string or three RGB values, got \" +\n                         repr(args))\n    for part in args:\n        if not isinstance(part, int) or part < 0 or part > 255:\n            raise ValueError(\"bad color sequence: \" + repr(tuple(args)) +\n                             \" (each RGB component is an int from 0 to 255)\")\n    return tuple(args)\n\n\nclass _Screen:\n    \"\"\"The turtle's window: 300 by 200 pixels, as in the book's turtle.cfg.\"\"\"\n\n    def __init__(self):\n        self._bg = \"white\"\n\n    def window_width(self):\n        return 300\n\n    def window_height(self):\n        return 200\n\n    def bgcolor(self, *color):\n        if not color:\n            return self._bg\n        self._bg = _checkColor(color)\n\n    def colormode(self, mode=None):\n        return 255\n\n\nclass Turtle:\n    \"\"\"A turtle that logs its lines instead of drawing them in a window.\"\"\"\n\n    def __init__(self):\n        self._x = 0.0\n        self._y = 0.0\n        self._heading = 0.0\n        self._down = True\n        self._color = \"black\"\n        self._fill = \"black\"\n        self._width = 1\n        self._visible = True\n        self._filling = False\n        self._lines = []\n        self.screen = _Screen()\n\n    # ---- accessor methods: report the state, change nothing ----\n    def position(self):\n        \"\"\"Returns the current position (x, y).\"\"\"\n        return (_tidy(self._x), _tidy(self._y))\n\n    pos = position\n\n    def xcor(self):\n        return _tidy(self._x)\n\n    def ycor(self):\n        return _tidy(self._y)\n\n    def heading(self):\n        \"\"\"Returns the current direction in degrees (0 east, 90 north).\"\"\"\n        h = _tidy(self._heading % 360)\n        return 0.0 if h == 360 else h\n\n    def isdown(self):\n        \"\"\"Returns True if the pen is down.\"\"\"\n        return self._down\n\n    def isvisible(self):\n        return self._visible\n\n    # ---- mutator methods: change the state ----\n    def up(self):\n        self._down = False\n\n    penup = pu = up\n\n    def down(self):\n        self._down = True\n\n    pendown = pd = down\n\n    def setheading(self, degrees):\n        self._heading = float(degrees)\n\n    seth = setheading\n\n    def left(self, degrees):\n        self._heading += degrees\n\n    lt = left\n\n    def right(self, degrees):\n        self._heading -= degrees\n\n    rt = right\n\n    def goto(self, x, y=None):\n        if y is None:\n            (x, y) = x\n        self._moveTo(float(x), float(y))\n\n    setpos = setposition = goto\n\n    def forward(self, distance):\n        angle = math.radians(self._heading)\n        self._moveTo(self._x + distance * math.cos(angle),\n                     self._y + distance * math.sin(angle))\n\n    fd = forward\n\n    def backward(self, distance):\n        self.forward(-distance)\n\n    back = bk = backward\n\n    def home(self):\n        self.goto(0, 0)\n        self.setheading(0)\n\n    def pencolor(self, *color):\n        if not color:\n            return self._color\n        self._color = _checkColor(color)\n\n    def fillcolor(self, *color):\n        if not color:\n            return self._fill\n        self._fill = _checkColor(color)\n\n    def width(self, pixels=None):\n        if pixels is None:\n            return self._width\n        self._width = pixels\n\n    pensize = width\n\n    def begin_fill(self):\n        self._filling = True\n\n    def end_fill(self):\n        self._filling = False\n\n    def clear(self):\n        \"\"\"Erases the drawings; the turtle's state does not change.\"\"\"\n        self._lines = []\n\n    def hideturtle(self):\n        self._visible = False\n\n    ht = hideturtle\n\n    def showturtle(self):\n        self._visible = True\n\n    st = showturtle\n\n    def speed(self, value=None):\n        return 0\n\n    def shape(self, name=None):\n        return \"classic\"\n\n    def _moveTo(self, x, y):\n        start = (_tidy(self._x), _tidy(self._y))\n        end = (_tidy(x), _tidy(y))\n        if self._down and start != end:\n            self._lines.append((start, end, self._color))\n        self._x = x\n        self._y = y\n\n    # ---- extras for the labs (not in the real Turtle) ----\n    def lines(self):\n        \"\"\"Returns the lines drawn so far as a list of (start, end) points.\"\"\"\n        return [(start, end) for (start, end, color) in self._lines]\n\n    def lineColors(self):\n        \"\"\"Returns the pen color of each line drawn so far.\"\"\"\n        return [color for (start, end, color) in self._lines]\n\n    def report(self):\n        \"\"\"Returns a short summary of the drawing.\"\"\"\n        total = 0.0\n        for ((x1, y1), (x2, y2), color) in self._lines:\n            total += math.hypot(x2 - x1, y2 - y1)\n        return (\"Lines drawn: \" + str(len(self._lines)) + \", total length \" +\n                str(_tidy(total)) + \" pixels\")\n",
+     "solution": "\"\"\"penturtle.py - a text-mode stand-in for turtle.Turtle.\n\nIt has the same method names as the Turtle methods in Table 8-2, so code\nyou write with it also runs in IDLE: change the import to\n    from turtle import Turtle\nInstead of opening a window, this Turtle keeps a log of the lines it draws.\n\nExtras for the labs (NOT in the real Turtle):\n    t.lines(), t.lineColors(), t.report()\n\"\"\"\nimport math\n\n\ndef _tidy(value):\n    \"\"\"Rounds to 2 decimals and turns -0.0 into 0.0.\"\"\"\n    return round(value, 2) + 0.0\n\n\ndef _checkColor(args):\n    \"\"\"Returns the color given to pencolor/fillcolor, or raises ValueError.\"\"\"\n    if len(args) == 1 and isinstance(args[0], str):\n        return args[0]\n    if len(args) == 1 and isinstance(args[0], tuple):\n        args = args[0]\n    if len(args) != 3:\n        raise ValueError(\"a color is a string or three RGB values, got \" +\n                         repr(args))\n    for part in args:\n        if not isinstance(part, int) or part < 0 or part > 255:\n            raise ValueError(\"bad color sequence: \" + repr(tuple(args)) +\n                             \" (each RGB component is an int from 0 to 255)\")\n    return tuple(args)\n\n\nclass _Screen:\n    \"\"\"The turtle's window: 300 by 200 pixels, as in the book's turtle.cfg.\"\"\"\n\n    def __init__(self):\n        self._bg = \"white\"\n\n    def window_width(self):\n        return 300\n\n    def window_height(self):\n        return 200\n\n    def bgcolor(self, *color):\n        if not color:\n            return self._bg\n        self._bg = _checkColor(color)\n\n    def colormode(self, mode=None):\n        return 255\n\n\nclass Turtle:\n    \"\"\"A turtle that logs its lines instead of drawing them in a window.\"\"\"\n\n    def __init__(self):\n        self._x = 0.0\n        self._y = 0.0\n        self._heading = 0.0\n        self._down = True\n        self._color = \"black\"\n        self._fill = \"black\"\n        self._width = 1\n        self._visible = True\n        self._filling = False\n        self._lines = []\n        self.screen = _Screen()\n\n    # ---- accessor methods: report the state, change nothing ----\n    def position(self):\n        \"\"\"Returns the current position (x, y).\"\"\"\n        return (_tidy(self._x), _tidy(self._y))\n\n    pos = position\n\n    def xcor(self):\n        return _tidy(self._x)\n\n    def ycor(self):\n        return _tidy(self._y)\n\n    def heading(self):\n        \"\"\"Returns the current direction in degrees (0 east, 90 north).\"\"\"\n        h = _tidy(self._heading % 360)\n        return 0.0 if h == 360 else h\n\n    def isdown(self):\n        \"\"\"Returns True if the pen is down.\"\"\"\n        return self._down\n\n    def isvisible(self):\n        return self._visible\n\n    # ---- mutator methods: change the state ----\n    def up(self):\n        self._down = False\n\n    penup = pu = up\n\n    def down(self):\n        self._down = True\n\n    pendown = pd = down\n\n    def setheading(self, degrees):\n        self._heading = float(degrees)\n\n    seth = setheading\n\n    def left(self, degrees):\n        self._heading += degrees\n\n    lt = left\n\n    def right(self, degrees):\n        self._heading -= degrees\n\n    rt = right\n\n    def goto(self, x, y=None):\n        if y is None:\n            (x, y) = x\n        self._moveTo(float(x), float(y))\n\n    setpos = setposition = goto\n\n    def forward(self, distance):\n        angle = math.radians(self._heading)\n        self._moveTo(self._x + distance * math.cos(angle),\n                     self._y + distance * math.sin(angle))\n\n    fd = forward\n\n    def backward(self, distance):\n        self.forward(-distance)\n\n    back = bk = backward\n\n    def home(self):\n        self.goto(0, 0)\n        self.setheading(0)\n\n    def pencolor(self, *color):\n        if not color:\n            return self._color\n        self._color = _checkColor(color)\n\n    def fillcolor(self, *color):\n        if not color:\n            return self._fill\n        self._fill = _checkColor(color)\n\n    def width(self, pixels=None):\n        if pixels is None:\n            return self._width\n        self._width = pixels\n\n    pensize = width\n\n    def begin_fill(self):\n        self._filling = True\n\n    def end_fill(self):\n        self._filling = False\n\n    def clear(self):\n        \"\"\"Erases the drawings; the turtle's state does not change.\"\"\"\n        self._lines = []\n\n    def hideturtle(self):\n        self._visible = False\n\n    ht = hideturtle\n\n    def showturtle(self):\n        self._visible = True\n\n    st = showturtle\n\n    def speed(self, value=None):\n        return 0\n\n    def shape(self, name=None):\n        return \"classic\"\n\n    def _moveTo(self, x, y):\n        start = (_tidy(self._x), _tidy(self._y))\n        end = (_tidy(x), _tidy(y))\n        if self._down and start != end:\n            self._lines.append((start, end, self._color))\n        self._x = x\n        self._y = y\n\n    # ---- extras for the labs (not in the real Turtle) ----\n    def lines(self):\n        \"\"\"Returns the lines drawn so far as a list of (start, end) points.\"\"\"\n        return [(start, end) for (start, end, color) in self._lines]\n\n    def lineColors(self):\n        \"\"\"Returns the pen color of each line drawn so far.\"\"\"\n        return [color for (start, end, color) in self._lines]\n\n    def report(self):\n        \"\"\"Returns a short summary of the drawing.\"\"\"\n        total = 0.0\n        for ((x1, y1), (x2, y2), color) in self._lines:\n            total += math.hypot(x2 - x1, y2 - y1)\n        return (\"Lines drawn: \" + str(len(self._lines)) + \", total length \" +\n                str(_tidy(total)) + \" pixels\")\n",
+     "editable": false
+    }
+   ],
+   "main_file": "ccurve.py",
+   "run_entry": "ccurve.py",
+   "stdin": "3\n",
+   "solution_notes": "`random.randint(a, b)` includes both ends, so `randint(0, 256)` can return 256, one more than an 8-bit component can hold (`random.randrange(256)` is an equivalent fix). The base case draws exactly one line in a fresh color; because every line of the fractal is drawn by some level-0 call, every line gets its own color. The recursive step is the case study's pseudocode: the two formulas find the corner where two half-length segments meet at a right angle. Since each level replaces every line with two, a level-N curve has 2 * (lines at level N - 1), which is 2 ** N: `countLines` mirrors the shape of `cCurve` but returns a number instead of drawing. In IDLE the real turtle needs `colormode = 255` (the book's turtle.cfg) or `t.screen.colormode(255)` to accept RGB integers.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "components range from 0 to 255",
+     "within": "randomColor",
+     "require": [
+      "randint\\(\\s*0\\s*,\\s*255\\s*\\)",
+      "randrange\\(\\s*(0\\s*,\\s*)?256\\s*\\)"
+     ],
+     "forbid": [
+      "randint\\(\\s*\\d+\\s*,\\s*256\\s*\\)",
+      "randint\\(\\s*[1-9]\\d*\\s*,"
+     ],
+     "message": "`random.randint(a, b)` includes both a and b. An RGB component goes from 0 to 255 (8 bits, 256 values), so use `random.randint(0, 255)` for each of the three."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "a new random pen color per line",
+     "within": "cCurve",
+     "require": "\\.pencolor\\s*\\(\\s*randomColor\\s*\\(\\s*\\)\\s*\\)|\\.pencolor\\s*\\(\\s*\\w+\\s*\\)",
+     "message": "In the `level == 0` branch, call `t.pencolor(randomColor())` before `drawLine`. Each level-0 call draws exactly one line, so this gives every line its own color."
+    },
+    {
+     "id": "C3",
+     "requirement": "R3",
+     "title": "the corner point formulas",
+     "within": "cCurve",
+     "require": "^(?=[\\s\\S]*x1\\s*\\+\\s*x2\\s*\\+\\s*y1\\s*-\\s*y2)(?=[\\s\\S]*x2\\s*\\+\\s*y1\\s*\\+\\s*y2\\s*-\\s*x1)",
+     "message": "Compute the corner with the case study's formulas: `xm = (x1 + x2 + y1 - y2) // 2` and `ym = (x2 + y1 + y2 - x1) // 2`."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "two recursive calls at `level - 1`",
+     "within": "cCurve",
+     "require": "cCurve\\s*\\(\\s*t\\s*,\\s*x1\\s*,\\s*y1\\s*,\\s*xm\\s*,\\s*ym\\s*,\\s*level\\s*-\\s*1\\s*\\)[\\s\\S]*cCurve\\s*\\(\\s*t\\s*,\\s*xm\\s*,\\s*ym\\s*,\\s*x2\\s*,\\s*y2\\s*,\\s*level\\s*-\\s*1\\s*\\)",
+     "message": "Draw the two halves in order: `cCurve(t, x1, y1, xm, ym, level - 1)`, then `cCurve(t, xm, ym, x2, y2, level - 1)`. Passing `level - 1` moves each call toward the base case."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "`countLines` is recursive",
+     "within": "countLines",
+     "require": "^(?=[\\s\\S]*level\\s*==\\s*0|level\\s*<\\s*1|not\\s+level)(?=[\\s\\S]*countLines\\s*\\(\\s*level\\s*-\\s*1\\s*\\))",
+     "forbid": [
+      "\\.forward\\s*\\(|cCurve\\s*\\(|Turtle\\s*\\("
+     ],
+     "message": "Give `countLines` the same shape as `cCurve`: a base case (`level == 0` returns 1) and a recursive step that uses `countLines(level - 1)`. It should count, not draw."
+    }
+   ],
+   "hints": [
+    "For R1, check the documentation of `random.randint(a, b)`: is `b` one of the values it can return?",
+    "A level-0 call is the only place a line is drawn. If the pen color changes right there, how many lines share a color?",
+    "For `countLines`: a level-1 curve is two level-0 curves. A level-2 curve is two level-1 curves. Write that sentence as a return statement."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "import random\nfrom penturtle import Turtle\nfrom ccurve import randomColor, cCurve, countLines\n\nrandom.seed(1035)\ncolors = [randomColor() for count in range(3000)]\nvalid = all(len(c) == 3 and all(0 <= part <= 255 for part in c)\n            for c in colors)\nprint(\"Every color is a valid RGB tuple:\", valid)\nprint(\"Some component reached 0:\", any(0 in c for c in colors))\nprint(\"Some component reached 255:\", any(255 in c for c in colors))\n\nfor level in range(6):\n    t = Turtle()\n    cCurve(t, 50, -50, 50, 50, level)\n    print(\"Level\", level, \"drew\", len(t.lines()), \"lines;\",\n          \"countLines says\", countLines(level))\n\nlevel = int(input(\"Level to trace: \"))\nt = Turtle()\ncCurve(t, 50, -50, 50, 50, level)\nfor (start, end) in t.lines():\n    print(\"  \", start, \"->\", end)\nown = len(set(t.lineColors())) == len(t.lines())\nprint(\"Each line has its own color:\", own)\nprint(\"countLines(10) =\", countLines(10))\n",
+    "stdin": "2\n",
+    "expected_output": "Every color is a valid RGB tuple: True\nSome component reached 0: True\nSome component reached 255: True\nLevel 0 drew 1 lines; countLines says 1\nLevel 1 drew 2 lines; countLines says 2\nLevel 2 drew 4 lines; countLines says 4\nLevel 3 drew 8 lines; countLines says 8\nLevel 4 drew 16 lines; countLines says 16\nLevel 5 drew 32 lines; countLines says 32\nLevel to trace:    (50.0, -50.0) -> (0.0, -50.0)\n   (0.0, -50.0) -> (0.0, 0.0)\n   (0.0, 0.0) -> (0.0, 50.0)\n   (0.0, 50.0) -> (50.0, 50.0)\nEach line has its own color: True\ncountLines(10) = 1024\n",
+    "predict": "The test program counts the lines of levels 0 to 5, then traces every line of a **level-2** c-curve from (50, -50) to (50, 50). Predict: how many lines does level 5 draw, and what are the four corner points of the level-2 curve?"
+   },
+   "warmup": [
+    {
+     "question": "The starter's `randomColor` uses `random.randint(0, 256)`. How many different values can each call return, and which of them is not a valid RGB component?",
+     "model_answer": "257 values, 0 through 256, because randint includes both ends. 256 is invalid: each component is 8 bits, which holds 256 values, 0 to 255."
+    },
+    {
+     "question": "Using the formulas, compute (xm, ym) for a level-1 c-curve from (50, -50) to (50, 50). What shape do the two new lines make?",
+     "model_answer": "xm = (50 + 50 + (-50) - 50) // 2 = 0 and ym = (50 + (-50) + 50 - 50) // 2 = 0, so the corner is (0, 0). The lines (50, -50) to (0, 0) and (0, 0) to (50, 50) meet at a right angle, like a V on its side."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Explain, using the structure of `cCurve`, why a level-N c-curve draws 2 ** N lines. How many lines does a level-10 curve draw?",
+     "model_answer": "Every call above level 0 makes exactly two calls one level lower and draws nothing itself, so the number of level-0 calls doubles at each level. Only level-0 calls draw, one line each, giving 2 ** N lines. A level-10 curve draws 2 ** 10 = 1024 lines."
+    },
+    {
+     "question": "The case study turns off animation with `tracer(False)` for levels above 8. Using your line counts, explain why.",
+     "model_answer": "The number of lines doubles with each level, so level 9 already draws 512 lines and level 12 draws 4096. Animating each line would take a long time, so the program builds the whole drawing in memory and shows it once with update()."
+    },
+    {
+     "question": "How many bits does one RGB color take, and how many different colors could `randomColor` return?",
+     "model_answer": "Three components of 8 bits each, 24 bits in total. Each component has 256 values, so there are 256 * 256 * 256 = 16,777,216 colors, which is 2 ** 24."
+    }
+   ],
+   "extension": "Write `curveLength(level)` that returns the total length of a c-curve from (50, -50) to (50, 50) without drawing it. Each level multiplies the length of every line by `1 / sqrt(2)` and doubles the number of lines. Compare its answer for level 3 with `t.report()` after `Run`.",
+   "worth_knowing": "The c-curve is also called the Lévy C curve, after the French mathematician Paul Lévy, who described its self-similar properties in 1938. Repeat the subdivision forever and the curve fills a region of the plane with an area greater than zero."
+  },
+  {
+   "id": "8.2a",
+   "title": "Traversing a grid of pixels: student ID photo filters",
+   "subtitle": "Row-major traversal, tuple unpacking, grayscale and two-color posters",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 8.2, The Properties of Images, The images Module, A Loop Pattern for Traversing a Grid, A Word on Tuples, Converting an Image to Black and White and Converting an Image to Grayscale, pp. 205-211",
+   "minutes": 30,
+   "objectives": [
+    "Visit every pixel of an image of any size with a row-major nested loop, using screen coordinates (x is the column, y is the row)",
+    "Unpack a pixel's `(r, g, b)` tuple, compute with its parts and set a new tuple",
+    "Convert to grayscale with luminance weights, and generalize black and white into a two-color filter"
+   ],
+   "scenario": "The campus ID office prints student cards on a printer that only takes **grayscale** photos. The student council also wants a **two-color poster** of the same photos in the school's navy (the reading's Programming Exercise 5, `posterize`).\n\nLast year's `grayscale` worked on the square test photos. This year's camera takes photos wider than they are tall, and the script crashes on the first one. It also uses the plain average of red, green and blue, which makes faces in blue light look too bright.\n\nThis lab uses `images.py` (read-only), a stand-in for the book's `images` module with the same `Image` methods. It builds images from rows of RGB tuples instead of GIF files, and `draw()` prints the pixels instead of opening a window. Like the real module, it raises an error for a position outside the image or a pixel value that isn't three integers from 0 to 255.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`grayscale` visits every pixel of any image in row-major order: the outer loop goes through the rows (`y` up to `getHeight()`), the inner loop through the columns (`x` up to `getWidth()`)."
+    },
+    {
+     "id": "R2",
+     "text": "`grayscale` uses the luminance weights: red times 0.299, green times 0.587, blue times 0.114, each converted with `int`, and sets the pixel to `(lum, lum, lum)`."
+    },
+    {
+     "id": "R3",
+     "text": "`posterize(image, color)` visits every pixel and decides with the RGB average: below 128 is dark, 128 or above is light."
+    },
+    {
+     "id": "R4",
+     "text": "`posterize` sets dark pixels to the `color` argument and light pixels to white `(255, 255, 255)`. No color is hard-coded for dark pixels."
+    },
+    {
+     "id": "R5",
+     "text": "The test program's grayscale values, the 1-by-5 strip and the poster match.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "filters.py",
+     "starter": "\"\"\"filters.py - prepare student ID photos for the card printer and\nthe event poster.\"\"\"\nfrom images import Image   # the real images module has the same Image methods\n\n\ndef grayscale(image):\n    \"\"\"Converts the argument image to grayscale (changes it in place).\"\"\"\n    # TODO (R1): this traversal worked on last year's square photos but crashes\n    # on the new 4-by-3 ones. Fix it so it visits every pixel of any image.\n    for y in range(image.getWidth()):\n        for x in range(image.getHeight()):\n            (r, g, b) = image.getPixel(x, y)\n            # TODO (R2): weight each component by its luminance instead\n            # of averaging.\n            average = (r + g + b) // 3\n            image.setPixel(x, y, (average, average, average))\n\n\ndef posterize(image, color):\n    \"\"\"Converts the argument image to two colors (changes it in place):\n    dark pixels become the given color, light pixels become white.\"\"\"\n    # TODO (R3): visit every pixel. A pixel whose RGB average is below\n    # 128 is dark.\n    # TODO (R4): dark pixels get the color argument, light ones get white.\n    pass\n\n\ndef samplePhoto():\n    \"\"\"Returns a small 4-by-3 test photo.\"\"\"\n    return Image([\n        [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255)],\n        [(200, 180, 40), (10, 20, 30), (128, 128, 128), (90, 200, 250)],\n        [(0, 0, 0), (127, 128, 129), (250, 100, 50), (60, 60, 200)]])\n\n\ndef main():\n    \"\"\"Shows a sample photo before and after each filter.\"\"\"\n    photo = samplePhoto()\n    print(photo)\n    photo.draw()\n    print(\"Grayscale:\")\n    grayscale(photo)\n    photo.draw()\n    print(\"Poster in school navy:\")\n    poster = samplePhoto()\n    posterize(poster, (0, 51, 102))\n    poster.draw()\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "solution": "\"\"\"filters.py - prepare student ID photos for the card printer and\nthe event poster.\"\"\"\nfrom images import Image   # the real images module has the same Image methods\n\n\ndef grayscale(image):\n    \"\"\"Converts the argument image to grayscale (changes it in place).\"\"\"\n    for y in range(image.getHeight()):\n        for x in range(image.getWidth()):\n            (r, g, b) = image.getPixel(x, y)\n            r = int(r * 0.299)\n            g = int(g * 0.587)\n            b = int(b * 0.114)\n            lum = r + g + b\n            image.setPixel(x, y, (lum, lum, lum))\n\n\ndef posterize(image, color):\n    \"\"\"Converts the argument image to two colors (changes it in place):\n    dark pixels become the given color, light pixels become white.\"\"\"\n    whitePixel = (255, 255, 255)\n    for y in range(image.getHeight()):\n        for x in range(image.getWidth()):\n            (r, g, b) = image.getPixel(x, y)\n            average = (r + g + b) // 3\n            if average < 128:\n                image.setPixel(x, y, color)\n            else:\n                image.setPixel(x, y, whitePixel)\n\n\ndef samplePhoto():\n    \"\"\"Returns a small 4-by-3 test photo.\"\"\"\n    return Image([\n        [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255)],\n        [(200, 180, 40), (10, 20, 30), (128, 128, 128), (90, 200, 250)],\n        [(0, 0, 0), (127, 128, 129), (250, 100, 50), (60, 60, 200)]])\n\n\ndef main():\n    \"\"\"Shows a sample photo before and after each filter.\"\"\"\n    photo = samplePhoto()\n    print(photo)\n    photo.draw()\n    print(\"Grayscale:\")\n    grayscale(photo)\n    photo.draw()\n    print(\"Poster in school navy:\")\n    poster = samplePhoto()\n    posterize(poster, (0, 51, 102))\n    poster.draw()\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "editable": true
+    },
+    {
+     "name": "images.py",
+     "starter": "\"\"\"images.py - a text-mode stand-in for the book's images module.\n\nThe Image class has the same methods as Table 8-4 (getWidth, getHeight,\ngetPixel, setPixel, clone, draw, save), so functions you write with it also\nrun with the real images module. Two differences:\n  - Build an image from rows of RGB tuples, Image(rows), instead of a GIF file\n    (Image(width, height) still makes a blank image, as in the book).\n  - draw() prints the pixels instead of opening a window; a blank (transparent)\n    pixel prints as  --  .\nExtra for the labs (NOT in the real module): image.blankPixels().\n\"\"\"\n\n\nclass Image:\n    \"\"\"A grid of RGB pixels with (0, 0) at the upper-left corner.\"\"\"\n\n    def __init__(self, *args):\n        self.filename = \"\"\n        if len(args) == 2 and all(isinstance(a, int) for a in args):\n            (width, height) = args\n            self._pixels = [[None] * width for y in range(height)]\n        elif len(args) == 1 and isinstance(args[0], list):\n            self._pixels = [list(row) for row in args[0]]\n            for row in self._pixels:\n                for p in row:\n                    _checkRGB(p)\n        else:\n            raise ValueError(\"this stand-in builds Image(width, height) or \"\n                             \"Image(rows); it cannot open image files\")\n\n    def getWidth(self):\n        \"\"\"Returns the width in pixels.\"\"\"\n        return len(self._pixels[0]) if self._pixels else 0\n\n    def getHeight(self):\n        \"\"\"Returns the height in pixels.\"\"\"\n        return len(self._pixels)\n\n    def getPixel(self, x, y):\n        \"\"\"Returns the (r, g, b) tuple at column x, row y.\"\"\"\n        self._checkPosition(x, y)\n        p = self._pixels[y][x]\n        return (0, 0, 0) if p is None else p\n\n    def setPixel(self, x, y, rgb):\n        \"\"\"Replaces the pixel at column x, row y with the tuple (r, g, b).\"\"\"\n        self._checkPosition(x, y)\n        _checkRGB(rgb)\n        self._pixels[y][x] = tuple(rgb)\n\n    def clone(self):\n        \"\"\"Returns a new image with the same pixels; changing one leaves\n        the other alone.\"\"\"\n        copy = Image(self.getWidth(), self.getHeight())\n        copy._pixels = [list(row) for row in self._pixels]\n        return copy\n\n    def draw(self):\n        \"\"\"Prints the pixels, one row per line (the real one opens a window).\"\"\"\n        for row in self._pixels:\n            cells = []\n            for p in row:\n                if p is None:\n                    cells.append(\"     --     \")\n                else:\n                    cells.append(\"(%3d,%3d,%3d)\" % p)\n            print(\" \".join(cells))\n\n    def save(self, filename=None):\n        \"\"\"Records the filename (the real module writes a GIF file).\"\"\"\n        if filename is not None:\n            if not filename.endswith(\".gif\"):\n                filename += \".gif\"\n            self.filename = filename\n\n    def blankPixels(self):\n        \"\"\"Returns how many pixels have never been given a color.\"\"\"\n        return sum(row.count(None) for row in self._pixels)\n\n    def __str__(self):\n        return (\"Filename: \" + self.filename +\n                \"\\nWidth: \" + str(self.getWidth()) +\n                \"\\nHeight: \" + str(self.getHeight()))\n\n    def _checkPosition(self, x, y):\n        w = self.getWidth()\n        h = self.getHeight()\n        inside = (isinstance(x, int) and isinstance(y, int) and\n                  0 <= x < w and 0 <= y < h)\n        if not inside:\n            raise IndexError(\"pixel (\" + str(x) + \", \" + str(y) +\n                             \") is outside this \" + str(w) + \" x \" + str(h) +\n                             \" image: x goes 0 to \" + str(w - 1) +\n                             \", y goes 0 to \" + str(h - 1))\n\n\ndef _checkRGB(rgb):\n    \"\"\"Raises ValueError unless rgb is three ints from 0 to 255.\"\"\"\n    if not (isinstance(rgb, tuple) and len(rgb) == 3 and\n            all(isinstance(c, int) and 0 <= c <= 255 for c in rgb)):\n        raise ValueError(\"a pixel is a tuple of three ints from 0 to 255, \"\n                         \"got \" + repr(rgb))\n",
+     "solution": "\"\"\"images.py - a text-mode stand-in for the book's images module.\n\nThe Image class has the same methods as Table 8-4 (getWidth, getHeight,\ngetPixel, setPixel, clone, draw, save), so functions you write with it also\nrun with the real images module. Two differences:\n  - Build an image from rows of RGB tuples, Image(rows), instead of a GIF file\n    (Image(width, height) still makes a blank image, as in the book).\n  - draw() prints the pixels instead of opening a window; a blank (transparent)\n    pixel prints as  --  .\nExtra for the labs (NOT in the real module): image.blankPixels().\n\"\"\"\n\n\nclass Image:\n    \"\"\"A grid of RGB pixels with (0, 0) at the upper-left corner.\"\"\"\n\n    def __init__(self, *args):\n        self.filename = \"\"\n        if len(args) == 2 and all(isinstance(a, int) for a in args):\n            (width, height) = args\n            self._pixels = [[None] * width for y in range(height)]\n        elif len(args) == 1 and isinstance(args[0], list):\n            self._pixels = [list(row) for row in args[0]]\n            for row in self._pixels:\n                for p in row:\n                    _checkRGB(p)\n        else:\n            raise ValueError(\"this stand-in builds Image(width, height) or \"\n                             \"Image(rows); it cannot open image files\")\n\n    def getWidth(self):\n        \"\"\"Returns the width in pixels.\"\"\"\n        return len(self._pixels[0]) if self._pixels else 0\n\n    def getHeight(self):\n        \"\"\"Returns the height in pixels.\"\"\"\n        return len(self._pixels)\n\n    def getPixel(self, x, y):\n        \"\"\"Returns the (r, g, b) tuple at column x, row y.\"\"\"\n        self._checkPosition(x, y)\n        p = self._pixels[y][x]\n        return (0, 0, 0) if p is None else p\n\n    def setPixel(self, x, y, rgb):\n        \"\"\"Replaces the pixel at column x, row y with the tuple (r, g, b).\"\"\"\n        self._checkPosition(x, y)\n        _checkRGB(rgb)\n        self._pixels[y][x] = tuple(rgb)\n\n    def clone(self):\n        \"\"\"Returns a new image with the same pixels; changing one leaves\n        the other alone.\"\"\"\n        copy = Image(self.getWidth(), self.getHeight())\n        copy._pixels = [list(row) for row in self._pixels]\n        return copy\n\n    def draw(self):\n        \"\"\"Prints the pixels, one row per line (the real one opens a window).\"\"\"\n        for row in self._pixels:\n            cells = []\n            for p in row:\n                if p is None:\n                    cells.append(\"     --     \")\n                else:\n                    cells.append(\"(%3d,%3d,%3d)\" % p)\n            print(\" \".join(cells))\n\n    def save(self, filename=None):\n        \"\"\"Records the filename (the real module writes a GIF file).\"\"\"\n        if filename is not None:\n            if not filename.endswith(\".gif\"):\n                filename += \".gif\"\n            self.filename = filename\n\n    def blankPixels(self):\n        \"\"\"Returns how many pixels have never been given a color.\"\"\"\n        return sum(row.count(None) for row in self._pixels)\n\n    def __str__(self):\n        return (\"Filename: \" + self.filename +\n                \"\\nWidth: \" + str(self.getWidth()) +\n                \"\\nHeight: \" + str(self.getHeight()))\n\n    def _checkPosition(self, x, y):\n        w = self.getWidth()\n        h = self.getHeight()\n        inside = (isinstance(x, int) and isinstance(y, int) and\n                  0 <= x < w and 0 <= y < h)\n        if not inside:\n            raise IndexError(\"pixel (\" + str(x) + \", \" + str(y) +\n                             \") is outside this \" + str(w) + \" x \" + str(h) +\n                             \" image: x goes 0 to \" + str(w - 1) +\n                             \", y goes 0 to \" + str(h - 1))\n\n\ndef _checkRGB(rgb):\n    \"\"\"Raises ValueError unless rgb is three ints from 0 to 255.\"\"\"\n    if not (isinstance(rgb, tuple) and len(rgb) == 3 and\n            all(isinstance(c, int) and 0 <= c <= 255 for c in rgb)):\n        raise ValueError(\"a pixel is a tuple of three ints from 0 to 255, \"\n                         \"got \" + repr(rgb))\n",
+     "editable": false
+    }
+   ],
+   "main_file": "filters.py",
+   "run_entry": "filters.py",
+   "solution_notes": "Screen coordinates are (column, row): `getPixel(x, y)` takes x up to `getWidth() - 1` and y up to `getHeight() - 1`. The starter's loops took their ranges from the wrong dimension, which is invisible on a square image and fails on the first wide one (y reaches 3 on a 3-row image). The weights follow the reading's `grayscale`; truncating each product separately is why white becomes (254, 254, 254): 76 + 149 + 29. `posterize` is the reading's `blackAndWhite` with the dark color taken from a parameter. A column-major traversal (x outer, y inner) also visits every pixel and is accepted, as are `width = image.getWidth()` style variables. The stand-in rejects floats in a pixel, so a missing `int` shows up as a clear error.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "rows come from the height, columns from the width",
+     "within": "grayscale",
+     "require": "^(?=[\\s\\S]*for\\s+y\\s+in\\s+range\\(\\s*(image\\.getHeight\\(\\s*\\)|height)\\s*\\))(?=[\\s\\S]*for\\s+x\\s+in\\s+range\\(\\s*(image\\.getWidth\\(\\s*\\)|width)\\s*\\))",
+     "forbid": [
+      "for\\s+y\\s+in\\s+range\\(\\s*(image\\.getWidth|width)",
+      "for\\s+x\\s+in\\s+range\\(\\s*(image\\.getHeight|height)"
+     ],
+     "message": "In screen coordinates, x is the column and y is the row. Loop `for y in range(image.getHeight()):` and inside it `for x in range(image.getWidth()):`, so x never passes the last column and y never passes the last row."
+    },
+    {
+     "id": "C2",
+     "requirement": "R2",
+     "title": "luminance weights",
+     "within": "grayscale",
+     "require": "^(?=[\\s\\S]*0?\\.299)(?=[\\s\\S]*0?\\.587)(?=[\\s\\S]*0?\\.114)",
+     "message": "Weight the components by how bright they look to the eye: `r * 0.299`, `g * 0.587`, `b * 0.114`. Green looks brightest and blue darkest, so a plain average misjudges them."
+    },
+    {
+     "id": "C3",
+     "requirement": "R2",
+     "title": "integers, not the plain average",
+     "within": "grayscale",
+     "require": "\\bint\\s*\\(",
+     "forbid": [
+      "//\\s*3"
+     ],
+     "message": "Replace the `// 3` average with the weighted sum, and convert with `int(...)`: a pixel's components must be integers, and `0.299 * r` is a float."
+    },
+    {
+     "id": "C4",
+     "requirement": "R3",
+     "title": "every pixel, judged by its average",
+     "within": "posterize",
+     "require": "^(?=[\\s\\S]*for\\s+\\w+\\s+in\\s+range\\([\\s\\S]*for\\s+\\w+\\s+in\\s+range\\()(?=[\\s\\S]*(<\\s*128|>=\\s*128|<=\\s*127|>\\s*127))",
+     "message": "Use the same nested loops as `grayscale`, compute `(r + g + b) // 3` for each pixel, and compare it with 128, as the reading's `blackAndWhite` does."
+    },
+    {
+     "id": "C5",
+     "requirement": "R4",
+     "title": "dark pixels get the `color` argument",
+     "within": "posterize",
+     "require": "setPixel\\s*\\(\\s*x\\s*,\\s*y\\s*,\\s*color\\s*\\)",
+     "forbid": [
+      "\\(\\s*0\\s*,\\s*0\\s*,\\s*0\\s*\\)"
+     ],
+     "message": "Pass the parameter itself: `image.setPixel(x, y, color)`. That is what makes `posterize` a generalization of `blackAndWhite`: the caller chooses the dark color."
+    }
+   ],
+   "hints": [
+    "Run the starter and read the last line of the error: which coordinate is outside the image, and which loop produced it?",
+    "Unpack first, then compute: `(r, g, b) = image.getPixel(x, y)`. Each weighted part needs `int(...)` before you add them up.",
+    "`posterize` is `blackAndWhite` with one change: the dark color comes from the `color` parameter instead of `(0, 0, 0)`."
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from images import Image\nfrom filters import grayscale, posterize, samplePhoto\n\nphoto = samplePhoto()\ngrayscale(photo)\nprint(\"Red becomes:\", photo.getPixel(0, 0))\nprint(\"Green becomes:\", photo.getPixel(1, 0))\nprint(\"Blue becomes:\", photo.getPixel(2, 0))\nprint(\"White becomes:\", photo.getPixel(3, 0))\nprint(\"Bottom-right corner:\", photo.getPixel(3, 2))\nphoto.draw()\n\nstrip = Image([[(100, 150, 200)], [(10, 10, 10)], [(240, 230, 220)],\n               [(0, 128, 255)], [(255, 255, 0)]])\ngrayscale(strip)\nprint(\"A 1-by-5 strip:\")\nprint([strip.getPixel(0, y)[0] for y in range(strip.getHeight())])\n\nnavy = (0, 51, 102)\nposter = samplePhoto()\nposterize(poster, navy)\nposter.draw()\ncount = 0\nfor y in range(poster.getHeight()):\n    for x in range(poster.getWidth()):\n        if poster.getPixel(x, y) == navy:\n            count += 1\nprint(\"Navy pixels:\", count)\ngold = Image([[(127, 127, 127), (128, 128, 128)]])\nposterize(gold, (255, 200, 0))\nprint(\"Average 127 becomes:\", gold.getPixel(0, 0))\nprint(\"Average 128 becomes:\", gold.getPixel(1, 0))\n",
+    "stdin": "",
+    "expected_output": "Red becomes: (76, 76, 76)\nGreen becomes: (149, 149, 149)\nBlue becomes: (29, 29, 29)\nWhite becomes: (254, 254, 254)\nBottom-right corner: (74, 74, 74)\n( 76, 76, 76) (149,149,149) ( 29, 29, 29) (254,254,254)\n(168,168,168) ( 16, 16, 16) (127,127,127) (171,171,171)\n(  0,  0,  0) (126,126,126) (137,137,137) ( 74, 74, 74)\nA 1-by-5 strip:\n[139, 8, 231, 104, 225]\n(  0, 51,102) (  0, 51,102) (  0, 51,102) (255,255,255)\n(255,255,255) (  0, 51,102) (255,255,255) (255,255,255)\n(  0, 51,102) (255,255,255) (255,255,255) (  0, 51,102)\nNavy pixels: 6\nAverage 127 becomes: (255, 200, 0)\nAverage 128 becomes: (255, 255, 255)\n",
+    "predict": "The test program converts the 4-by-3 sample photo to grayscale. Predict: what gray do pure red (255, 0, 0), pure green and pure blue become? And does white (255, 255, 255) stay exactly 255?"
+   },
+   "warmup": [
+    {
+     "question": "The sample photo is 4 pixels wide and 3 tall. The starter's outer loop is `for y in range(image.getWidth())` and the inner one `for x in range(image.getHeight())`. Which `getPixel` call fails first, and which column is never visited?",
+     "model_answer": "getPixel(0, 3) fails first: y runs 0 to 3 because the width is 4, but the rows are only 0 to 2. Column x = 3 is never visited, because x only goes to 2 (the height minus 1)."
+    },
+    {
+     "question": "With the plain average, pure green (0, 255, 0) and pure blue (0, 0, 255) both become the same gray. Which one looks brighter to the human eye?",
+     "model_answer": "Green. The eye is most sensitive to green and least to blue, so averaging makes blue areas too light and green areas too dark. Both average to 85."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "White (255, 255, 255) came out as (254, 254, 254). Explain exactly where the missing 1 went.",
+     "model_answer": "Each product is truncated separately with int: int(255 * 0.299) = 76, int(255 * 0.587) = 149 and int(255 * 0.114) = 29, which add up to 254. The fractions .245, .685 and .07 that were dropped add up to about 1. Rounding the total, int(r * 0.299 + g * 0.587 + b * 0.114 + 0.5), would keep white at 255."
+    },
+    {
+     "question": "`grayscale` and `posterize` change the image they receive and return nothing. When is that a good design, and when would you rather return a new image?",
+     "model_answer": "Changing the image in place saves memory and suits a pipeline where the original isn't needed again. But it destroys the original, so if the program must keep it (to compare, undo, or make the card and the poster from the same photo) it should work on a clone or return a new image. That is why main builds a second samplePhoto for the poster."
+    },
+    {
+     "question": "Why does a pixel at average 127 become navy while one at 128 becomes white? Is 128 a good threshold for every photo?",
+     "model_answer": "The test is average < 128, so 127 counts as dark and 128 as light; 128 is the midpoint of 0 to 255. It's a reasonable default, but a dark photo would turn almost all navy and a bright one almost all white. A better poster might take the threshold as a parameter or use the photo's own average brightness."
+    }
+   ],
+   "extension": "Write `invert(image)` (the reading's Programming Exercise 7): each component becomes 255 minus itself. Predict what inverting a grayscale image twice gives, then check it with `draw()`.",
+   "worth_knowing": "The weights 0.299, 0.587 and 0.114 come from color television. Engineers chose them in 1953 so a color broadcast would look right on black-and-white sets, and digital video standards still use them to compute brightness."
+  },
+  {
+   "id": "8.2b",
+   "title": "New images from old: the newspaper's photo thumbnails",
+   "subtitle": "clone, blurring with neighbors, and reducing an image's size",
+   "source": "Fundamentals of Python: First Programs, 3e (Lambert), Section 8.2, Copying an Image, Blurring an Image and Reducing the Image Size, pp. 211-215",
+   "minutes": 35,
+   "objectives": [
+    "Use `clone` to build a new image while reading from an unchanged original",
+    "Average a pixel with its four neighbors, keeping the traversal away from the edges",
+    "Shrink an image by a factor so that every pixel of the new image receives a color"
+   ],
+   "scenario": "The campus newspaper's website shows each photo twice: a slightly **softened** version (phone cameras make the edges of text and windows look jagged) and a small **thumbnail** on the front page.\n\nThe intern's `thumbs.py` has two problems. `blur` writes into the photo it is reading, so the newspaper loses its original. And `shrink` leaves blank (transparent) pixels along the right and bottom edges of most thumbnails, which show up as a white strip on the page.\n\nLike Lab 8.2a, this lab uses the read-only `images.py` stand-in. A blank pixel prints as `--`, and `image.blankPixels()` (an extra of the stand-in) counts them.",
+   "requirements": [
+    {
+     "id": "R1",
+     "text": "`blur` builds its result in `image.clone()`, reads every pixel from the original image, writes only into the copy, and returns the copy. The argument image does not change."
+    },
+    {
+     "id": "R2",
+     "text": "Each blurred pixel is the average of five pixels: itself and its left, right, upper and lower neighbors (each component divided by 5 with `//`). Edge pixels keep their color."
+    },
+    {
+     "id": "R3",
+     "text": "`shrink(image, factor)` gives every pixel of the new image a color: the pixel at `(newX, newY)` copies the original pixel at `(newX * factor, newY * factor)`."
+    },
+    {
+     "id": "R4",
+     "text": "The test program's blurred values and thumbnails match, with no blank pixels and the original photo unchanged.",
+     "verified_by_output": true
+    }
+   ],
+   "files": [
+    {
+     "name": "thumbs.py",
+     "starter": "\"\"\"thumbs.py - soften and shrink photos for the campus newspaper's website.\"\"\"\nfrom images import Image   # the real images module has the same Image methods\n\n\ndef tripleSum(triple1, triple2):\n    \"\"\"Returns the sums of two RGB tuples, position by position.\"\"\"\n    (r1, g1, b1) = triple1\n    (r2, g2, b2) = triple2\n    return (r1 + r2, g1 + g2, b1 + b2)\n\n\ndef blur(image):\n    \"\"\"Builds and returns a new image which is a blurred copy of the\n    argument image. The argument image must not change.\"\"\"\n    # TODO (R1): build the result in a copy, and read every pixel from\n    # the original.\n    for y in range(1, image.getHeight() - 1):\n        for x in range(1, image.getWidth() - 1):\n            oldP = image.getPixel(x, y)\n            # TODO (R2): add the pixel and its 4 neighbors (left, right,\n            # above, below) with tripleSum, then divide each sum by 5.\n            image.setPixel(x, y, oldP)\n    return image\n\n\ndef shrink(image, factor):\n    \"\"\"Builds and returns a new image which is a smaller copy of the argument\n    image, by the factor argument.\"\"\"\n    width = image.getWidth()\n    height = image.getHeight()\n    new = Image(width // factor, height // factor)\n    # TODO (R3): on a 4-by-4 photo with factor 2, this leaves blank\n    # pixels in the new image. Every pixel of the new image must get\n    # a color.\n    newY = 0\n    for oldY in range(0, height - factor, factor):\n        newX = 0\n        for oldX in range(0, width - factor, factor):\n            new.setPixel(newX, newY, image.getPixel(oldX, oldY))\n            newX += 1\n        newY += 1\n    return new\n\n\ndef samplePhoto():\n    \"\"\"Returns a small 4-by-4 test photo with a bright square in the middle.\"\"\"\n    dark = (20, 40, 60)\n    lit = (220, 200, 180)\n    return Image([[dark, dark, dark, dark],\n                  [dark, lit, lit, dark],\n                  [dark, lit, lit, dark],\n                  [dark, dark, dark, dark]])\n\n\ndef main():\n    \"\"\"Shows a photo, its blurred copy and its thumbnail.\"\"\"\n    photo = samplePhoto()\n    photo.draw()\n    print(\"Blurred:\")\n    blur(photo).draw()\n    print(\"Thumbnail, factor 2:\")\n    thumb = shrink(photo, 2)\n    thumb.draw()\n    print(\"Blank pixels in the thumbnail:\", thumb.blankPixels())\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "solution": "\"\"\"thumbs.py - soften and shrink photos for the campus newspaper's website.\"\"\"\nfrom images import Image   # the real images module has the same Image methods\n\n\ndef tripleSum(triple1, triple2):\n    \"\"\"Returns the sums of two RGB tuples, position by position.\"\"\"\n    (r1, g1, b1) = triple1\n    (r2, g2, b2) = triple2\n    return (r1 + r2, g1 + g2, b1 + b2)\n\n\ndef blur(image):\n    \"\"\"Builds and returns a new image which is a blurred copy of the\n    argument image. The argument image must not change.\"\"\"\n    new = image.clone()\n    for y in range(1, image.getHeight() - 1):\n        for x in range(1, image.getWidth() - 1):\n            oldP = image.getPixel(x, y)\n            left = image.getPixel(x - 1, y)\n            right = image.getPixel(x + 1, y)\n            top = image.getPixel(x, y - 1)\n            bottom = image.getPixel(x, y + 1)\n            sums = tripleSum(oldP, left)\n            sums = tripleSum(sums, right)\n            sums = tripleSum(sums, top)\n            sums = tripleSum(sums, bottom)\n            (r, g, b) = sums\n            new.setPixel(x, y, (r // 5, g // 5, b // 5))\n    return new\n\n\ndef shrink(image, factor):\n    \"\"\"Builds and returns a new image which is a smaller copy of the argument\n    image, by the factor argument.\"\"\"\n    new = Image(image.getWidth() // factor, image.getHeight() // factor)\n    for newY in range(new.getHeight()):\n        for newX in range(new.getWidth()):\n            oldP = image.getPixel(newX * factor, newY * factor)\n            new.setPixel(newX, newY, oldP)\n    return new\n\n\ndef samplePhoto():\n    \"\"\"Returns a small 4-by-4 test photo with a bright square in the middle.\"\"\"\n    dark = (20, 40, 60)\n    lit = (220, 200, 180)\n    return Image([[dark, dark, dark, dark],\n                  [dark, lit, lit, dark],\n                  [dark, lit, lit, dark],\n                  [dark, dark, dark, dark]])\n\n\ndef main():\n    \"\"\"Shows a photo, its blurred copy and its thumbnail.\"\"\"\n    photo = samplePhoto()\n    photo.draw()\n    print(\"Blurred:\")\n    blur(photo).draw()\n    print(\"Thumbnail, factor 2:\")\n    thumb = shrink(photo, 2)\n    thumb.draw()\n    print(\"Blank pixels in the thumbnail:\", thumb.blankPixels())\n\n\nif __name__ == \"__main__\":\n    main()\n",
+     "editable": true
+    },
+    {
+     "name": "images.py",
+     "starter": "\"\"\"images.py - a text-mode stand-in for the book's images module.\n\nThe Image class has the same methods as Table 8-4 (getWidth, getHeight,\ngetPixel, setPixel, clone, draw, save), so functions you write with it also\nrun with the real images module. Two differences:\n  - Build an image from rows of RGB tuples, Image(rows), instead of a GIF file\n    (Image(width, height) still makes a blank image, as in the book).\n  - draw() prints the pixels instead of opening a window; a blank (transparent)\n    pixel prints as  --  .\nExtra for the labs (NOT in the real module): image.blankPixels().\n\"\"\"\n\n\nclass Image:\n    \"\"\"A grid of RGB pixels with (0, 0) at the upper-left corner.\"\"\"\n\n    def __init__(self, *args):\n        self.filename = \"\"\n        if len(args) == 2 and all(isinstance(a, int) for a in args):\n            (width, height) = args\n            self._pixels = [[None] * width for y in range(height)]\n        elif len(args) == 1 and isinstance(args[0], list):\n            self._pixels = [list(row) for row in args[0]]\n            for row in self._pixels:\n                for p in row:\n                    _checkRGB(p)\n        else:\n            raise ValueError(\"this stand-in builds Image(width, height) or \"\n                             \"Image(rows); it cannot open image files\")\n\n    def getWidth(self):\n        \"\"\"Returns the width in pixels.\"\"\"\n        return len(self._pixels[0]) if self._pixels else 0\n\n    def getHeight(self):\n        \"\"\"Returns the height in pixels.\"\"\"\n        return len(self._pixels)\n\n    def getPixel(self, x, y):\n        \"\"\"Returns the (r, g, b) tuple at column x, row y.\"\"\"\n        self._checkPosition(x, y)\n        p = self._pixels[y][x]\n        return (0, 0, 0) if p is None else p\n\n    def setPixel(self, x, y, rgb):\n        \"\"\"Replaces the pixel at column x, row y with the tuple (r, g, b).\"\"\"\n        self._checkPosition(x, y)\n        _checkRGB(rgb)\n        self._pixels[y][x] = tuple(rgb)\n\n    def clone(self):\n        \"\"\"Returns a new image with the same pixels; changing one leaves\n        the other alone.\"\"\"\n        copy = Image(self.getWidth(), self.getHeight())\n        copy._pixels = [list(row) for row in self._pixels]\n        return copy\n\n    def draw(self):\n        \"\"\"Prints the pixels, one row per line (the real one opens a window).\"\"\"\n        for row in self._pixels:\n            cells = []\n            for p in row:\n                if p is None:\n                    cells.append(\"     --     \")\n                else:\n                    cells.append(\"(%3d,%3d,%3d)\" % p)\n            print(\" \".join(cells))\n\n    def save(self, filename=None):\n        \"\"\"Records the filename (the real module writes a GIF file).\"\"\"\n        if filename is not None:\n            if not filename.endswith(\".gif\"):\n                filename += \".gif\"\n            self.filename = filename\n\n    def blankPixels(self):\n        \"\"\"Returns how many pixels have never been given a color.\"\"\"\n        return sum(row.count(None) for row in self._pixels)\n\n    def __str__(self):\n        return (\"Filename: \" + self.filename +\n                \"\\nWidth: \" + str(self.getWidth()) +\n                \"\\nHeight: \" + str(self.getHeight()))\n\n    def _checkPosition(self, x, y):\n        w = self.getWidth()\n        h = self.getHeight()\n        inside = (isinstance(x, int) and isinstance(y, int) and\n                  0 <= x < w and 0 <= y < h)\n        if not inside:\n            raise IndexError(\"pixel (\" + str(x) + \", \" + str(y) +\n                             \") is outside this \" + str(w) + \" x \" + str(h) +\n                             \" image: x goes 0 to \" + str(w - 1) +\n                             \", y goes 0 to \" + str(h - 1))\n\n\ndef _checkRGB(rgb):\n    \"\"\"Raises ValueError unless rgb is three ints from 0 to 255.\"\"\"\n    if not (isinstance(rgb, tuple) and len(rgb) == 3 and\n            all(isinstance(c, int) and 0 <= c <= 255 for c in rgb)):\n        raise ValueError(\"a pixel is a tuple of three ints from 0 to 255, \"\n                         \"got \" + repr(rgb))\n",
+     "solution": "\"\"\"images.py - a text-mode stand-in for the book's images module.\n\nThe Image class has the same methods as Table 8-4 (getWidth, getHeight,\ngetPixel, setPixel, clone, draw, save), so functions you write with it also\nrun with the real images module. Two differences:\n  - Build an image from rows of RGB tuples, Image(rows), instead of a GIF file\n    (Image(width, height) still makes a blank image, as in the book).\n  - draw() prints the pixels instead of opening a window; a blank (transparent)\n    pixel prints as  --  .\nExtra for the labs (NOT in the real module): image.blankPixels().\n\"\"\"\n\n\nclass Image:\n    \"\"\"A grid of RGB pixels with (0, 0) at the upper-left corner.\"\"\"\n\n    def __init__(self, *args):\n        self.filename = \"\"\n        if len(args) == 2 and all(isinstance(a, int) for a in args):\n            (width, height) = args\n            self._pixels = [[None] * width for y in range(height)]\n        elif len(args) == 1 and isinstance(args[0], list):\n            self._pixels = [list(row) for row in args[0]]\n            for row in self._pixels:\n                for p in row:\n                    _checkRGB(p)\n        else:\n            raise ValueError(\"this stand-in builds Image(width, height) or \"\n                             \"Image(rows); it cannot open image files\")\n\n    def getWidth(self):\n        \"\"\"Returns the width in pixels.\"\"\"\n        return len(self._pixels[0]) if self._pixels else 0\n\n    def getHeight(self):\n        \"\"\"Returns the height in pixels.\"\"\"\n        return len(self._pixels)\n\n    def getPixel(self, x, y):\n        \"\"\"Returns the (r, g, b) tuple at column x, row y.\"\"\"\n        self._checkPosition(x, y)\n        p = self._pixels[y][x]\n        return (0, 0, 0) if p is None else p\n\n    def setPixel(self, x, y, rgb):\n        \"\"\"Replaces the pixel at column x, row y with the tuple (r, g, b).\"\"\"\n        self._checkPosition(x, y)\n        _checkRGB(rgb)\n        self._pixels[y][x] = tuple(rgb)\n\n    def clone(self):\n        \"\"\"Returns a new image with the same pixels; changing one leaves\n        the other alone.\"\"\"\n        copy = Image(self.getWidth(), self.getHeight())\n        copy._pixels = [list(row) for row in self._pixels]\n        return copy\n\n    def draw(self):\n        \"\"\"Prints the pixels, one row per line (the real one opens a window).\"\"\"\n        for row in self._pixels:\n            cells = []\n            for p in row:\n                if p is None:\n                    cells.append(\"     --     \")\n                else:\n                    cells.append(\"(%3d,%3d,%3d)\" % p)\n            print(\" \".join(cells))\n\n    def save(self, filename=None):\n        \"\"\"Records the filename (the real module writes a GIF file).\"\"\"\n        if filename is not None:\n            if not filename.endswith(\".gif\"):\n                filename += \".gif\"\n            self.filename = filename\n\n    def blankPixels(self):\n        \"\"\"Returns how many pixels have never been given a color.\"\"\"\n        return sum(row.count(None) for row in self._pixels)\n\n    def __str__(self):\n        return (\"Filename: \" + self.filename +\n                \"\\nWidth: \" + str(self.getWidth()) +\n                \"\\nHeight: \" + str(self.getHeight()))\n\n    def _checkPosition(self, x, y):\n        w = self.getWidth()\n        h = self.getHeight()\n        inside = (isinstance(x, int) and isinstance(y, int) and\n                  0 <= x < w and 0 <= y < h)\n        if not inside:\n            raise IndexError(\"pixel (\" + str(x) + \", \" + str(y) +\n                             \") is outside this \" + str(w) + \" x \" + str(h) +\n                             \" image: x goes 0 to \" + str(w - 1) +\n                             \", y goes 0 to \" + str(h - 1))\n\n\ndef _checkRGB(rgb):\n    \"\"\"Raises ValueError unless rgb is three ints from 0 to 255.\"\"\"\n    if not (isinstance(rgb, tuple) and len(rgb) == 3 and\n            all(isinstance(c, int) and 0 <= c <= 255 for c in rgb)):\n        raise ValueError(\"a pixel is a tuple of three ints from 0 to 255, \"\n                         \"got \" + repr(rgb))\n",
+     "editable": false
+    }
+   ],
+   "main_file": "thumbs.py",
+   "run_entry": "thumbs.py",
+   "solution_notes": "`blur` must read from an image that doesn't change while it works: if it wrote into the image it reads, the pixel at (x, y) would be averaged with a left and upper neighbor that were already blurred, so the result would depend on the traversal order (the reading's Exercise 8-2, question 7). The traversal starts at 1 and stops before the last row and column, because edge pixels don't have four neighbors; the clone gives them their original colors. The reading combines the five tuples with `reduce` and divides with `map` and a `lambda`; repeated `tripleSum` calls, or summing the components by hand, are equivalent. In `shrink`, the starter's bound `range(0, height - factor, factor)` stops one block early whenever the size is a multiple of the factor (4 rows with factor 2 gives only row 0), and a `while oldY < height - factor` loop has the same problem. Driving the loops by the new image's size, as here, fills every new pixel and can never read outside the original. `oldY <= height - factor` is also correct.",
+   "checks": [
+    {
+     "id": "C1",
+     "requirement": "R1",
+     "title": "`blur` works in a clone",
+     "within": "blur",
+     "require": "\\w+\\s*=\\s*image\\.clone\\s*\\(\\s*\\)",
+     "message": "Start with `new = image.clone()`. The copy has the same pixels, and changing it leaves the original alone."
+    },
+    {
+     "id": "C2",
+     "requirement": "R1",
+     "title": "never writes into the original",
+     "within": "blur",
+     "forbid": [
+      "image\\.setPixel\\s*\\("
+     ],
+     "require": "(?!image\\.)\\b\\w+\\.setPixel\\s*\\(",
+     "message": "Read with `image.getPixel(...)` and write with `new.setPixel(...)`. Writing into `image` changes neighbors that later pixels still need to read, and destroys the newspaper's original."
+    },
+    {
+     "id": "C3",
+     "requirement": "R1",
+     "title": "returns the copy",
+     "within": "blur",
+     "require": "return\\s+(?!image\\b)[A-Za-z_]\\w*",
+     "message": "Return the new image (for example `return new`), not the argument."
+    },
+    {
+     "id": "C4",
+     "requirement": "R2",
+     "title": "reads the four neighbors",
+     "within": "blur",
+     "require": "^(?=[\\s\\S]*getPixel\\s*\\(\\s*x\\s*-\\s*1\\s*,\\s*y\\s*\\))(?=[\\s\\S]*getPixel\\s*\\(\\s*x\\s*\\+\\s*1\\s*,\\s*y\\s*\\))(?=[\\s\\S]*getPixel\\s*\\(\\s*x\\s*,\\s*y\\s*-\\s*1\\s*\\))(?=[\\s\\S]*getPixel\\s*\\(\\s*x\\s*,\\s*y\\s*\\+\\s*1\\s*\\))",
+     "message": "Read the left `(x - 1, y)`, right `(x + 1, y)`, upper `(x, y - 1)` and lower `(x, y + 1)` neighbors. Remember that y grows downward in screen coordinates."
+    },
+    {
+     "id": "C5",
+     "requirement": "R2",
+     "title": "averages five pixels",
+     "within": "blur",
+     "require": "//\\s*5",
+     "message": "Divide each summed component by 5 with `//`: the pixel plus its four neighbors. Integer division keeps every component an int."
+    },
+    {
+     "id": "C6",
+     "requirement": "R3",
+     "title": "the loop bounds reach the last block",
+     "within": "shrink",
+     "forbid": [
+      "range\\(\\s*0\\s*,\\s*\\w+\\s*-\\s*factor\\s*,\\s*factor\\s*\\)",
+      "<\\s*\\w+\\s*-\\s*factor"
+     ],
+     "require": [
+      "range\\(\\s*new\\.getHeight\\(\\s*\\)\\s*\\)",
+      "range\\(\\s*\\w+\\s*//\\s*factor\\s*\\)",
+      "<=\\s*\\w+\\s*-\\s*factor",
+      "range\\(\\s*0\\s*,\\s*\\w+\\s*-\\s*factor\\s*\\+\\s*1\\s*,\\s*factor\\s*\\)",
+      "range\\(\\s*\\w+\\s*\\)"
+     ],
+     "message": "A bound of `height - factor` stops one block early when the size is a multiple of the factor. Loop over the new image instead, `for newY in range(new.getHeight()):`, and compute the original position as `newY * factor`."
+    }
+   ],
+   "hints": [
+    "Run the starter: the blurred photo looks exactly like the original. In `blur`, which image is read and which one is written? They should be different objects.",
+    "List the five pixels for (x, y) on paper first. Then add them with `tripleSum` four times, unpack the result into `(r, g, b)` and divide each part by 5.",
+    "For `shrink`, trace the starter's `range(0, height - factor, factor)` with height 4 and factor 2. Which values does it produce? Now think of the loop from the thumbnail's side: which original pixel does new pixel (1, 1) need?"
+   ],
+   "test_program": {
+    "file_name": "run_tests.py",
+    "code": "from images import Image\nfrom thumbs import blur, shrink\n\nblack = (0, 0, 0)\nrows = [[black, black, black, black, black],\n        [black, (250, 250, 250), black, (100, 0, 0), black],\n        [black, black, black, (0, 0, 200), black],\n        [black, black, black, black, black]]\nphoto = Image(rows)\nsoft = blur(photo)\nprint(\"Blur returned a new image:\", soft is not photo)\nsame = all(photo.getPixel(x, y) == rows[y][x]\n           for y in range(4) for x in range(5))\nprint(\"Original unchanged:\", same)\nsoft.draw()\n\n\ndef report(label, thumb):\n    \"\"\"Prints a thumbnail's size and how many of its pixels are blank.\"\"\"\n    print(label, \"->\", thumb.getWidth(), \"x\", thumb.getHeight(),\n          \"with\", thumb.blankPixels(), \"blank pixels\")\n\n\ngrid = Image([[(10 * x, 20 * y, 100) for x in range(4)] for y in range(4)])\nthumb = shrink(grid, 2)\nreport(\"4 x 4 by 2\", thumb)\nthumb.draw()\nwide = Image([[(x, x, x) for x in range(6)] for y in range(3)])\nthumb = shrink(wide, 3)\nreport(\"6 x 3 by 3\", thumb)\nthumb.draw()\nodd = Image([[(x, y, 0) for x in range(5)] for y in range(5)])\nreport(\"5 x 5 by 2\", shrink(odd, 2))\n",
+    "stdin": "",
+    "expected_output": "Blur returned a new image: True\nOriginal unchanged: True\n(  0,  0,  0) (  0,  0,  0) (  0,  0,  0) (  0,  0,  0) (  0,  0,  0)\n(  0,  0,  0) ( 50, 50, 50) ( 70, 50, 50) ( 20,  0, 40) (  0,  0,  0)\n(  0,  0,  0) ( 50, 50, 50) (  0,  0, 40) ( 20,  0, 40) (  0,  0,  0)\n(  0,  0,  0) (  0,  0,  0) (  0,  0,  0) (  0,  0,  0) (  0,  0,  0)\n4 x 4 by 2 -> 2 x 2 with 0 blank pixels\n(  0,  0,100) ( 20,  0,100)\n(  0, 40,100) ( 20, 40,100)\n6 x 3 by 3 -> 2 x 1 with 0 blank pixels\n(  0,  0,  0) (  3,  3,  3)\n5 x 5 by 2 -> 2 x 2 with 0 blank pixels\n",
+    "predict": "The test program blurs a 5-by-4 photo that has a bright pixel (250, 250, 250) at (1, 1). Predict: what does that pixel become, and what does its right-hand neighbor (2, 1) become? Then it shrinks a 4-by-4 photo by 2: how many blank pixels does the starter leave?"
+   },
+   "warmup": [
+    {
+     "question": "Trace the starter's `shrink` on a 4-by-4 photo with factor 2: which values does `range(0, height - factor, factor)` produce, and which pixels of the 2-by-2 thumbnail get a color?",
+     "model_answer": "range(0, 2, 2) produces only 0, for both loops. So only the thumbnail pixel (0, 0) gets a color; (1, 0), (0, 1) and (1, 1) stay blank, 3 blank pixels."
+    },
+    {
+     "question": "`blur` loops from 1 to `getHeight() - 2` and from 1 to `getWidth() - 2`. Why doesn't it start at 0?",
+     "model_answer": "A pixel on the edge is missing at least one neighbor: at x = 0 there is no left neighbor, so getPixel(x - 1, y) would be outside the image. Skipping the outer edge avoids checking bounds for every neighbor, at the cost of leaving the edge pixels unblurred."
+    }
+   ],
+   "reflection": [
+    {
+     "question": "Suppose `blur` wrote straight into the image it reads from. Which neighbors of pixel (2, 1) would already have changed by the time it is computed, and why does that give a wrong blur?",
+     "model_answer": "The row-major traversal has already processed (1, 1), the left neighbor, and every pixel of row 0 above it is an edge that doesn't change. So the left neighbor would already be blurred, and the bright value would be smeared toward the right and down. The result depends on the traversal order instead of the original photo, which is why blur reads from the original and writes into a clone."
+    },
+    {
+     "question": "Shrinking a 6-by-3 photo by 3 keeps 2 of its 18 pixels. What happens to the rest, and why does the reading say enlarging is the harder problem?",
+     "model_answer": "16 of the 18 pixels are discarded; only every third pixel in each direction survives, so the information is lost for good. Shrinking only throws information away, and the eye rarely notices at a small size. Enlarging has to invent pixels that were never sampled, estimating their colors from neighbors, and the eye notices the loss of quality at the larger size."
+    },
+    {
+     "question": "`clone` makes images that are structurally equivalent but not identical. What does that mean here, and what does `soft is not photo` check?",
+     "model_answer": "The clone has the same width, height and pixel values, so the two images are equal in content, but they are two separate objects: changing a pixel in one doesn't change the other. `soft is not photo` checks identity, that blur returned a different object, rather than the same image modified."
+    }
+   ],
+   "extension": "Add `detectEdges(image, amount)` from the reading: compare each pixel's average with its left and lower neighbors and build a new black-and-white image. Which ranges must the two loops use so that `x - 1` and `y + 1` stay inside the image?",
+   "worth_knowing": "Photo apps rarely shrink by simply keeping every Nth pixel. Skipping pixels can create moiré, false wavy stripes on fabric or brick walls. Real resizers first blur slightly (like your `blur`) and then sample, so each kept pixel stands for its whole block."
+  }
+ ]
+}
